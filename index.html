@@ -1,38 +1,530 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Materyal Fabrikası</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: #f9fafb;
-      color: #111827;
-    }
-    header {
-      background: #2563eb;
-      color: white;
-      padding: 20px;
-      text-align: center;
-    }
-    h1 {
-      margin: 0;
-      font-size: 24px;
-    }
-    main {
-      padding: 20px;
-      text-align: center;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Materyal Fabrikası - Türkçe ve Türk Kültürü</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 2rem 0;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .search-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            margin: 2rem 0;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .search-box {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            min-width: 250px;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-section {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-group label {
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .filter-select {
+            padding: 0.8rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            min-width: 120px;
+        }
+
+        .clear-filters {
+            padding: 0.8rem 1.5rem;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            align-self: flex-end;
+        }
+
+        .clear-filters:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+        }
+
+        .materials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .material-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            animation: cardAppear 0.5s ease-out;
+        }
+
+        @keyframes cardAppear {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .material-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-title {
+            flex: 1;
+        }
+
+        .card-title h3 {
+            font-size: 1.3rem;
+            color: #333;
+            margin-bottom: 0.3rem;
+        }
+
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .tag {
+            padding: 0.4rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .tag-konu { background: #4CAF50; }
+        .tag-tema { background: #2196F3; }
+        .tag-seviye { background: #FF9800; }
+
+        .card-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+        }
+
+        .download-btn:hover {
+            background: linear-gradient(135deg, #45a049, #4CAF50);
+            transform: translateY(-2px);
+        }
+
+        .preview-btn {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            color: white;
+        }
+
+        .preview-btn:hover {
+            background: linear-gradient(135deg, #1976D2, #2196F3);
+            transform: translateY(-2px);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            color: white;
+            font-size: 1.2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .results-count {
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .materials-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-box {
+                flex-direction: column;
+            }
+            
+            .filter-section {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
 </head>
 <body>
-  <header>
-    <h1>Materyal Fabrikası</h1>
-  </header>
-  <main>
-    <!-- Boş içerik alanı -->
-  </main>
+    <div class="header">
+        <h1>🏭 Materyal Fabrikası</h1>
+        <p>Türkçe ve Türk Kültürü Dersi Eğitim Materyalleri</p>
+    </div>
+
+    <div class="container">
+        <div class="search-section">
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="Materyal adı veya açıklama ile arayın..." id="searchInput">
+            </div>
+            
+            <div class="filter-section">
+                <div class="filter-group">
+                    <label>Konu:</label>
+                    <select class="filter-select" id="konuFilter">
+                        <option value="">Tüm Konular</option>
+                        <option value="Dil Bilgisi">Dil Bilgisi</option>
+                        <option value="Edebiyat">Edebiyat</option>
+                        <option value="Kültür">Kültür</option>
+                        <option value="Tarih">Tarih</option>
+                        <option value="Coğrafya">Coğrafya</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label>Tema:</label>
+                    <select class="filter-select" id="temaFilter">
+                        <option value="">Tüm Temalar</option>
+                        <option value="Oyun">Oyun</option>
+                        <option value="Etkileşimli">Etkileşimli</option>
+                        <option value="Video">Video</option>
+                        <option value="Quiz">Quiz</option>
+                        <option value="Sunum">Sunum</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label>Seviye:</label>
+                    <select class="filter-select" id="seviyeFilter">
+                        <option value="">Tüm Seviyeler</option>
+                        <option value="Başlangıç">Başlangıç</option>
+                        <option value="Orta">Orta</option>
+                        <option value="İleri">İleri</option>
+                        <option value="Uzman">Uzman</option>
+                    </select>
+                </div>
+                
+                <button class="clear-filters" onclick="clearFilters()">Filtreleri Temizle</button>
+            </div>
+        </div>
+
+        <div class="results-count" id="resultsCount"></div>
+        <div class="materials-grid" id="materialsGrid"></div>
+        <div class="no-results" id="noResults" style="display: none;">
+            <h2>🔍 Sonuç Bulunamadı</h2>
+            <p>Arama kriterlerinize uygun materyal bulunmamaktadır.</p>
+        </div>
+    </div>
+
+    <script>
+        // Örnek materyal verisi
+        const materials = [
+            {
+                id: 1,
+                name: "Türkçe Harfler Oyunu",
+                description: "Etkileşimli harfler oyunu ile çocuklar Türk alfabesini öğrenebilir ve pekiştirebilir.",
+                icon: "🎮",
+                konu: "Dil Bilgisi",
+                tema: "Oyun",
+                seviye: "Başlangıç",
+                scormPath: "scorm/01.zip",
+                previewUrl: "preview/01/index.html"
+            },
+            {
+                id: 2,
+                name: "Atatürk'ün Hayatı Sunumu",
+                description: "Mustafa Kemal Atatürk'ün hayatını anlatan interaktif sunum materyali.",
+                icon: "🇹🇷",
+                konu: "Tarih",
+                tema: "Sunum",
+                seviye: "Orta",
+                scormPath: "scorm/02.zip",
+                previewUrl: "preview/02/index.html"
+            },
+            {
+                id: 3,
+                name: "Türk Edebiyatı Quiz",
+                description: "Klasik ve modern Türk edebiyatından sorular içeren eğlenceli quiz uygulaması.",
+                icon: "📚",
+                konu: "Edebiyat",
+                tema: "Quiz",
+                seviye: "İleri",
+                scormPath: "scorm/edebiyat-quiz.zip",
+                previewUrl: "preview/edebiyat-quiz/index.html"
+            },
+            {
+                id: 4,
+                name: "Anadolu Coğrafyası Haritası",
+                description: "İnteraktif harita ile Anadolu'nun coğrafi özelliklerini keşfedin.",
+                icon: "🗺️",
+                konu: "Coğrafya",
+                tema: "Etkileşimli",
+                seviye: "Orta",
+                scormPath: "scorm/anadolu-haritasi.zip",
+                previewUrl: "preview/anadolu-haritasi/index.html"
+            },
+            {
+                id: 5,
+                name: "Geleneksel Türk Müziği",
+                description: "Türk müzik kültürü ve geleneksel çalgılar hakkında video serisi.",
+                icon: "🎵",
+                konu: "Kültür",
+                tema: "Video",
+                seviye: "Başlangıç",
+                scormPath: "scorm/turk-muzigi.zip",
+                previewUrl: "preview/turk-muzigi/index.html"
+            },
+            {
+                id: 6,
+                name: "Kelime Dağarcığı Geliştirme",
+                description: "Günlük hayatta kullanılan Türkçe kelimeleri öğrenme ve pekiştirme oyunu.",
+                icon: "💭",
+                konu: "Dil Bilgisi",
+                tema: "Oyun",
+                seviye: "Orta",
+                scormPath: "scorm/kelime-oyunu.zip",
+                previewUrl: "preview/kelime-oyunu/index.html"
+            },
+            {
+                id: 7,
+                name: "Osmanlı Tarihi Timeline",
+                description: "Osmanlı İmparatorluğu'nun kuruluşundan yıkılışına kadar olan süreç.",
+                icon: "⏳",
+                konu: "Tarih",
+                tema: "Etkileşimli",
+                seviye: "İleri",
+                scormPath: "scorm/osmanli-timeline.zip",
+                previewUrl: "preview/osmanli-timeline/index.html"
+            },
+            {
+                id: 8,
+                name: "Türk Mutfağı Kültürü",
+                description: "Geleneksel Türk yemekleri ve mutfak kültürü üzerine interaktif içerik.",
+                icon: "🍽️",
+                konu: "Kültür",
+                tema: "Sunum",
+                seviye: "Başlangıç",
+                scormPath: "scorm/turk-mutfagi.zip",
+                previewUrl: "preview/turk-mutfagi/index.html"
+            }
+        ];
+
+        let filteredMaterials = [...materials];
+
+        function renderMaterials(materialsToRender) {
+            const grid = document.getElementById('materialsGrid');
+            const resultsCount = document.getElementById('resultsCount');
+            const noResults = document.getElementById('noResults');
+
+            resultsCount.textContent = `${materialsToRender.length} materyal bulundu`;
+
+            if (materialsToRender.length === 0) {
+                grid.style.display = 'none';
+                noResults.style.display = 'block';
+                resultsCount.style.display = 'none';
+                return;
+            }
+
+            grid.style.display = 'grid';
+            noResults.style.display = 'none';
+            resultsCount.style.display = 'block';
+
+            grid.innerHTML = materialsToRender.map(material => `
+                <div class="material-card">
+                    <div class="card-header">
+                        <div class="card-icon">${material.icon}</div>
+                        <div class="card-title">
+                            <h3>${material.name}</h3>
+                        </div>
+                    </div>
+                    
+                    <div class="card-tags">
+                        <span class="tag tag-konu">${material.konu}</span>
+                        <span class="tag tag-tema">${material.tema}</span>
+                        <span class="tag tag-seviye">${material.seviye}</span>
+                    </div>
+                    
+                    <div class="card-description">
+                        ${material.description}
+                    </div>
+                    
+                    <div class="card-actions">
+                        <a href="${material.scormPath}" class="action-btn download-btn" download>
+                            📥 SCORM İndir
+                        </a>
+                        <a href="${material.previewUrl}" class="action-btn preview-btn" target="_blank">
+                            👁️ Önizle
+                        </a>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterMaterials() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const konuFilter = document.getElementById('konuFilter').value;
+            const temaFilter = document.getElementById('temaFilter').value;
+            const seviyeFilter = document.getElementById('seviyeFilter').value;
+
+            filteredMaterials = materials.filter(material => {
+                const matchesSearch = material.name.toLowerCase().includes(searchTerm) || 
+                                    material.description.toLowerCase().includes(searchTerm);
+                const matchesKonu = !konuFilter || material.konu === konuFilter;
+                const matchesTema = !temaFilter || material.tema === temaFilter;
+                const matchesSeviye = !seviyeFilter || material.seviye === seviyeFilter;
+
+                return matchesSearch && matchesKonu && matchesTema && matchesSeviye;
+            });
+
+            renderMaterials(filteredMaterials);
+        }
+
+        function clearFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('konuFilter').value = '';
+            document.getElementById('temaFilter').value = '';
+            document.getElementById('seviyeFilter').value = '';
+            filterMaterials();
+        }
+
+        function previewMaterial(materialName) {
+            // Bu fonksiyon artık kullanılmıyor - linkler doğrudan previewUrl'e yönlendiriyor
+        }
+
+        // Event listeners
+        document.getElementById('searchInput').addEventListener('input', filterMaterials);
+        document.getElementById('konuFilter').addEventListener('change', filterMaterials);
+        document.getElementById('temaFilter').addEventListener('change', filterMaterials);
+        document.getElementById('seviyeFilter').addEventListener('change', filterMaterials);
+
+        // Initial render
+        renderMaterials(materials);
+    </script>
 </body>
 </html>
