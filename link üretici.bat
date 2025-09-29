@@ -5,7 +5,7 @@ REM ====== BURAYI KENDİ URL'İNLE DÜZENLE ======
 set "BASE_URL=https://materyalfabrikasi.github.io/"
 
 REM ====== ÇIKTI DOSYASI ======
-set "OUTPUT=dosyalar.txt"
+set "OUTPUT=linkinizBurada.txt"
 
 REM Eski dosyayı sil
 if exist "%OUTPUT%" del "%OUTPUT%"
