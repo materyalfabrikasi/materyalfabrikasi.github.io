@@ -6,7 +6,8 @@
 </metadata>
 <organizations default="LearningApps.org">
   <organization identifier="LearningApps.org" structure="hierarchical">
-    <title>LearningApps.org</title><item identifier="BİRLİKTE YAŞAM-ÇEVRE İLE İLETİŞİM" isvisible="true" identifierref="LAFiles0" ><title>BİRLİKTE YAŞAM-ÇEVRE İLE İLETİŞİM</title></item></organization>
+    <title>LearningApps.org</title><item identifier="BİRLİKTE YAŞAM-ÇEVRE İLE İLETİŞİM" isvisible="true" identifierref="LAFiles0" ><title>BİRLİKTE YAŞAM-ÇEVRE İLE İLETİŞİM</title></item><item identifier="BİRLİKTE YAŞAM-KOMŞULUK" isvisible="true" identifierref="LAFiles1" ><title>BİRLİKTE YAŞAM-KOMŞULUK</title></item></organization>
 	</organizations>
   <resources><resource identifier="LAFiles0" type="webcontent" adlcp:scormtype="sco" href="index.html"><file href="index.html" />
+      <file href="SCORM_API_wrapper.js" /></resource><resource identifier="LAFiles1" type="webcontent" adlcp:scormtype="sco" href="index1.html"><file href="index1.html" />
       <file href="SCORM_API_wrapper.js" /></resource></resources></manifest>
