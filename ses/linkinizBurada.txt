@@ -1,6 +1,7 @@
 https://materyalfabrikasi.github.io/ses/isim-degistir.bat
 https://materyalfabrikasi.github.io/ses/link_uretici.bat
 https://materyalfabrikasi.github.io/ses/name.py
+https://materyalfabrikasi.github.io/ses/guzelsozler/Afiyet_olsun_.mp3
 https://materyalfabrikasi.github.io/ses/guzelsozler/cokyasa.mp3
 https://materyalfabrikasi.github.io/ses/guzelsozler/Elinesaglik.mp3
 https://materyalfabrikasi.github.io/ses/guzelsozler/Gecmisolsun.mp3
