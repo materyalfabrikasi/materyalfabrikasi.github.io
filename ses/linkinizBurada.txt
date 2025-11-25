@@ -20,6 +20,12 @@ https://materyalfabrikasi.github.io/ses/burdur/.DS_Store
 https://materyalfabrikasi.github.io/ses/burdur/aglasun.mp3
 https://materyalfabrikasi.github.io/ses/Ataturk/.DS_Store
 https://materyalfabrikasi.github.io/ses/Ataturk/1881yilinda.m4a
+https://materyalfabrikasi.github.io/ses/mevlana/.DS_Store
+https://materyalfabrikasi.github.io/ses/mevlana/dogum.mp3
+https://materyalfabrikasi.github.io/ses/mevlana/konya.mp3
+https://materyalfabrikasi.github.io/ses/mevlana/mesnevi.mp3
+https://materyalfabrikasi.github.io/ses/mevlana/goc.mp3
+https://materyalfabrikasi.github.io/ses/mevlana/gelne.mp3
 https://materyalfabrikasi.github.io/ses/tanisma/Benimadimpelin_.mp3
 https://materyalfabrikasi.github.io/ses/tanisma/Memnunoldumkaya.mp3
 https://materyalfabrikasi.github.io/ses/tanisma/Nasilsinizkaya.mp3
