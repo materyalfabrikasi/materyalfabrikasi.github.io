@@ -1,6 +1,7 @@
 https://materyalfabrikasi.github.io/video/turkce.mp4
 https://materyalfabrikasi.github.io/video/.DS_Store
 https://materyalfabrikasi.github.io/video/link_uretici.bat
+https://materyalfabrikasi.github.io/video/mevlana.mp4
 https://materyalfabrikasi.github.io/video/isim-degistir.bat
 https://materyalfabrikasi.github.io/video/linkolusturucu.py
 https://materyalfabrikasi.github.io/video/name.py
