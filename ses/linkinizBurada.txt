@@ -67,3 +67,9 @@ https://materyalfabrikasi.github.io/ses/T1/babasi.m4a
 https://materyalfabrikasi.github.io/ses/T1/burdursalda.m4a
 https://materyalfabrikasi.github.io/ses/T1/askeriokullar.m4a
 https://materyalfabrikasi.github.io/ses/T1/10kasim.m4a
+https://materyalfabrikasi.github.io/ses/yunusemre/.DS_Store
+https://materyalfabrikasi.github.io/ses/yunusemre/merhaba.mp3
+https://materyalfabrikasi.github.io/ses/yunusemre/tarla.mp3
+https://materyalfabrikasi.github.io/ses/yunusemre/eser.mp3
+https://materyalfabrikasi.github.io/ses/yunusemre/gelintanisolalim.mp3
+https://materyalfabrikasi.github.io/ses/yunusemre/sevgi.mp3
