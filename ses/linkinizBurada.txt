@@ -67,6 +67,13 @@ https://materyalfabrikasi.github.io/ses/turkiyeziyareti/karsilamak.mp3
 https://materyalfabrikasi.github.io/ses/turkiyeziyareti/sohbet_etmek.mp3
 https://materyalfabrikasi.github.io/ses/turkiyeziyareti/su_gibi_gidin_su_gib.mp3
 https://materyalfabrikasi.github.io/ses/turkiyeziyareti/ziyaret_etmek.mp3
+https://materyalfabrikasi.github.io/ses/yerlimalçatasozleri/ak.mp3
+https://materyalfabrikasi.github.io/ses/yerlimalçatasozleri/ayak.mp3
+https://materyalfabrikasi.github.io/ses/yerlimalçatasozleri/bag.mp3
+https://materyalfabrikasi.github.io/ses/yerlimalçatasozleri/damla.mp3
+https://materyalfabrikasi.github.io/ses/yerlimalçatasozleri/emek.mp3
+https://materyalfabrikasi.github.io/ses/yerlimalçatasozleri/guvenme.mp3
+https://materyalfabrikasi.github.io/ses/yerlimalçatasozleri/sakla.mp3
 https://materyalfabrikasi.github.io/ses/yunusemre/.DS_Store
 https://materyalfabrikasi.github.io/ses/yunusemre/eser.mp3
 https://materyalfabrikasi.github.io/ses/yunusemre/gelintanisolalim.mp3
