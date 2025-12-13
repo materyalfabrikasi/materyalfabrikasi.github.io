@@ -43,6 +43,13 @@ https://materyalfabrikasi.github.io/ses/turkiyeziyareti/hasret_gidermek.mp3
 https://materyalfabrikasi.github.io/ses/turkiyeziyareti/karsilamak.mp3
 https://materyalfabrikasi.github.io/ses/turkiyeziyareti/sohbet_etmek.mp3
 https://materyalfabrikasi.github.io/ses/turkiyeziyareti/ziyaret_etmek.mp3
+https://materyalfabrikasi.github.io/ses/kisicecekleri/adacayi.mp3
+https://materyalfabrikasi.github.io/ses/kisicecekleri/boza.mp3
+https://materyalfabrikasi.github.io/ses/kisicecekleri/.DS_Store
+https://materyalfabrikasi.github.io/ses/kisicecekleri/ihlamur.mp3
+https://materyalfabrikasi.github.io/ses/kisicecekleri/cay.mp3
+https://materyalfabrikasi.github.io/ses/kisicecekleri/salep.mp3
+https://materyalfabrikasi.github.io/ses/kisicecekleri/turkkahvesi.mp3
 https://materyalfabrikasi.github.io/ses/ankara/anitkabir.mp3
 https://materyalfabrikasi.github.io/ses/ankara/kale.mp3
 https://materyalfabrikasi.github.io/ses/ankara/atakule.mp3
