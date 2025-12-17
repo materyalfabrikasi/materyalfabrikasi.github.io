@@ -27,10 +27,10 @@ https://materyalfabrikasi.github.io/ses/guzelsozler/Nasilsin.mp3
 https://materyalfabrikasi.github.io/ses/guzelsozler/ozurdilerim.mp3
 https://materyalfabrikasi.github.io/ses/guzelsozler/Sihhatlerolsun.mp3
 https://materyalfabrikasi.github.io/ses/kahraman/sarki.mp3
-https://materyalfabrikasi.github.io/ses/kiscaylari/boza.mp3
-https://materyalfabrikasi.github.io/ses/kiscaylari/ihlamur.mp3
-https://materyalfabrikasi.github.io/ses/kiscaylari/nanelimon.mp3
-https://materyalfabrikasi.github.io/ses/kiscaylari/salep.mp3
+https://materyalfabrikasi.github.io/ses/kiscaylarii/boza.mp3
+https://materyalfabrikasi.github.io/ses/kiscaylarii/ihlamur.mp3
+https://materyalfabrikasi.github.io/ses/kiscaylarii/nanelimon.mp3
+https://materyalfabrikasi.github.io/ses/kiscaylarii/salep.mp3
 https://materyalfabrikasi.github.io/ses/kisicecekleri/.DS_Store
 https://materyalfabrikasi.github.io/ses/kisicecekleri/adacayi.mp3
 https://materyalfabrikasi.github.io/ses/kisicecekleri/boza.mp3
