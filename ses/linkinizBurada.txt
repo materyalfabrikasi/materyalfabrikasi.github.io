@@ -45,6 +45,14 @@ https://materyalfabrikasi.github.io/ses/mevlana/goc.mp3
 https://materyalfabrikasi.github.io/ses/mevlana/konya.mp3
 https://materyalfabrikasi.github.io/ses/mevlana/mesnevi.mp3
 https://materyalfabrikasi.github.io/ses/o/merhabalar.m4a
+https://materyalfabrikasi.github.io/ses/sayismaca/birayla.aac
+https://materyalfabrikasi.github.io/ses/sayismaca/ebe.aac
+https://materyalfabrikasi.github.io/ses/sayismaca/ebeuzun.aac
+https://materyalfabrikasi.github.io/ses/sayismaca/igne.aac
+https://materyalfabrikasi.github.io/ses/sayismaca/leylek.aac
+https://materyalfabrikasi.github.io/ses/sayismaca/ordek.aac
+https://materyalfabrikasi.github.io/ses/sayismaca/portakal.aac
+https://materyalfabrikasi.github.io/ses/sayismaca/portakalk.aac
 https://materyalfabrikasi.github.io/ses/T1/.DS_Store
 https://materyalfabrikasi.github.io/ses/T1/10kasim.m4a
 https://materyalfabrikasi.github.io/ses/T1/23Nisan.m4a
