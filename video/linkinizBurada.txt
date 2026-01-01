@@ -1,4 +1,5 @@
 https://materyalfabrikasi.github.io/video/.DS_Store
+https://materyalfabrikasi.github.io/video/EbelemeceOyunu.mp4
 https://materyalfabrikasi.github.io/video/isim-degistir.bat
 https://materyalfabrikasi.github.io/video/linkolusturucu.py
 https://materyalfabrikasi.github.io/video/link_uretici.bat
@@ -8,4 +9,7 @@ https://materyalfabrikasi.github.io/video/turkce.mp4
 https://materyalfabrikasi.github.io/video/benveailem/niloya1.mp4
 https://materyalfabrikasi.github.io/video/bursa/bursa.mp4
 https://materyalfabrikasi.github.io/video/karagoz/karagozhacivat.mp4
+https://materyalfabrikasi.github.io/video/oyun/devecuce.mp4
+https://materyalfabrikasi.github.io/video/oyun/himbil.mp4
 https://materyalfabrikasi.github.io/video/oyun/isimsehir.mp4
+https://materyalfabrikasi.github.io/video/oyun/mangala.mp4
