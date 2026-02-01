@@ -93,6 +93,15 @@ https://materyalfabrikasi.github.io/ses/tanisma/Merhabapelin.mp3
 https://materyalfabrikasi.github.io/ses/tanisma/Nasilsinizkaya.mp3
 https://materyalfabrikasi.github.io/ses/tanisma/Tesekkurederimbenkaya.mp3
 https://materyalfabrikasi.github.io/ses/tanisma/Tesekkurederimiyiypelin.mp3
+https://materyalfabrikasi.github.io/ses/temizlik/aslan.mp3
+https://materyalfabrikasi.github.io/ses/temizlik/ayakkabç.mp3
+https://materyalfabrikasi.github.io/ses/temizlik/bal.mp3
+https://materyalfabrikasi.github.io/ses/temizlik/dis.mp3
+https://materyalfabrikasi.github.io/ses/temizlik/elyuz.mp3
+https://materyalfabrikasi.github.io/ses/temizlik/evimizitemizleriz.mp3
+https://materyalfabrikasi.github.io/ses/temizlik/havlu.mp3
+https://materyalfabrikasi.github.io/ses/temizlik/kolonya.mp3
+https://materyalfabrikasi.github.io/ses/temizlik/terlik.mp3
 https://materyalfabrikasi.github.io/ses/turkiyeziyareti/eline_saglik.mp3
 https://materyalfabrikasi.github.io/ses/turkiyeziyareti/hasret_gidermek.mp3
 https://materyalfabrikasi.github.io/ses/turkiyeziyareti/ikram_etmek.mp3
