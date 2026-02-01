@@ -94,7 +94,7 @@ https://materyalfabrikasi.github.io/ses/tanisma/Nasilsinizkaya.mp3
 https://materyalfabrikasi.github.io/ses/tanisma/Tesekkurederimbenkaya.mp3
 https://materyalfabrikasi.github.io/ses/tanisma/Tesekkurederimiyiypelin.mp3
 https://materyalfabrikasi.github.io/ses/temizlik/aslan.mp3
-https://materyalfabrikasi.github.io/ses/temizlik/ayakkabç.mp3
+https://materyalfabrikasi.github.io/ses/temizlik/ayakkabi.mp3
 https://materyalfabrikasi.github.io/ses/temizlik/bal.mp3
 https://materyalfabrikasi.github.io/ses/temizlik/dis.mp3
 https://materyalfabrikasi.github.io/ses/temizlik/elyuz.mp3
