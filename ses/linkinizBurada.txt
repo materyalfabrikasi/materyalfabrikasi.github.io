@@ -102,6 +102,13 @@ https://materyalfabrikasi.github.io/ses/temizlik/evimizitemizleriz.mp3
 https://materyalfabrikasi.github.io/ses/temizlik/havlu.mp3
 https://materyalfabrikasi.github.io/ses/temizlik/kolonya.mp3
 https://materyalfabrikasi.github.io/ses/temizlik/terlik.mp3
+https://materyalfabrikasi.github.io/ses/temizlikkulturu/aslann.mp3
+https://materyalfabrikasi.github.io/ses/temizlikkulturu/ayakkabii.mp3
+https://materyalfabrikasi.github.io/ses/temizlikkulturu/ball.mp3
+https://materyalfabrikasi.github.io/ses/temizlikkulturu/havluu.mp3
+https://materyalfabrikasi.github.io/ses/temizlikkulturu/kolonyaa.mp3
+https://materyalfabrikasi.github.io/ses/temizlikkulturu/temizlikk.mp3
+https://materyalfabrikasi.github.io/ses/temizlikkulturu/terlikk.mp3
 https://materyalfabrikasi.github.io/ses/turkiyeziyareti/eline_saglik.mp3
 https://materyalfabrikasi.github.io/ses/turkiyeziyareti/hasret_gidermek.mp3
 https://materyalfabrikasi.github.io/ses/turkiyeziyareti/ikram_etmek.mp3
