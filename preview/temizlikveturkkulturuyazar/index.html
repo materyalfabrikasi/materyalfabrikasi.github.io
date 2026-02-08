@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temizlik ve Kültür Eşleştirme Etkinliği</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f8ff; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .instructions { background-color: #ffffff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; text-align: center; max-width: 600px; border-left: 5px solid #2ecc71; }
+        .container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 900px; }
+        .drop-zone { background: #fff; border: 2px dashed #3498db; border-radius: 10px; padding: 10px; text-align: center; min-height: 200px; transition: 0.3s; }
+        .drop-zone img { width: 100%; border-radius: 5px; margin-bottom: 10px; }
+        .sentence-pool { margin-top: 30px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; background: #ecf0f1; padding: 20px; border-radius: 10px; width: 100%; max-width: 900px; }
+        .sentence { background: #3498db; color: white; padding: 10px 15px; border-radius: 5px; cursor: grab; font-size: 14px; user-select: none; }
+        .sentence:active { cursor: grabbing; }
+        .matched { background: #2ecc71 !important; border: 2px solid #27ae60 !important; }
+    </style>
+</head>
+<body>
+
+<div class="instructions">
+    <p>Görsellere dikkatlice bak. Cümleleri oku. Cümleyi ilgili görselin üzerine sürükle.</p>
+    <strong>🇹🇷 Tüm eşleştirmeleri tamamladıktan sonra Türk kültüründeki temizlikle ilgili güzel davranışlar üzerine konuşalım!</strong>
+</div>
+
+<div class="container">
+    <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)" data-match="11.png">
+        <img src="11.png" alt="Evi temizleme">
+    </div>
+    <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)" data-match="12.png">
+        <img src="12.png" alt="Temizlik imandan gelir">
+    </div>
+    <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)" data-match="13.png">
+        <img src="13.png" alt="Kişisel temizlik">
+    </div>
+    <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)" data-match="14.png">
+        <img src="14.png" alt="Kolonya ikramı">
+    </div>
+    <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)" data-match="15.png">
+        <img src="15.png" alt="Kapıda ayakkabı çıkarma">
+    </div>
+    <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)" data-match="16.png">
+        <img src="16.png" alt="El yıkama">
+    </div>
+</div>
+
+<div class="sentence-pool" id="pool">
+    <div class="sentence" draggable="true" ondragstart="drag(event)" id="s11">“Misafir gelmeden önce evi temizleriz.”</div>
+    <div class="sentence" draggable="true" ondragstart="drag(event)" id="s12">“Büyüklerimiz, ‘Temizlik imandan gelir.’ der.”</div>
+    <div class="sentence" draggable="true" ondragstart="drag(event)" id="s13">“Dişlerimi fırçalar, yüzümü yıkarım.”</div>
+    <div class="sentence" draggable="true" ondragstart="drag(event)" id="s14">“Misafirimize kolonya ikram ederiz.”</div>
+    <div class="sentence" draggable="true" ondragstart="drag(event)" id="s15">“Evimize girerken ayakkabılarımızı kapıda çıkarırız.”</div>
+    <div class="sentence" draggable="true" ondragstart="drag(event)" id="s16">“Ellerimi sabun ve suyla yıkıyorum.”</div>
+</div>
+
+<script>
+    function allowDrop(ev) {
+        ev.preventDefault();
+    }
+
+    function drag(ev) {
+        ev.dataTransfer.setData("text", ev.target.id);
+    }
+
+    function drop(ev) {
+        ev.preventDefault();
+        var data = ev.dataTransfer.getData("text");
+        var draggedElement = document.getElementById(data);
+        var dropZone = ev.currentTarget;
+        
+        // Basit kontrol: ID'nin son iki rakamı görsel adıyla eşleşiyor mu?
+        if (data.replace('s', '') === dropZone.getAttribute('data-match').replace('.png', '')) {
+            dropZone.appendChild(draggedElement);
+            dropZone.classList.add('matched');
+            draggedElement.setAttribute("draggable", "false");
+            draggedElement.style.cursor = "default";
+        } else {
+            alert("Tekrar dene! Bu cümle bu görselle eşleşmiyor.");
+        }
+    }
+</script>
+
+</body>
+</html>
