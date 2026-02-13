@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temizlik ve Misafirlik Oyunu</title>
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --success-color: #2ecc71;
+            --bg-color: #f0f8ff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .game-container {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        #score-board {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+            background: #e1f5fe;
+            padding: 10px 20px;
+            border-radius: 50px;
+        }
+
+        .image-section {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .image-section img {
+            max-width: 200px;
+            border-radius: 15px;
+            border: 4px solid var(--primary-color);
+        }
+
+        .words-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #f9f9f9;
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            justify-content: center;
+        }
+
+        .word {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: grab;
+            user-select: none;
+            transition: transform 0.2s;
+        }
+
+        .word:active {
+            cursor: grabbing;
+        }
+
+        .word.dragged {
+            opacity: 0.5;
+        }
+
+        .text-content {
+            line-height: 2.5;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .drop-zone {
+            display: inline-block;
+            min-width: 100px;
+            height: 30px;
+            border-bottom: 2px solid var(--primary-color);
+            margin: 0 5px;
+            vertical-align: middle;
+            background: #fdfdfd;
+            text-align: center;
+            line-height: 30px;
+            transition: all 0.3s;
+        }
+
+        .drop-zone.hover {
+            background: #e3f2fd;
+            border-bottom-width: 4px;
+        }
+
+        .drop-zone.correct {
+            color: var(--success-color);
+            border-bottom-color: var(--success-color);
+            font-weight: bold;
+        }
+
+        .message {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #f39c12;
+            height: 35px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="game-container">
+        <div class="header">
+            <h2>Kelime Yerleştirme Oyunu</h2>
+            <div id="score-board">Puan: <span id="score">0</span></div>
+        </div>
+
+        <div class="image-section">
+            <img src="temizlik.jpg" alt="Temizlik Görseli">
+        </div>
+
+        <div class="words-container" id="words-box">
+        </div>
+
+        <div class="text-content">
+            “Eyvah, her yerim <span class="drop-zone" data-answer="kir pas"></span> içinde!”<br>
+            Hemen <span class="drop-zone" data-answer="banyoya"></span> gitmeliyim. O sırada annemin sözü aklıma
+            geldi:<br>
+            “Temizlik <span class="drop-zone" data-answer="imandan"></span> gelir.”<br>
+            Hemen musluğu <span class="drop-zone" data-answer="açtım"></span>.<br>
+            Ellerimi <span class="drop-zone" data-answer="sabunla"></span> köpük köpük yaptım.<br>
+            Dişimi <span class="drop-zone" data-answer="fırçaladım"></span>, yüzümü güzelce <span class="drop-zone"
+                data-answer="yıkadım"></span>.<br>
+            Az sonra eve bir <span class="drop-zone" data-answer="misafir"></span> gelecek.<br>
+            Annem misafir için <span class="drop-zone" data-answer="temizlik"></span> yaptı.<br>
+            Kapının yanına <span class="drop-zone" data-answer="terlik"></span> koyduk.<br>
+            Bizde ayakkabılar <span class="drop-zone" data-answer="kapıda"></span> çıkarılır.<br>
+            Misafirler gelince annem onlara <span class="drop-zone" data-answer="kolonya"></span> ikram etti.<br>
+            Hep birlikte oturduk ve sohbet ettik.
+        </div>
+
+        <div id="final-message" class="message"></div>
+    </div>
+
+    <script>
+        const words = ["kir pas", "banyoya", "imandan", "açtım", "sabunla", "fırçaladım", "yıkadım", "misafir", "temizlik", "terlik", "kapıda", "kolonya"];
+        let score = 0;
+        const totalWords = words.length;
+
+        const wordsBox = document.getElementById('words-box');
+        const scoreDisplay = document.getElementById('score');
+        const finalMessage = document.getElementById('final-message');
+
+        function initGame() {
+            const shuffledWords = [...words].sort(() => Math.random() - 0.5);
+            shuffledWords.forEach(wordText => {
+                const wordEl = document.createElement('div');
+                wordEl.className = 'word';
+                wordEl.draggable = true;
+                wordEl.textContent = wordText;
+                wordEl.id = 'word-' + Math.random().toString(36).substr(2, 9);
+
+                wordEl.addEventListener('dragstart', dragStart);
+                wordsBox.appendChild(wordEl);
+            });
+        }
+
+        function dragStart(e) {
+            e.dataTransfer.setData('text/plain', e.target.textContent);
+            e.dataTransfer.setData('sourceId', e.target.id);
+        }
+
+        const dropZones = document.querySelectorAll('.drop-zone');
+        dropZones.forEach(zone => {
+            zone.addEventListener('dragover', e => e.preventDefault());
+            zone.addEventListener('dragenter', e => e.target.classList.add('hover'));
+            zone.addEventListener('dragleave', e => e.target.classList.remove('hover'));
+            zone.addEventListener('drop', handleDrop);
+        });
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const droppedWord = e.dataTransfer.getData('text/plain');
+            const sourceId = e.dataTransfer.getData('sourceId');
+            const zone = e.target;
+            const correctAnswer = zone.getAttribute('data-answer');
+
+            zone.classList.remove('hover');
+
+            if (droppedWord === correctAnswer && !zone.classList.contains('correct')) {
+                zone.textContent = droppedWord;
+                zone.classList.add('correct');
+                document.getElementById(sourceId).style.display = 'none';
+
+                score += 10;
+                scoreDisplay.textContent = score;
+
+                if (document.querySelectorAll('.correct').length === totalWords) {
+                    finalMessage.textContent = "Maşallah! Hepsi doğru! 🎉";
+                }
+            } else {
+                zone.style.borderBottomColor = 'red';
+                setTimeout(() => { if (!zone.classList.contains('correct')) zone.style.borderBottomColor = ''; }, 500);
+            }
+        }
+
+        initGame();
+    </script>
+
+</body>
+
+</html>
