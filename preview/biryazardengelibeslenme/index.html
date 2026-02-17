@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sağlıklı Günüm 🌿</title>
+    <style>
+        :root {
+            --primary: #27ae60;
+            --secondary: #f39c12;
+            --bg: #fff9e6;
+            --text: #2c3e50;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg);
+            background-image: radial-gradient(#ffe082 1px, transparent 1px);
+            background-size: 20px 20px;
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .fruit {
+            position: absolute;
+            font-size: 2.5rem;
+            z-index: -1;
+            animation: move linear infinite;
+        }
+
+        @keyframes move {
+            from {
+                transform: translateY(100vh) rotate(0deg);
+            }
+
+            to {
+                transform: translateY(-10vh) rotate(360deg);
+            }
+        }
+
+        #game-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+            border: 6px solid #ffcc33;
+            position: relative;
+        }
+
+        .header {
+            font-size: 2rem;
+            color: var(--primary);
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .instruction-box {
+            background: #f0f4f8;
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            text-align: left;
+            font-size: 0.95rem;
+            border-left: 5px solid var(--secondary);
+        }
+
+        .score-box {
+            background: #ff5722;
+            color: white;
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .option-btn {
+            background: white;
+            border: 3px solid #eee;
+            padding: 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 1.05rem;
+            font-weight: 600;
+            width: 100%;
+            margin-bottom: 10px;
+            transition: 0.2s;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            border-color: var(--primary);
+            background: #f1f8e9;
+        }
+
+        #feedback-area {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: bold;
+            display: none;
+        }
+
+        .start-btn,
+        #next-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 4px 0 #1b5e20;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="fruit" style="left: 5%; animation-duration: 8s;">🍎</div>
+    <div class="fruit" style="left: 85%; animation-duration: 10s;">🥦</div>
+    <div class="fruit" style="left: 40%; animation-duration: 15s;">🍓</div>
+
+    <div id="game-container">
+        <div class="header">Sağlıklı Günüm 🌿</div>
+
+        <div id="start-screen">
+            <div class="instruction-box">
+                <strong>Nasıl Oynanır?</strong><br>
+                • Bir gün içinde beslenme seçimlerine dair sorularla karşılaşacaksın.<br>
+                • Her doğru ve sağlıklı seçim sana <strong>20 puan</strong> kazandırır.<br>
+                • Amacın günü <strong>100 tam puan</strong> ile bitirmek!<br>
+                • Seçimini yap, geri bildirimi oku ve ilerle.
+            </div>
+            <button class="start-btn" onclick="startGame()">Oyuna Başla 🚀</button>
+        </div>
+
+        <div id="quiz-area" class="hidden">
+            <div class="score-box">Puan: <span id="score">0</span> / 100</div>
+            <div class="question-text" id="question" style="font-size: 1.2rem; font-weight: 600; margin-bottom: 20px;">
+            </div>
+            <div class="options-container" id="options"></div>
+            <div id="feedback-area"></div>
+            <button id="next-btn" class="hidden" onclick="nextQuestion()">Devam Et ➔</button>
+        </div>
+
+        <div id="result-area" class="hidden">
+            <div style="font-size: 5rem;" id="final-emoji">🥳</div>
+            <h2 id="result-title"></h2>
+            <p id="result-text" style="font-size: 1.1rem; margin-bottom: 20px;"></p>
+            <button onclick="location.reload()" class="start-btn">Yeniden Dene</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                q: "Saat 07.45, güne merhaba! İlk tercihin ne olur?",
+                options: [
+                    { text: "Hemen telefona/tablete bakmak", score: 0, msg: "Bu seçiminle güne yorgun başlarsın! 📱" },
+                    { text: "Kocaman bir bardak su içmek", score: 20, msg: "Harika! 💧" }
+                ]
+            },
+            {
+                q: "Saat 12.15, öğle yemeğinde ne tercih edersin?",
+                options: [
+                    { text: "Izgara köfte ve bol salata", score: 20, msg: "Müthiş seçim! Tam bir enerji deposu. 🥗" },
+                    { text: "Hızlıca bir sandviç ve asitli içecek", score: 0, msg: "Bu seçim seni öğleden sonra yorabilir. 🥪" }
+                ]
+            },
+            {
+                q: "Saat 15.30, canın atıştırmalık çekti. Bir seçim yap.",
+                options: [
+                    { text: "Paketli çikolatalı gofret", score: 0, msg: "Şeker yerine meyve daha iyi bir fikir. 🍫" },
+                    { text: "Bir elma ve iki tam ceviz", score: 20, msg: "İşte sağlıklı ara öğün budur! 🍎" }
+                ]
+            },
+            {
+                q: "Saat 19.00, akşam yemeği için hangisini seçersin?",
+                options: [
+                    { text: "Zeytinyağlı taze fasulye ve yoğurt", score: 20, msg: "Çok hafif ve sindirimi kolay! 🥦" },
+                    { text: "Kızarmış tavuk ve bol mayonez", score: 0, msg: "Akşam için biraz ağır bir tercih oldu. 🍗" }
+                ]
+            },
+            {
+                q: "Saat 22.00, uykuya hazırlanırken hangisini seçersin?",
+                options: [
+                    { text: "Bir şeyler atıştırıp televizyon izlemek", score: 0, msg: "Dolu mide uykunu bölebilir. 📺" },
+                    { text: "Bitki çayı içip kitap okumak", score: 20, msg: "Harika bir dinlenme yöntemi. 🍵" }
+                ]
+            }
+        ];
+
+        let currentIdx = 0;
+        let totalScore = 0;
+
+        function startGame() {
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('quiz-area').classList.remove('hidden');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            document.getElementById('next-btn').classList.add('hidden');
+            const fb = document.getElementById('feedback-area');
+            fb.style.display = 'none';
+
+            const currentQ = questions[currentIdx];
+            document.getElementById('question').innerText = currentQ.q;
+            const optContainer = document.getElementById('options');
+            optContainer.innerHTML = "";
+
+            // Doğru şıkkın yeri her seferinde değişsin diye karıştıralım
+            const shuffledOptions = [...currentQ.options].sort(() => Math.random() - 0.5);
+
+            shuffledOptions.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt.text;
+                btn.onclick = () => handleChoice(opt, btn);
+                optContainer.appendChild(btn);
+            });
+        }
+
+        function handleChoice(opt, selectedBtn) {
+            const buttons = document.getElementsByClassName('option-btn');
+            for (let b of buttons) b.disabled = true;
+
+            totalScore += opt.score;
+            document.getElementById('score').innerText = totalScore;
+
+            const fb = document.getElementById('feedback-area');
+            fb.innerText = opt.msg;
+            fb.style.display = 'block';
+            fb.style.backgroundColor = opt.score > 0 ? "#e8f5e9" : "#ffebee";
+            fb.style.color = opt.score > 0 ? "#2e7d32" : "#c62828";
+
+            document.getElementById('next-btn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentIdx++;
+            if (currentIdx < questions.length) {
+                loadQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            document.getElementById('quiz-area').classList.add('hidden');
+            const resArea = document.getElementById('result-area');
+            resArea.classList.remove('hidden');
+
+            const title = document.getElementById('result-title');
+            const text = document.getElementById('result-text');
+            const emoji = document.getElementById('final-emoji');
+
+            if (totalScore === 100) {
+                title.innerText = "Harikasın!";
+                text.innerText = "Tüm seçimlerin çok sağlıklıydı. Harika bir gün geçirdin!";
+                emoji.innerText = "👑";
+            } else if (totalScore >= 60) {
+                title.innerText = "Çok İyi!";
+                text.innerText = "Çoğu seçimin doğruydu. Birkaç küçük değişiklikle tam puan alabilirsin.";
+                emoji.innerText = "🌟";
+            } else {
+                title.innerText = "Denemeye Devam!";
+                text.innerText = "Sağlıklı seçimler yaptıkça kendini daha enerjik hissedeceksin!";
+                emoji.innerText = "🍎";
+            }
+        }
+    </script>
+
+</body>
+
+</html>

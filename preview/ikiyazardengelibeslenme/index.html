@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sağlıklı Yaşam Eşleştirme Oyunu</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --primary: #4CAF50;
+            --secondary: #FF9800;
+            --bg: #f0f8ff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Uçuşan Emojiler */
+        .emoji-bg {
+            position: fixed;
+            top: -50px;
+            font-size: 2rem;
+            z-index: -1;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(110vh) rotate(360deg);
+            }
+        }
+
+        .container {
+            max-width: 900px;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
+            position: relative;
+        }
+
+        h1 {
+            color: var(--primary);
+            text-align: center;
+        }
+
+        .instructions {
+            background: #e8f5e9;
+            padding: 15px;
+            border-left: 5px solid var(--primary);
+            margin-bottom: 30px;
+            font-size: 0.95rem;
+        }
+
+        .game-area {
+            display: flex;
+            justify-content: space-between;
+            gap: 50px;
+            position: relative;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex: 1;
+        }
+
+        .item {
+            padding: 15px;
+            background: #fff;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            z-index: 2;
+        }
+
+        .item:hover {
+            border-color: var(--secondary);
+            transform: scale(1.02);
+        }
+
+        .selected {
+            background: var(--secondary) !important;
+            color: white;
+            border-color: var(--secondary);
+        }
+
+        .matched {
+            background: var(--primary) !important;
+            color: white;
+            border-color: var(--primary);
+            cursor: default;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        #reset-btn {
+            margin-top: 30px;
+            padding: 10px 25px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>🍎 Sağlıklı Yaşam Şifresi 🥦</h1>
+
+        <div class="instructions">
+            <strong>Yönerge:</strong><br>
+            • Sol taraftaki kelimeye tıkla, ardından sağ taraftaki doğru tanıma tıkla.<br>
+            • Doğru eşleştirmeleri yaparak sağlıklı yaşam kelimelerini çöz.<br>
+
+        </div>
+
+        <div class="game-area" id="gameArea">
+            <canvas id="canvas"></canvas>
+            <div class="column" id="wordsCol"></div>
+            <div class="column" id="defsCol"></div>
+        </div>
+
+        <center><button id="reset-btn" onclick="location.reload()">Tekrar Oyna</button></center>
+    </div>
+
+    <script>
+        const data = [
+            { w: "Dengeli Beslenme", d: "Sağlık için gerekli olan besinleri belirli ölçülerde ve düzenli olarak alma." },
+            { w: "Sağlık", d: "Bireyin fiziksel, sosyal ve ruhsal yönden tam bir iyilik durumunda olması." },
+            { w: "Atıştırmak", d: "Acele olarak yemek veya içmek." },
+            { w: "Kahvaltı", d: "Genellikle sabahları yenilen hafif yemek." },
+            { w: "Öğün", d: "Yemek vakti" },
+            { w: "Meyve", d: "Bitkilerin çiçek açtıktan sonra oluşan, içinde çekirdek taşıyan besleyici kısmı." },
+            { w: "Kuru yemiş", d: "Fındık, fıstık, leblebi gibi yemek dışında yenilen yiyecekler." }
+        ];
+
+        let selectedWord = null;
+        let matches = 0;
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Emojileri uçur
+        const emojis = ['🍎', '🥦', '🥕', '🍓', '🥑', '🍌', '🥗', '🥛'];
+        function createEmoji() {
+            const div = document.createElement('div');
+            div.className = 'emoji-bg';
+            div.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+            div.style.left = Math.random() * 100 + 'vw';
+            div.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            document.body.appendChild(div);
+            setTimeout(() => div.remove(), 5000);
+        }
+        setInterval(createEmoji, 500);
+
+        // Karıştır ve Listele
+        function init() {
+            const words = [...data].sort(() => Math.random() - 0.5);
+            const defs = [...data].sort(() => Math.random() - 0.5);
+
+            words.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'item';
+                div.innerText = item.w;
+                div.onclick = () => selectWord(div, item.w);
+                document.getElementById('wordsCol').appendChild(div);
+            });
+
+            defs.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'item';
+                div.innerText = item.d;
+                div.onclick = () => selectDef(div, item.d);
+                document.getElementById('defsCol').appendChild(div);
+            });
+
+            resizeCanvas();
+        }
+
+        function selectWord(el, val) {
+            if (el.classList.contains('matched')) return;
+            document.querySelectorAll('#wordsCol .item').forEach(i => i.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedWord = { el, val };
+        }
+
+        function selectDef(el, val) {
+            if (!selectedWord || el.classList.contains('matched')) return;
+
+            const correctPair = data.find(item => item.w === selectedWord.val);
+
+            if (correctPair.d === val) {
+                el.classList.add('matched');
+                selectedWord.el.classList.remove('selected');
+                selectedWord.el.classList.add('matched');
+                drawLink(selectedWord.el, el);
+                selectedWord = null;
+                matches++;
+
+                if (matches === data.length) {
+                    launchFireworks();
+                    document.getElementById('reset-btn').style.display = 'block';
+                }
+            } else {
+                el.style.borderColor = 'red';
+                setTimeout(() => el.style.borderColor = '#ddd', 500);
+            }
+        }
+
+        function drawLink(el1, el2) {
+            const rect1 = el1.getBoundingClientRect();
+            const rect2 = el2.getBoundingClientRect();
+            const areaRect = document.getElementById('gameArea').getBoundingClientRect();
+
+            ctx.beginPath();
+            ctx.moveTo(rect1.right - areaRect.left, rect1.top + rect1.height / 2 - areaRect.top);
+            ctx.lineTo(rect2.left - areaRect.left, rect2.top + rect2.height / 2 - areaRect.top);
+            ctx.strokeStyle = '#4CAF50';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+        }
+
+        function resizeCanvas() {
+            canvas.width = document.getElementById('gameArea').offsetWidth;
+            canvas.height = document.getElementById('gameArea').offsetHeight;
+        }
+
+        function launchFireworks() {
+            var duration = 5 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+            function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+
+            var interval = setInterval(function () {
+                var timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) return clearInterval(interval);
+                var particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+            }, 250);
+        }
+
+        window.onresize = resizeCanvas;
+        init();
+    </script>
+
+</body>
+
+</html>
