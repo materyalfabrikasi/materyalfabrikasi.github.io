@@ -67,6 +67,10 @@ https://materyalfabrikasi.github.io/ses/sayismaca/leylek.aac
 https://materyalfabrikasi.github.io/ses/sayismaca/ordek.aac
 https://materyalfabrikasi.github.io/ses/sayismaca/portakal.aac
 https://materyalfabrikasi.github.io/ses/sayismaca/portakalk.aac
+https://materyalfabrikasi.github.io/ses/spor/1.mp3
+https://materyalfabrikasi.github.io/ses/spor/2.mp3
+https://materyalfabrikasi.github.io/ses/spor/3.mp3
+https://materyalfabrikasi.github.io/ses/spor/4.mp3
 https://materyalfabrikasi.github.io/ses/T1/.DS_Store
 https://materyalfabrikasi.github.io/ses/T1/10kasim.m4a
 https://materyalfabrikasi.github.io/ses/T1/23Nisan.m4a
