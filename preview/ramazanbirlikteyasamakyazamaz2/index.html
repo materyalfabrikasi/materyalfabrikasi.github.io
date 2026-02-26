@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sesli Ramazan Oyunu</title>
+    <style>
+        :root {
+            --gece: #0f172a;
+            --altin: #fbbf24;
+            --yesil: #10b981;
+            --mavi: #3b82f6;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: radial-gradient(circle, #1e293b 0%, #0f172a 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* Yönerge Ekranı */
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal {
+            background: white;
+            color: #1e293b;
+            padding: 40px;
+            border-radius: 30px;
+            max-width: 650px;
+            width: 90%;
+            text-align: center;
+            border: 10px solid var(--altin);
+        }
+
+        .modal p {
+            line-height: 1.8;
+            font-size: 1.3rem;
+            margin-bottom: 30px;
+        }
+
+        .start-btn {
+            background: var(--yesil);
+            color: white;
+            border: none;
+            padding: 20px 60px;
+            font-size: 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Oyun Alanı */
+        .game-wrapper {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+            gap: 30px;
+        }
+
+        .image-container {
+            flex: 1;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: flex-start;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 15px;
+            width: calc(33.33% - 20px);
+            min-width: 280px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .card img {
+            width: 100%;
+            height: 220px;
+            object-fit: contain;
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .drop-zone {
+            width: 100%;
+            height: 70px;
+            border: 3px dashed var(--altin);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        /* Sesli Butonlar Kolonu */
+        .sound-column {
+            width: 200px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 20px;
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .sound-label {
+            background: var(--mavi);
+            color: white;
+            height: 60px;
+            border-radius: 12px;
+            cursor: grab;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 5px 0 #1e40af;
+            user-select: none;
+            transition: 0.2s;
+        }
+
+        .sound-label:active {
+            cursor: grabbing;
+        }
+
+        .correct {
+            background: var(--yesil) !important;
+            box-shadow: none;
+            border: none;
+            font-size: 2.5rem;
+        }
+
+        .wrong {
+            background: #ef4444 !important;
+        }
+
+        /* Mobil Uyumluluk */
+        @media (max-width: 800px) {
+            .game-wrapper {
+                flex-direction: column;
+            }
+
+            .sound-column {
+                width: 100%;
+                order: -1;
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+
+            .sound-label {
+                width: 70px;
+            }
+
+            .card {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="overlay">
+        <div class="modal">
+            <h2>🌙 Sesli Ramazan Oyunu</h2>
+            <p>Ramazan ayının dinimizde büyük bir önemi ve diğer aylar arasında seçkin bir yeri vardır. Kur’an-ı Kerim
+                bu ayda indirilmeye başlanmıştır.
+                Ramazan geleneklerini yansıtan görselleri inceleyiniz ve doğru isimlerle eşleştiriniz. Sağ taraftaki
+                hoparlörlere tıklayarak sesi dinleyin, sonra o sesin hangi resme ait olduğunu bulup üzerine sürükleyin.
+            </p>
+            <button class="start-btn" onclick="startGame()">Başla!</button>
+        </div>
+    </div>
+
+    <div class="game-wrapper">
+        <div class="image-container" id="image-container"></div>
+        <div class="sound-column" id="sound-column"></div>
+    </div>
+
+    <script>
+        const data = [
+            { id: "ramazan_pidesi", text: "Ramazan Pidesi" },
+            { id: "hurma", text: "Hurma" },
+            { id: "sahur", text: "Sahur" },
+            { id: "mahya", text: "Mahya" },
+            { id: "ramazan_davulcusu", text: "Ramazan Davulcusu" },
+            { id: "kandil_simidi", text: "Kandil Simidi" },
+            { id: "gullac", text: "Güllaç" },
+            { id: "hacivat_karagoz", text: "Hacivat Karagöz" },
+            { id: "iftar_sofrasi", text: "İftar Sofrası" }
+        ];
+
+        let maleVoice = null;
+
+        // Sistemdeki en iyi erkek sesini bulma
+        function loadVoices() {
+            const voices = window.speechSynthesis.getVoices();
+            // Türkçe ve içinde 'male', 'erkek', veya bazı bilinen erkek isimleri olan sesleri ara
+            maleVoice = voices.find(v => v.lang.includes('tr') && (v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('erkek'))) ||
+                voices.find(v => v.lang.includes('tr')); // Bulamazsa standart Türkçe sesi al
+        }
+
+        window.speechSynthesis.onvoiceschanged = loadVoices;
+
+        function speak(txt, pitch = 1) {
+            window.speechSynthesis.cancel();
+            const msg = new SpeechSynthesisUtterance(txt);
+            if (maleVoice) msg.voice = maleVoice;
+            msg.lang = 'tr-TR';
+            msg.pitch = 0.8; // Sesi biraz daha kalınlaştırarak erkek tonuna yaklaştırır
+            msg.rate = 0.9;  // Daha yumuşak ve sakin bir hız
+            window.speechSynthesis.speak(msg);
+        }
+
+        function startGame() {
+            document.getElementById('overlay').style.display = 'none';
+            speak("Haydi başlayalım! Hoparlörlere tıkla ve sesi doğru resme sürükle.");
+        }
+
+        const container = document.getElementById('image-container');
+        const soundCol = document.getElementById('sound-column');
+
+        // Resimleri Diz
+        [...data].sort(() => Math.random() - 0.5).forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'card';
+            div.innerHTML = `
+            <img src="${item.id}.png" alt="Ramazan">
+            <div class="drop-zone" data-id="${item.id}">📢</div>
+        `;
+            container.appendChild(div);
+        });
+
+        // Ses Etiketlerini Diz
+        [...data].sort(() => Math.random() - 0.5).forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'sound-label';
+            div.draggable = true;
+            div.id = `label-${item.id}`;
+            div.innerHTML = '🔊'; // Hoparlör simgesi
+            div.dataset.id = item.id;
+            div.dataset.text = item.text;
+
+            // Tıklayınca seslendir
+            div.addEventListener('click', () => speak(item.text));
+
+            // Sürükleme
+            div.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text', e.target.dataset.id);
+                speak(item.text); // Sürüklemeye başlayınca da ismini söyler (yardımcı olması için)
+            });
+
+            soundCol.appendChild(div);
+        });
+
+        // Drop mantığı
+        container.addEventListener('dragover', (e) => e.preventDefault());
+        container.addEventListener('drop', (e) => {
+            const zone = e.target.closest('.drop-zone');
+            if (!zone) return;
+
+            const draggedId = e.dataTransfer.getData('text');
+            const zoneId = zone.dataset.id;
+            const targetLabel = document.getElementById(`label-${draggedId}`);
+
+            if (draggedId === zoneId) {
+                zone.innerHTML = '✅';
+                zone.classList.add('correct');
+                targetLabel.style.visibility = 'hidden';
+                speak("Doğru!");
+            } else {
+                zone.classList.add('wrong');
+                speak("Bu ses bu resme ait değil.");
+                setTimeout(() => zone.classList.remove('wrong'), 800);
+            }
+        });
+    </script>
+
+</body>
+
+</html>
