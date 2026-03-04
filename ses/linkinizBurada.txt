@@ -73,6 +73,10 @@ https://materyalfabrikasi.github.io/ses/mahya/6b.mp3
 https://materyalfabrikasi.github.io/ses/mahya/7.mp3
 https://materyalfabrikasi.github.io/ses/mahya/7a.mp3
 https://materyalfabrikasi.github.io/ses/mahya/7b.mp3
+https://materyalfabrikasi.github.io/ses/mani/1.mp3
+https://materyalfabrikasi.github.io/ses/mani/2.mp3
+https://materyalfabrikasi.github.io/ses/mani/3.mp3
+https://materyalfabrikasi.github.io/ses/mani/4.mp3
 https://materyalfabrikasi.github.io/ses/mevlana/.DS_Store
 https://materyalfabrikasi.github.io/ses/mevlana/dogum.mp3
 https://materyalfabrikasi.github.io/ses/mevlana/gelne.mp3
