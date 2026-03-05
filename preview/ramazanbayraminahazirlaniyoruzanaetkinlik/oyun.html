@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>İnteraktif Bayram Videosu</title>
+    <style>
+        body { display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #222; }
+        #videoContainer { position: relative; width: 80%; max-width: 800px; background: black; }
+        video { width: 100%; display: block; }
+        
+        /* Sağ üst köşe butonu */
+        #fsButton { position: absolute; top: 10px; right: 10px; z-index: 20; padding: 8px 15px; cursor: pointer; background: rgba(0,0,0,0.5); color: white; border: 1px solid white; border-radius: 4px; }
+
+        /* Soru katmanı */
+        #overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; z-index: 10; }
+        button#actionBtn { padding: 10px 25px; cursor: pointer; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+<div id="videoContainer">
+    <button id="fsButton" onclick="toggleFullScreen()">Tam Ekran</button>
+    
+    <div id="overlay">
+        <p id="message">Bayram öncesi tatlı telaşları anlatan videoyu dikkatle izleyiniz. Belirlenen noktalarda sorulacak soruları cevaplayınız.</p>
+        <button id="actionBtn" onclick="startVideo()">Başla</button>
+    </div>
+    
+    <video id="myVideo" src="1.mp4"></video>
+</div>
+
+<script>
+    const video = document.getElementById('myVideo');
+    const overlay = document.getElementById('overlay');
+    const message = document.getElementById('message');
+    const actionBtn = document.getElementById('actionBtn');
+    const container = document.getElementById('videoContainer');
+
+    const stops = [
+        { time: 23, text: "Bayram öncesinde yapılan hazırlıkları örneklerle anlatınız.", triggered: false },
+        { time: 42, text: "Yaşadığınız yerde bayramlaşma nasıl gerçekleşir? Bayram harçlığı kavramını duydunuz mu?", triggered: false },
+        { time: 65, text: "Bayram öncesinde yaşadığınız heyecanları anlatınız. Ramazan Bayram’ı sizin için ne ifade etmektedir?", triggered: false }
+    ];
+
+    function startVideo() {
+        overlay.style.display = 'none';
+        video.play();
+    }
+
+    function toggleFullScreen() {
+        if (!document.fullscreenElement) {
+            container.requestFullscreen();
+        } else {
+            document.exitFullscreen();
+        }
+    }
+
+    video.addEventListener('timeupdate', () => {
+        stops.forEach((stop) => {
+            if (Math.floor(video.currentTime) === stop.time && !stop.triggered) {
+                video.pause();
+                stop.triggered = true;
+                message.innerText = stop.text;
+                actionBtn.innerText = "Tamam";
+                overlay.style.display = 'flex';
+            }
+        });
+    });
+</script>
+</body>
+</html>
