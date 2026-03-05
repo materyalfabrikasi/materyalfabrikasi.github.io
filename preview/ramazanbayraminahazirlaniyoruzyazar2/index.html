@@ -1,36 +1,324 @@
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
     <meta charset="UTF-8">
-    <title>iframe içerik görüntüleyici</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sürükle & Bırak Eşleştirme</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
     <style>
         body {
-            font-family: Arial, sans-serif;
             margin: 0;
-            padding: 20px;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            color: white;
+        }
+
+        /* YÖNERGE MODAL */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            background-color: #f5f5f5;
+            z-index: 999;
         }
-        .container {
-            text-align: center;
-        }
-        h1 {
+
+        .modal {
+            background: white;
             color: #333;
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal h2 {
+            margin-top: 0;
+            color: #ff9800;
+        }
+
+        .modal button {
+            margin-top: 20px;
+            padding: 10px 25px;
+            border: none;
+            border-radius: 20px;
+            background: #28a745;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .modal button:hover {
+            background: #218838;
+        }
+
+        /* ÜST BİLGİ */
+        h1 {
+            margin: 20px 0 10px;
+        }
+
+        .game-info {
+            display: flex;
+            gap: 25px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            width: 90%;
+            max-width: 800px;
+            height: 18px;
+            background: #ddd;
+            border-radius: 20px;
+            overflow: hidden;
             margin-bottom: 20px;
         }
-        iframe {
-            border: 1px solid #ddd;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            max-width: 100%;
+
+        .progress {
+            height: 100%;
+            width: 0%;
+            background: #28a745;
+            transition: 0.3s;
+        }
+
+        /* BÜYÜK GÖRSEL */
+        .image-container {
+            width: 90%;
+            max-width: 800px;
+            height: 60vh;
+            background: white;
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            margin-bottom: 25px;
+        }
+
+        .image-container img {
+            max-height: 90%;
+            max-width: 90%;
+        }
+
+        .image-container.correct {
+            border: 5px solid #28a745;
+        }
+
+        .image-container.wrong {
+            border: 5px solid #dc3545;
+        }
+
+        /* İSİM KARTLARI */
+        .labels {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            width: 90%;
+            max-width: 900px;
+        }
+
+        .label-card {
+            background: white;
+            color: #333;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: grab;
+            user-select: none;
+            transition: 0.2s;
+        }
+
+        .label-card.dragging {
+            opacity: 0.5;
+        }
+
+        button.restart {
+            margin: 30px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            background: #ff9800;
+            color: white;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        button.restart:hover {
+            background: #e68900;
+        }
+
+        @media(max-width:768px) {
+            .image-container {
+                height: 45vh;
+            }
         }
     </style>
 </head>
+
 <body>
-    <div class="container">
-        <iframe style="max-width:100%" src="oyun.html" width="600" height="400" frameborder="0" allowfullscreen></iframe>
+
+    <!-- YÖNERGE -->
+    <div class="overlay" id="instructionOverlay">
+        <div class="modal">
+            <h2>🎉 Oyun Başlıyor!</h2>
+            <p>
+
+                Bayram heyecanı her yeri sardı. Ancak bazı geleneklerimiz resimlerinden ayrı düşmüş.
+                Onları doğru yerlerine kavuşturmak senin elinde!
+            </p>
+            <button onclick="startGame()">Tamam</button>
+        </div>
     </div>
+
+    <h1><i class="fa-solid fa-image"></i> Doğru İsmi Sürükle</h1>
+
+    <div class="game-info">
+        ⭐ Puan: <span id="score">0</span>
+        ❤️ Can: <span id="lives">3</span>
+        ⏱ Süre: <span id="timer">0</span> sn
+    </div>
+
+    <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+    </div>
+
+    <div class="image-container" id="imageContainer"></div>
+    <div class="labels" id="labels"></div>
+
+    <button class="restart" onclick="restartGame()">
+        <i class="fa-solid fa-rotate"></i> Yeniden Başlat
+    </button>
+
+    <script>
+
+        /* =========================
+           DATA DİZİSİ
+        ========================= */
+        const DATA = [
+            { image: "bayramsekeri.png", label: "Bayram Şekeri" },
+            { image: "bayramtemizligi.png", label: "Bayram Temizliği" },
+            { image: "bayramnamazi.png", label: "Bayram Namazı" },
+            { image: "elopme.png", label: "El Öpme" },
+            { image: "bayramharcligi.png", label: "Bayram Harçlığı" },
+            { image: "fitre.png", label: "Fitre" },
+            { image: "arife.png", label: "Arife" }
+        ];
+
+        let score = 0;
+        let lives = 3;
+        let currentIndex = 0;
+        let timer = 0;
+        let interval;
+        let shuffledData = [];
+
+        function shuffle(array) {
+            return array.sort(() => Math.random() - 0.5);
+        }
+
+        function startTimer() {
+            interval = setInterval(() => {
+                timer++;
+                document.getElementById("timer").innerText = timer;
+            }, 1000);
+        }
+
+        function updateProgress() {
+            document.getElementById("progress").style.width =
+                (currentIndex / DATA.length * 100) + "%";
+        }
+
+        function loadQuestion() {
+            const container = document.getElementById("imageContainer");
+            const labelsDiv = document.getElementById("labels");
+            container.classList.remove("correct", "wrong");
+
+            if (currentIndex >= shuffledData.length) {
+                clearInterval(interval);
+                setTimeout(() => alert("🎉 Tebrikler! Oyunu Tamamladın!"), 300);
+                return;
+            }
+
+            const current = shuffledData[currentIndex];
+            container.innerHTML = `<img src="${current.image}">`;
+
+            labelsDiv.innerHTML = "";
+            const shuffledLabels = shuffle([...DATA]);
+
+            shuffledLabels.forEach(item => {
+                const card = document.createElement("div");
+                card.className = "label-card";
+                card.draggable = true;
+                card.dataset.label = item.label;
+                card.innerText = item.label;
+                labelsDiv.appendChild(card);
+
+                card.addEventListener("dragstart", () => card.classList.add("dragging"));
+                card.addEventListener("dragend", () => card.classList.remove("dragging"));
+            });
+        }
+
+        document.getElementById("imageContainer").addEventListener("dragover", e => e.preventDefault());
+
+        document.getElementById("imageContainer").addEventListener("drop", e => {
+            e.preventDefault();
+            const dragging = document.querySelector(".dragging");
+            if (!dragging) return;
+
+            const current = shuffledData[currentIndex];
+
+            if (dragging.dataset.label === current.label) {
+                document.getElementById("imageContainer").classList.add("correct");
+                score += 10;
+                currentIndex++;
+                updateProgress();
+                setTimeout(loadQuestion, 700);
+            } else {
+                document.getElementById("imageContainer").classList.add("wrong");
+                lives--;
+                if (lives <= 0) {
+                    clearInterval(interval);
+                    alert("❌ Oyun Bitti!");
+                    restartGame();
+                }
+            }
+
+            document.getElementById("score").innerText = score;
+            document.getElementById("lives").innerText = lives;
+        });
+
+        function startGame() {
+            document.getElementById("instructionOverlay").style.display = "none";
+            restartGame();
+        }
+
+        function restartGame() {
+            score = 0;
+            lives = 3;
+            currentIndex = 0;
+            timer = 0;
+            shuffledData = shuffle([...DATA]);
+            clearInterval(interval);
+
+            document.getElementById("score").innerText = 0;
+            document.getElementById("lives").innerText = 3;
+            document.getElementById("timer").innerText = 0;
+            document.getElementById("progress").style.width = "0%";
+
+            loadQuestion();
+            startTimer();
+        }
+
+    </script>
 </body>
+
 </html>
