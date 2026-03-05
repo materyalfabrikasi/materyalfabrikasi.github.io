@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Spor Değerleri Yakalama Oyunu</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+            color: white;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        h2 {
+            margin-top: 10px;
+        }
+
+        #gameArea {
+            position: relative;
+            width: 100%;
+            height: 450px;
+            border-top: 3px solid white;
+            overflow: hidden;
+        }
+
+        .word {
+            position: absolute;
+            font-size: 20px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        #player {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            font-size: 50px;
+            transform: translateX(-50%);
+            transition: left 0.05s linear;
+        }
+
+        #scoreBoard {
+            margin-top: 10px;
+            font-size: 18px;
+        }
+
+        .feedback {
+            position: absolute;
+            font-size: 60px;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: fadeOut 1s forwards;
+        }
+
+        @keyframes fadeOut {
+            0% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
+
+        button {
+            padding: 8px 16px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>🏅 Spor ve Değerleri Yakala</h2>
+
+    <p><strong>Yönerge:</strong><br>
+        Ekrandan aşağı doğru akan kelimeleri dikkatle inceleyiniz.
+        Spora yakışan tutumlarla ilgili olan kelimeleri yakalamaya çalışınız.
+        Alt kısımdaki sporcuyu <strong>sağ–sol ok tuşları</strong> veya <strong>mouse hareketi</strong> ile kontrol
+        ediniz.
+        Doğru kelime yakaladığınızda puan kazanırsınız ✅
+        Sporla ilgisi olmayan bir kelimeyi yakalarsanız puan kaybedersiniz ❌
+        Süre sonunda en yüksek puana ulaşmaya çalışınız.
+    </p>
+
+    <button onclick="startGame()">Oyunu Başlat</button>
+
+    <div id="gameArea">
+        <div id="player">🏃</div>
+    </div>
+
+    <div id="scoreBoard">
+        Puan: <span id="score">0</span> | Süre: <span id="time">60</span>
+    </div>
+
+    <script>
+
+        const correctWords = [
+            "zafer", "centilmenlik", "tebrik", "saygı", "çalışkanlık",
+            "azim", "disiplin", "takım ruhu", "dayanıklılık", "çaba",
+            "rekabet", "antrenman", "performans", "başarı", "sabır",
+            "motivasyon", "hedef", "spor", "mücadele", "destek",
+            "güven", "liderlik"
+        ];
+
+        const wrongWords = [
+            "kıskançlık", "hile", "yalan", "tembellik", "öfke",
+            "alay", "bencillik", "kavga", "korku", "dalgınlık",
+            "umursamazlık", "sorumsuzluk", "hakaret",
+            "negatiflik", "küskünlük", "çekememezlik"
+        ];
+
+        let score = 0;
+        let timeLeft = 60;
+        let player = document.getElementById("player");
+        let gameArea = document.getElementById("gameArea");
+        let gameInterval;
+        let wordInterval;
+        let playerPosition = window.innerWidth / 2;
+
+        // Klavye kontrolü
+        document.addEventListener("keydown", function (e) {
+            if (e.key === "ArrowLeft") {
+                playerPosition -= 30;
+            }
+            if (e.key === "ArrowRight") {
+                playerPosition += 30;
+            }
+            limitPlayer();
+        });
+
+        // Mouse kontrolü
+        gameArea.addEventListener("mousemove", function (e) {
+            playerPosition = e.clientX - 25;
+            limitPlayer();
+        });
+
+        function limitPlayer() {
+            if (playerPosition < 0) playerPosition = 0;
+            if (playerPosition > window.innerWidth - 50)
+                playerPosition = window.innerWidth - 50;
+            player.style.left = playerPosition + "px";
+        }
+
+        function startGame() {
+            score = 0;
+            timeLeft = 60;
+            document.getElementById("score").innerText = score;
+            document.getElementById("time").innerText = timeLeft;
+            gameArea.innerHTML = '<div id="player">🏃</div>';
+            player = document.getElementById("player");
+
+            gameInterval = setInterval(updateTimer, 1000);
+            wordInterval = setInterval(createWord, 900);
+        }
+
+        function updateTimer() {
+            timeLeft--;
+            document.getElementById("time").innerText = timeLeft;
+            if (timeLeft <= 0) {
+                clearInterval(gameInterval);
+                clearInterval(wordInterval);
+                alert("Oyun bitti! Toplam puan: " + score);
+            }
+        }
+
+        function createWord() {
+            const word = document.createElement("div");
+            word.classList.add("word");
+
+            const isCorrect = Math.random() > 0.5;
+            const wordText = isCorrect
+                ? correctWords[Math.floor(Math.random() * correctWords.length)]
+                : wrongWords[Math.floor(Math.random() * wrongWords.length)];
+
+            word.innerText = wordText;
+            word.style.left = Math.random() * (window.innerWidth - 120) + "px";
+            word.style.top = "0px";
+
+            gameArea.appendChild(word);
+
+            let fall = setInterval(() => {
+                let top = parseInt(word.style.top);
+                word.style.top = top + 4 + "px";
+
+                let wordRect = word.getBoundingClientRect();
+                let playerRect = player.getBoundingClientRect();
+
+                if (
+                    wordRect.bottom >= playerRect.top &&
+                    wordRect.left < playerRect.right &&
+                    wordRect.right > playerRect.left
+                ) {
+                    clearInterval(fall);
+                    checkWord(word.innerText);
+                    word.remove();
+                }
+
+                if (top > 430) {
+                    clearInterval(fall);
+                    word.remove();
+                }
+
+            }, 30);
+        }
+
+        function checkWord(text) {
+            let feedback = document.createElement("div");
+            feedback.classList.add("feedback");
+
+            if (correctWords.includes(text)) {
+                score += 10;
+                feedback.innerText = "✅";
+            } else {
+                score -= 5;
+                feedback.innerText = "❌";
+            }
+
+            document.getElementById("score").innerText = score;
+            gameArea.appendChild(feedback);
+
+            setTimeout(() => feedback.remove(), 800);
+        }
+
+    </script>
+
+</body>
+
+</html>

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="tr">
 
@@ -2667,4 +2668,2675 @@
 
 </body>
 
+=======
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://ulkemyanimda.github.io/icons/factory.ico" type="image/x-icon">
+    <title>Materyal Fabrikası - Türkçe ve Türk Kültürü</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 2rem 0;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .search-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            margin: 2rem 0;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .search-box {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            min-width: 250px;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-section {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-group label {
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .filter-select {
+            padding: 0.8rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            min-width: 120px;
+        }
+
+        .clear-filters {
+            padding: 0.8rem 1.5rem;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            align-self: flex-end;
+        }
+
+        .clear-filters:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+        }
+
+        .materials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .material-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            animation: cardAppear 0.5s ease-out;
+        }
+
+        @keyframes cardAppear {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .material-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-title {
+            flex: 1;
+        }
+
+        .card-title h3 {
+            font-size: 1.3rem;
+            color: #333;
+            margin-bottom: 0.3rem;
+        }
+
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .tag {
+            padding: 0.4rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .tag-konu {
+            background: #4CAF50;
+        }
+
+        .tag-tema {
+            background: #2196F3;
+        }
+
+        .tag-seviye {
+            background: #FF9800;
+        }
+
+        .tag-yas {
+            background: #9C27B0;
+        }
+
+        .card-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            flex: 1;
+            min-width: 100px;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+        }
+
+        .download-btn:hover {
+            background: linear-gradient(135deg, #45a049, #4CAF50);
+            transform: translateY(-2px);
+        }
+
+        .preview-btn {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            color: white;
+        }
+
+        .preview-btn:hover {
+            background: linear-gradient(135deg, #1976D2, #2196F3);
+            transform: translateY(-2px);
+        }
+
+        .pdf-btn {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+            color: white;
+        }
+
+        .pdf-btn:hover {
+            background: linear-gradient(135deg, #d32f2f, #f44336);
+            transform: translateY(-2px);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            color: white;
+            font-size: 1.2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .results-count {
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .materials-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .search-box {
+                flex-direction: column;
+            }
+
+            .filter-section {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .card-actions {
+                flex-direction: column;
+            }
+
+            .action-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>🏭 Materyal Fabrikası</h1>
+        <p>Türkçe ve Türk Kültürü Dersi Eğitim Materyalleri</p>
+    </div>
+
+    <div class="container">
+        <div class="search-section">
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="Materyal adı veya açıklama ile arayın..."
+                    id="searchInput">
+            </div>
+
+            <div class="filter-section">
+                <div class="filter-group">
+                    <label>Konu:</label>
+                    <select class="filter-select" id="konuFilter">
+                        <option value="">Tüm Konular</option>
+                        <option value="Okuma">Okuma</option>
+                        <option value="Yazma">Yazma</option>
+                        <option value="Dinleme">Dinleme</option>
+                        <option value="Konuşma">Konuşma</option>
+
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Tema:</label>
+                    <select class="filter-select" id="temaFilter">
+                        <option value="">Tüm Temalar</option>
+                         <option value="BEN VE AİLEM">BEN VE AİLEM</option>
+						<option value="BİRLİKTE YAŞAM">BİRLİKTE YAŞAM</option>
+						<option value="MEMLEKETİMİ TANIYORUM">MEMLEKETİMİ TANIYORUM</option>
+                        <option value="GÜZEL MEMLEKETİM">GÜZEL MEMLEKETİM</option>
+						<option value="DEĞERLERİMİZLE YAŞIYORUM">DEĞERLERİMİZLE YAŞIYORUM</option>
+						<option value="BİZİ BİZ YAPANLAR">BİZİ BİZ YAPANLAR</option>
+                        <option value="GELENEKSEL TÜRK OYUNLARI">GELENEKSEL TÜRK OYUNLARI</option>
+						<option value="SAĞLIĞIMIZI KORUYALIM">SAĞLIĞIMIZI KORUYALIM</option>
+                        <option value="KÖKLERDEN GELECEĞE">KÖKLERDEN GELECEĞE</option>
+                        <option value="BİR VARMIŞ, BİR YOKMUŞ">BİR VARMIŞ, BİR YOKMUŞ</option>
+                        <option value="SANAT DÜNYASI">SANAT DÜNYASI</option>
+                        <option value="BİZİ BİZ YAPANLAR">BİZİ BİZ YAPANLAR</option>
+                        <option value="SAĞLIKLI YAŞAM">SAĞLIKLI YAŞAM</option>
+                        <option value="BİLİM VE TEKNOLOJİDE YOLCULUK">BİLİM VE TEKNOLOJİDE YOLCULUK</option>
+                        <option value="İYİ Kİ DOĞDUN CUMHURİYET">İYİ Kİ DOĞDUN CUMHURİYET</option>
+                        <option value="ATATÜRK">ATATÜRK</option>
+                        <option value="15 Aralık Dünya Türk Dili Ailesi Günü">15 Aralık Dünya Türk Dili Ailesi Günü
+                        </option>
+                        <option value="Bayrak Sevgisi">Bayrak Sevgisi</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Seviye:</label>
+                    <select class="filter-select" id="seviyeFilter">
+                        <option value="">Tüm Seviyeler</option>
+                        <option value="Yazar">Yazar</option>
+                        <option value="Yazamaz">Yazamaz</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Yaş Grubu:</label>
+                    <select class="filter-select" id="yasFilter">
+                        <option value="">Tüm Yaşlar</option>
+                        <option value="5-10">5-10 Yaş</option>
+                        <option value="11-16">11-16 Yaş</option>
+
+                    </select>
+                </div>
+
+                <button class="clear-filters" onclick="clearFilters()">Filtreleri Temizle</button>
+            </div>
+        </div>
+
+        <div class="results-count" id="resultsCount"></div>
+
+        <div class="materials-grid" id="materialsGrid"></div>
+        <div class="no-results" id="noResults" style="display: none;">
+            <h2>🔍 Sonuç Bulunamadı</h2>
+            <p>Arama kriterlerinize uygun materyal bulunmamaktadır.</p>
+        </div>
+    </div>
+
+    <script>
+        const materials = [
+                       {
+                id: 1,
+                name: "Hep Bir Aradayız - Kalıp İfadeler - Eşleştir",
+                description: "Öğrenciler, günlük yaşamda kullanılan temel kalıp ifadelerin hangi durumda söylendiğini ayırt eder ve uygun resimlerle eşleştirir.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "BİRLİKTE YAŞAM",
+                seviye: "Yazar",
+                yas: "11-16",
+                scormPath: "scorm/HepbiraradayizKalipifadeler_eslestir.zip",
+                previewUrl: "preview/HepbiraradayizKalipifadeler_eslestir/index.html",
+                pdfPath: "pdf/HepbiraradayizKalipifadeler_eslestir.pdf"
+            },
+            {
+                id: 2,
+                name: "Hep Bir Aradayız - Kalıp İfadeler - Seç",
+                description: "Öğrenciler, görselleri inceleyerek Türk kültüründe birlikte yaşamda kullanılan temel kalıp ifadeleri tanır ve uygun durumlarla eşleştirir.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "BİRLİKTE YAŞAM",
+                seviye: "Yazar",
+                yas: "11-16",
+                scormPath: "scorm/HepbiraradayizKalipifadeler_sec.zip",
+                previewUrl: "preview/HepbiraradayizKalipifadeler_sec/index.html",
+                pdfPath: "pdf/HepbiraradayizKalipifadeler_sec.pdf"
+            },
+            {
+                id: 3,
+                name: "Hep Bir Aradayız - Kalıp İfadeler - Dinle",
+                description: "Öğrenciler, günlük yaşamda kullanılan bazı temel kalıp ifadeleri görseller eşliğinde dinleyerek tanır ve hangi durumda söylendiğini ayırt eder.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "BİRLİKTE YAŞAM",
+                seviye: "Yazamaz",
+                yas: "11-16",
+                scormPath: "scorm/HepbiraradayizKalipifadeler_dinle.zip",
+                previewUrl: "preview/HepbiraradayizKalipifadeler_dinle/index.html",
+                pdfPath: "pdf/HepbiraradayizKalipifadeler_dinle.pdf"
+            },
+            {
+                id: 4,
+                name: "Türkiye'den Merhaba - Güzel Sözler - Eşleştir",
+                description: "Öğrenciler, günlük yaşamda kullanılan bazı temel kalıp ifadeleri tanır ve uygun görsellerle doğru şekilde eşleştirir.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "BEN VE AİLEM",
+                seviye: "Yazar",
+                yas: "5-10",
+                scormPath: "scorm/Turkiyedenmerhabaguzelsozler_eslestir.zip",
+                previewUrl: "preview/Turkiyedenmerhabaguzelsozler_eslestir/index.html",
+                pdfPath: "pdf/Turkiyedenmerhabaguzelsozler_eslestir.pdf"
+            },
+            {
+                id: 5,
+                name: "Türkiye'den Merhaba - Güzel Sözler - Yaz",
+                description: "Öğrenciler, görsellerden hareketle eksik harfleri tamamlayarak günlük yaşamda kullanılan temel kalıp ifadeleri tanır, doğru şekilde yazar ve iletişimde kullanır. ",
+                icon: "👪",
+                konu: "Yazma",
+                tema: "BEN VE AİLEM",
+                seviye: "Yazar",
+                yas: "5-10",
+                scormPath: "scorm/Turkiyedenmerhabaguzelsozler_yaz.zip",
+                previewUrl: "preview/Turkiyedenmerhabaguzelsozler_yaz/index.html",
+                pdfPath: "pdf/Turkiyedenmerhabaguzelsozler_yaz.pdf"
+            },
+            {
+                id: 6,
+                name: "Türkiye'den Merhaba - Karşılama ve Uğurlama",
+                description: "Öğrenciler, izledikleri videodaki karakterler ve olaylar hakkında soruları yanıtlar, günlük yaşamda misafir karşılama ve uğurlama ile ilgili kendi deneyimlerini sözlü olarak paylaşır. ",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "BEN VE AİLEM",
+                seviye: "Yazamaz",
+                yas: "5-10",
+                scormPath: "scorm/Turkiyedenmerhabakarsilamaugurlama.zip",
+                previewUrl: "preview/Turkiyedenmerhabakarsilamaugurlama/index.html",
+                pdfPath: "pdf/Turkiyedenmerhabakarsilamaugurlama.pdf"
+            },
+            {
+                id: 7,
+                name: "Misafirperverlik: Kapımız Hep Açık - Türk Kahvesi",
+                description: "Öğrenciler, görsel ve işlemsel bir süreci (Türk kahvesi yapımı) sıralı biçimde anlatır ve kültürel bağlamla ilişkilendirir.",
+                icon: "👪",
+                konu: "Konuşma",
+                tema: "BİRLİKTE YAŞAM",
+                seviye: "Yazamaz",
+                yas: "11-16",
+                scormPath: "scorm/misafirperverlikturkkahvesi.zip",
+                previewUrl: "preview/misafirperverlikturkkahvesi/index.html",
+                pdfPath: "pdf/misafirperverlikturkkahvesi.pdf"
+            },
+            {
+                id: 8,
+                name: "Misafirperverlik: Kapımız Hep Açık - Tanrı Misafiri",
+                description: "Öğrenciler dinlediği/izlediği metinde Türk misafirperverliği temasını kavrar, kültürel ve mecazî anlamları bağlamdan çıkarır.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "BİRLİKTE YAŞAM",
+                seviye: "Yazamaz",
+                yas: "11-16",
+                scormPath: "scorm/Turkkulturundemisafirperverlik.zip",
+                previewUrl: "preview/Turkkulturundemisafirperverlik/index.html",
+                pdfPath: "pdf/Turkkulturundemisafirperverlik.pdf"
+            },
+            {
+                id: 9,
+                name: "Misafirperverlik: Kapımız Hep Açık - Misafir Ağırlama",
+                description: "Öğrenci, okuduğu metindeki kültürel unsurları ve değerleri bağlam içinde anlamlandırır.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "BİRLİKTE YAŞAM",
+                seviye: "Yazar",
+                yas: "11-16",
+                scormPath: "scorm/misafiragirlama.zip",
+                previewUrl: "preview/misafiragirlama/index.html",
+                pdfPath: "pdf/misafiragirlama.pdf"
+            },
+            {
+                id: 10,
+                name: "Sevgiyle Paylaşalım - Eşleştir",
+                description: "Öğrenciler sesli anlatım ve görselleri izleyerek hikâyenin olay akışını anlar, hikâyedeki önemli kelime ve ifadeleri ayırt eder.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "BEN VE AİLEM",
+                seviye: "Yazamaz",
+                yas: "5-10",
+                scormPath: "scorm/sevgiylepaylasalim-eslestir.zip",
+                previewUrl: "preview/sevgiylepaylasalim-eslestir/index.html",
+                pdfPath: "pdf/sevgiylepaylasalim-eslestir.pdf"
+            },
+            {
+                id: 11,
+                name: "Sevgiyle Paylaşalım - Görselleri Sırala",
+                description: "Öğrenciler sesli anlatım ve görselleri izleyerek hikâyenin olay akışını anlar ve görselleri oluş sırasına göre sıralar; hikâyedeki önemli kelime ve ifadeleri ayırt eder.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "BEN VE AİLEM",
+                seviye: "Yazamaz",
+                yas: "5-10",
+                scormPath: "scorm/sevgiylepaylasalim-gorselsirala.zip",
+                previewUrl: "preview/sevgiylepaylasalim-gorselsirala/index.html",
+                pdfPath: "pdf/sevgiylepaylasalim-gorselsirala.pdf"
+            },
+            {
+                id: 12,
+                name: "Sevgiyle Paylaşalım - Cevapla",
+                description: "Öğrenciler, videodaki hikâyeyi dinleyip/izleyerek olayların akışını ve karakterlerin duygularını anlar, önemli kelime ve ifadeleri bağlama uygun şekilde açıklar ve yöneltilen sorulara doğru cevaplar verir.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "BEN VE AİLEM",
+                seviye: "Yazamaz",
+                yas: "5-10",
+                scormPath: "scorm/sevgiylepaylasalim-cevapla.zip",
+                previewUrl: "preview/sevgiylepaylasalim-cevapla/index.html",
+                pdfPath: "pdf/sevgiylepaylasalim-cevapla.pdf"
+            },
+            {
+                id: 13,
+                name: "Sevgiyle Paylaşalım - Doldur",
+                description: "Öğrenciler hikâyeyi dinlerken veya izlerken olayların sırasını ve karakterlerin duygularını anlar, hikâyede geçen önemli kelime ve ifadeleri (ör. ziyaret etmek, sohbet etmek, eline sağlık, komşuluk vb.) ayırt eder ve anlamını kavrar.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "BEN VE AİLEM",
+                seviye: "Yazar",
+                yas: "5-10",
+                scormPath: "scorm/sevgiylepaylasalim-doldur.zip",
+                previewUrl: "preview/sevgiylepaylasalim-doldur/index.html",
+                pdfPath: "pdf/sevgiylepaylasalim-doldur.pdf"
+            },
+            {
+                id: 14,
+                name: "Sevgiyle Paylaşalım - Bul",
+                description: "Öğrenciler sesli anlatım ve görseller yardımıyla hikâyenin genel akışını takip eder; hikâyede geçen önemli kelime ve ifadeleri (ör. ziyaret etmek, hasret gidermek, eline sağlık, sohbet etmek, ikram etmek vb.) ayırt eder ve bulmacayı doğru şekilde tamamlar.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "BEN VE AİLEM",
+                seviye: "Yazar",
+                yas: "5-10",
+                scormPath: "scorm/sevgiylepaylasalim-bul.zip",
+                previewUrl: "preview/sevgiylepaylasalim-bul/index.html",
+                pdfPath: "pdf/sevgiylepaylasalim-bul.pdf"
+            },
+            {
+                id: 15,
+                name: "Sevgiyle Paylaşalım - Cümle Sırala",
+                description: "Öğrenciler, videodaki sesli hikâyeyi dinleyerek/izleyerek olayların oluş sırasını anlar ve metinden verilen cümleleri doğru sıraya koyar.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "BİRLİKTE YAŞAM",
+                seviye: "Yazar",
+                yas: "11-16",
+                scormPath: "scorm/sevgiylepaylasalim-cumlesirala.zip",
+                previewUrl: "preview/sevgiylepaylasalim-cumlesirala/index.html",
+                pdfPath: "pdf/sevgiylepaylasalim-cumlesirala.pdf"
+            },
+            {
+                id: 16,
+                name: "Mahallemde Güzel Bir Gün - Kelime Avı",
+                description: "Dinlediği metindeki anahtar kelimeleri belirler, bu kelimeleri anlam ve bağlam ilişkisi içinde ayırt ederek sözcük avı etkinliğinde doğru şekilde bulur.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "BİRLİKTE YAŞAM",
+                seviye: "Yazar",
+                yas: "11-16",
+                scormPath: "scorm/mahallemdeguzelbirgunkelimeavi.zip",
+                previewUrl: "preview/mahallemdeguzelbirgunkelimeavi/index.html",
+                pdfPath: "pdf/mahallemdeguzelbirgunkelimeavi.pdf"
+            },
+            {
+                id: 17,
+                name: "Mahallemde Güzel Bir Gün - Doğru Olanı Seç",
+                description: "Dinledikleri metinle ilgili sorulan sorulara uygun cevaplar verir ve hikâyedeki olumlu değerleri (yardımlaşma, paylaşma, nezaket) fark eder.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "BİRLİKTE YAŞAM",
+                seviye: "Yazar",
+                yas: "11-16",
+                scormPath: "scorm/mahallemdeguzelbirgundogruolanısec.zip",
+                previewUrl: "preview/mahallemdeguzelbirgundogruolanısec/index.html",
+                pdfPath: "pdf/mahallemdeguzelbirgundogruolanısec.pdf"
+            },
+            {
+                id: 18,
+                name: "Mahallemde Güzel Bir Gün - Dinle / İzle ve Cevapla",
+                description: "Dinledikleri metinle ilgili sorulan sorulara uygun cevaplar verir ve hikâyedeki olumlu değerleri (yardımlaşma, paylaşma, nezaket) fark eder ve kendi yaşamından benzer deneyimler paylaşır.",
+                icon: "👪",
+                konu: "Konuşma",
+                tema: "BİRLİKTE YAŞAM",
+                seviye: "Yazamaz",
+                yas: "11-16",
+                scormPath: "scorm/mahallemdeguzelbirgunizlevecevapla.zip",
+                previewUrl: "preview/mahallemdeguzelbirgunizlevecevapla/index.html",
+                pdfPath: "pdf/mahallemdeguzelbirgunizlevecevapla.pdf"
+            },
+            {
+                id: 19,
+                name: "Şifa Çorbası - Bu Nedir?",
+                description: "Öğrenci dinlediği/izlediği bir hikâyede geçen önemli kelimeleri ilgili görsel üzerinde bulur ve işaretler.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "BEN VE AİLEM",
+                seviye: "Yazar",
+                yas: "5-10",
+                scormPath: "scorm/sifacorbasibunedir.zip",
+                previewUrl: "preview/sifacorbasibunedir/index.html",
+                pdfPath: "pdf/sifacorbasibunedir.pdf"
+            },
+            {
+                id: 20,
+                name: "Şifa Çorbası - Hecele",
+                description: "Öğrenci dinlediği/izlediği bir hikâyede geçen önemli kelimeleri hecelerine ayırır.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "BEN VE AİLEM",
+                seviye: "Yazar",
+                yas: "5-10",
+                scormPath: "scorm/sifacorbasiheceleme.zip",
+                previewUrl: "preview/sifacorbasiheceleme/index.html",
+                pdfPath: "pdf/sifacorbasiheceleme.pdf"
+            },
+            {
+                id: 21,
+                name: "Şifa Çorbası - Boşlukları Doldur",
+                description: "Hikâyeyi dinlerken veya izlerken olayların sırasını ve karakterlerin duygularını anlar, hikâyede geçen kelime ve ifadeleri  ayırt eder ve anlamını kavrar.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "BEN VE AİLEM",
+                seviye: "Yazar",
+                yas: "5-10",
+                scormPath: "scorm/sifacorbasiboslukdoldurma.zip",
+                previewUrl: "preview/sifacorbasiboslukdoldurma/index.html",
+                pdfPath: "pdf/sifacorbasiboslukdoldurma.pdf"
+            },
+            {
+                id: 22,
+                name: "Şifa Çorbası - Cümleleri Sırala",
+                description: "Videodaki sesli hikâyeyi dinleyerek/izleyerek olayların oluş sırasını anlar ve metinden verilen cümleleri doğru sıraya koyar.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "BEN VE AİLEM",
+                seviye: "Yazar",
+                yas: "5-10",
+                scormPath: "scorm/sifacorbasicumlesiralama.zip",
+                previewUrl: "preview/sifacorbasicumlesiralama/index.html",
+                pdfPath: "pdf/sifacorbasicumlesiralama.pdf"
+            },
+            {
+                id: 23,
+                name: "Şifa Çorbası - Görselleri Sırala",
+                description: "Öğrenciler sesli anlatım ve görselleri izleyerek hikâyenin olay akışını anlar ve görselleri oluş sırasına göre sıralar; hikâyedeki önemli kelime ve ifadeleri ayırt eder.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "BEN VE AİLEM",
+                seviye: "Yazamaz",
+                yas: "5-10",
+                scormPath: "scorm/sifacorbasiresimsiralama.zip",
+                previewUrl: "preview/sifacorbasiresimsiralama/index.html",
+                pdfPath: "pdf/sifacorbasiresimsiralama.pdf"
+            },
+            {
+                id: 24,
+                name: "Cumhuriyet Bayramı - Kelime Bulmaca",
+                description: "Öğrenciler, görsellerden hareketle Cumhuriyet Bayramı ile ilgili kelimeleri tahmin eder.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "İYİ Kİ DOĞDUN CUMHURİYET",
+                seviye: "Yazar",
+                yas: "11-16",
+                scormPath: "scorm/cumhuriyetkelimebulmaca.zip",
+                previewUrl: "preview/cumhuriyetkelimebulmaca/index.html",
+                pdfPath: "pdf/cumhuriyetkelimebulmaca.pdf"
+            },
+            {
+                id: 25,
+                name: "Cumhuriyet Bayramı - Dün Gibi - Cümle Sıralama ",
+                description: "Öğrenciler Cumhuriyet Bayramı’yla ilgili metni okuyarak metindeki olayların gelişim sırasını doğru biçimde belirler.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "İYİ Kİ DOĞDUN CUMHURİYET",
+                seviye: "Yazar",
+                yas: "11-16",
+                scormPath: "scorm/29Ekimdungibi.zip",
+                previewUrl: "preview/29Ekimdungibi/index.html",
+                pdfPath: "pdf/29Ekimdungibi.pdf"
+            },
+            {
+                id: 26,
+                name: "Cumhuriyet Bayramı - Dün Gibi - Dinle ve Yanıtla ",
+                description: "Öğrenci, metinde geçen olaylardan yola çıkarak Cumhuriyet coşkusunu, birlik, beraberlik ve kıvanç (gurur) duygularıyla ilişkilendirir ve metinle ilgili soruları yanıtlar.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "İYİ Kİ DOĞDUN CUMHURİYET",
+                seviye: "Yazamaz",
+                yas: "11-16",
+                scormPath: "scorm/cumhuriyetbayramidungibi.zip",
+                previewUrl: "preview/cumhuriyetbayramidungibi/index.html",
+                pdfPath: "pdf/29Ekimdungibi.pdf"
+            },
+            {
+                id: 27,
+                name: "Cumhuriyet Bayramı - Elif'in Kalbindeki Bayram ",
+                description: "Öğrenciler, dinlediği Cumhuriyet Bayramı konulu metindeki ana fikir, olay sırası ve duyguları anlayarak sorulara doğru cevap verir.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "İYİ Kİ DOĞDUN CUMHURİYET",
+                seviye: "Yazamaz",
+                yas: "11-16",
+                scormPath: "scorm/cumhuriyetbayramiElifinkalbindekibayram.zip",
+                previewUrl: "preview/cumhuriyetbayramiElifinkalbindekibayram/index.html",
+                pdfPath: "pdf/cumhuriyetbayramiElifinkalbindekibayram.pdf"
+            },
+            {
+                id: 28,
+                name: "Cumhuriyet Bayramı - Konuşalım ",
+                description: "Öğrenci, 29 Ekim Cumhuriyet Bayramı’nın anlam ve önemini açıklayarak Türkiye’deki kutlamaları kendi yaşadığı yerle karşılaştırır; duygu ve düşüncelerini planlı, anlaşılır ve saygılı bir biçimde sözlü olarak ifade eder.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "İYİ Kİ DOĞDUN CUMHURİYET",
+                seviye: "Yazamaz",
+                yas: "11-16",
+                scormPath: "scorm/29ekimkonusmaetkinligi.zip",
+                previewUrl: "preview/29ekimkonusmaetkinligi/index.html",
+                pdfPath: "pdf/29ekimkonusmaetkinligi.pdf"
+            },
+            {
+                id: 29,
+                name: "Cumhuriyet Bayramı - Dinle ve Boşlukları Doldur ",
+                description: "Videodaki 29 Ekim Cumhuriyet Bayramı kutlamasını dinleyip/izleyerek olayların akışını ve karakterlerin duygularını anlar, önemli kelime ve ifadeleri bağlama uygun şekilde kullanarak boşlukları doldurur.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "İYİ Kİ DOĞDUN CUMHURİYET",
+                seviye: "Yazar",
+                yas: "5-10",
+                scormPath: "scorm/Cumhuriyetboslukdoldurma.zip",
+                previewUrl: "preview/Cumhuriyetboslukdoldurma/index.html",
+                pdfPath: "pdf/Cumhuriyetboslukdoldurma.pdf"
+            },
+            {
+                id: 30,
+                name: "Cumhuriyet Bayramı - Yapboz ",
+                description: "Öğrenci dinlediği/izlediği bir videoda geçen önemli kelimeleri anlar, kelimelerin anlamını öğrenir ve onları hecelerine ayırır.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "İYİ Kİ DOĞDUN CUMHURİYET",
+                seviye: "Yazar",
+                yas: "5-10",
+                scormPath: "scorm/Cumhuriyetyapboz.zip",
+                previewUrl: "preview/Cumhuriyetyapboz/index.html",
+                pdfPath: "pdf/Cumhuriyetyapboz.pdf"
+            },
+            {
+                id: 31,
+                name: "Cumhuriyet Bayramı - İzle ve Yanıtla",
+                description: "Videodaki 29 Ekim Cumhuriyet Bayramı kutlamasını dinleyip/izleyerek olayların akışını ve karakterlerin duygularını anlar, önemli kelime ve ifadeleri bağlama uygun şekilde kullanarak yöneltilen sorulara doğru cevaplar verir.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "İYİ Kİ DOĞDUN CUMHURİYET",
+                seviye: "Yazamaz",
+                yas: "5-10",
+                scormPath: "scorm/Cumhuriyetvideosoru.zip",
+                previewUrl: "preview/Cumhuriyetvideosoru/index.html",
+                pdfPath: "pdf/Cumhuriyetvideosoru.pdf"
+            },
+            {
+                id: 32,
+                name: "İki Deniz Bir Renk: Antalya’dan İzmir’e - Aspendos - İzle ve Yanıtla",
+                description: "Öğrenci, izlediği videodan Aspendos Tiyatrosu’nun tarihî, mimarî ve kültürel özelliklerine ilişkin temel bilgileri anlar ve sorulara uygun cevaplar verir.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "GÜZEL MEMLEKETİM",
+                seviye: "Yazamaz",
+                yas: "11-16",
+                scormPath: "scorm/antalyayazamaz.zip",
+                previewUrl: "preview/antalyayazamaz/index.html",
+                pdfPath: "pdf/antalyayazamaz.pdf"
+            },
+            {
+                id: 33,
+                name: "İki Deniz Bir Renk: Antalya’dan İzmir’e - İzmir - İzle ve Yanıtla",
+                description: "Öğrenci, İzmir’in kültürel ve coğrafi özelliklerini tanıtan videoyu izler ve İzmir hakkında kişisel görüşlerini Türkçeyi doğru ve akıcı biçimde kullanarak ifade eder.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "GÜZEL MEMLEKETİM",
+                seviye: "Yazamaz",
+                yas: "11-16",
+                scormPath: "scorm/izmiryazamaz.zip",
+                previewUrl: "preview/izmiryazamaz/index.html",
+                pdfPath: "pdf/izmiryazamaz.pdf"
+            },
+            {
+                id: 34,
+                name: "İki Deniz Bir Renk: Antalya’dan İzmir’e - Antalya - İncele ve grupla",
+                description: "Öğrenci, görselleri inceleyerek Antalya’nın tarihî, doğal, sanatsal ve kültürel özelliklerini doğru kategorilerle eşleştirir.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "GÜZEL MEMLEKETİM",
+                seviye: "Yazar",
+                yas: "11-16",
+                scormPath: "scorm/guzelmemleketimAntalya.zip",
+                previewUrl: "preview/guzelmemleketimAntalya/index.html",
+                pdfPath: "pdf/guzelmemleketimAntalya.pdf"
+            },
+            {
+                id: 35,
+                name: "İki Deniz Bir Renk: Antalya’dan İzmir’e - İzmir - Bu nedir?",
+                description: "Öğrenci, görselleri inceleyerek Antalya’nın tarihî, doğal, sanatsal ve kültürel özelliklerini doğru kategorilerle eşleştirir.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "GÜZEL MEMLEKETİM",
+                seviye: "Yazar",
+                yas: "11-16",
+                scormPath: "scorm/guzelmemleketimizmir.zip",
+                previewUrl: "preview/guzelmemleketimizmir/index.html",
+                pdfPath: "pdf/guzelmemleketimizmir.pdf"
+            },
+            {
+                id: 36,
+                name: "Zamanı Aşan Lider Atatürk - Anıtkabir - İzle ve Cevapla ",
+                description: "Öğrenciler, Anıtkabir’e ilişkin bilgileri dinleyerek bu yapının tarihî ve millî önemini kendi ifadeleriyle özetleyip soruları yanıtlar.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "ATATÜRK",
+                seviye: "Yazamaz",
+                yas: "11-16",
+                scormPath: "scorm/anitkabir.zip",
+                previewUrl: "preview/anitkabir/index.html",
+                pdfPath: "pdf/anitkabir.pdf"
+            },
+            {
+                id: 37,
+                name: "Zamanı Aşan Lider Atatürk - Dinle ve Eşleştir ",
+                description: "Öğrenciler, dinlediklerinden yola çıkarak Atatürk’ün hayatındaki önemli olay ve kavramları ayırt ederek görsellerle ilişkilendirir.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "ATATÜRK",
+                seviye: "Yazamaz",
+                yas: "11-16",
+                scormPath: "scorm/ataturkdinleveeslestir.zip",
+                previewUrl: "preview/ataturkdinleveeslestir/index.html",
+                pdfPath: "pdf/ataturkdinleveeslestir.pdf"
+            },
+            {
+                id: 38,
+                name: "Zamanı Aşan Lider Atatürk - Oku ve Eşleştir ",
+                description: "Öğrenciler, Mustafa Kemal Atatürk’ün hayatına ilişkin kısa metinleri dikkatle okuyarak tarihsel olayları ayırt eder ve bu bilgileri görsellerle ilişkilendirir.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "ATATÜRK",
+                seviye: "Yazar",
+                yas: "11-16",
+                scormPath: "scorm/ataturkokuveeslestir.zip",
+                previewUrl: "preview/ataturkokuveeslestir/index.html",
+                pdfPath: "pdf/ataturkokuveeslestir.pdf"
+            },
+            {
+                id: 39,
+                name: "Zamanı Aşan Lider Atatürk - Sırala",
+                description: "Öğrenciler, Atatürk’ün hayatına ait metinleri okuyarak olayların zaman sırasını fark eder ve uygun bir şekilde sıraya koyar. ",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "ATATÜRK",
+                seviye: "Yazar",
+                yas: "11-16",
+                scormPath: "scorm/sirala.zip",
+                previewUrl: "preview/sirala/index.html",
+                pdfPath: "pdf/sirala.pdf"
+            },
+            {
+                id: 40,
+                name: "Burdur ve Mardin’in Kültürel Dokusunda Bir Yolculuk - Burdur - İzle ve Yanıtla",
+                description: "Öğrenciler  Burdur’un doğal ve kültürel özelliklerine ilişkin bilgileri dinler; görsel-işitsel ipuçlarından çıkarımlar yapar ve bunları sözlü olarak ifade eder.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "MEMLEKETİMİ TANIYORUM",
+                seviye: "Yazamaz",
+                yas: "6-10",
+                scormPath: "scorm/burdurizleveyanitla.zip",
+                previewUrl: "preview/burdurizleveyanitla/index.html",
+                pdfPath: "pdf/burdurizleveyanitla.pdf"
+            },
+            {
+                id: 41,
+                name: "Burdur ve Mardin’in Kültürel Dokusunda Bir Yolculuk - Burdur - Bak ve Gruplandır",
+                description: "Öğrenciler Burdur’un tarihî, doğal, kültürel ve sanatsal özelliklerini metin ve görsellerden tanır; bu bilgileri doğru kategorilerle ilişkilendirir.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "MEMLEKETİMİ TANIYORUM",
+                seviye: "Yazar",
+                yas: "6-10",
+                scormPath: "scorm/Burdurbakvegruplandir.zip",
+                previewUrl: "preview/Burdurbakvegruplandir/index.html",
+                pdfPath: "pdf/Burdurbakvegruplandir.pdf"
+            },
+            {
+                id: 42,
+                name: "Burdur ve Mardin’in Kültürel Dokusunda Bir Yolculuk - Burdur - Bak ve Yaz",
+                description: "Öğrenciler Burdur’a ait kültürel ögeleri verilen görsellerden hareketle tahmin eder ve kelimeleri doğru yazar.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "MEMLEKETİMİ TANIYORUM",
+                seviye: "Yazar",
+                yas: "6-10",
+                scormPath: "scorm/burdurbakveyaz.zip",
+                previewUrl: "preview/burdurbakveyaz/index.html",
+                pdfPath: "pdf/burdurbakveyaz.pdf"
+            },
+            {
+                id: 43,
+                name: "Burdur ve Mardin’in Kültürel Dokusunda Bir Yolculuk - Memleketim Mardin",
+                description: "Öğrenciler Mardin’in kültürel unsurları ile ilgili metnini okur ve olay örgüsünü anlar. ",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "MEMLEKETİMİ TANIYORUM",
+                seviye: "Yazar",
+                yas: "6-10",
+                scormPath: "scorm/Memleketimmardin.zip",
+                previewUrl: "preview/Memleketimmardin/index.html",
+                pdfPath: "pdf/Memleketimmardin.pdf"
+            },
+            {
+                id: 44,
+                name: "Burdur ve Mardin’in Kültürel Dokusunda Bir Yolculuk - Mardin - İzle ve Yanıtla",
+                description: "Öğrenciler Mardin’in doğal ve kültürel özelliklerine ilişkin bilgileri dinler; görsel-işitsel ipuçlarından çıkarımlar yapar ve bunları sözlü olarak ifade eder.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "GÜZEL MEMLEKETİM",
+                seviye: "Yazamaz",
+                yas: "11-16",
+                scormPath: "scorm/mardinizleveyanitla.zip",
+                previewUrl: "preview/mardinizleveyanitla/index.html",
+                pdfPath: "pdf/mardinizleveyanitla.pdf"
+            },
+            {
+                id: 45,
+                name: "Burdur ve Mardin’in Kültürel Dokusunda Bir Yolculuk - Mardin - Bak ve Yaz",
+                description: "Öğrenciler Mardin’e ait kültürel ögeleri verilen görsellerden hareketle tahmin eder ve kelimeleri doğru yazar.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "GÜZEL MEMLEKETİM",
+                seviye: "Yazar",
+                yas: "11-16",
+                scormPath: "scorm/mardinbakveyaz.zip",
+                previewUrl: "preview/mardinbakveyaz/index.html",
+                pdfPath: "pdf/mardinbakveyaz.pdf"
+            },
+            {
+                id: 46,
+                name: "Burdur ve Mardin’in Kültürel Dokusunda Bir Yolculuk - Burdur - Oku ve Eşleştir",
+                description: "Öğrenciler, Burdur’un kültürel ve coğrafi özelliklerini tanıtan kısa metinleri dikkatlice okuyup görsellerle ilişkilendirir.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "GÜZEL MEMLEKETİM",
+                seviye: "Yazar",
+                yas: "11-16",
+                scormPath: "scorm/burdurokuveeslestir.zip",
+                previewUrl: "preview/burdurokuveeslestir/index.html",
+                pdfPath: "pdf/burdurokuveeslestir.pdf"
+            },
+            {
+                id: 47,
+                name: "Bayraklar - Bak ve Eşleştir",
+                description: "Öğrenciler, bu ülkelerin bayraklarını doğru şekilde eşleştirerek Türkçenin dünya üzerindeki yaygınlığını fark eder.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "15 Aralık Dünya Türk Dili Ailesi Günü",
+                seviye: "Yazar",
+                yas: "11-16",
+                scormPath: "scorm/bayraklar.zip",
+                previewUrl: "preview/bayraklar/index.html",
+                pdfPath: "pdf/bayraklar.pdf"
+            },
+            {
+                id: 48,
+                name: "Bence Türkçe - Oku ve Eşleştir",
+                description: "Öğrenciler, verilen görseller ile “Bence Türkçe…” ifadeleriyle başlayan cümleleri eşleştirerek görsel okuma, anlamlandırma ve dilsel ifade becerilerini kullanır.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "15 Aralık Dünya Türk Dili Ailesi Günü",
+                seviye: "Yazar",
+                yas: "11-16",
+                scormPath: "scorm/benceTurkce.zip",
+                previewUrl: "preview/benceTurkce/index.html",
+                pdfPath: "pdf/benceTurkce.pdf"
+            },
+            {
+                id: 49,
+                name: "Türkçem - İzle ve Yanıtla",
+                description: "Öğrenciler, Türklerin bilinen ilk alfabesi olan Göktürk alfabesi ile ilgili izledikleri video ile ilgili sorulara yanıt verir.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "15 Aralık Dünya Türk Dili Ailesi Günü",
+                seviye: "Yazamaz",
+                yas: "11-16",
+                scormPath: "scorm/Turkcemvideo.zip",
+                previewUrl: "preview/Turkcemvideo/index.html",
+                pdfPath: "pdf/Turkcemvideo.pdf"
+            },
+            {
+                id: 50,
+                name: "Mevlânâ'nın Gönül Bahçesi - Eşini Bul",
+                description: "Öğrenciler, verilen görsellerin eşlerini bularak Türk dünyasında önemli bir şahsiyet olan Mevlânâ ile ilgili farkındalık kazanırlar.",
+                icon: "👪",
+                konu: "Konuşma",
+                tema: "DEĞERLERİMİZLE YAŞIYORUM",
+                seviye: "Yazamaz",
+                yas: "5-10",
+                scormPath: "scorm/mevlanayiogren.zip",
+                previewUrl: "preview/mevlanayiogren/index.html",
+                pdfPath: "pdf/mevlanayiogren.pdf"
+            },
+            {
+                id: 51,
+                name: "Mevlânâ'nın Yedi Öğüdü",
+                description: "Öğrenciler, bağlamı dikkate alarak ve videodaki içerikten yararlanarak Mevlânâ’nın öğütlerindeki boşlukları uygun kelimelerle doldurur ve Mevlânâ’nın yedi öğüdünü anlar.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "DEĞERLERİMİZLE YAŞIYORUM",
+                seviye: "Yazar",
+                yas: "5-10",
+                scormPath: "scorm/mevlananinyediogudu.zip",
+                previewUrl: "preview/mevlananinyediogudu/index.html",
+                pdfPath: "pdf/mevlananinyediogudu.pdf"
+            },
+            {
+                id: 52,
+                name: "Mevlânâ'yı Tanıyalım - Eşleştir",
+                description: "Öğrenciler, Mevlâna Celaleddin Rumi’nin hayatı, önemli eserleri, yaşadığı şehir ve Mevlevilik kültürüne ait temel unsurları görsellerle eşleştirerek tanır.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "DEĞERLERİMİZLE YAŞIYORUM",
+                seviye: "Yazar",
+                yas: "5-10",
+                scormPath: "scorm/mevlanayitaniyalim.zip",
+                previewUrl: "preview/mevlanayitaniyalim/index.html",
+                pdfPath: "pdf/mevlanayitaniyalim.pdf"
+            },
+            {
+                id: 53,
+                name: "Mevlânâ'yı Tanıyalım - Bulmaca",
+                description: "Öğrenciler, Türk kültüründe önemli bir şahsiyet olan Mevlâna ile ilgili bilgileri bulmacadan bulur ve bu konuda bilgilerini derinleştirir.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "DEĞERLERİMİZLE YAŞIYORUM",
+                seviye: "Yazar",
+                yas: "5-10",
+                scormPath: "scorm/mevlana.zip",
+                previewUrl: "preview/mevlana/index.html",
+                pdfPath: "pdf/mevlana.pdf"
+            },
+            {
+                id: 54,
+                name: "Mevlânâ: Gel, Ne Olursan Ol, Gel",
+                description: "Öğrenciler Mevlânâ ile ilgili izlediği videoda boyunca yöneltilen soruları yanıtlayarak dinlediğini Mevlânâ’nın düşünce dünyasını anlayacaktır.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "BİZİ BİZ YAPANLAR",
+                seviye: "Yazamaz",
+                yas: "11-16",
+                scormPath: "scorm/mevlanagelneolursanolgel.zip",
+                previewUrl: "preview/mevlanagelneolursanolgel/index.html",
+                pdfPath: "pdf/mevlanagelneolursanolgel.pdf"
+            },
+            {
+                id: 55,
+                name: "Mevlânâ'yı Tanıyalım - Dinle ve Eşleştir",
+                description: "Öğrenciler, Mevlânâ ile ilgili dinledikleri kısa bilgileri ilişkili görselle eşleştirir ve Mevlânâ hakkında temel çıkarımlar yaparak kültürel farkındalıklarını arttırır.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "BİZİ BİZ YAPANLAR",
+                seviye: "Yazamaz",
+                yas: "11-16",
+                scormPath: "scorm/mevlanakimdirdinleveeslestir.zip",
+                previewUrl: "preview/mevlanakimdirdinleveeslestir/index.html",
+                pdfPath: "pdf/mevlanakimdirdinleveeslestir.pdf"
+            },
+            {
+                id: 56,
+                name: "Mevlânâ'dan Öğütler",
+                description: "Öğrenciler, Mevlana’nın öğütlerini inceleyerek her bir öğüdün hangi değerle ilişkili olduğunu belirler.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "BİZİ BİZ YAPANLAR",
+                seviye: "Yazar",
+                yas: "11-16",
+                scormPath: "scorm/mevlanadanogutler.zip",
+                previewUrl: "preview/mevlanadanogutler/index.html",
+                pdfPath: "pdf/mevlanadanogutler.pdf"
+            },
+            {
+                id: 57,
+                name: "Mesnevî",
+                description: "Öğrenciler, Mevlânâ'nın Mesnevî'sinden seçilen bazı hikmetli sözlerin derin anlamlarını arkadaşlarıyla tartışarak anlama ve yorumlama yeteneğini geliştirecektir.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "BİZİ BİZ YAPANLAR",
+                seviye: "Yazar",
+                yas: "11-16",
+                scormPath: "scorm/Mesnevi.zip",
+                previewUrl: "preview/mesnevi/index.html",
+                pdfPath: "pdf/Mesnevi.pdf"
+            },
+            {
+                id: 58,
+                name: "Dede Korkut Kim?",
+                description: "Öğrenciler, Dede Korkut’un hayatını konu alan videoyu dinleyip/izleyerek temel bilgileri ayırt eder ve yöneltilen soruları doğru şekilde yanıtlar.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "DEĞERLERİMİZLE YAŞIYORUM",
+                seviye: "Yazamaz",
+                yas: "5-10",
+                scormPath: "scorm/dedekorkutkim.zip",
+                previewUrl: "preview/dedekorkutkim/index.html",
+                pdfPath: "pdf/dedekorkutkim.pdf"
+            },
+            {
+                id: 59,
+                name: "Yunus Emre Kim?",
+                description: "Öğrenciler, Yunus Emre’nin hayatını konu alan videoyu dinleyip/izleyerek temel bilgileri ayırt eder ve yöneltilen soruları doğru şekilde yanıtlar.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "DEĞERLERİMİZLE YAŞIYORUM",
+                seviye: "Yazamaz",
+                yas: "5-10",
+                scormPath: "scorm/yunusemrekim.zip",
+                previewUrl: "preview/yunusemrekim/index.html",
+                pdfPath: "pdf/yunusemrekim.pdf"
+            },
+            {
+                id: 60,
+                name: "Yunus Emre mi Korkut Dede mi?",
+                description: "Öğrenciler, Türk kültürüne ait önemli şahsiyetlerle ilgili verilen kısa bilgileri okuyarak ayırt eder; bu bilgileri ilgili görsellerle ilişkilendirir ve doğru şekilde eşleştirir.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "DEĞERLERİMİZLE YAŞIYORUM",
+                seviye: "Yazar",
+                yas: "5-10",
+                scormPath: "scorm/yunusemremidedekorkutmu.zip",
+                previewUrl: "preview/yunusemremidedekorkutmu/index.html",
+                pdfPath: "pdf/yunusemremidedekorkutmu.pdf"
+            },
+            {
+                id: 61,
+                name: "Boğaçhan Destanı - İzle",
+                description: "Öğrenciler, dinlediği/izlediği geleneksel Türk kültürüne ait sözlü bir anlatının (Dede Korkut Hikâyeleri) olay örgüsü, karakterler ve kültürel ögelerini belirleyerek çıkarımlar yapar ve bunları sorulara yanıtlayarak ifade eder.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "DEĞERLERİMİZLE YAŞIYORUM",
+                seviye: "Yazar",
+                yas: "5-10",
+                scormPath: "scorm/bogachandestaniizle.zip",
+                previewUrl: "preview/bogachandestaniizle/index.html",
+                pdfPath: "pdf/bogachandestaniizle.pdf"
+            },
+            {
+                id: 62,
+                name: "Yunus Emre ve Şiir",
+                description: "Öğrenciler, videodaki ipuçlarını kullanarak Yunus Emre’nin yaşamı ve düşünce dünyasına ait temel bilgileri açıklayabileceklerdir.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "BİZİ BİZ YAPANLAR",
+                seviye: "Yazamaz",
+                yas: "11-15",
+                scormPath: "scorm/yunusemrevideo.zip",
+                previewUrl: "preview/yunusemrevideo/index.html",
+                pdfPath: "pdf/yunusemrevideo.pdf"
+            },
+            {
+                id: 63,
+                name: "Yunus Emre'nin Dilinden",
+                description: "Öğrenciler, Yunus Emre’nin şiirlerinden verilen kesitleri okur, anlamını kavrar ve şiirlerdeki duygu, düşünce ve temayı yansıtan uygun görsellerle eşleştirir.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "DEĞERLERİMİZLE YAŞIYORUM",
+                seviye: "Yazamaz",
+                yas: "5-10",
+                scormPath: "scorm/yunusemrenindilinden.zip",
+                previewUrl: "preview/yunusemrenindilinden/index.html",
+                pdfPath: "pdf/yunusemrenindilinden.pdf"
+            },
+            {
+                id: 64,
+                name: "Yunus Emre'yi Tanıyalım",
+                description: "Öğrenciler, dinledikleri bilgileri özümseyerek bu bilgileri ilgili görsellerle ilişkilendiren temel ipuçlarını doğru bir şekilde belirler.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "BİZİ BİZ YAPANLAR",
+                seviye: "Yazamaz",
+                yas: "11-15",
+                scormPath: "scorm/yunusemreyitaniyalim.zip",
+                previewUrl: "preview/yunusemreyitaniyalim/index.html",
+                pdfPath: "pdf/yunusemreyitaniyalim.pdf"
+            },
+            {
+                id: 65,
+                name: "Adım Yunus Emre",
+                description: "Öğrenci, metindeki boşlukları anlamca uygun kelimelerle doldurarak metni okuyarak Yunus Emre’yi temel özellikleriyle tanır.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "BİZİ BİZ YAPANLAR",
+                seviye: "Yazar",
+                yas: "11-15",
+                scormPath: "scorm/adimYunusEmre.zip",
+                previewUrl: "preview/adimYunusEmre/index.html",
+                pdfPath: "pdf/adimYunusEmre.pdf"
+            },
+            {
+                id: 66,
+                name: "Yunus Emre Değerleri",
+                description: "Öğrenciler, oyundaki gizli kelimeyi tahmin ederken Yunus Emre’nin temel değerlerini tanır.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "BİZİ BİZ YAPANLAR",
+                seviye: "Yazar",
+                yas: "11-15",
+                scormPath: "scorm/YunusEmreDegerleri.zip",
+                previewUrl: "preview/YunusEmreDegerleri/index.html",
+                pdfPath: "pdf/YunusEmreDegerleri.pdf"
+            },
+            {
+                id: 67,
+                name: "Nerede Ne Var?",
+                description: "Öğrenciler, ülkemizde coğrafi işaretli ürünlerin hangi şehirlerimize ait olduğunu bulur ve coğrafi işaretli ürünler üzerinden yerli üretimin ve kültürel mirasın korunmasının önemini kavrar.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "DEĞERLERİMİZLE YAŞIYORUM",
+                seviye: "Yazamaz",
+                yas: "5-10",
+                scormPath: "scorm/cografiisaretliurunler.zip",
+                previewUrl: "preview/cografiisaretliurunler/index.html",
+                pdfPath: "pdf/cografiisaretliurunler.pdf"
+            },
+            {
+                id: 68,
+                name: "Tasarruf Edelim",
+                description: "Öğrenci, izlediği/dinlediği metinden hareketle tasarrufun ve israf etmemenin önemini kavrar.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "DEĞERLERİMİZLE YAŞIYORUM",
+                seviye: "Yazamaz",
+                yas: "5-10",
+                scormPath: "scorm/tasarrufedelim.zip",
+                previewUrl: "preview/tasarrufedelim/index.html",
+                pdfPath: "pdf/tasarrufedelim.pdf"
+            },
+            {
+                id: 69,
+                name: "Atalar Ne Demiş?",
+                description: "Öğrenciler, tutumlu olma ile ilgili verilen atasözlerini anlayarak atasözlerin içeriğini yansıtan ilgili görsellerle eşleştirir.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "DEĞERLERİMİZLE YAŞIYORUM",
+                seviye: "Yazamaz",
+                yas: "5-10",
+                scormPath: "scorm/atalarnedemis.zip",
+                previewUrl: "preview/atalarnedemis/index.html",
+                pdfPath: "pdf/atalarnedemis.pdf"
+            },
+            {
+                id: 70,
+                name: "Nerede Ne Yetişir?",
+                description: "Öğrenciler Türkiye’de yetişen tarım ürünlerini bu ürünlerle ünlenen şehirlerle ilişkilendirerek ülkemizin tarımsal zenginliğini tanır.",
+                icon: "👪",
+                konu: "Yazma",
+                tema: "DEĞERLERİMİZLE YAŞIYORUM",
+                seviye: "Yazar",
+                yas: "5-10",
+                scormPath: "scorm/ulkemizitaniyalim.zip",
+                previewUrl: "preview/ulkemizitaniyalim/index.html",
+                pdfPath: "pdf/ulkemizitaniyalim.pdf"
+            },
+            {
+                id: 71,
+                name: "Yerli ve Millî Üretim",
+                description: "Öğrenciler dinlediği şarkı ve verilen sorular aracılığıyla Türkiye’nin savunma sanayisinde yerli ve millî olarak üretilen ürünleri tanır.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "DEĞERLERİMİZLE YAŞIYORUM",
+                seviye: "Yazar",
+                yas: "5-10",
+                scormPath: "scorm/yerlivemilliuretim.zip",
+                previewUrl: "preview/yerlivemilliuretim/index.html",
+                pdfPath: "pdf/yerlivemilliuretim.pdf"
+            },
+            {
+                id: 72,
+                name: "Bil Bakalım, Ne Nerede?",
+                description: "Öğrenciler, Türkiye’de yetiştirilen temel tarım ürünlerini tanır; bu ürünlerin yetiştirildiği illeri eşleştirerek Türk tarım ürünlerinin üretim yerlerine ilişkin bilinç geliştirir.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "BİZİ BİZ YAPANLAR",
+                seviye: "Yazamaz",
+                yas: "11-16",
+                scormPath: "scorm/bilbakalimnenerede.zip",
+                previewUrl: "preview/bilbakalimnenerede/index.html",
+                pdfPath: "pdf/bilbakalimnenerede.pdf"
+            },
+            {
+                id: 73,
+                name: "Tutum ve Yatırım",
+                description: "Öğrenciler, sağlıklı tüketim, yerli üretim ve coğrafi işaret kavramlarını tanır; yerli malı kullanmanın ülke ekonomisine ve toplumsal sorumluluğa katkısını fark eder.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "BİZİ BİZ YAPANLAR",
+                seviye: "Yazamaz",
+                yas: "11-16",
+                scormPath: "scorm/tutumveyatirim.zip",
+                previewUrl: "preview/tutumveyatirim/index.html",
+                pdfPath: "pdf/tutumveyatirim.pdf"
+            },
+            {
+                id: 74,
+                name: "Bereketli Topraklarımız",
+                description: "Öğrenciler, Türkiye’nin farklı bölgelerinde yetiştirilen tarım ürünlerini yetiştirildiği illerle ilişkilendirir; yerli üretimin ülke ekonomisine katkısını kavrayarak bilinçli tüketici olma bilinci geliştirir.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "BİZİ BİZ YAPANLAR",
+                seviye: "Yazar",
+                yas: "11-16",
+                scormPath: "scorm/bereketlitopraklarimiz.zip",
+                previewUrl: "preview/bereketlitopraklarimiz/index.html",
+                pdfPath: "pdf/bereketlitopraklarimiz.pdf"
+            },
+            {
+                id: 75,
+                name: "Kaan",
+                description: "Öğrenciler, KAAN ile ilgili video ve metinden hareketle bağlama uygun kelimeleri belirler, yeni kelimelerin anlamlarını çıkarır ve yerli ve millî teknolojiye ilişkin bilinç, sorumluluk ve vatanseverlik değerleri doğrultusunda farkındalık geliştirir.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "BİZİ BİZ YAPANLAR",
+                seviye: "Yazar",
+                yas: "11-16",
+                scormPath: "scorm/kaan.zip",
+                previewUrl: "preview/kaan/index.html",
+                pdfPath: "pdf/kaan.pdf"
+            },
+            {
+                id: 76,
+                name: "TCG Anadolu",
+                description: "ÖÖğrenciler, TCG Anadolu örneğinden hareketle yerli ve millî teknolojinin önemini fark eder ve bu doğrultuda TCG Anadolu’nun Türk savunma sanayisindeki yerini anlamlandırır.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "BİZİ BİZ YAPANLAR",
+                seviye: "Yazar",
+                yas: "11-16",
+                scormPath: "scorm/tgcanadolu.zip",
+                previewUrl: "preview/tgcanadolu/index.html",
+                pdfPath: "pdf/tcganadolu.pdf"
+            },
+            {
+                id: 77,
+                name: "Kış İçecekleri - Eşleştir",
+                description: "Öğrenci, Türk kültüründe geleneksel kış içecekleri ile ilgili özellikleri dinler ve uygun olan görselle eşleştirerek bu içecekleri tanır",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "DEĞERLERİMİZLE YAŞIYORUM",
+                seviye: "Yazamaz",
+                yas: "5-10",
+                scormPath: "scorm/kisiceceklerieslestir.zip",
+                previewUrl: "preview/kisiceceklerieslestir/index.html",
+                pdfPath: "pdf/kisiceceklerieslestir.pdf"
+            },
+            {
+                id: 78,
+                name: "Boza",
+                description: "Öğrenci, izlediği/dinlediği metinden hareketle Türk kültüründe geleneksel kış içeceği olan boza ile ilgili bilgi sahibi olur.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "DEĞERLERİMİZLE YAŞIYORUM",
+                seviye: "Yazamaz",
+                yas: "5-10",
+                scormPath: "scorm/bozadinleveyanitla.zip",
+                previewUrl: "preview/bozadinleveyanitla/index.html",
+                pdfPath: "pdf/bozadinleveyanitla.pdf"
+            },
+            {
+                id: 79,
+                name: "Kış İçecekleri",
+                description: "Öğrenci,  Türk kültüründe geleneksel kış içeceklerini öğrenir.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "DEĞERLERİMİZLE YAŞIYORUM",
+                seviye: "Yazar",
+                yas: "5-10",
+                scormPath: "scorm/kisicecekleri.zip",
+                previewUrl: "preview/kisicecekleri/index.html",
+                pdfPath: "pdf/kisicecekleri.pdf"
+            },
+            {
+                id: 80,
+                name: "Kış İçecekleri - Oku ve Bul",
+                description: "Öğrenci,  Türk kültüründe geleneksel kış içeceklerinin özelliklerini öğrenir.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "DEĞERLERİMİZLE YAŞIYORUM",
+                seviye: "Yazar",
+                yas: "5-10",
+                scormPath: "scorm/kisiceceklerinibul.zip",
+                previewUrl: "preview/kisiceceklerinibul/index.html",
+                pdfPath: "pdf/kisiceceklerinibul.pdf"
+            },
+            {
+                id: 81,
+                name: "Nane Limon",
+                description: "Öğrenci,  izlediği/dinlediği metinden hareketle Türk kültüründe geleneksel kış içeceği olan nane limon çayı ile ilgili bilgi sahibi olur.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "DEĞERLERİMİZLE YAŞIYORUM",
+                seviye: "Yazar",
+                yas: "5-10",
+                scormPath: "scorm/nanelimon.zip",
+                previewUrl: "preview/nanelimon/index.html",
+                pdfPath: "pdf/nanelimon.pdf"
+            },
+            {
+                id: 82,
+                name: "Salep Yapıyoruz",
+                description: "Öğrenci, izlediği/dinlediği metinden hareketle Türk kültüründe geleneksel kış içeceği olan salep içeceğinin yapım aşamaları ile ilgili bilgi sahibi olur.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "DEĞERLERİMİZLE YAŞIYORUM",
+                seviye: "Yazar",
+                yas: "5-10",
+                scormPath: "scorm/salepyapiyoruz.zip",
+                previewUrl: "preview/salepyapiyoruz/index.html",
+                pdfPath: "pdf/salepyapiyoruz.pdf"
+            },
+            {
+                id: 83,
+                name: "Bir Yudum Kış",
+                description: "Öğrenciler, izlediği/dinlediği metinden hareketle Türk kültüründe geleneksel kış içecekleri ile ilgili bilgi sahibi olur.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "BİZİ BİZ YAPANLAR",
+                seviye: "Yazamaz",
+                yas: "11-16",
+                scormPath: "scorm/biryudumkis.zip",
+                previewUrl: "preview/biryudumkis/index.html",
+                pdfPath: "pdf/biryudumkis.pdf"
+            },
+            {
+                id: 84,
+                name: "Muhabbetin En Sıcak Hâli Çay",
+                description: "Öğrenciler, izlediği/dinlediği metinden hareketle Türk kültüründe çay içeceğinin yeri konusunda bilgi sahibi olur.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "BİZİ BİZ YAPANLAR",
+                seviye: "Yazamaz",
+                yas: "11-16",
+                scormPath: "scorm/muhabbetinensicakhalicay.zip",
+                previewUrl: "preview/muhabbetinensicakhalicay/index.html",
+                pdfPath: "pdf/muhabbetinensicakhalicay.pdf"
+            },
+            {
+                id: 85,
+                name: "Nasıl Çay Demlerim",
+                description: "Öğrenci, izlediği/dinlediği metinden hareketle Türk kültüründe geleneksel kış içeceği olan çay içeceğinin yapım aşamaları ile ilgili bilgi sahibi olur.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "BİZİ BİZ YAPANLAR",
+                seviye: "Yazar",
+                yas: "11-16",
+                scormPath: "scorm/nasilcaydemlerim.zip",
+                previewUrl: "preview/nasilcaydemlerim/index.html",
+                pdfPath: "pdf/nasilcaydemlerim.pdf"
+            },
+            {
+                id: 86,
+                name: "Nane Limon Kabuğu",
+                description: "Öğrenci, izlediği/dinlediği metinden hareketle Türk kültüründe geleneksel kış içeceği olan nane limon içeceğinin yapım aşamaları ile ilgili bilgi sahibi olur.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "BİZİ BİZ YAPANLAR",
+                seviye: "Yazar",
+                yas: "11-16",
+                scormPath: "scorm/nanelimonkabugu.zip",
+                previewUrl: "preview/nanelimonkabugu/index.html",
+                pdfPath: "pdf/nanelimonkabugu.pdf"
+            },
+            {
+                id: 88,
+                name: "Tilki ile Leylek",
+                description: "Öğrenciler, izlediklerinden / dinlediklerinden hareketle olaylar hakkında tahminlerde bulunur. ",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "DEĞERLERİMİZLE YAŞIYORUM",
+                seviye: "Yazamaz",
+                yas: "5-10",
+                scormPath: "scorm/tilkiileleylek.zip",
+                previewUrl: "preview/tilkiileleylek/index.html",
+                pdfPath: "pdf/tilkiileleylek.pdf"
+            },
+            {
+                id: 89,
+                name: "Anka Kuşu Masalı",
+                description: "Öğrenciler Anka Kuşu Masalı’nı dinleyerek metindeki olayları ve değerleri (cesaret, akıl, sabır) sözlü olarak ifade eder ve sorulara uygun cevaplar verir.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "DEĞERLERİMİZLE YAŞIYORUM",
+                seviye: "Yazamaz",
+                yas: "5-10",
+                scormPath: "scorm/ankakusumasali.zip",
+                previewUrl: "preview/ankakusumasali/index.html",
+                pdfPath: "pdf/ankakusumasali.pdf"
+            },
+            {
+                id: 90,
+                name: "Keloğlan ve Şehzade Masalı",
+                description: "Öğrenci, Keloğlan ve Şehzade Masalı’nı dinleyerek metindeki olayları ve değerleri (akıl, cesaret, dostluk) anlayıp soruları sözlü ve yazılı olarak doğru şekilde cevaplar. ",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "DEĞERLERİMİZLE YAŞIYORUM",
+                seviye: "Yazar",
+                yas: "5-10",
+                scormPath: "scorm/keloglanvesehzademasali.zip",
+                previewUrl: "preview/keloglanvesehzademasali/index.html",
+                pdfPath: "pdf/keloglanvesehzademasali.pdf"
+            },
+            {
+                id: 91,
+                name: "Keloğlan ve Şehzade Masalı Bulmaca",
+                description: "Öğrenci, Keloğlan ve Şehzade Masalı bağlamında verilen sözcüklerin anlam ve görsellerinden yararlanarak sözcükleri tahmin eder ve yazılı olarak doğru kullanır. ",
+                icon: "👪",
+                konu: "Yazma",
+                tema: "DEĞERLERİMİZLE YAŞIYORUM",
+                seviye: "Yazar",
+                yas: "5-10",
+                scormPath: "scorm/keloglanvesehzademasalibulmaca.zip",
+                previewUrl: "preview/keloglanvesehzademasalibulmaca/index.html",
+                pdfPath: "pdf/keloglanvesehzademasalibulmaca.pdf"
+            },
+            {
+                id: 92,
+                name: "Masallarımız ve Değerlerimiz",
+                description: "Öğrenci, dinlediği masalları içeriklerinde vurgulanan değerlerle (yardımlaşma, dostluk, çalışkanlık, farklılıklara saygı) eşleştirir.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "DEĞERLERİMİZLE YAŞIYORUM",
+                seviye: "Yazar",
+                yas: "5-10",
+                scormPath: "scorm/masallarimizvedegerlerimiz.zip",
+                previewUrl: "preview/masallarimizvedegerlerimiz/index.html",
+                pdfPath: "pdf/masallarimizvedegerlerimiz.pdf"
+            },
+            {
+                id: 93,
+                name: "Bereketli Sofra",
+                description: "Öğrencilerin masalda geçen olayları hatırlar, dinleme yoluyla ana olayları ve yardımcı olayları ayırt eder.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "BİZİ BİZ YAPANLAR",
+                seviye: "Yazamaz",
+                yas: "11-16",
+                scormPath: "scorm/bereketlisofra.zip",
+                previewUrl: "preview/bereketlisofra/index.html",
+                pdfPath: "pdf/bereketlisofra.pdf"
+            },
+            {
+                id: 94,
+                name: "Keloğlan ile Şehzade",
+                description: "Öğrenciler, Keloğlan ile Şehzade masalının olay örgüsünü doğru sırayla kavrar ve dinledikleri/izledikleri metinden hareketle sorulara anlamlı ve gerekçeli cevaplar verir. ",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "BİZİ BİZ YAPANLAR",
+                seviye: "Yazamaz",
+                yas: "11-16",
+                scormPath: "scorm/keloglanilesehzade.zip",
+                previewUrl: "preview/keloglanilesehzade/index.html",
+                pdfPath: "pdf/keloglanilesehzade.pdf"
+            },
+            {
+                id: 95,
+                name: "Padişahın Kızları",
+                description: "Öğrenci, Türk masallarına ait bir metinde bağlamdan hareketle kelime anlamlarını tahmin ederek boşlukları anlamca uygun kelimelerle doldurur ve masalların kültürel değerler ile iyilik–kötülük çatışmasını yansıttığını fark eder.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "BİZİ BİZ YAPANLAR",
+                seviye: "Yazar",
+                yas: "11-16",
+                scormPath: "scorm/padisahinkizlarimasali.zip",
+                previewUrl: "preview/padisahinkizlarimasali/index.html",
+                pdfPath: "pdf/padisahinkizlarimasali.pdf"
+            },
+            {
+                id: 96,
+                name: "Keloğlan Kimdir",
+                description: "Öğrenci, Keloğlan masalları üzerinden bağlama uygun kelime seçimi yaparak Keloğlan’ın kişilik özelliklerini anlar.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "BİZİ BİZ YAPANLAR",
+                seviye: "Yazar",
+                yas: "11-16",
+                scormPath: "scorm/keloglankimdir.zip",
+                previewUrl: "preview/keloglankimdir/index.html",
+                pdfPath: "pdf/keloglankimdir.pdf"
+            },
+            {
+                id: 97,
+                name: "Masal Milyoneri",
+                description: "Öğrenciler, Türk masallarını okur ve metnin temel özelliklerinden hareketle masalların kültürel değerleri nasıl aktardığını fark eder. ",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "BİZİ BİZ YAPANLAR",
+                seviye: "Yazar",
+                yas: "11-16",
+                scormPath: "scorm/masalmilyoneri.zip",
+                previewUrl: "preview/masalmilyoneri/index.html",
+                pdfPath: "pdf/masalmilyoneri.pdf"
+            },
+            {
+                id: 98,
+                name: "Türk Masallarında Unsur",
+                description: "Öğrenciler Türk masallarında sıkça yer alan karakter ve unsurları tanır.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "BİZİ BİZ YAPANLAR",
+                seviye: "Yazar",
+                yas: "11-16",
+                scormPath: "scorm/turkmasallarindaunsur.zip",
+                previewUrl: "preview/turkmasallarindaunsur/index.html",
+                pdfPath: "pdf/turkmasallarindaunsur.pdf"
+            },
+            {
+                id: 99,
+                name: "Ebe Kim Olacak?",
+                description: "Öğrenci, dinlediği/izlediği içerikten hareketle geleneksel Türk oyunlarında ebe seçiminin nasıl yapıldığını sözlü olarak ifade eder.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "GELENEKSEL TÜRK OYUNLARI",
+                seviye: "Yazamaz",
+                yas: "5-10",
+                scormPath: "scorm/ebekimolacak.zip",
+                previewUrl: "preview/ebekimolacak/index.html",
+                pdfPath: "pdf/ebekimolacak.pdf"
+            },
+            {
+                id: 100,
+                name: "Ooo Piti Piti",
+                description: "Öğrenci, izlediği/dinlediği içerikten hareketle oyunlarda ebe seçiminin nedenini ve ebenin görevini sözlü olarak ifade eder.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "GELENEKSEL TÜRK OYUNLARI",
+                seviye: "Yazamaz",
+                yas: "5-10",
+                scormPath: "scorm/ooopitipiti.zip",
+                previewUrl: "preview/ooopitipiti/index.html",
+                pdfPath: "pdf/ooopitipiti.pdf"
+            },
+            {
+                id: 101,
+                name: "Ebe Nerede?",
+                description: "Öğrenci, dinlediği sayışmaca metinlerini uygun görsellerle eşleştirerek geleneksel Türk oyunlarında ebe seçiminin nasıl yapıldığını fark eder.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "GELENEKSEL TÜRK OYUNLARI",
+                seviye: "Yazamaz",
+                yas: "5-10",
+                scormPath: "scorm/ebenerededinle.zip",
+                previewUrl: "preview/ebenerededinle/index.html",
+                pdfPath: "pdf/ebenerededinle.pdf"
+            },
+            {
+                id: 102,
+                name: "Ebe, Ebe Nerede?",
+                description: "Öğrenci, dinlediği sayışmacayı anlayarak bölümlerini doğru sıraya dizer ve geleneksel Türk oyunlarında kullanılan sayışmacaların yapısını fark eder.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "GELENEKSEL TÜRK OYUNLARI",
+                seviye: "Yazamaz",
+                yas: "5-10",
+                scormPath: "scorm/ebeneredesirala.zip",
+                previewUrl: "preview/ebeneredesirala/index.html",
+                pdfPath: "pdf/ebeneredesirala.pdf"
+            },
+            {
+                id: 103,
+                name: "Portakalı Soydum",
+                description: "Öğrenci, dinlediği sayışmacadaki eksik ifadeleri tamamlayarak sayışmanın bütünlüğünü ve ritmik yapısını fark eder.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "GELENEKSEL TÜRK OYUNLARI",
+                seviye: "Yazar",
+                yas: "5-10",
+                scormPath: "scorm/portakalisoydum.zip",
+                previewUrl: "preview/portakalisoydum/index.html",
+                pdfPath: "pdf/portakalisoydum.pdf"
+            },
+
+            {
+                id: 104,
+                name: "Bilmece Bildirmece - Dinleme",
+                description: "Öğrenciler, Türk kültürüne ait bilmecelerdeki ipuçlarından yola çıkarak doğru cevapları görsellerle eşleştirir.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "GELENEKSEL TÜRK OYUNLARI",
+                seviye: "Yazamaz",
+                yas: "11-16",
+                scormPath: "scorm/bilmecebildirmecedinle.zip",
+                previewUrl: "preview/bilmecebildirmecedinle/index.html",
+                pdfPath: "pdf/bilmecebildirmecedinle.pdf"
+            },
+            {
+                id: 105,
+                name: "Ortak Miras",
+                description: "Öğrenci, izlediği videoda beştaş ve dokuztaş oyunlarının kurallarını ve oynanış aşamalarını dikkatle dinler ve beştaş ve dokuztaş oyunlarının nasıl oynandığını kendi cümleleriyle sözlü olarak ifade eder.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "GELENEKSEL TÜRK OYUNLARI",
+                seviye: "Yazamaz",
+                yas: "11-16",
+                scormPath: "scorm/ortakmiras.zip",
+                previewUrl: "preview/ortakmiras/index.html",
+                pdfPath: "pdf/ortakmiras.pdf"
+            },
+            {
+                id: 106,
+                name: "Bilmece Bildirmece Oku",
+                description: "Öğrenciler, Türk kültürüne ait bilmecelerdeki ipuçlarından yola çıkarak doğru cevapları görsellerle eşleştirir.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "GELENEKSEL TÜRK OYUNLARI",
+                seviye: "Yazar",
+                yas: "11-16",
+                scormPath: "scorm/bilmecebildirmeceoku.zip",
+                previewUrl: "preview/bilmecebildirmeceoku/index.html",
+                pdfPath: "pdf/bilmecebildirmeceoku.pdf"
+            },
+            {
+                id: 107,
+                name: "Şarkıyı Söyle Bilmeceyi Çöz",
+                description: "Öğrenciler, şarkıyı dikkatle dinleyerek eksik kelimeleri tamamlar, şarkı sözlerindeki ipuçlarından hareketle bilmecenin cevabını tahmin edip sözlü olarak ifade eder.",
+                icon: "👪",
+                konu: "Yazma",
+                tema: "GELENEKSEL TÜRK OYUNLARI",
+                seviye: "Yazar",
+                yas: "11-16",
+                scormPath: "scorm/sarkiyisoylebilmeceyicoz.zip",
+                previewUrl: "preview/sarkiyisoylebilmeceyicoz/index.html",
+                pdfPath: "pdf/sarkiyisoylebilmeceyicoz.pdf"
+            },
+            {
+                id: 108,
+                name: "Mangalayı Tanıyalım",
+                description: "Öğrenci geleneksel Türk oyunu mangalanın temel kurallarını öğrenir.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "GELENEKSEL TÜRK OYUNLARI",
+                seviye: "Yazamaz",
+                yas: "5-10",
+                scormPath: "scorm/mangalayitaniyalim.zip",
+                previewUrl: "preview/mangalayitaniyalim/index.html",
+                pdfPath: "pdf/mangalayitaniyalim.pdf"
+            },
+            {
+                id: 109,
+                name: "Mangala Taş Dağıtımı",
+                description: "Öğrenci, geleneksel Türk oyunu mangala ile ilgili dinlediği metni anlayarak taş dağıtım kurallarını açıklar.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "GELENEKSEL TÜRK OYUNLARI",
+                seviye: "Yazamaz",
+                yas: "5-10",
+                scormPath: "scorm/mangalatasdagitimi.zip",
+                previewUrl: "preview/mangalatasdagitimi/index.html",
+                pdfPath: "pdf/mangalatasdagitimi.pdf"
+            },
+            {
+                id: 110,
+                name: "Mangala Taş Alma",
+                description: "Öğrenci, geleneksel Türk oyunu mangala ile ilgili dinlediği metni anlayarak taş alma kurallarını açıklar.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "GELENEKSEL TÜRK OYUNLARI",
+                seviye: "Yazamaz",
+                yas: "5-10",
+                scormPath: "scorm/mangalatasalma.zip",
+                previewUrl: "preview/mangalatasalma/index.html",
+                pdfPath: "pdf/mangalatasalma.pdf"
+            },
+            {
+                id: 111,
+                name: "Mangala Oyun Sonu Kuralları",
+                description: "Öğrenci, geleneksel Türk oyunu mangala ile ilgili dinlediği metni anlayarak oyun sırasında yapılan hamlelerin sonuçlarını açıklayabilir.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "GELENEKSEL TÜRK OYUNLARI",
+                seviye: "Yazamaz",
+                yas: "5-10",
+                scormPath: "scorm/mangalaoyunsonukurallari.zip",
+                previewUrl: "preview/mangalaoyunsonukurallari/index.html",
+                pdfPath: "pdf/mangalaoyunsonukurallari.pdf"
+            },
+            {
+                id: 112,
+                name: "Mangala Oyun Sonu",
+                description: "Öğrenci, geleneksel Türk oyunu mangala ile ilgili dinlediği metni anlayarak oyun kurallarını ve oyun sonunda yapılması gerekenleri açıklar.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "GELENEKSEL TÜRK OYUNLARI",
+                seviye: "Yazamaz",
+                yas: "5-10",
+                scormPath: "scorm/mangalaoyunsonu.zip",
+                previewUrl: "preview/mangalaoyunsonu/index.html",
+                pdfPath: "pdf/mangalaoyunsonu.pdf"
+            },
+            {
+                id: 113,
+                name: "Hımbıl",
+                description: "Öğrenci, geleneksel Türk oyunu Hımbıl oyununu dinleyerek kurallarını, amaçlarını ve oyun sırasında yapılması gereken hareketleri ayırt eder.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "GELENEKSEL TÜRK OYUNLARI",
+                seviye: "Yazamaz",
+                yas: "5-10",
+                scormPath: "scorm/himbil.zip",
+                previewUrl: "preview/himbil/index.html",
+                pdfPath: "pdf/himbil.pdf"
+            },
+            {
+                id: 114,
+                name: "İsim, Şehir, Bitki",
+                description: "Öğrenci, geleneksel Türk oyunu mangala ile ilgili dinlediği metni anlar, oyun ile ilgili soruları okur  oyun kurallarını ve oyun sonunda yapılması gerekenleri açıklar.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "GELENEKSEL TÜRK OYUNLARI",
+                seviye: "Yazar",
+                yas: "5-10",
+                scormPath: "scorm/isimsehirbitki.zip",
+                previewUrl: "preview/isimsehirbitki/index.html",
+                pdfPath: "pdf/isimsehirbitki.pdf"
+            },
+            {
+                id: 115,
+                name: "İsim, Şehir, Bitki Oynayalım",
+                description: "Öğrenci, geleneksel Türk oyunu ‘İsim/Şehir/Bitki’yi kurallarına uygun şekilde oynayabilir.",
+                icon: "👪",
+                konu: "Yazma",
+                tema: "GELENEKSEL TÜRK OYUNLARI",
+                seviye: "Yazar",
+                yas: "5-10",
+                scormPath: "scorm/isimsehirbitkioynayalim.zip",
+                previewUrl: "preview/isimsehirbitkioynayalim/index.html",
+                pdfPath: "pdf/isimsehirbitkioynayalim.pdf"
+            },
+            {
+                id: 116,
+                name: "Geleneksel Türk Oyunu: Mangala",
+                description: "Öğrenciler, Mangala oyununun taş ve kuyu sayısı, kuralları ve oynanış biçimi hakkında bilgi sahibi olur.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "GELENEKSEL TÜRK OYUNLARI",
+                seviye: "Yazamaz",
+                yas: "11-16",
+                scormPath: "scorm/mangala.zip",
+                previewUrl: "preview/mangala/index.html",
+                pdfPath: "pdf/mangala.pdf"
+            },
+            {
+                id: 117,
+                name: "Sobele",
+                description: "Öğrenci, geleneksel Türk oyunu Saklambaç bağlamında konum bildiren sözcükleri doğru kullanarak görselleri sözlü olarak betimler.",
+                icon: "👪",
+                konu: "Konuşma",
+                tema: "GELENEKSEL TÜRK OYUNLARI",
+                seviye: "Yazamaz",
+                yas: "11-16",
+                scormPath: "scorm/sobele.zip",
+                previewUrl: "preview/sobele/index.html",
+                pdfPath: "pdf/sobele.pdf"
+            },
+            {
+                id: 118,
+                name: "Oyunlarımız",
+                description: "Öğrenci, geleneksel oyunları içeride ve dışarıda oynananlar olarak sınıflandırır, tercihlerini sözlü olarak ifade eder ve gerekçelendirir.",
+                icon: "👪",
+                konu: "Konuşma",
+                tema: "GELENEKSEL TÜRK OYUNLARI",
+                seviye: "Yazar",
+                yas: "11-16",
+                scormPath: "scorm/oyunlarimiz.zip",
+                previewUrl: "preview/oyunlarimiz/index.html",
+                pdfPath: "pdf/oyunlarimiz.pdf"
+            },
+            {
+                id: 119,
+                name: "Saklambaç",
+                description: "Öğrenciler, saklambaç oyununun oynanış adımlarını okuduktan sonra mantıklı sıraya koyar.",
+                icon: "👪",
+                konu: "Konuşma",
+                tema: "GELENEKSEL TÜRK OYUNLARI",
+                seviye: "Yazar",
+                yas: "11-16",
+                scormPath: "scorm/saklambac.zip",
+                previewUrl: "preview/saklambac/index.html",
+                pdfPath: "pdf/saklambac.pdf"
+            },
+            {
+                id: 120,
+                name: "İsim, Şehir, Bitki, Hayvan",
+                description: "Öğrenci, “İsim–Şehir–Hayvan–Bitki” oyununun kurallarını uygulayarak kelimeleri doğru kategorilere yerleştirir, sözcük dağarcığını geliştirir ve iş birliği içinde oynar.",
+                icon: "👪",
+                konu: "Yazma",
+                tema: "GELENEKSEL TÜRK OYUNLARI",
+                seviye: "Yazar",
+                yas: "11-16",
+                scormPath: "scorm/isimsehirbitkihayvan.zip",
+                previewUrl: "preview/isimsehirbitkihayvan/index.html",
+                pdfPath: "pdf/isimsehirbitkihayvan.pdf"
+            },
+            {
+                id: 121,
+                name: "Bayrağımız",
+                description: "Öğrenciler, bayrak sevgisinin millî kimlik ve aidiyet bilinciyle pekiştirir; bayrağımızın kardeşliği, birlik ruhunu ve ortak gelecek idealini temsil eden bir değer olduğunu kavrar. ",
+                icon: "👪",
+                konu: "Konuşma",
+                tema: "Bayrak Sevgisi",
+                seviye: "Yazamaz",
+                yas: "6-10",
+                scormPath: "scorm/bayragimiz.zip",
+                previewUrl: "preview/bayragimiz/index.html",
+                pdfPath: "pdf/bayragimiz.pdf"
+            },
+            {
+                id: 122,
+                name: "Bayrak Şiiri",
+                description: "Öğrenciler, bayrak sevgisinin millî kimlik ve aidiyet bilinciyle pekiştirir; bayrağımızın kardeşliği, birlik ruhunu ve ortak gelecek idealini temsil eden bir değer olduğunu kavrar. ",
+                icon: "👪",
+                konu: "Yazma",
+                tema: "Bayrak Sevgisi",
+                seviye: "Yazar",
+                yas: "11-16",
+                scormPath: "scorm/bayraksiiri.zip",
+                previewUrl: "preview/bayraksiiri/index.html",
+                pdfPath: "pdf/bayraksiiri.pdf"
+            },
+            {
+                id: 123,
+                name: "Temizlik ve Türk Kültürü - Dinle",
+                description: "Öğrenciler, temizlik ile ilgili temel kelimeleri ve kavramları anlar; temizliğin Türk kültürüne temizliğin önemine yönelik bir farkındalık geliştirir. ",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "SAĞLIĞIMIZI KORUYALIM",
+                seviye: "Yazamaz",
+                yas: "5-10",
+                scormPath: "scorm/temizlikveturkkulturuyazamazelhijyeni.zip",
+                previewUrl: "preview/temizlikveturkkulturuyazamazelhijyeni/index.html",
+                pdfPath: "pdf/temizlikveturkkulturuyazamazelhijyeni.pdf"
+            },
+            {
+                id: 124,
+                name: "Temizlik ve Türk Kültürü - Oku",
+                description: "Öğrenciler, temizlik ile ilgili temel kelimeleri ve kavramları anlar; temizliğin Türk kültürüne temizliğin önemine yönelik bir farkındalık geliştirir. ",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "SAĞLIĞIMIZI KORUYALIM",
+                seviye: "Yazar",
+                yas: "5-10",
+                scormPath: "scorm/temizlikveturkkulturuyazarzelhijyeni.zip",
+                previewUrl: "preview/temizlikveturkkulturuyazarelhijyeni/index.html",
+                pdfPath: "pdf/temizlikveturkkulturuyazarelhijyeni.pdf"
+            },
+            {
+                id: 125,
+                name: "Temizlik ve Misafirlik - Dinle",
+                description: "Öğrenciler, temizlik ile ilgili temel kelimeleri ve kavramları anlar; temizliğin Türk kültürüne temizliğin önemine yönelik bir farkındalık geliştirir. ",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "SAĞLIĞIMIZI KORUYALIM",
+                seviye: "Yazamaz",
+                yas: "5-10",
+                scormPath: "scorm/temizlikvemisafiryazamazelhijyeni.zip",
+                previewUrl: "preview/temizlikvemisafiryazamazelhijyeni/index.html",
+                pdfPath: "pdf/temizlikvemisafiryazamazelhijyeni.pdf"
+            },
+            {
+                id: 126,
+                name: "Temizlik ve Misafirlik - Oku",
+                description: "Öğrenciler, temizlik ile ilgili temel kelimeleri ve kavramları anlar; temizliğin Türk kültürüne temizliğin önemine yönelik bir farkındalık geliştirir. ",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "SAĞLIĞIMIZI KORUYALIM",
+                seviye: "Yazar",
+                yas: "5-10",
+                scormPath: "scorm/temizlikvemisafirlikyazarelhijyeni.zip",
+                previewUrl: "preview/temizlikvemisafirlikyazarelhijyeni/index.html",
+                pdfPath: "pdf/temizlikvemisafirlikyazarelhijyeni.pdf"
+            },
+            {
+                id: 127,
+                name: "El Hijyeni",
+                description: "Öğrenciler, temizlik kurallarını anlatan bir şarkıyı dinler, temizlik ile ilgili temel kelimeleri ve kavramları anlar. ",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "SAĞLIĞIMIZI KORUYALIM",
+                seviye: "Yazar",
+                yas: "5-10",
+                scormPath: "scorm/elhijyeni.zip",
+                previewUrl: "preview/elhijyeni/index.html",
+                pdfPath: "pdf/elhijyeni.pdf"
+            },
+            {
+                id: 128,
+                name: "Temizlik ve Türk Kültürü - Dinle",
+                description: "Öğrenciler, temizlik ile ilgili temel kelimeleri ve kavramları anlar; temizliğin Türk kültürüne temizliğin önemine yönelik bir farkındalık geliştirir. ",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "SAĞLIKLI YAŞAM",
+                seviye: "Yazamaz",
+                yas: "11-16",
+                scormPath: "scorm/temizlikveturkkulturuyazamaz.zip",
+                previewUrl: "preview/temizlikveturkkulturuyazamaz/index.html",
+                pdfPath: "pdf/1temizlikveturkkulturuyazamaz.pdf"
+            },
+            {
+                id: 129,
+                name: "Temizlik ve Türk Kültürü - Oku",
+                description: "Öğrenciler, temizlik ile ilgili temel kelimeleri ve kavramları anlar; temizliğin Türk kültürüne temizliğin önemine yönelik bir farkındalık geliştirir. ",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "SAĞLIKLI YAŞAM",
+                seviye: "Yazar",
+                yas: "11-16",
+                scormPath: "scorm/temizlikveturkkulturuyazar.zip",
+                previewUrl: "preview/temizlikveturkkulturuyazar/index.html",
+                pdfPath: "pdf/temizlikveturkkulturuyazar.pdf"
+            },
+            {
+                id: 130,
+                name: "Temizlik ve Misafirlik - Dinle",
+                description: "Öğrenciler, temizlik ile ilgili temel kelimeleri ve kavramları anlar; temizliğin Türk kültürüne temizliğin önemine yönelik bir farkındalık geliştirir. ",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "SAĞLIKLI YAŞAM",
+                seviye: "Yazamaz",
+                yas: "11-16",
+                scormPath: "scorm/temizlikvemisafirlikyazamaz.zip",
+                previewUrl: "preview/temizlikvemisafirlikyazamaz/index.html",
+                pdfPath: "pdf/temizlikvemisafirlikyazamaz.pdf"
+            },
+            {
+                id: 131,
+                name: "Temizlik ve Misafirlik - Oku",
+                description: "Öğrenciler, temizlik ile ilgili temel kelimeleri ve kavramları anlar; temizliğin Türk kültürüne temizliğin önemine yönelik bir farkındalık geliştirir. ",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "SAĞLIKLI YAŞAM",
+                seviye: "Yazar",
+                yas: "11-16",
+                scormPath: "scorm/temizlikvemisafirlikyazar.zip",
+                previewUrl: "preview/temizlikvemisafirlikyazar/index.html",
+                pdfPath: "pdf/temizlikvemisafirlikyazar.pdf"
+            },
+            {
+                id: 132,
+                name: "Eyvah",
+                description: "Öğrenciler, temizlik kurallarını anlatan bir şarkıyı dinler, temizlik ile ilgili temel kelimeleri ve kavramları anlar. ",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "SAĞLIKLI YAŞAM",
+                seviye: "Yazar",
+                yas: "11-16",
+                scormPath: "scorm/eyvah.zip",
+                previewUrl: "preview/eyvah/index.html",
+                pdfPath: "pdf/eyvah.pdf"
+            },
+            {
+                id: 133,
+                name: "C Vitamini - Oku ve Yanıtla",
+                description: "Öğrenci sağlıklı yaşamak için sağlıklı beslenmenin önemini açıklar.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "SAĞLIĞIMIZI KORUYALIM",
+                seviye: "Yazar",
+                yas: "5-10",
+                scormPath: "scorm/biryazarturp.zip",
+                previewUrl: "preview/biryazarturp/index.html",
+                pdfPath: "pdf/biryazarturp.pdf"
+            },
+            {
+                id: 134,
+                name: "C Vitamini - Yanıtla",
+                description: "Öğrenci sağlıklı yaşamak için sağlıklı beslenmenin önemini açıklar.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "SAĞLIĞIMIZI KORUYALIM",
+                seviye: "Yazamaz",
+                yas: "5-10",
+                scormPath: "scorm/biryazamazturp.zip",
+                previewUrl: "preview/biryazamazturp/index.html",
+                pdfPath: "pdf/biryazamazturp.pdf"
+            },
+            {
+                id: 135,
+                name: "Sağlıklı Besleniyorum",
+                description: "Öğrenciler sağlıklı yiyecekler ile sağlıksız yiyecekleri sınıflandırır ve sağlıklı yaşamada sağlıklı yiyeceklerin önemini açıklar.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "SAĞLIĞIMIZI KORUYALIM",
+                seviye: "Yazar",
+                yas: "5-10",
+                scormPath: "scorm/ikiyazarturp.zip",
+                previewUrl: "preview/ikiyazarturp/index.html",
+                pdfPath: "pdf/ikiyazarturp.pdf"
+            },
+            {
+                id: 136,
+                name: "Sağlıklı mı Sağlıksız mı?",
+                description: "Öğrenciler sağlıklı yiyecekler ile sağlıksız yiyecekleri sınıflandırır ve sağlıklı yaşamada sağlıklı yiyeceklerin önemini açıklar.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "SAĞLIĞIMIZI KORUYALIM",
+                seviye: "Yazamaz",
+                yas: "5-10",
+                scormPath: "scorm/ikiyazamazturp.zip",
+                previewUrl: "preview/ikiyazamazturp/index.html",
+                pdfPath: "pdf/ikiyazamazturp.pdf"
+            },
+            {
+                id: 137,
+                name: "Turp Ye Turp Gibi Ol",
+                description: "Öğrenci, sebzelerin sağlıklı beslenmede önemini açıklar; turp örneği üzerinden vitaminler, sağlığa yararları ve dildeki kullanımına ilişkin çıkarım yapar.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "SAĞLIĞIMIZI KORUYALIM",
+                seviye: "Yazamaz",
+                yas: "5-10",
+                scormPath: "scorm/turp.zip",
+                previewUrl: "preview/turp/index.html",
+                pdfPath: "pdf/turp.pdf"
+            },
+            {
+                id: 138,
+                name: "Sağlıklı Tabak",
+                description: "Öğrenci, sağlıklı ve sağlıksız yiyecekleri ayırt eder. Dengeli beslenmenin ne anlama geldiğini açıklar.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "SAĞLIKLI YAŞAM",
+                seviye: "Yazamaz",
+                yas: "11-16",
+                scormPath: "scorm/biryazamazdengelibeslenme.zip",
+                previewUrl: "preview/biryazamazdengelibeslenme/index.html",
+                pdfPath: "pdf/biryazamazdengelibeslenme.pdf"
+            },
+            {
+                id: 139,
+                name: "Sağlıklı Günüm",
+                description: "Öğrenci, sağlıklı ve sağlıksız yiyecekleri ayırt eder. Dengeli beslenmenin ne anlama geldiğini açıklar.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "SAĞLIKLI YAŞAM",
+                seviye: "Yazar",
+                yas: "11-16",
+                scormPath: "scorm/biryazardengelibeslenme.zip",
+                previewUrl: "preview/biryazardengelibeslenme/index.html",
+                pdfPath: "pdf/biryazardengelibeslenme.pdf"
+            },
+            {
+                id: 140,
+                name: "Dengeli Beslenme - Tanımları",
+                description: "Öğrenci, dengeli beslenmenin ne anlama geldiğini açıklar. Günlük öğünlerinde farklı besin gruplarına yer vermesi gerektiğini fark eder.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "SAĞLIKLI YAŞAM",
+                seviye: "Yazamaz",
+                yas: "11-16",
+                scormPath: "scorm/ikiyazamazdengelibeslenme.zip",
+                previewUrl: "preview/ikiyazamazdengelibeslenme/index.html",
+                pdfPath: "pdf/ikiyazamazdengelibeslenme.pdf"
+            },
+            {
+                id: 141,
+                name: "Dengeli Beslenme - Tanımları",
+                description: "Öğrenci, dengeli beslenmenin ne anlama geldiğini açıklar. Günlük öğünlerinde farklı besin gruplarına yer vermesi gerektiğini fark eder.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "SAĞLIKLI YAŞAM",
+                seviye: "Yazar",
+                yas: "11-16",
+                scormPath: "scorm/ikiyazardengelibeslenme.zip",
+                previewUrl: "preview/ikiyazardengelibeslenme/index.html",
+                pdfPath: "pdf/ikiyazardengelibeslenme.pdf"
+            },
+            {
+                id: 142,
+                name: "Dengeli Besleniyorum",
+                description: "Öğrenci, sağlıklı ve sağlıksız yiyecekleri ayırt eder. Dengeli beslenmenin ne anlama geldiğini açıklar.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "SAĞLIKLI YAŞAM",
+                seviye: "Yazamaz",
+                yas: "11-16",
+                scormPath: "scorm/dengelibeslenme.zip",
+                previewUrl: "preview/dengelibeslenme/index.html",
+                pdfPath: "pdf/dengelibeslenme.pdf"
+            },
+            {
+                id: 143,
+                name: "Ata Sporları - Dinle",
+                description: "Öğrenciler ata sporlarımıza ait özellikleri anlar ve ilgili görselle eşleştirir.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "SAĞLIĞIMIZI KORUYALIM",
+                seviye: "Yazamaz",
+                yas: "5-10",
+                scormPath: "scorm/pirilyazamaz1.zip",
+                previewUrl: "preview/pirilyazamaz1/index.html",
+                pdfPath: "pdf/pirilyazamaz1.pdf"
+            },
+            {
+                id: 144,
+                name: "Ata Sporları - Oku",
+                description: "Öğrenciler ata sporlarımıza ait özellikleri anlar ve ilgili görselle eşleştirir.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "SAĞLIĞIMIZI KORUYALIM",
+                seviye: "Yazar",
+                yas: "5-10",
+                scormPath: "scorm/pirilyazar1.zip",
+                previewUrl: "preview/pirilyazar1/index.html",
+                pdfPath: "pdf/pirilyazar1.pdf"
+            },
+            {
+                id: 145,
+                name: "Sporun Faydaları",
+                description: "Öğrenciler görselle iletilen anlamı belirler. Sporun yararlarını kavrar ve açıklar.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "SAĞLIĞIMIZI KORUYALIM",
+                seviye: "Yazamaz",
+                yas: "5-10",
+                scormPath: "scorm/pirilyazamaz2.zip",
+                previewUrl: "preview/pirilyazamaz2/index.html",
+                pdfPath: "pdf/pirilyazamaz2.pdf"
+            },
+            {
+                id: 146,
+                name: "Spor Yapınca Ne Olur?",
+                description: "Öğrenciler görselle iletilen anlamı belirler. Sporun yararlarını kavrar ve açıklar.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "SAĞLIĞIMIZI KORUYALIM",
+                seviye: "Yazar",
+                yas: "5-10",
+                scormPath: "scorm/pirilyazar2.zip",
+                previewUrl: "preview/pirilyazar2/index.html",
+                pdfPath: "pdf/pirilyazar2.pdf"
+            },
+            {
+                id: 147,
+                name: "Pırıl- Evde Spor",
+                description: "Öğrenciler dinlediği/izlediği metinden hareketle egzersiz yapmanın önemini kavrar.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "SAĞLIĞIMIZI KORUYALIM",
+                seviye: "Yazar",
+                yas: "5-10",
+                scormPath: "scorm/piril.zip",
+                previewUrl: "preview/piril/index.html",
+                pdfPath: "pdf/piril.pdf"
+            },
+            {
+                id: 148,
+                name: "Hangi Spor? - Dinle",
+                description: "Öğrenci, geleneksel Türk sporlarını ayırt eder.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "SAĞLIKLI YAŞAM",
+                seviye: "Yazamaz",
+                yas: "11-16",
+                scormPath: "scorm/sporinanmaktiryazamaz1.zip",
+                previewUrl: "preview/sporinanmaktiryazamaz1/index.html",
+                pdfPath: "pdf/sporinanmaktiryazamaz1.pdf"
+            },
+            {
+                id: 149,
+                name: "Hangi Spor? - Seç",
+                description: "Öğrenci, geleneksel Türk sporlarını ayırt eder.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "SAĞLIKLI YAŞAM",
+                seviye: "Yazar",
+                yas: "11-16",
+                scormPath: "scorm/sporinanmaktiryazar1.zip",
+                previewUrl: "preview/sporinanmaktiryazar1/index.html",
+                pdfPath: "pdf/sporinanmaktiryazar1.pdf"
+            },
+            {
+                id: 150,
+                name: "Sporcu Ahlakı - Dinle",
+                description: "Öğrenci; sporda mücadele etmenin, inanmanın ve azmin başarıya giden yoldaki rolünü kavrar.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "SAĞLIKLI YAŞAM",
+                seviye: "Yazamaz",
+                yas: "11-16",
+                scormPath: "scorm/sporinanmaktiryazamaz2.zip",
+                previewUrl: "preview/sporinanmaktiryazamaz2/index.html",
+                pdfPath: "pdf/sporinanmaktiryazamaz2.pdf"
+            },
+            {
+                id: 151,
+                name: "Sporcu Ahlakı - Oku",
+                description: "Öğrenci; sporda mücadele etmenin, inanmanın ve azmin başarıya giden yoldaki rolünü kavrar.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "SAĞLIKLI YAŞAM",
+                seviye: "Yazar",
+                yas: "11-16",
+                scormPath: "scorm/sporinanmaktiryazar2.zip",
+                previewUrl: "preview/sporinanmaktiryazar2/index.html",
+                pdfPath: "pdf/sporinanmaktiryazar2.pdf"
+            },
+            {
+                id: 152,
+                name: "Spor İnanmaktır",
+                description: "Öğrenci; sporda mücadele etmenin, inanmanın ve azmin başarıya giden yoldaki rolünü açıklar.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "SAĞLIKLI YAŞAM",
+                seviye: "Yazamaz",
+                yas: "11-16",
+                scormPath: "scorm/sporinanmaktir.zip",
+                previewUrl: "preview/sporinanmaktir/index.html",
+                pdfPath: "pdf/sporinanmaktir.pdf"
+            },
+            {
+                id: 153,
+                name: "Ramazan Bilmeceleri - Dinle",
+                description: "Öğrenciler dinledikleri/izledikleri metinden hareketle Ramazan ayına ait temel kavramları belirler.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "BİR VARMIŞ, BİR YOKMUŞ",
+                seviye: "Yazamaz",
+                yas: "5-10",
+                scormPath: "scorm/karagozvehacivatyazamaz1.zip",
+                previewUrl: "preview/karagozvehacivatyazamaz1/index.html",
+                pdfPath: "pdf/karagozvehacivatyazamaz1.pdf"
+            },
+            {
+                id: 154,
+                name: "Ramazan Bilmeceleri - Oku",
+                description: "Öğrenciler okudukları metinden hareketle Ramazan ayına ait temel kavramları belirler.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "BİR VARMIŞ, BİR YOKMUŞ",
+                seviye: "Yazar",
+                yas: "5-10",
+                scormPath: "scorm/karagozvehacivatyazar1.zip",
+                previewUrl: "preview/karagozvehacivatyazar1/index.html",
+                pdfPath: "pdf/karagozvehacivatyazar1.pdf"
+            },
+            {
+                id: 155,
+                name: "Mahya - Dinle",
+                description: "Öğrenciler “mahya” kavramını öğrenir, mahyaların içerdiği değerleri belirler ve açıklar.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "BİR VARMIŞ, BİR YOKMUŞ",
+                seviye: "Yazamaz",
+                yas: "5-10",
+                scormPath: "scorm/karagozvehacivatyazamaz2.zip",
+                previewUrl: "preview/karagozvehacivatyazamaz2/index.html",
+                pdfPath: "pdf/karagozvehacivatyazamaz2.pdf"
+            },
+            {
+                id: 156,
+                name: "Mahya - Oku",
+                description: "Öğrenciler “mahya” kavramını öğrenir, mahyaların içerdiği değerleri belirler ve açıklar.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "BİR VARMIŞ, BİR YOKMUŞ",
+                seviye: "Yazar",
+                yas: "5-10",
+                scormPath: "scorm/karagozvehacivatyazar2.zip",
+                previewUrl: "preview/karagozvehacivatyazar2/index.html",
+                pdfPath: "pdf/karagozvehacivatyazar2.pdf"
+            },
+            {
+                id: 157,
+                name: "Karagöz ile Hacivat",
+                description: "Öğrenciler paylaşmak değerini kavrar ve Ramazan ayının önemini açıklar.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "BİR VARMIŞ, BİR YOKMUŞ",
+                seviye: "Yazamaz",
+                yas: "5-10",
+                scormPath: "scorm/karagozvehacivat.zip",
+                previewUrl: "preview/karagozvehacivat/index.html",
+                pdfPath: "pdf/karagozvehacivat.pdf"
+            },
+            {
+                id: 158,
+                name: "Ramazan Kavramları - Dinle",
+                description: "Öğrenci, Ramazan ayının yardımlaşma, sabır ve paylaşma gibi değerlerle ilişkisini kurar.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "KÖKLERDEN GELECEĞE",
+                seviye: "Yazamaz",
+                yas: "11-16",
+                scormPath: "scorm/ramazanbirlikteyasamakyazamaz1.zip",
+                previewUrl: "preview/ramazanbirlikteyasamakyazamaz1/index.html",
+                pdfPath: "pdf/ramazanbirlikteyasamakyazamaz1.pdf"
+            },
+            {
+                id: 159,
+                name: "Ramazan Kavramları - Oku",
+                description: "Öğrenci, Ramazan ayının yardımlaşma, sabır ve paylaşma gibi değerlerle ilişkisini kurar.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "KÖKLERDEN GELECEĞE",
+                seviye: "Yazamaz",
+                yas: "11-16",
+                scormPath: "scorm/ramazanbirlikteyasamakyazar1.zip",
+                previewUrl: "preview/ramazanbirlikteyasamakyazar1/index.html",
+                pdfPath: "pdf/ramazanbirlikteyasamakyazar1.pdf"
+            },
+            {
+                id: 158,
+                name: "Ramazan Gelenekleri - Dinle",
+                description: "Öğrenci; Ramazan ayı ile ilişkili kavramları ayırt eder ve Ramazan ayındaki yerini açıklar.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "KÖKLERDEN GELECEĞE",
+                seviye: "Yazamaz",
+                yas: "11-16",
+                scormPath: "scorm/ramazanbirlikteyasamakyazamaz2.zip",
+                previewUrl: "preview/ramazanbirlikteyasamakyazamaz2/index.html",
+                pdfPath: "pdf/ramazanbirlikteyasamakyazamaz2.pdf"
+            },
+            {
+                id: 159,
+                name: "Ramazan Gelenekleri - Oku",
+                description: "Öğrenci; Ramazan ayı ile ilişkili kavramları ayırt eder ve Ramazan ayındaki yerini açıklar.",
+                icon: "👪",
+                konu: "Okuma",
+                tema: "KÖKLERDEN GELECEĞE",
+                seviye: "Yazar",
+                yas: "11-16",
+                scormPath: "scorm/ramazanbirlikteyasamakyazar2.zip",
+                previewUrl: "preview/ramazanbirlikteyasamakyazar2/index.html",
+                pdfPath: "pdf/ramazanbirlikteyasamakyazar2.pdf"
+            },
+            {
+                id: 160,
+                name: "Ramazan'ı Birlikte Yaşamak",
+                description: "Öğrenci, Ramazan ayının yardımlaşma, sabır ve paylaşma gibi değerlerle ilişkisini kurar.",
+                icon: "👪",
+                konu: "Dinleme",
+                tema: "KÖKLERDEN GELECEĞE",
+                seviye: "Yazamaz",
+                yas: "11-16",
+                scormPath: "scorm/ramazanbirlikteyasamak.zip",
+                previewUrl: "preview/ramazanbirlikteyasamak/index.html",
+                pdfPath: "pdf/ramazanbirlikteyasamak.pdf"
+            },
+        ];
+
+        let filteredMaterials = [...materials];
+
+        function renderMaterials(materialsToRender) {
+            const grid = document.getElementById('materialsGrid');
+            const resultsCount = document.getElementById('resultsCount');
+            const noResults = document.getElementById('noResults');
+
+            resultsCount.textContent = `${materialsToRender.length} materyal bulundu`;
+
+            if (materialsToRender.length === 0) {
+                grid.style.display = 'none';
+                noResults.style.display = 'block';
+                resultsCount.style.display = 'none';
+                return;
+            }
+
+            grid.style.display = 'grid';
+            noResults.style.display = 'none';
+            resultsCount.style.display = 'block';
+
+            const staticCard = `
+                <div class="material-card" style="border: 2px solid rgba(102, 126, 234, 0.4); background: linear-gradient(135deg, rgba(255,255,255,0.98), rgba(240,242,255,0.95));">
+                    <div class="card-header">
+                        <div class="card-icon" style="background: #fff; overflow: hidden; padding: 0;">
+                            <img src="icons/haftalik-etkinlikler-logo.png" alt="Haftalık Etkinlikler Logo"
+                                 style="width: 100%; height: 100%; object-fit: contain;">
+                        </div>
+                        <div class="card-title">
+                            <h3 style="color: #444;">Haftalık Etkinlik Planları</h3>
+                            <span style="font-size: 0.8rem; color: #888; font-weight: 500;">📌 Sabit İçerik</span>
+                        </div>
+                    </div>
+                    <div class="card-description">
+                        Türkçe ve Türk Kültürü dersine yönelik haftalık etkinlik planlarını bu bağlantıdan inceleyebilirsiniz. Planlar düzenli olarak güncellenmektedir.
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.6rem; margin-top: 0.5rem; padding: 0.7rem 1rem; background: rgba(102,126,234,0.08); border-radius: 10px;">
+                        <span style="font-size: 1.3rem;">🔗</span>
+                        <a href="https://ulkemyanimda.github.io/ogretmensandigi/HaftalikEtkinlikler/index.html"
+                           target="_blank"
+                           style="color: #667eea; font-weight: 600; font-size: 0.95rem; text-decoration: none;">
+                            Haftalık Etkinliklere Git →
+                        </a>
+                    </div>
+                </div>
+            `;
+
+            grid.innerHTML = staticCard + materialsToRender.map(material => `
+                <div class="material-card">
+                    <div class="card-header">
+                        <div class="card-icon">${material.icon}</div>
+                        <div class="card-title">
+                            <h3>${material.name}</h3>
+                        </div>
+                    </div>
+                    
+                    <div class="card-tags">
+                        <span class="tag tag-konu">${material.konu}</span>
+                        <span class="tag tag-tema">${material.tema}</span>
+                        <span class="tag tag-seviye">${material.seviye}</span>
+                        <span class="tag tag-yas">${material.yas} Yaş</span>
+                    </div>
+                    
+                    <div class="card-description">
+                        ${material.description}
+                    </div>
+                    
+                    <div class="card-actions">
+                        <a href="${material.scormPath}" class="action-btn download-btn" download>
+                            📥 SCORM
+                        </a>
+                        <a href="${material.previewUrl}" class="action-btn preview-btn" target="_blank">
+                            👁️ Önizle
+                        </a>
+                        <a href="${material.pdfPath}" class="action-btn pdf-btn" download>
+                            📄 PDF
+                        </a>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterMaterials() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const konuFilter = document.getElementById('konuFilter').value;
+            const temaFilter = document.getElementById('temaFilter').value;
+            const seviyeFilter = document.getElementById('seviyeFilter').value;
+            const yasFilter = document.getElementById('yasFilter').value;
+
+            filteredMaterials = materials.filter(material => {
+                const matchesSearch = material.name.toLowerCase().includes(searchTerm) ||
+                    material.description.toLowerCase().includes(searchTerm);
+                const matchesKonu = !konuFilter || material.konu === konuFilter;
+                const matchesTema = !temaFilter || material.tema === temaFilter;
+                const matchesSeviye = !seviyeFilter || material.seviye === seviyeFilter;
+                const matchesYas = !yasFilter || material.yas === yasFilter;
+
+                return matchesSearch && matchesKonu && matchesTema && matchesSeviye && matchesYas;
+            });
+
+            renderMaterials(filteredMaterials);
+        }
+
+        function clearFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('konuFilter').value = '';
+            document.getElementById('temaFilter').value = '';
+            document.getElementById('seviyeFilter').value = '';
+            document.getElementById('yasFilter').value = '';
+            filterMaterials();
+        }
+
+        document.getElementById('searchInput').addEventListener('input', filterMaterials);
+        document.getElementById('konuFilter').addEventListener('change', filterMaterials);
+        document.getElementById('temaFilter').addEventListener('change', filterMaterials);
+        document.getElementById('seviyeFilter').addEventListener('change', filterMaterials);
+        document.getElementById('yasFilter').addEventListener('change', filterMaterials);
+
+        renderMaterials(materials);
+    </script>
+
+
+
+    <footer style="background-color: #f1f1f1; padding: 20px 10px; text-align: center; font-family: Arial, sans-serif;">
+        <div style="margin-bottom: 15px;">
+            <div style="display: flex; justify-content: center; align-items: center; gap: 20px;">
+                <a href="https://yyegm.meb.gov.tr/" target="_blank">
+                    <img src="icons/logo2.png" alt="Logo 1" style="height: 50px; width: auto;">
+                </a>
+                <a href="https://ulkemyanimda.github.io/" target="_blank">
+                    <img src="icons/logo1.png" alt="Logo 2" style="height: 50px; width: auto;">
+                </a>
+            </div>
+        </div>
+
+        <!-- Sosyal Medya İkonları (CDN'den SVG) -->
+        <div style="margin: 15px 0; display: flex; justify-content: center; gap: 15px;">
+            <a href="https://www.instagram.com/ulkemyanimda" target="_blank">
+                <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/instagram.svg" alt="Instagram"
+                    style="height: 30px; width: 30px;">
+            </a>
+            <a href="https://twitter.com/ulkemyanimda" target="_blank">
+                <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/x.svg" alt="Twitter"
+                    style="height: 30px; width: 30px;">
+            </a>
+            <a href="https://www.facebook.com/ulkemyanimda" target="_blank">
+                <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/facebook.svg" alt="Facebook"
+                    style="height: 30px; width: 30px;">
+            </a>
+            <a href="https://www.youtube.com/@ulkem_yanimda" target="_blank">
+                <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/youtube.svg" alt="YouTube"
+                    style="height: 30px; width: 30px;">
+            </a>
+        </div>
+
+        <div>
+            <p style="margin: 0; font-size: 14px; color: #333;">&copy; 2025 ÜLKEM YANIMDA!</p>
+        </div>
+    </footer>
+
+
+
+
+
+
+
+</body>
+
+>>>>>>> 4ad62791a7c59555c2cab15dd3ed80ef445c50b5
 </html>

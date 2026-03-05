@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eşleştirme Oyunu</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: radial-gradient(circle, #ffefba, #ffffff);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Kenar Süslemeleri */
+        body::before,
+        body::after {
+            content: "✨🎈🌟🎨";
+            position: fixed;
+            font-size: 30px;
+            width: 40px;
+            height: 100%;
+            word-wrap: break-word;
+            top: 10px;
+            z-index: -1;
+            opacity: 0.5;
+        }
+
+        body::before {
+            left: 10px;
+        }
+
+        body::after {
+            right: 10px;
+        }
+
+        /* Yönerge Paneli */
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        #instruction-box {
+            background: #fff;
+            border: 8px solid #ff6b6b;
+            padding: 40px;
+            border-radius: 40px;
+            max-width: 550px;
+            text-align: center;
+            box-shadow: 0 15px 0 #ee5253;
+        }
+
+        /* Ses Kutuları */
+        #sounds-wrapper {
+            background: #48dbfb;
+            width: 100%;
+            padding: 25px 0;
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-bottom: 5px solid #0abde3;
+        }
+
+        .sound-card {
+            width: 100px;
+            height: 100px;
+            background: #ffffff;
+            border: 4px solid #2e86de;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: grab;
+            transition: all 0.3s;
+            font-weight: bold;
+            color: #2e86de;
+            box-shadow: 0 4px 0 #2e86de;
+        }
+
+        .sound-card:hover {
+            transform: translateY(-5px);
+            background: #f1f2f6;
+        }
+
+        .sound-card:active {
+            cursor: grabbing;
+        }
+
+        /* Resim Alanları (3x2 Izgara) */
+        #images-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 35px;
+            padding: 50px;
+            max-width: 1100px;
+        }
+
+        .drop-zone {
+            width: 280px;
+            height: 280px;
+            background: white;
+            border-radius: 35px;
+            border: 6px dashed #ff9f43;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            position: relative;
+            transition: background 0.3s;
+        }
+
+        .drop-zone img {
+            width: 85%;
+            height: 85%;
+            object-fit: contain;
+        }
+
+        /* Durum Renkleri */
+        .drop-hover {
+            background: #fff4d1;
+            border-style: solid;
+            border-color: #ff6b6b;
+        }
+
+        .success-zone {
+            border: 8px solid #1dd1a1;
+            background: #ebfffa;
+            box-shadow: 0 0 20px rgba(29, 209, 161, 0.4);
+        }
+
+        .hidden {
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #score-panel {
+            background: #ff6b6b;
+            color: white;
+            padding: 10px 40px;
+            border-radius: 0 0 30px 30px;
+            font-size: 24px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #win-banner {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 120px;
+            color: #ff9f43;
+            text-shadow: 6px 6px 0 #fff, -2px -2px 0 #fff;
+            z-index: 2000;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="overlay">
+        <div id="instruction-box">
+            <p style="font-size: 20px; line-height: 1.8; text-align: left; color: #333;">
+                🌟 Görsellere dikkatlice bak.<br>
+                👂 <b>"Dinle"</b> düğmesine bas ve sesleri sırayla dinle.<br>
+                🤝 Dinlediğin cümleyi ilgili görselin üzerine sürükle.<br>
+                🇹🇷 Tüm eşleştirmeleri tamamladıktan sonra Türk kültüründeki temizlikle ilgili güzel davranışlar
+                üzerine
+                konuşalım!
+            </p>
+            <button onclick="document.getElementById('overlay').style.display='none'"
+                style="background: #1dd1a1; color: white; border: none; padding: 18px 60px; font-size: 24px; border-radius: 40px; cursor: pointer; box-shadow: 0 6px 0 #10ac84; margin-top: 20px;">
+                Hadi Başlayalım!
+            </button>
+        </div>
+    </div>
+
+    <div id="sounds-wrapper"></div>
+
+    <div id="score-panel">Puan: <span id="puan">0</span> / 6</div>
+
+    <div id="images-grid"></div>
+
+    <div id="win-banner">AFERİN! 🎉</div>
+
+    <script>
+        let score = 0;
+        const items = [1, 2, 3, 4, 5, 6];
+        const soundsWrapper = document.getElementById('sounds-wrapper');
+        const imagesGrid = document.getElementById('images-grid');
+
+        // Sesleri Karıştır (İpucu yok, sadece "DİNLE")
+        [...items].sort(() => Math.random() - 0.5).forEach(num => {
+            const card = document.createElement('div');
+            card.className = 'sound-card';
+            card.id = `s-${num}`;
+            card.draggable = true;
+            card.innerHTML = `<span style="font-size: 40px;">🎧</span><span style="font-size:14px; margin-top:5px;">DİNLE</span>`;
+
+            const audio = new Audio(`1${num}.m4a`);
+            card.onclick = () => audio.play();
+            card.ondragstart = (e) => e.dataTransfer.setData("text", num);
+
+            soundsWrapper.appendChild(card);
+        });
+
+        // Resim Alanlarını Oluştur (3x2 Izgara)
+        items.forEach(num => {
+            const zone = document.createElement('div');
+            zone.className = 'drop-zone';
+            zone.innerHTML = `<img src="1${num}.png">`;
+
+            zone.ondragover = (e) => {
+                e.preventDefault();
+                zone.classList.add('drop-hover');
+            };
+            zone.ondragleave = () => zone.classList.remove('drop-hover');
+
+            zone.ondrop = (e) => {
+                zone.classList.remove('drop-hover');
+                const draggedId = e.dataTransfer.getData("text");
+
+                if (draggedId == num) {
+                    document.getElementById(`s-${draggedId}`).classList.add('hidden');
+                    zone.classList.add('success-zone');
+                    score++;
+                    document.getElementById('puan').innerText = score;
+                    if (score === 6) celebrate();
+                }
+            };
+            imagesGrid.appendChild(zone);
+        });
+
+        function celebrate() {
+            document.getElementById('win-banner').style.display = 'block';
+            const end = Date.now() + 7000;
+
+            (function frame() {
+                confetti({ particleCount: 12, spread: 80, origin: { y: 0.6 }, colors: ['#ff6b6b', '#1dd1a1', '#feca57', '#5f27cd', '#48dbfb'] });
+                if (Date.now() < end) requestAnimationFrame(frame);
+            }());
+        }
+    </script>
+</body>
+
+</html>

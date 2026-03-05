@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spor İnanmaktır- Etkileşimli Video</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            position: relative;
+            width: 80%;
+            max-width: 800px;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        video {
+            width: 100%;
+            display: block;
+        }
+
+        /* Yönerge Ekranı */
+        #overlay-instruction {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            z-index: 10;
+            padding: 20px;
+        }
+
+        /* Soru Paneli */
+        #question-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            display: none;
+            z-index: 20;
+            width: 80%;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        button {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color: #2ecc71;
+        }
+
+        #start-btn {
+            margin-top: 20px;
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div id="overlay-instruction">
+            <h2>SPOR İNANMAKTIR.</h2>
+            <p>Lütfen videoyu dikkatle izleyiniz.<br>Duraklama noktalarında size sorulacak soruları cevaplayınız.</p>
+            <button id="start-btn">Videoyu Başlat</button>
+        </div>
+
+        <video id="myVideo">
+            <source src="sporinanmaktir.mp4" type="video/mp4">
+            Tarayıcınız video etiketini desteklemiyor.
+        </video>
+
+        <div id="question-container">
+            <div class="question-text" id="question-text">Soru buraya gelecek...</div>
+            <br>
+            <button id="continue-btn">Devam Et</button>
+        </div>
+    </div>
+
+    <script>
+        const video = document.getElementById('myVideo');
+        const instruction = document.getElementById('overlay-instruction');
+        const startBtn = document.getElementById('start-btn');
+        const questionContainer = document.getElementById('question-container');
+        const questionText = document.getElementById('question-text');
+        const continueBtn = document.getElementById('continue-btn');
+
+
+        // Sorular ve duraklama saniyeleri
+        const questions = [
+            { time: 3, text: "Spor, sence nedir? Tek kelimeyle ifade etsen ne söylerdin?" },
+            { time: 6, text: "“Spor, kim ne derse desin mücadeleyi bırakmamaktır.” sözü sana ne ifade ediyor?" },
+            { time: 23, text: "Peki, tam pes etmek üzereyken devam etme kararı aldığın bir an oldu mu? O anı anlatır mısın?" }
+        ];
+
+        let currentQuestionIndex = 0;
+
+        // Başlat butonu
+        startBtn.addEventListener('click', () => {
+            instruction.style.display = 'none';
+            video.play();
+        });
+
+        // Zaman kontrolü
+        video.addEventListener('timeupdate', () => {
+            if (currentQuestionIndex < questions.length) {
+                const nextQuestion = questions[currentQuestionIndex];
+
+                // Mevcut saniye sorunun saniyesine ulaştıysa (0.5 sn hassasiyetle)
+                if (video.currentTime >= nextQuestion.time) {
+                    video.pause();
+                    showQuestion(nextQuestion.text);
+                }
+            }
+        });
+
+        function showQuestion(text) {
+            questionText.innerText = text;
+            questionContainer.style.display = 'block';
+
+        }
+
+        // Devam Et butonu
+        continueBtn.addEventListener('click', () => {
+            questionContainer.style.display = 'none';
+            currentQuestionIndex++;
+            video.play();
+        });
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ramazan Sözcük Avı</title>
+    <style>
+        :root {
+            --ramazan-gold: #d4af37;
+            --ramazan-dark: #8b6d31;
+            --ramazan-green: #2E7D32;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f4e7d3;
+            font-family: 'Segoe UI', sans-serif;
+            user-select: none;
+            /* Metin seçilmesini engeller, oyun konforu sağlar */
+        }
+
+        .main-container {
+            width: 800px;
+            height: 1100px;
+            background-image: url('ramazan çerçeve.jpg');
+            background-size: 100% 100%;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 110px 70px;
+            box-sizing: border-box;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .instruction {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 12px;
+            border-radius: 10px;
+            border: 2px solid var(--ramazan-gold);
+            text-align: center;
+            margin-bottom: 15px;
+            font-weight: bold;
+            color: #5d4037;
+        }
+
+        /* Eşleştirme Stilleri */
+        .match-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .match-btn {
+            padding: 10px;
+            background: white;
+            border: 2px solid var(--ramazan-gold);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            min-height: 55px;
+        }
+
+        .match-btn.selected {
+            background: #fff59d;
+        }
+
+        .match-btn.correct {
+            background: var(--ramazan-green);
+            color: white;
+            border-color: var(--ramazan-green);
+            cursor: default;
+        }
+
+        /* Kelime Avı Üst Liste */
+        .word-bank {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 15px;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--ramazan-gold);
+        }
+
+        .word-to-find {
+            padding: 4px 10px;
+            border-radius: 15px;
+            background: white;
+            border: 1px solid #ccc;
+            font-weight: bold;
+            color: #666;
+        }
+
+        .word-to-find.found {
+            background: var(--ramazan-green);
+            color: white;
+            text-decoration: line-through;
+            border-color: var(--ramazan-green);
+        }
+
+        /* Oyun Tablosu */
+        #word-grid {
+            display: grid;
+            grid-template-columns: repeat(16, 28px);
+            gap: 4px;
+            background: white;
+            padding: 10px;
+            border: 4px solid var(--ramazan-gold);
+            border-radius: 10px;
+            cursor: crosshair;
+        }
+
+        .cell {
+            width: 28px;
+            height: 28px;
+            background: #f9f9f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            border-radius: 3px;
+            font-size: 14px;
+        }
+
+        .cell.highlighted {
+            background: #ffeb3b;
+        }
+
+        /* Sürüklerken */
+        .cell.found {
+            background: var(--ramazan-green) !important;
+            color: white;
+        }
+
+        .nav-btn {
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: var(--ramazan-green);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .nav-btn:disabled {
+            background: #ccc;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="main-container">
+        <h1 style="color: var(--ramazan-dark); margin: 0 0 10px 0;">Ramazan Etkinliği</h1>
+
+        <div id="step1" style="width: 100%;">
+            <div class="instruction">Verilen kelimeleri doğru tanımlarıyla eşleştiriniz. Tüm eşleştirmeleri doğru
+                yaptığınızda sözcük avı oyununun kilidi açılacaktır.</div>
+            <div class="match-grid">
+                <div class="column" id="words-col"></div>
+                <div class="column" id="defs-col"></div>
+            </div>
+            <center><button id="next-step" class="nav-btn" disabled onclick="startStep2()">Sözcük Avına Başla ➔</button>
+            </center>
+        </div>
+
+        <div id="step2" class="hidden">
+            <div class="instruction">Yönerge: Tabloda yer alan gizli kelimeleri bulunuz.</div>
+            <div class="word-bank" id="word-bank"></div>
+            <div id="word-grid"></div>
+        </div>
+    </div>
+
+    <script>
+        const gameData = [
+            { w: "RAMAZAN PİDESİ", d: "İftar sofralarının vazgeçilmez sıcak ekmeği." },
+            { w: "GÜLLAÇ", d: "Süt ve gülsuyu ile hazırlanan hafif Ramazan tatlısı." },
+            { w: "RAMAZAN DAVULCUSU", d: "Manilerle insanları sahura uyandıran geleneksel kişi." },
+            { w: "İFTAR", d: "Akşam ezanıyla birlikte orucun açıldığı an." },
+            { w: "MAHYA", d: "Minareler arasına asılan ışıklı yazı." },
+            { w: "İMSAK", d: "Oruca başlama vakti, tan yerinin ağarması." },
+            { w: "SAHUR", d: "Ramazanda gün doğmadan önce yenilen yemek." },
+            { w: "TERAVİH", d: "Ramazan gecelerinde kılınan namaz." }
+        ];
+
+        let selectedWordBtn = null;
+        let correctMatches = 0;
+
+        // --- EŞLEŞTİRME ---
+        function initStep1() {
+            const wordsCol = document.getElementById('words-col');
+            const defsCol = document.getElementById('defs-col');
+            const shuffledDefs = [...gameData].sort(() => Math.random() - 0.5);
+
+            gameData.forEach(item => {
+                const btn = document.createElement('button');
+                btn.className = 'match-btn'; btn.textContent = item.w;
+                btn.onclick = () => {
+                    if (btn.classList.contains('correct')) return;
+                    document.querySelectorAll('#words-col .match-btn').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    selectedWordBtn = { btn: btn, word: item.w };
+                };
+                wordsCol.appendChild(btn);
+            });
+
+            shuffledDefs.forEach(item => {
+                const btn = document.createElement('button');
+                btn.className = 'match-btn'; btn.textContent = item.d;
+                btn.onclick = () => {
+                    if (!selectedWordBtn || btn.classList.contains('correct')) return;
+                    const match = gameData.find(x => x.w === selectedWordBtn.word);
+                    if (match.d === btn.textContent) {
+                        btn.classList.add('correct'); selectedWordBtn.btn.classList.add('correct');
+                        correctMatches++;
+                        if (correctMatches === gameData.length) document.getElementById('next-step').disabled = false;
+                    }
+                    selectedWordBtn = null;
+                    document.querySelectorAll('.selected').forEach(b => b.classList.remove('selected'));
+                };
+                defsCol.appendChild(btn);
+            });
+        }
+
+        // --- SÖZCÜK AVI (SÜRÜKLEME ÖZELLİĞİ) ---
+        let isSelecting = false;
+        let selectionPath = [];
+
+        function startStep2() {
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step2').classList.remove('hidden');
+            initWordSearch();
+        }
+
+        function initWordSearch() {
+            const bank = document.getElementById('word-bank');
+            const gridContainer = document.getElementById('word-grid');
+            bank.innerHTML = '';
+            gridContainer.innerHTML = '';
+            const size = 16;
+            let grid = Array(size).fill().map(() => Array(size).fill(''));
+
+            // Kelimeleri Üst Listeye Ekle
+            gameData.forEach(item => {
+                const span = document.createElement('div');
+                span.className = 'word-to-find';
+                span.id = 'bank-' + item.w.replace(/\s/g, ''); // Remove spaces for ID
+                span.textContent = item.w;
+                bank.appendChild(span);
+            });
+
+            // Kelimeleri Tabloya Yerleştir (Karışık: Yatay ve Dikey)
+            gameData.forEach(item => {
+                let placed = false;
+                const word = item.w.replace(/\s/g, ''); // Remove spaces for grid placement
+                let attempts = 0;
+                while (!placed && attempts < 100) {
+                    attempts++;
+                    let isVertical = Math.random() > 0.5;
+                    let r = Math.floor(Math.random() * (isVertical ? size - word.length : size));
+                    let c = Math.floor(Math.random() * (isVertical ? size : size - word.length));
+
+                    let canPlace = true;
+                    for (let i = 0; i < word.length; i++) {
+                        let currentCell = grid[isVertical ? r + i : r][isVertical ? c : c + i];
+                        if (currentCell !== '' && currentCell !== word[i]) {
+                            canPlace = false; break;
+                        }
+                    }
+
+                    if (canPlace) {
+                        for (let i = 0; i < word.length; i++) grid[isVertical ? r + i : r][isVertical ? c : c + i] = word[i];
+                        placed = true;
+                    }
+                }
+            });
+
+            const letters = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ";
+            for (let r = 0; r < size; r++) {
+                for (let c = 0; c < size; c++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.textContent = grid[r][c] || letters[Math.floor(Math.random() * letters.length)];
+
+                    // Mouse Etkinlikleri
+                    cell.onmousedown = () => { isSelecting = true; startSelection(cell); };
+                    cell.onmouseenter = () => { if (isSelecting) startSelection(cell); };
+                    gridContainer.appendChild(cell);
+                }
+            }
+
+            window.onmouseup = () => {
+                if (isSelecting) finalizeSelection();
+                isSelecting = false;
+            };
+        }
+
+        function startSelection(cell) {
+            if (cell.classList.contains('found')) return;
+            cell.classList.add('highlighted');
+            selectionPath.push(cell);
+        }
+
+        function finalizeSelection() {
+            const selectedWord = selectionPath.map(c => c.textContent).join('');
+            const match = gameData.find(item => item.w.replace(/\s/g, '') === selectedWord);
+
+            if (match) {
+                selectionPath.forEach(c => {
+                    c.classList.remove('highlighted');
+                    c.classList.add('found');
+                });
+                document.getElementById('bank-' + match.w.replace(/\s/g, '')).classList.add('found');
+
+                if (document.querySelectorAll('.word-to-find.found').length === gameData.length) {
+                    setTimeout(() => {
+                        alert("Tebrikler! Ramazan etkinliğini başarıyla tamamladın. 🌙");
+                    }, 300);
+                }
+            } else {
+                selectionPath.forEach(c => c.classList.remove('highlighted'));
+            }
+            selectionPath = [];
+        }
+
+        initStep1();
+    </script>
+</body>
+
+</html>

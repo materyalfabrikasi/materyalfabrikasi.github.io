@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sağlıklı Tabak Oyunu</title>
+    <style>
+        :root {
+            --bg-color: #e8f4f8;
+            --success: #27ae60;
+            --error: #c0392b;
+            --plate-border: #bdc3c7;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Yönerge Ekranı */
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(44, 62, 80, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            color: white;
+        }
+
+        .modal {
+            background: white;
+            color: #2c3e50;
+            padding: 40px;
+            border-radius: 25px;
+            max-width: 550px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal h2 {
+            color: #2980b9;
+            margin-top: 0;
+        }
+
+        .modal ul {
+            text-align: left;
+            line-height: 1.6;
+        }
+
+        .modal button {
+            background: #2980b9;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .modal button:hover {
+            background: #3498db;
+        }
+
+        /* Puan Paneli - Sağ Üst Köşe */
+        #score-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            z-index: 60;
+            border: 3px solid #2980b9;
+        }
+
+        #score-text {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        #msg-popup {
+            position: fixed;
+            top: 110px;
+            right: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 10px;
+            min-width: 200px;
+            text-align: center;
+        }
+
+        /* Oyun Alanı */
+        #game-container {
+            position: relative;
+            width: 850px;
+            height: 850px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Belirgin Merkez Tabak */
+        #plate-area {
+            width: 480px;
+            height: 480px;
+            background: #ffffff;
+            /* Beyaz porselen rengi */
+            border-radius: 50%;
+            display: flex;
+            flex-wrap: wrap;
+            align-content: center;
+            justify-content: center;
+            gap: 12px;
+            /* Gerçekçi tabak efekti için gölgeler */
+            box-shadow:
+                inset 0 0 20px rgba(0, 0, 0, 0.1),
+                /* İç derinlik */
+                0 15px 35px rgba(0, 0, 0, 0.2),
+                /* Dış gölge */
+                0 0 0 15px #f8f9fa,
+                /* Tabak kenarı (hafif gri) */
+                0 0 0 16px #bdc3c7;
+            /* Dış kenar çizgisi */
+            position: relative;
+            z-index: 5;
+            /* Image'ı kaldırdık çünkü CSS ile tasarlıyoruz */
+            overflow: hidden;
+            /* Taşmaları engelle */
+        }
+
+
+        /* Yiyecekler */
+        .food {
+            position: absolute;
+            width: 85px;
+            height: 85px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            cursor: grab;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+        }
+
+        .on-plate {
+            position: static !important;
+            transform: scale(0.8) !important;
+            cursor: default !important;
+            box-shadow: none !important;
+            z-index: 10 !important;
+            background: transparent !important;
+        }
+
+        .correct-txt {
+            color: var(--success);
+            background: #e8f8f0;
+        }
+
+        .wrong-txt {
+            color: var(--error);
+            background: #fceceb;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="overlay">
+        <div class="modal">
+            <h2>🥗 Sağlıklı Beslenme Oyunu</h2>
+            <p>Bugün sağlıklı bir tabak hazırlamaya ne dersin?</p>
+            <ul>
+                <li><b>Yönerge:</b> Etrafta duran yiyeceklerden sağlıklı olanları seç ve tabağın içine sürükle.
+                </li>
+                <li><b>Puan Sistemi:</b>
+                    <ul>
+                        <li>Her doğru (sağlıklı) yiyecek için <b>+10 puan</b> kazanırsın.</li>
+                        <li>Her yanlış (sağlıksız) seçim için <b>-5 puan</b> kaybedersin.</li>
+                    </ul>
+                </li>
+            </ul>
+            <button onclick="startGame()">Hemen Başla!</button>
+        </div>
+    </div>
+
+    <div id="score-panel">
+        <div id="score-text">Puan: 0</div>
+    </div>
+    <div id="msg-popup"></div>
+
+    <div id="game-container">
+        <div id="plate-area">
+            <!-- CSS ile tasarlanmış tabak -->
+        </div>
+
+    </div>
+
+    <script>
+        const foods = [
+            // Sağlıklı
+            { e: '🥦', t: 'h', n: 'Brokoli' }, { e: '🍎', t: 'h', n: 'Elma' },
+            { e: '🐟', t: 'h', n: 'Balık' }, { e: '🥚', t: 'h', n: 'Yumurta' },
+            { e: 'carrot', e: '🥕', t: 'h', n: 'Havuç' }, { e: '🍗', t: 'h', n: 'Tavuk' },
+            { e: '🍇', t: 'h', n: 'Üzüm' }, { e: '🥛', t: 'h', n: 'Süt' },
+            { e: '🥗', t: 'h', n: 'Salata' }, { e: '🍌', t: 'h', n: 'Muz' },
+            { e: '🥒', t: 'h', n: 'Salatalık' }, { e: '🥜', t: 'h', n: 'Kuruyemiş' },
+            // Sağlıksız
+            { e: '🍔', t: 'u', n: 'Hamburger' }, { e: '🍟', t: 'u', n: 'Kızartma' },
+            { e: 'donut', e: '🍩', t: 'u', n: 'Donut' }, { e: '🍕', t: 'u', n: 'Pizza' },
+            { e: '🍭', t: 'u', n: 'Lolipop' }, { e: '🥤', t: 'u', n: 'Asitli İçecek' },
+            { e: '🍫', t: 'u', n: 'Çikolata' }, { e: '🍦', t: 'u', n: 'Dondurma' },
+
+        ];
+
+        let score = 0;
+        const plate = document.getElementById('plate-area');
+
+        function startGame() {
+            document.getElementById('overlay').style.display = 'none';
+            const container = document.getElementById('game-container');
+            const shuffled = foods.sort(() => Math.random() - 0.5);
+
+            shuffled.forEach((food, i) => {
+                const angle = (i / shuffled.length) * Math.PI * 2;
+                const radius = 350;
+                const x = 425 + radius * Math.cos(angle) - 42;
+                const y = 425 + radius * Math.sin(angle) - 42;
+
+                const el = document.createElement('div');
+                el.className = 'food';
+                el.innerText = food.e;
+                el.style.left = `${x}px`;
+                el.style.top = `${y}px`;
+                el.setAttribute('draggable', 'true');
+
+                el.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('type', food.t);
+                    e.dataTransfer.setData('name', food.n);
+                    el.id = 'dragging';
+                });
+
+                container.appendChild(el);
+            });
+        }
+
+        plate.addEventListener('dragover', (e) => e.preventDefault());
+
+
+        plate.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const type = e.dataTransfer.getData('type');
+            const name = e.dataTransfer.getData('name');
+            const activeEl = document.getElementById('dragging');
+            const msgBox = document.getElementById('msg-popup');
+
+            if (type === 'h') {
+                score += 10;
+                msgBox.innerText = `Harika! ${name} +10 Puan`;
+                msgBox.className = 'correct-txt';
+                activeEl.classList.add('on-plate');
+                activeEl.removeAttribute('draggable');
+                plate.appendChild(activeEl);
+
+                // Sağlıklı yiyecekleri say
+                const totalHealthy = foods.filter(f => f.t === 'h').length;
+                const collectedHealthy = document.querySelectorAll('.on-plate').length;
+
+                if (collectedHealthy === totalHealthy) {
+                    setTimeout(() => {
+                        const overlay = document.getElementById('overlay');
+                        const modalContent = overlay.querySelector('.modal');
+                        modalContent.innerHTML = `
+                            <h2 style="color: #27ae60;">🎉 Aferin! 🎉</h2>
+                            <p style="font-size: 22px;">Tüm sağlıklı yiyecekleri topladın!</p>
+                            <p style="font-size: 24px; font-weight: bold;">Toplam Puan: ${score}</p>
+                            <button onclick="location.reload()">Tekrar Oyna</button>
+                        `;
+                        overlay.style.display = 'flex';
+                    }, 500);
+                }
+
+            } else {
+                score -= 5;
+                msgBox.innerText = `${name} Zararlı! -5 Puan`;
+                msgBox.className = 'wrong-txt';
+            }
+
+            activeEl.id = '';
+            document.getElementById('score-text').innerText = `Puan: ${score}`;
+            setTimeout(() => { msgBox.innerText = ''; msgBox.className = ''; }, 1500);
+        });
+
+    </script>
+</body>
+
+</html>
