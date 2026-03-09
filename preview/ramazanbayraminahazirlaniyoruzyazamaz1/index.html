@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sesli Eşleştirme Oyunu</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #ff9966, #ff5e62);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            color: white;
+        }
+
+        /* YÖNERGE */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+
+        .modal {
+            background: white;
+            color: #333;
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .modal button {
+            margin-top: 20px;
+            padding: 10px 25px;
+            border: none;
+            border-radius: 20px;
+            background: #28a745;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        /* ÜST BİLGİ */
+        h1 {
+            margin: 20px 0 10px;
+        }
+
+        .game-info {
+            display: flex;
+            gap: 25px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            width: 90%;
+            max-width: 800px;
+            height: 18px;
+            background: #ddd;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress {
+            height: 100%;
+            width: 0%;
+            background: #28a745;
+            transition: 0.3s;
+        }
+
+        /* BÜYÜK GÖRSEL */
+        .image-container {
+            width: 90%;
+            max-width: 800px;
+            height: 60vh;
+            background: white;
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            margin-bottom: 25px;
+        }
+
+        .image-container img {
+            max-height: 90%;
+            max-width: 90%;
+        }
+
+        .image-container.correct {
+            border: 5px solid #28a745;
+        }
+
+        .image-container.wrong {
+            border: 5px solid #dc3545;
+        }
+
+        /* SES BUTONLARI */
+        .labels {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .audio-card {
+            background: white;
+            color: #333;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            flex-direction: column;
+            gap: 5px;
+            cursor: grab;
+            transition: 0.2s;
+        }
+
+        .audio-card:hover {
+            transform: scale(1.1);
+        }
+
+        .audio-card.dragging {
+            opacity: 0.5;
+        }
+
+        button.restart {
+            margin: 30px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            background: #ff9800;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- YÖNERGE -->
+    <div class="overlay" id="instructionOverlay">
+        <div class="modal">
+            <h2>🎉 Oyun Başlıyor!</h2>
+            <p>
+
+                Bayram heyecanı her yeri sardı. Ancak bazı geleneklerimiz resimlerinden ayrı düşmüş.
+                Onları doğru yerlerine kavuşturmak senin elinde!
+            </p>
+            <button onclick="startGame()">Tamam</button>
+        </div>
+    </div>
+
+    <h1><i class="fa-solid fa-volume-high"></i> Doğru Sesi Sürükle</h1>
+
+    <div class="game-info">
+        ⭐ Puan: <span id="score">0</span>
+        ❤️ Can: <span id="lives">3</span>
+        ⏱ Süre: <span id="timer">0</span> sn
+    </div>
+
+    <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+    </div>
+
+    <div class="image-container" id="imageContainer"></div>
+    <div class="labels" id="labels"></div>
+
+    <button class="restart" onclick="restartGame()">Yeniden Başlat</button>
+
+    <script>
+
+        /* =========================
+           DATA (Ses Dosyası Eklendi)
+        ========================= */
+        const DATA = [
+            { image: "bayramsekeri.png", audio: "bayramsekeri.mp3", key: "bayramsekeri" },
+            { image: "bayramtemizligi.png", audio: "bayramtemizligi.mp3", key: "bayramtemizligi" },
+            { image: "bayramnamazi.png", audio: "bayramnamazi.mp3", key: "bayramnamazi" },
+            { image: "elopme.png", audio: "elopme.mp3", key: "elopme" },
+            { image: "bayramharcligi.png", audio: "bayramharcligi.mp3", key: "bayramharcligi" },
+            { image: "fitre.png", audio: "fitre.mp3", key: "fitre" },
+            { image: "arife.png", audio: "arife.mp3", key: "arife" }
+        ];
+
+        let score = 0, lives = 3, currentIndex = 0, timer = 0, interval, shuffledData = [];
+
+        function shuffle(a) { return a.sort(() => Math.random() - 0.5); }
+
+        function startTimer() {
+            interval = setInterval(() => {
+                timer++;
+                document.getElementById("timer").innerText = timer;
+            }, 1000);
+        }
+
+        function updateProgress() {
+            document.getElementById("progress").style.width =
+                (currentIndex / DATA.length * 100) + "%";
+        }
+
+        function loadQuestion() {
+            const container = document.getElementById("imageContainer");
+            const labelsDiv = document.getElementById("labels");
+            container.classList.remove("correct", "wrong");
+
+            if (currentIndex >= shuffledData.length) {
+                clearInterval(interval);
+                setTimeout(() => alert("🎉 Tebrikler!"), 300);
+                return;
+            }
+
+            const current = shuffledData[currentIndex];
+            container.innerHTML = `<img src="${current.image}">`;
+
+            labelsDiv.innerHTML = "";
+            DATA.forEach((item, index) => {
+                const card = document.createElement("div");
+                card.className = "audio-card";
+                card.draggable = true;
+                card.dataset.key = item.key;
+                card.innerHTML = `<span>${index + 1}</span><i class="fa-solid fa-play"></i>`;
+                labelsDiv.appendChild(card);
+
+                const audio = new Audio(item.audio);
+
+                card.addEventListener("click", () => audio.play());
+                card.addEventListener("dragstart", () => card.classList.add("dragging"));
+                card.addEventListener("dragend", () => card.classList.remove("dragging"));
+            });
+        }
+
+        document.getElementById("imageContainer").addEventListener("dragover", e => e.preventDefault());
+
+        document.getElementById("imageContainer").addEventListener("drop", e => {
+            e.preventDefault();
+            const dragging = document.querySelector(".dragging");
+            if (!dragging) return;
+
+            const current = shuffledData[currentIndex];
+
+            if (dragging.dataset.key === current.key) {
+                document.getElementById("imageContainer").classList.add("correct");
+                score += 10;
+                currentIndex++;
+                updateProgress();
+                setTimeout(loadQuestion, 700);
+            } else {
+                document.getElementById("imageContainer").classList.add("wrong");
+                lives--;
+                if (lives <= 0) {
+                    clearInterval(interval);
+                    alert("❌ Oyun Bitti!");
+                    restartGame();
+                }
+            }
+
+            document.getElementById("score").innerText = score;
+            document.getElementById("lives").innerText = lives;
+        });
+
+        function startGame() {
+            document.getElementById("instructionOverlay").style.display = "none";
+            restartGame();
+        }
+
+        function restartGame() {
+            score = 0; lives = 3; currentIndex = 0; timer = 0;
+            shuffledData = shuffle([...DATA]);
+            clearInterval(interval);
+
+            document.getElementById("score").innerText = 0;
+            document.getElementById("lives").innerText = 3;
+            document.getElementById("timer").innerText = 0;
+            document.getElementById("progress").style.width = "0%";
+
+            loadQuestion();
+            startTimer();
+        }
+    </script>
+</body>
+
+</html>

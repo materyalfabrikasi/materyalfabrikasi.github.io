@@ -28,6 +28,8 @@ https://materyalfabrikasi.github.io/ses/bilmece/yildizlar.mp3
 https://materyalfabrikasi.github.io/ses/bilmece/yumurta.mp3
 https://materyalfabrikasi.github.io/ses/burdur/.DS_Store
 https://materyalfabrikasi.github.io/ses/burdur/aglasun.mp3
+https://materyalfabrikasi.github.io/ses/fitre/1.mp3
+https://materyalfabrikasi.github.io/ses/fitre/2.mp3
 https://materyalfabrikasi.github.io/ses/guzelsozler/Afiyet_olsun_.mp3
 https://materyalfabrikasi.github.io/ses/guzelsozler/cokyasa.mp3
 https://materyalfabrikasi.github.io/ses/guzelsozler/Elinesaglik.mp3
@@ -73,6 +75,10 @@ https://materyalfabrikasi.github.io/ses/mahya/6b.mp3
 https://materyalfabrikasi.github.io/ses/mahya/7.mp3
 https://materyalfabrikasi.github.io/ses/mahya/7a.mp3
 https://materyalfabrikasi.github.io/ses/mahya/7b.mp3
+https://materyalfabrikasi.github.io/ses/mani/1.mp3
+https://materyalfabrikasi.github.io/ses/mani/2.mp3
+https://materyalfabrikasi.github.io/ses/mani/3.mp3
+https://materyalfabrikasi.github.io/ses/mani/4.mp3
 https://materyalfabrikasi.github.io/ses/mevlana/.DS_Store
 https://materyalfabrikasi.github.io/ses/mevlana/dogum.mp3
 https://materyalfabrikasi.github.io/ses/mevlana/gelne.mp3
