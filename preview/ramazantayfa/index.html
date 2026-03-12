@@ -1,0 +1,208 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İnteraktif Ramazan Hikayesi</title>
+    <style>
+        :root {
+            --bg-color: #e0f2f1;
+            --accent-color: #ff9800;
+            --text-color: #2c3e50;
+            --secondary-color: #4caf50;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', cursive, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: var(--text-color);
+            overflow: hidden;
+        }
+
+        #game-container {
+            width: 95%;
+            max-width: 900px;
+            max-height: 90vh;
+            background: white;
+            border-radius: 25px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            border: 6px solid #fff;
+        }
+
+        #intro-screen { display: block; }
+        .instruction-box {
+            background: #fff3e0;
+            padding: 20px;
+            border: 3px dashed var(--accent-color);
+            border-radius: 15px;
+            margin: 15px 0;
+            font-size: 1.1rem;
+            line-height: 1.5;
+        }
+
+        #video-container { 
+            display: none; 
+            position: relative; 
+            width: 100%;
+            border-radius: 15px;
+            overflow: hidden;
+            background: #000;
+        }
+        
+        video {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        #question-overlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            border-radius: 15px;
+        }
+
+        .question-card {
+            background: white;
+            width: 80%;
+            padding: 25px;
+            border-radius: 20px;
+            border: 5px solid var(--accent-color);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .question-text {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #e65100;
+            line-height: 1.4;
+        }
+
+        .btn {
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 12px 35px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #2e7d32;
+            transition: all 0.2s;
+        }
+
+        .btn:hover { background: #45a049; transform: scale(1.05); }
+        .btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #2e7d32; }
+
+        #final-screen { display: none; }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <div id="intro-screen">
+        <h1 style="color: var(--accent-color); margin-top: 0; font-size: 1.8rem;">📽️ İzle ve Düşün!</h1>
+        <div class="instruction-box">
+            <p>Merhaba! Seninle harika bir video izleyeceğiz. 😊</p>
+            <p>Video bazı yerlerde duracak ve sana bir soru soracak. Soruyu düşün ve <b>"Devam Et"</b> butonuna basarak yolculuğuna devam et!</p>
+        </div>
+        <button class="btn" onclick="startGame()">Hadi Başlayalım! 🚀</button>
+    </div>
+
+    <div id="video-container">
+        <video id="myVideo" controls controlsList="nodownload">
+            <source src="1.mp4" type="video/mp4">
+        </video>
+
+        <div id="question-overlay">
+            <div class="question-card">
+                <div class="question-text" id="current-question">Soru buraya gelecek...</div>
+                <button class="btn" onclick="continueVideo()">Devam Et ➡️</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="final-screen">
+        <h1 style="color: var(--secondary-color); font-size: 2rem;">Harikaydın! 🎊</h1>
+        <div style="font-size: 4rem; margin: 15px;">🎖️</div>
+        <p style="font-size: 1.2rem;">Tüm soruları tamamladın. Katıldığın için teşekkürler!</p>
+        <button class="btn" onclick="location.reload()">Başa Dön 🔄</button>
+    </div>
+</div>
+
+<script>
+    const video = document.getElementById('myVideo');
+    const container = document.getElementById('video-container');
+    const questionOverlay = document.getElementById('question-overlay');
+    const questionText = document.getElementById('current-question');
+    
+    // Güncellenmiş Soru ve Süreleri (Dakika:Saniye -> Toplam Saniye)
+    const questions = [
+        { time: 110, text: "Arife çiçeği sözcüğünü daha önce duymuş muydun? Sen de bir arife çiçeği misin?" }, // 1.50 dk
+        { time: 170, text: "Bayramlık nedir?" }, // 2.50 dk
+        { time: 285, text: "Akın’ın yerinde sen olsaydın ne yapardın?" }, // 4.45 dk
+        { time: 299, text: "İzlediğin videodan hareketle “Ramazan………………………….dır.” boşluğu tamamla." } // 4.59 dk
+    ];
+
+    let answeredQuestions = new Set();
+
+    function startGame() {
+        document.getElementById('intro-screen').style.display = 'none';
+        container.style.display = 'block';
+        video.currentTime = 50; // Video 0.50 saniyede başlar
+        video.play();
+    }
+
+    video.addEventListener('timeupdate', () => {
+        const currentTime = Math.floor(video.currentTime);
+
+        questions.forEach((q) => {
+            if (currentTime === q.time && !answeredQuestions.has(q.time)) {
+                video.pause();
+                if (document.fullscreenElement) document.exitFullscreen();
+                showQuestion(q.text, q.time);
+            }
+        });
+
+        // 5.02 saniyede biter (302. saniye)
+        if (video.currentTime >= 302) {
+            video.pause();
+            showFinalScreen();
+        }
+    });
+
+    function showQuestion(text, timeId) {
+        questionText.innerText = text;
+        questionOverlay.style.display = 'flex';
+        answeredQuestions.add(timeId);
+    }
+
+    function continueVideo() {
+        questionOverlay.style.display = 'none';
+        video.play();
+    }
+
+    function showFinalScreen() {
+        container.style.display = 'none';
+        document.getElementById('final-screen').style.display = 'block';
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,351 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ramazan Manileri Sıralama Oyunu</title>
+    <style>
+        :root {
+            --primary-color: #ff9800;
+            --secondary-color: #4caf50;
+            --night-blue: #1a237e;
+            --gold: #ffd700;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-image: url('1.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            color: #fff;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        body::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1;
+        }
+
+        /* KAYAN YILDIZLAR */
+        .shooting-star {
+            position: absolute;
+            top: 0; left: 50%;
+            width: 2px; height: 2px;
+            background: #fff;
+            box-shadow: 0 0 10px #fff, 0 0 20px #fff;
+            animation: shoot 3s linear infinite;
+            z-index: 2;
+            opacity: 0;
+        }
+        @keyframes shoot {
+            0% { transform: translate(0, 0) rotate(-45deg); opacity: 1; }
+            20% { transform: translate(-500px, 500px) rotate(-45deg); opacity: 0; }
+            100% { transform: translate(-500px, 500px) rotate(-45deg); opacity: 0; }
+        }
+
+        #game-container {
+            width: 90%;
+            max-width: 650px;
+            background: rgba(255, 255, 255, 0.94);
+            padding: 25px;
+            border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            color: var(--night-blue);
+            border: 4px solid var(--gold);
+        }
+
+        .lantern {
+            position: absolute;
+            top: -15px;
+            font-size: 40px;
+            animation: swing 3s ease-in-out infinite alternate;
+            transform-origin: top center;
+            z-index: 11;
+        }
+        .lantern-left { left: 20px; }
+        .lantern-right { right: 20px; }
+        @keyframes swing { from { transform: rotate(-8deg); } to { transform: rotate(8deg); } }
+
+        .screen { display: none; animation: slideUp 0.5s ease-out; }
+        .active { display: block; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        h1, h3 { color: #d32f2f; margin-top: 0; }
+        
+        .instruction-img {
+            max-width: 130px;
+            margin: 10px auto;
+            border-radius: 50%;
+            border: 4px solid var(--gold);
+            background: white;
+        }
+
+        .btn {
+            background: linear-gradient(to bottom, #ff9800, #e65100);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 15px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(230, 81, 0, 0.3);
+        }
+
+        #intro-video { width: 100%; border-radius: 15px; background: #000; }
+        #mid-video { width: 45%; max-width: 280px; border: 4px solid var(--gold); border-radius: 15px; margin: 10px auto; display: block; }
+
+        .mani-satir {
+            background: linear-gradient(to right, #ffffff, #fffde7);
+            border: 2px solid #ffcc80;
+            padding: 14px;
+            margin: 8px 0;
+            border-radius: 15px;
+            cursor: grab;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            color: #4e342e;
+        }
+        .mani-satir:hover { border-color: var(--primary-color); }
+        .dragging { opacity: 0.5; border: 2px dashed #ff9800; }
+        
+        /* DOĞRU VE YANLIŞ DURUMLARI İÇİN YENİ STİLLER */
+        .correct-item { border-color: #4caf50 !important; border-width: 3px !important; box-shadow: 0 0 15px rgba(76, 175, 80, 0.4); }
+        .wrong-item { border-color: #f44336 !important; border-width: 3px !important; }
+
+        #score-board {
+            background: var(--gold);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 10px;
+            color: #000;
+        }
+
+        .feedback { font-size: 1.1rem; min-height: 35px; font-weight: bold; }
+        .confetti { position: absolute; width: 10px; height: 10px; z-index: 100; animation: fall linear forwards; }
+        @keyframes fall { to { transform: translateY(100vh) rotate(720deg); } }
+    </style>
+</head>
+<body>
+
+<div class="shooting-star" style="left: 80%; animation-delay: 0s;"></div>
+<div class="shooting-star" style="left: 30%; animation-delay: 5s;"></div>
+
+<div class="lantern lantern-left">🏮</div>
+<div class="lantern lantern-right">🏮</div>
+
+<div id="game-container">
+    <div id="score-board">⭐ Puan: <span id="puan">0</span></div>
+
+    <div id="screen-1" class="screen active">
+        <h1>Ramazan Neşesi 🌙</h1>
+        <img src="1.png" alt="Ramazan" class="instruction-img">
+        <p>Mânilerimiz birbirine karıştı! <br> Onları doğru sıralayıp puanları topla!</p>
+        <button class="btn" onclick="goToScreen(2)">Hadi Başlayalım!</button>
+    </div>
+
+    <div id="screen-2" class="screen">
+        <h3>Videoyu İzleyelim 📺</h3>
+        <video id="intro-video" controls>
+            <source src="1.mp4" type="video/mp4">
+        </video>
+        <br>
+        <button class="btn" onclick="startLevels()">Sıralamaya Geç ➡️</button>
+    </div>
+
+    <div id="screen-game" class="screen">
+        <h3 id="level-title">Manini Sırala</h3>
+        <div id="feedback-msg" class="feedback"></div>
+        <ul class="sortable-list" id="mani-list"></ul>
+        <button class="btn" onclick="checkOrder()">Kontrol Et ✔️</button>
+    </div>
+
+    <div id="screen-mid-video" class="screen">
+        <h2 style="color:var(--secondary-color)">Tebrikler! 🎉</h2>
+        <video id="mid-video">
+            <source src="2.mp4" type="video/mp4">
+        </video>
+        <br>
+        <button class="btn" id="next-mani-btn" onclick="nextAfterVideo()">Sıradaki Maniye Geç ✨</button>
+    </div>
+
+    <div id="screen-finish" class="screen">
+        <div class="congrats-card">
+            <h1>Hayırlı Ramazanlar! 🎉</h1>
+            <p style="font-size: 1.3rem; color: #d32f2f; font-weight: bold; margin: 15px 0;">
+                "Tebrik ederim. Bir sonraki Ramazan'a kavuşmak dileğiyle..."
+            </p>
+            <div id="final-score-text" style="font-size: 1.6rem; font-weight: bold;"></div>
+            <div style="font-size: 3rem; margin: 15px 0;">🕌 🍬 🥁</div>
+            <button class="btn" onclick="location.reload()">Baştan Oyna</button>
+        </div>
+    </div>
+</div>
+
+<audio id="clap-sound" src="alkis.mp3"></audio>
+
+<script>
+    let currentLevel = 0;
+    let score = 0;
+    const maniler = [
+        ["Davulun içi pekmez,", "Çalarım fakat ötmez.", "Bir bahşiş vermezseniz,", "Davulcu buradan gitmez."],
+        ["Ramazan’ım merhaba,", "Bizlere verdin sefâ,", "Rabbimize hamdolsun,", "Her nefeste bin defa."],
+        ["Bak geldi etli dolma,", "Çok yiyip göbek salma.", "Üstüne bir kahve iç,", "Terâvihe geç kalma!"],
+        ["Sahur vakti emîndir.", "Hoşaf suyu serindir.", "Aman eli çabuk tut.", "Yetimi sen sevindir."]
+    ];
+
+    function goToScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        const target = document.getElementById('screen-' + id);
+        if(target) target.classList.add('active');
+    }
+
+    function startLevels() {
+        document.getElementById('intro-video').pause();
+        loadMani(); 
+        goToScreen('game');
+    }
+
+    function loadMani() {
+        const list = document.getElementById('mani-list');
+        const feedback = document.getElementById('feedback-msg');
+        list.innerHTML = "";
+        feedback.innerHTML = "";
+        document.getElementById('level-title').textContent = (currentLevel + 1) + ". Mani Sıralama";
+        let shuffled = [...maniler[currentLevel]].sort(() => Math.random() - 0.5);
+        shuffled.forEach(text => {
+            const li = document.createElement('li');
+            li.className = 'mani-satir';
+            li.draggable = true;
+            li.textContent = text;
+            li.addEventListener('dragstart', () => {
+                li.classList.add('dragging');
+                playDragSound(); // Sürükleme sesi tetikleme
+            });
+            li.addEventListener('dragend', () => li.classList.remove('dragging'));
+            list.appendChild(li);
+        });
+        setupDragDrop();
+    }
+
+    function playDragSound() {
+        // 1.mp4'ün ilk 0.5 saniyesini kullanarak "tık" sesi oluşturma
+        const vid = document.getElementById('intro-video');
+        vid.currentTime = 0;
+        vid.volume = 0.2;
+        vid.play().then(() => {
+            setTimeout(() => { vid.pause(); vid.volume = 1; }, 200);
+        }).catch(e => console.log("Etkileşim sesi için kullanıcı izni bekleniyor."));
+    }
+
+    function setupDragDrop() {
+        const list = document.getElementById('mani-list');
+        list.addEventListener('dragover', e => {
+            e.preventDefault();
+            const draggingItem = document.querySelector('.dragging');
+            const afterElement = getDragAfterElement(list, e.clientY);
+            if (afterElement == null) list.appendChild(draggingItem);
+            else list.insertBefore(draggingItem, afterElement);
+        });
+    }
+
+    function getDragAfterElement(container, y) {
+        const draggableElements = [...container.querySelectorAll('.mani-satir:not(.dragging)')];
+        return draggableElements.reduce((closest, child) => {
+            const box = child.getBoundingClientRect();
+            const offset = y - box.top - box.height / 2;
+            if (offset < 0 && offset > closest.offset) return { offset: offset, element: child };
+            else return closest;
+        }, { offset: Number.NEGATIVE_INFINITY }).element;
+    }
+
+    function checkOrder() {
+        const items = [...document.querySelectorAll('.mani-satir')];
+        const userOrder = items.map(i => i.textContent.trim());
+        const correctOrder = maniler[currentLevel];
+        const feedback = document.getElementById('feedback-msg');
+
+        if (JSON.stringify(userOrder) === JSON.stringify(correctOrder)) {
+            score += 25;
+            document.getElementById('puan').textContent = score;
+            feedback.innerHTML = "<span style='color:green'>✨ Muhteşem! Doğru Sıralama.</span>";
+            
+            // DOĞRU SIRALAMADA KARTLARIN ÇERÇEVESİNİ YEŞİL YAP
+            items.forEach(item => item.classList.add('correct-item'));
+            
+            createConfetti(100); 
+            document.getElementById('clap-sound').play();
+            setTimeout(() => {
+                goToScreen('mid-video');
+                const midVid = document.getElementById('mid-video');
+                midVid.play();
+                if(currentLevel === maniler.length - 1) document.getElementById('next-mani-btn').textContent = "Oyunu Bitir ✨";
+            }, 1200);
+        } else {
+            feedback.innerHTML = "<span style='color:red'>⚠️ Tekrar Dene! Dizeler karışmış.</span>";
+            items.forEach(item => {
+                item.classList.add('wrong-item');
+                setTimeout(() => item.classList.remove('wrong-item'), 1000);
+            });
+            setTimeout(() => loadMani(), 1500);
+        }
+    }
+
+    function nextAfterVideo() {
+        document.getElementById('mid-video').pause();
+        currentLevel++;
+        if (currentLevel < maniler.length) { loadMani(); goToScreen('game'); }
+        else { finishGame(); }
+    }
+
+    function finishGame() {
+        goToScreen('finish');
+        document.getElementById('final-score-text').textContent = "Puanın: " + score;
+        setInterval(() => createConfetti(10), 300);
+
+        const finalAudio = document.getElementById('intro-video');
+        finalAudio.currentTime = 0;
+        finalAudio.play();
+        const stopTime = 10;
+        const checkStop = setInterval(() => {
+            if (finalAudio.currentTime >= stopTime) {
+                finalAudio.pause();
+                clearInterval(checkStop);
+            }
+        }, 100);
+    }
+
+    function createConfetti(count) {
+        for(let i=0; i<count; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + 'vw';
+            confetti.style.backgroundColor = ['#ffd700', '#ff9800', '#ffffff', '#4caf50', '#ff4081', '#00e5ff'][Math.floor(Math.random()*6)];
+            confetti.style.animationDuration = (Math.random() * 1.5 + 1.5) + 's';
+            confetti.style.top = "-20px";
+            document.body.appendChild(confetti);
+            setTimeout(() => confetti.remove(), 3000);
+        }
+    }
+</script>
+</body>
+</html>

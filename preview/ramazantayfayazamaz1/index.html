@@ -1,0 +1,288 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Estetik Ses-Görsel Eşleştirme</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --accent: #ff9f43;
+            --success: #2ecc71;
+            --glass: rgba(255, 255, 255, 0.15);
+            --card-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            overflow: hidden;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg-gradient);
+        }
+
+        /* Başlangıç ve Bitiş Ekranı */
+        .overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 12, 41, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 2000;
+            color: white;
+            text-align: center;
+        }
+
+        .btn-main {
+            background: var(--success);
+            border: none;
+            padding: 18px 45px;
+            border-radius: 50px;
+            font-size: 1.8rem;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+            transition: 0.3s;
+            font-weight: bold;
+        }
+
+        .btn-main:hover { transform: scale(1.05); background: #27ae60; }
+
+        /* Ana Konteynır */
+        .app-wrapper {
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+            padding: 25px;
+            box-sizing: border-box;
+            gap: 25px;
+        }
+
+        /* SOL: Görsel Grid (2x2) */
+        .visual-grid {
+            flex: 4;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .drop-zone {
+            background: rgba(255, 255, 255, 0.9);
+            border: 4px solid transparent;
+            border-radius: 30px;
+            position: relative;
+            overflow: hidden; /* Resmin dışarı taşmasını engeller */
+            box-shadow: var(--card-shadow);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Görseller Çerçevenin İçini Tam Doldurur */
+        .drop-zone img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Çerçeveyi tam doldurur */
+            transition: 0.5s;
+        }
+
+        .drop-zone.hover {
+            border-color: var(--accent);
+            transform: scale(1.02);
+            box-shadow: 0 0 30px rgba(255, 159, 67, 0.5);
+        }
+
+        /* SAĞ: Ses Sütunu */
+        .audio-sidebar {
+            flex: 1;
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border-radius: 35px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: center;
+            padding: 20px 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Yeni Estetik Ses İkonları */
+        .audio-token {
+            width: 75px; /* Küçültüldü */
+            height: 75px;
+            background: white;
+            color: #764ba2;
+            border-radius: 22px; /* Karemsi yuvarlak form */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            cursor: grab;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .audio-token:hover {
+            background: var(--accent);
+            color: white;
+            transform: translateY(-5px);
+        }
+
+        .audio-token::after {
+            content: "\f028"; /* FontAwesome Sound Icon */
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+        }
+
+        /* Başarı Efekti */
+        .matched {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.5);
+        }
+
+        .success-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(46, 204, 113, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 6rem;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        #win-screen { display: none; }
+    </style>
+</head>
+<body>
+
+    <div id="start-overlay" class="overlay">
+        <div style="background: white; color: #333; padding: 40px; border-radius: 40px; box-shadow: 0 20px 40px rgba(0,0,0,0.5);">
+            <i class="fas fa-music" style="font-size: 4rem; color: #764ba2; margin-bottom: 20px;"></i>
+            <h1 style="margin-bottom: 30px;">Sesleri Eşleştir!</h1>
+            <button class="btn-main" onclick="startGame()">BAŞLA</button>
+        </div>
+    </div>
+
+    <div id="win-screen" class="overlay">
+        <i class="fas fa-trophy" style="font-size: 8rem; color: #f1c40f; margin-bottom: 20px;"></i>
+        <h1 style="font-size: 4rem; margin-bottom: 10px;">Tebrik Ederim!</h1>
+        <p style="font-size: 1.5rem; opacity: 0.8; margin-bottom: 30px;">Hepsini başarıyla tamamladın.</p>
+        <button class="btn-main" onclick="location.reload()" style="background: #f1c40f; color: #333;">YENİDEN OYNA</button>
+    </div>
+
+    <div class="app-wrapper">
+        <div class="visual-grid" id="grid"></div>
+        <div class="audio-sidebar" id="sidebar"></div>
+    </div>
+
+<script>
+    const DATA = [
+        { id: 1, label: "Görsel 1" },
+        { id: 2, label: "Görsel 2" },
+        { id: 3, label: "Görsel 3" },
+        { id: 4, label: "Görsel 4" }
+    ];
+
+    let found = 0;
+    let audioTask = null;
+
+    function startGame() {
+        document.getElementById('start-overlay').style.display = 'none';
+        new Audio('5.mp3').play().catch(() => {});
+        init();
+    }
+
+    function init() {
+        const grid = document.getElementById('grid');
+        const sidebar = document.getElementById('sidebar');
+
+        // Görselleri Karıştır ve Bas
+        [...DATA].sort(() => Math.random() - 0.5).forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'drop-zone';
+            div.dataset.id = item.id;
+            div.innerHTML = `<img src="${item.id}.png" onerror="this.src='https://via.placeholder.com/500?text=${item.label}'">`;
+            
+            div.ondragover = e => e.preventDefault();
+            div.ondragenter = () => div.classList.add('hover');
+            div.ondragleave = () => div.classList.remove('hover');
+            div.ondrop = e => handleDrop(e, div);
+            
+            grid.appendChild(div);
+        });
+
+        // Ses İkonlarını Karıştır ve Bas
+        [...DATA].sort(() => Math.random() - 0.5).forEach(item => {
+            const token = document.createElement('div');
+            token.className = 'audio-token';
+            token.draggable = true;
+            token.id = "aud-" + item.id;
+            // İçerik CSS pseudo-elementten (::after) geliyor, ikon orada tanımlı.
+
+            token.onclick = () => playSnd(item.id);
+            token.ondragstart = e => {
+                e.dataTransfer.setData("text", item.id);
+                playSnd(item.id);
+            };
+
+            sidebar.appendChild(token);
+        });
+    }
+
+    function playSnd(id) {
+        const el = document.getElementById("aud-" + id);
+        if (el.classList.contains('matched')) return;
+
+        if (audioTask) {
+            audioTask.pause();
+            audioTask.currentTime = 0;
+        }
+        audioTask = new Audio(`${id}.mp3`);
+        audioTask.play().catch(() => {});
+    }
+
+    function handleDrop(e, zone) {
+        e.preventDefault();
+        zone.classList.remove('hover');
+        const sid = e.dataTransfer.getData("text");
+
+        if (zone.querySelector('.success-overlay')) return;
+
+        if (sid == zone.dataset.id) {
+            const source = document.getElementById("aud-" + sid);
+            source.classList.add('matched');
+            if (audioTask) audioTask.pause();
+
+            const over = document.createElement('div');
+            over.className = 'success-overlay';
+            over.innerHTML = '<i class="fas fa-check-circle"></i>';
+            zone.appendChild(over);
+
+            new Audio('https://actions.google.com/sounds/v1/cartoon/clime_up.ogg').play();
+            
+            found++;
+            if (found === DATA.length) {
+                setTimeout(() => {
+                    document.getElementById('win-screen').style.display = 'flex';
+                }, 800);
+            }
+        } else {
+            new Audio('https://actions.google.com/sounds/v1/cartoon/pop.ogg').play();
+            zone.style.transform = "shake 0.5s"; // Basit bir sallanma efekti hayal edilebilir
+        }
+    }
+</script>
+</body>
+</html>
