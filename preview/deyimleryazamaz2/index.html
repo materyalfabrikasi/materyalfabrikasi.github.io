@@ -1,0 +1,212 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eşleştirme Oyunu</title>
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --accent-color: #FF9800; /* Çerçeve ve Buton Rengi */
+            --bg-color: #2C3E50;    /* Antrasit Zemin */
+        }
+
+        body, html {
+            margin: 0; padding: 0; height: 100%;
+            font-family: sans-serif;
+            background-color: var(--bg-color);
+            color: white; overflow: hidden;
+        }
+
+        #game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* Üstteki Dolum Çizgisi */
+        #progress-container {
+            width: 90%; height: 20px;
+            background: #34495e;
+            border-radius: 10px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        #progress-bar {
+            width: 0%; height: 100%;
+            background: var(--primary-color);
+            transition: width 0.5s;
+        }
+
+        #stats {
+            margin-top: 10px;
+            display: flex; gap: 30px;
+            font-size: 1.2rem; font-weight: bold;
+        }
+
+        /* Dikdörtgen Çerçeve ve Görsel */
+        #drop-zone {
+            width: 500px; height: 350px;
+            border: 6px solid var(--accent-color);
+            border-radius: 15px;
+            margin-top: 40px;
+            display: flex; justify-content: center; align-items: center;
+            background: rgba(0,0,0,0.2);
+            box-shadow: 0 0 20px rgba(255, 152, 0, 0.3);
+        }
+
+        #current-image {
+            max-width: 95%; max-height: 95%;
+            object-fit: contain;
+        }
+
+        /* Ses Butonları */
+        #audio-shelf {
+            display: flex; gap: 20px;
+            margin-top: 50px;
+        }
+
+        .audio-btn {
+            width: 80px; height: 80px;
+            background: transparent;
+            border: 3px solid var(--accent-color); /* Çerçeve ile aynı renk */
+            border-radius: 15px;
+            color: var(--accent-color);
+            font-size: 30px;
+            display: flex; justify-content: center; align-items: center;
+            cursor: grab;
+            transition: 0.3s;
+        }
+
+        .audio-btn:hover {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        #feedback {
+            position: absolute; top: 50%;
+            font-size: 3rem; font-weight: bold;
+            display: none; pointer-events: none;
+        }
+    </style>
+</head>
+<body onclick="playStartAudio()">
+
+<div id="game-container">
+    <div id="progress-container">
+        <div id="progress-bar"></div>
+    </div>
+
+    <div id="stats">
+        <span>Süre: <span id="timer">02:00</span></span>
+        <span>Can: <span id="lives">❤️❤️❤️</span></span>
+    </div>
+
+    <div id="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)">
+        <img id="current-image" src="" alt="Yükleniyor...">
+    </div>
+
+    <div id="audio-shelf">
+        </div>
+
+    <div id="feedback"></div>
+</div>
+
+<script>
+    let currentId = 1;
+    let lives = 3;
+    let timeLeft = 120;
+    let introPlayed = false;
+
+    // Sayfa tıklandığında 7.mp3'ü bir kez çal
+    function playStartAudio() {
+        if (!introPlayed) {
+            const intro = new Audio('7.mp3');
+            intro.play();
+            introPlayed = true;
+            startTimer();
+        }
+    }
+
+    function initSounds() {
+        const shelf = document.getElementById('audio-shelf');
+        const ids = [1, 2, 3, 4, 5, 6].sort(() => Math.random() - 0.5);
+        
+        shelf.innerHTML = '';
+        ids.forEach(id => {
+            const btn = document.createElement('div');
+            btn.className = 'audio-btn';
+            btn.draggable = true;
+            btn.innerHTML = '🔊';
+            btn.onclick = (e) => { e.stopPropagation(); new Audio(id + '.mp3').play(); };
+            btn.ondragstart = (e) => e.dataTransfer.setData("text", id);
+            shelf.appendChild(btn);
+        });
+    }
+
+    function loadLevel() {
+        if (currentId > 6) { endGame(true); return; }
+        document.getElementById('current-image').src = currentId + '.jpg';
+    }
+
+    function allowDrop(e) { e.preventDefault(); }
+
+    function drop(e) {
+        e.preventDefault();
+        const draggedId = parseInt(e.dataTransfer.getData("text"));
+        
+        if (draggedId === currentId) {
+            showFeedback("Harika! ✅", "#4CAF50");
+            currentId++;
+            updateProgress();
+            setTimeout(loadLevel, 800);
+        } else {
+            lives--;
+            updateLives();
+            showFeedback("Yanlış! ❌", "#F44336");
+            if (lives <= 0) endGame(false);
+        }
+    }
+
+    function updateProgress() {
+        const prg = ((currentId - 1) / 6) * 100;
+        document.getElementById('progress-bar').style.width = prg + "%";
+    }
+
+    function updateLives() {
+        document.getElementById('lives').innerText = "❤️".repeat(lives) + "🖤".repeat(3-lives);
+    }
+
+    function showFeedback(text, color) {
+        const fb = document.getElementById('feedback');
+        fb.innerText = text; fb.style.color = color; fb.style.display = 'block';
+        setTimeout(() => fb.style.display = 'none', 800);
+    }
+
+    function startTimer() {
+        setInterval(() => {
+            if(timeLeft > 0 && currentId <= 6 && lives > 0) {
+                timeLeft--;
+                let m = Math.floor(timeLeft / 60);
+                let s = timeLeft % 60;
+                document.getElementById('timer').innerText = `${m}:${s < 10 ? '0'+s : s}`;
+            } else if (timeLeft === 0) { endGame(false); }
+        }, 1000);
+    }
+
+    function endGame(win) {
+        alert(win ? "Tebrikler! Oyunu tamamladın. 🎉" : "Oyun bitti, tekrar dene! 🌈");
+        location.reload();
+    }
+
+    // Başlangıç
+    initSounds();
+    loadLevel();
+</script>
+
+</body>
+</html>

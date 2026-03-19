@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El ile ilgili deyimler</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+            user-select: none;
+            /* Metin seçimini engeller */
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        /* --- OYUN ALANI TASARIMI --- */
+        #game-container {
+            position: relative;
+            width: 910px;
+            height: 600px;
+            background-color: #fff;
+            border: 2px solid #ccc;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        /* Merkezdeki Resim */
+        #center-image {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 900px;
+            /* Resmi buradan büyütebilirsin */
+            height: auto;
+            z-index: 1;
+            pointer-events: none;
+            /* Resmin üzerine tıklanmasını engeller */
+        }
+
+        /* Puan Tablosu */
+        #score-board {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+            z-index: 10;
+        }
+
+        /* --- SÜRÜKLENEBİLİR DEYİMLER (ALT KISIM) --- */
+        #draggables-area {
+            display: flex;
+            gap: 15px;
+            padding: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 800px;
+        }
+
+        .draggable-item {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: grab;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .draggable-item:active {
+            cursor: grabbing;
+            transform: scale(0.95);
+        }
+
+        /* --- HEDEF KUTULAR (DROP ZONES) --- */
+        .drop-zone {
+            position: absolute;
+            /* Konumları manuel ayarlamak için absolute şart */
+            width: 160px;
+            height: 80px;
+            background-color: #ecf0f1;
+            border: 2px dashed #95a5a6;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-size: 14px;
+            color: #7f8c8d;
+            z-index: 5;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .drop-zone.hovered {
+            background-color: #d6eaf8;
+            border-color: #3498db;
+            transform: scale(1.05);
+        }
+
+        .drop-zone.correct {
+            background-color: #2ecc71 !important;
+            /* Yeşil */
+            border: 2px solid #27ae60;
+            color: white;
+            border-style: solid;
+        }
+
+        .drop-zone.wrong {
+            background-color: #e74c3c !important;
+            /* Kırmızı */
+            border: 2px solid #c0392b;
+            color: white;
+            animation: shake 0.5s;
+        }
+
+        /* --- KONUMLANDIRMA BÖLÜMÜ (BURAYI DÜZENLE) --- */
+
+        /* 
+           Aşağıdaki kutuların konumlarını 'top' (yukarıdan uzaklık) 
+           ve 'left' (soldan uzaklık) değerlerini değiştirerek ayarlayabilirsin.
+           'el.jpg' resminin etrafına dağıtmaya çalış.
+        */
+
+        /* KUTU 1 KONUMU */
+        #box1 {
+            top: 25px;
+            /* Yukarıdan 50px boşluk */
+            left: 180px;
+            /* Soldan 50px boşluk */
+        }
+
+        /* KUTU 2 KONUMU */
+        #box2 {
+            top: 0px;
+            right: 360px;
+            /* Sağdan 50px boşluk (left yerine right kullanabilirsin) */
+            left: auto;
+        }
+
+        /* KUTU 3 KONUMU */
+        #box3 {
+            top: 42%;
+            left: 90px;
+            transform: translateY(-50%);
+            /* Dikeyde tam ortalamak için */
+        }
+
+        /* KUTU 4 KONUMU */
+        #box4 {
+            top: 15%;
+            right: 180px;
+            left: auto;
+            transform: translateY(-50%);
+        }
+
+        /* KUTU 5 KONUMU */
+        #box5 {
+            bottom: 350px;
+            /* Alttan 50px boşluk */
+            left: 80%;
+            transform: translateX(-50%);
+            /* Yatayda tam ortalamak için */
+            top: auto;
+        }
+
+        /* Yanlış cevap animasyonu */
+        @keyframes shake {
+            0% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            50% {
+                transform: translateX(5px);
+            }
+
+            75% {
+                transform: translateX(-5px);
+            }
+
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        /* Mesaj Kutusu */
+        #message-area {
+            height: 30px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .msg-success {
+            color: green;
+        }
+
+        .msg-error {
+            color: red;
+        }
+
+        /* Yönerge (Instruction) Tasarımı */
+        .instruction {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            margin: 10px 0 20px 0;
+            max-width: 800px;
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>El ile İlgili Deyimler</h1>
+    <div class="instruction">Aşağıda verilen deyimlerden "yardım etme, yardımlaşma" anlamındaki deyimleri kutucuklara
+        sürükleyelim.</div>
+
+    <div id="score-board">Puan: <span id="score">0</span> / 5</div>
+
+    <div id="game-container">
+        <!-- Merkez Resim -->
+        <img src="el.jpg" alt="El Resmi" id="center-image">
+
+        <!-- 5 Adet Hedef Kutu -->
+        <div class="drop-zone" id="box1" data-id="target1">Buraya Sürükle</div>
+        <div class="drop-zone" id="box2" data-id="target2">Buraya Sürükle</div>
+        <div class="drop-zone" id="box3" data-id="target3">Buraya Sürükle</div>
+        <div class="drop-zone" id="box4" data-id="target4">Buraya Sürükle</div>
+        <div class="drop-zone" id="box5" data-id="target5">Buraya Sürükle</div>
+    </div>
+
+    <div id="draggables-area">
+        <!-- Sürüklenecek Deyimler -->
+        <!-- data-type="correct" veya "wrong" olarak işaretledim -->
+        <div class="draggable-item" draggable="true" id="drag1" data-type="correct">El vermek</div>
+        <div class="draggable-item" draggable="true" id="drag2" data-type="wrong">El sürmemek</div>
+        <div class="draggable-item" draggable="true" id="drag3" data-type="correct">El atmak</div>
+        <div class="draggable-item" draggable="true" id="drag4" data-type="correct">El ele vermek</div>
+        <div class="draggable-item" draggable="true" id="drag5" data-type="wrong">Eli ayağına dolaşmak</div>
+        <div class="draggable-item" draggable="true" id="drag6" data-type="correct">El birliği etmek</div>
+        <div class="draggable-item" draggable="true" id="drag7" data-type="correct">El uzatmak</div>
+    </div>
+
+    <div id="message-area"></div>
+
+    <script>
+        const draggables = document.querySelectorAll('.draggable-item');
+        const dropZones = document.querySelectorAll('.drop-zone');
+        const scoreElement = document.getElementById('score');
+        const messageArea = document.getElementById('message-area');
+
+        let score = 0;
+        let correctCount = 0;
+        const maxScore = 5;
+
+        // Sürükleme Başlangıcı
+        draggables.forEach(draggable => {
+            draggable.addEventListener('dragstart', () => {
+                draggable.classList.add('dragging');
+                // Sürüklenen öğenin ID'sini ve Tipini (doğru/yanlış) taşıyoruz
+                event.dataTransfer.setData('text/plain', JSON.stringify({
+                    id: draggable.id,
+                    type: draggable.getAttribute('data-type'),
+                    text: draggable.innerText
+                }));
+            });
+
+            draggable.addEventListener('dragend', () => {
+                draggable.classList.remove('dragging');
+            });
+        });
+
+        // Kutuların üzerine gelindiğinde
+        dropZones.forEach(zone => {
+            zone.addEventListener('dragover', (e) => {
+                e.preventDefault(); // Bırakmaya izin ver
+                if (!zone.classList.contains('correct')) {
+                    zone.classList.add('hovered');
+                }
+            });
+
+            zone.addEventListener('dragleave', () => {
+                zone.classList.remove('hovered');
+            });
+
+            // Bırakıldığında
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.classList.remove('hovered');
+
+                // Eğer kutu zaten doğru cevapla dolmuşsa işlem yapma
+                if (zone.classList.contains('correct')) return;
+
+                const dataString = event.dataTransfer.getData('text/plain');
+                const data = JSON.parse(dataString);
+                const draggedElement = document.getElementById(data.id);
+
+                // --- MANTIK KONTROLÜ ---
+                if (data.type === 'correct') {
+                    // DOĞRU CEVAP
+                    zone.classList.add('correct');
+                    zone.innerText = data.text; // Kutunun içine deyimi yaz
+                    zone.style.color = "white";
+
+                    // Sürüklenen elemanı listeden gizle (veya sil)
+                    draggedElement.style.display = 'none';
+
+                    score += 10;
+                    correctCount++;
+                    scoreElement.innerText = score;
+
+                    showMessage("Harika! Doğru cevap.", "success");
+                    checkWin();
+
+                } else {
+                    // YANLIŞ CEVAP
+                    zone.classList.add('wrong');
+                    showMessage("Yanlış deyim! Dikkat et.", "error");
+
+                    // Kırmızı uyarıyı 1 saniye sonra kaldır
+                    setTimeout(() => {
+                        zone.classList.remove('wrong');
+                    }, 1000);
+                }
+            });
+        });
+
+        function showMessage(text, type) {
+            messageArea.innerText = text;
+            messageArea.className = type === 'success' ? 'msg-success' : 'msg-error';
+
+            // Mesajı 2 saniye sonra temizle
+            setTimeout(() => {
+                messageArea.innerText = "";
+            }, 2000);
+        }
+
+        function checkWin() {
+            if (correctCount === maxScore) {
+                setTimeout(() => {
+                    alert("TEBRİKLER! Tüm doğru deyimleri buldun ve oyunu kazandın! 🎉");
+                    // İstersen burada sayfayı yenileyebilirsin: location.reload();
+                }, 500);
+            }
+        }
+    </script>
+</body>
+
+</html>

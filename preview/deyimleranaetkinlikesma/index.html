@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Etkileşimli Deyimler Oyunu</title>
+    <style>
+        body {
+            margin: 0;
+            background: #2d3436;
+            overflow: hidden;
+        }
+
+        #video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* Tarayıcının tam ekran butonunu gizle */
+        video::-webkit-media-controls-fullscreen-button {
+            display: none !important;
+        }
+
+        #overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(108, 92, 231, 0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .btn {
+            padding: 20px 50px;
+            font-size: 2rem;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            background: #55efc4;
+            color: #000;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="video-container">
+        <div id="overlay">
+            <h2 id="title">Deyimlerin Dünyasına Girmeye Hazır Mısın?</h2>
+            <p id="question">Videoyu izle ve sorulara cevap ver.</p>
+            <button class="btn" id="actionBtn" onclick="initVideo()">BAŞLA</button>
+        </div>
+
+        <video id="myVideo" controls>
+            <source src="1.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <script>
+        const container = document.getElementById("video-container");
+        const video = document.getElementById("myVideo");
+        const overlay = document.getElementById("overlay");
+        const title = document.getElementById("title");
+        const question = document.getElementById("question");
+        const actionBtn = document.getElementById("actionBtn");
+
+        const quizPoints = [
+            { time: 16, text: "‘Küplere binmek’ ve ‘ağzını bıçak açmamak’ deyimlerinin anlamlarını tahmin ediniz." },
+            { time: 32, text: "Sizce insanlar hangi durumlarda 'attan inip eşeğe binmek' deyimini kullanır?" },
+            {
+                time: 83, text: "Türkçedeki bazı deyimlerin başka dillerde de benzer anlamlara sahip olduğunu biliyor musunuz?Örnekler verebilir misiniz?"
+            }
+        ];
+
+        let lastStop = -1;
+
+        function initVideo() {
+            // Tam ekran tetikleyici
+            if (container.requestFullscreen) {
+                container.requestFullscreen();
+            } else if (container.webkitRequestFullscreen) {
+                container.webkitRequestFullscreen();
+            }
+
+            overlay.style.display = 'none';
+            video.play();
+        }
+
+        video.addEventListener('timeupdate', () => {
+            const currentTime = Math.floor(video.currentTime);
+            const currentQuiz = quizPoints.find(q => q.time === currentTime);
+
+            if (currentQuiz && lastStop !== currentTime) {
+                video.pause();
+                lastStop = currentTime;
+                title.innerText = "SORU ZAMANI! 🤔";
+                question.innerText = currentQuiz.text;
+                actionBtn.innerText = "TAMAM, DEVAM ET";
+                overlay.style.display = 'flex';
+            }
+        });
+
+        actionBtn.addEventListener('click', () => {
+            if (video.paused) {
+                overlay.style.display = 'none';
+                video.play();
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deyim Avcısı - Final</title>
+    <style>
+        body {
+            background-color: #232b2b;
+            /* Koyu Kurşuni */
+            font-family: "Comic Sans MS", "Comic Sans", cursive;
+            font-size: 11pt;
+            margin: 0;
+            color: #ecf0f1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Yönerge Ekranı - Turkuaz */
+        #intro-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #00ced1;
+            /* Turkuaz */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .instruction-box {
+            background: white;
+            color: #333;
+            padding: 35px;
+            border-radius: 30px;
+            border: 6px dashed #ff4500;
+            max-width: 550px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .start-btn {
+            background: #ff4500;
+            color: white;
+            border: none;
+            padding: 18px 45px;
+            font-size: 18pt;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 25px;
+            transition: 0.3s;
+        }
+
+        .start-btn:hover {
+            transform: scale(1.1);
+            background: #32cd32;
+        }
+
+        /* Ana Oyun Alanı */
+        #game-container {
+            display: none;
+            width: 95%;
+            max-width: 1300px;
+            padding: 40px 20px;
+            gap: 30px;
+            justify-content: center;
+        }
+
+        /* Görseller Bölümü (Sol - İkili Sıra) */
+        #images-col {
+            flex: 2;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        /* Kelime Kartları (Sağ - Sabit ve Ortalanmış) */
+        #words-col-wrapper {
+            flex: 0.8;
+            position: sticky;
+            top: 50%;
+            /* Ekranın ortasına sabitleme başlar */
+            transform: translateY(-50%);
+            /* Kendi yüksekliği kadar yukarı çıkarak tam ortalar */
+            height: 80vh;
+            /* Ekran yüksekliğinin %80'i kadar alan kaplar */
+            display: flex;
+            flex-direction: column;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        #words-list {
+            overflow-y: auto;
+            /* Kartlar sığmazsa içinde kaydırma çubuğu çıkar */
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* Kaydırma Çubuğu Tasarımı */
+        #words-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #words-list::-webkit-scrollbar-thumb {
+            background: #FFDB58;
+            border-radius: 10px;
+        }
+
+        /* Görsel Kart Tasarımı */
+        .image-card {
+            background: #2c3e50;
+            padding: 15px;
+            border-radius: 18px;
+            text-align: center;
+            border: 3px solid #7f8c8d;
+        }
+
+        .image-card img {
+            width: 100%;
+            height: 220px;
+            object-fit: contain;
+            background-color: #1a252f;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .image-name {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 10px;
+            color: #FFDB58;
+            font-size: 12pt;
+        }
+
+        /* Sürükleme Alanı */
+        .drop-zone {
+            border: 2px dashed #95a5a6;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10pt;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px;
+            color: #bdc3c7;
+        }
+
+        .drop-zone.correct {
+            background-color: #27ae60 !important;
+            border: 2px solid #fff;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* Kelime Kartları (Hardal Sarısı) */
+        .card {
+            background-color: #FFDB58;
+            color: #232b2b;
+            padding: 15px;
+            border-radius: 12px;
+            cursor: grab;
+            border: 2px solid #b8860b;
+            text-align: center;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .card:active {
+            cursor: grabbing;
+            transform: scale(0.95);
+        }
+
+        #success-msg {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 50px;
+            border-radius: 40px;
+            border: 10px solid #27ae60;
+            text-align: center;
+            font-size: 30pt;
+            color: #27ae60;
+            z-index: 2000;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="intro-screen">
+        <div class="instruction-box">
+            <h1 style="color: #008b8b;">🕵️ Deyim Dedektifi Göreve Hazır!</h1>
+            <p style="font-size: 14pt;">Sağ taraftaki anlamları, sol taraftaki doğru resimlerin altına sürükle.</p>
+            <p>Bakalım 10'da 10 yapabilecek misin?</p>
+            <button class="start-btn" onclick="startGame()">Macerayı Başlat! 🚀</button>
+        </div>
+    </div>
+
+    <div id="game-container">
+        <div id="images-col"></div>
+
+        <div id="words-col-wrapper">
+            <h3 style="text-align: center; color: #FFDB58; margin-top: 0;">Anlamları Sürükle</h3>
+            <div id="words-list"></div>
+        </div>
+    </div>
+
+    <div id="success-msg">🥳 Tebrikler, Harikasın! 🥳</div>
+
+    <script>
+        const data = [
+            { id: 1, name: "El üstünde tutmak", meaning: "Bir kimseye çok saygı ve sevgi göstermek" },
+            { id: 2, name: "Renkten renge girmek", meaning: "Korkudan veya utançtan yüzünün rengi değişmek" },
+            { id: 3, name: "Kulak kabartmak", meaning: "Belli etmemeye çalışarak dinlemek" },
+            { id: 4, name: "Gözden düşmek", meaning: "Bir kişi veya şeyin değerini yitirmesi" },
+            { id: 5, name: "Eli ayağı dolaşmak", meaning: "Şaşırmak, telaşlanmak" },
+            { id: 6, name: "Daldan dala konmak", meaning: "Sık sık konu veya düşünce değiştirmek" },
+            { id: 7, name: "Üstüne düşmek", meaning: "Bir kimseyle veya bir şeyle çok ilgilenmek" },
+            { id: 8, name: "Göze girmek", meaning: "Davranışlarıyla ilgi ve önem kazanmak" },
+            { id: 9, name: "Süt dökmüş kedi gibi", meaning: "Suçunu bilerek, bundan utanarak" },
+            { id: 10, name: "Etekleri zil çalmak", meaning: "Çok sevinmek" }
+        ];
+
+        let correctMatches = 0;
+
+        function startGame() {
+            document.getElementById('intro-screen').style.display = 'none';
+            document.getElementById('game-container').style.display = 'flex';
+            initGame();
+        }
+
+        function initGame() {
+            const wordsList = document.getElementById('words-list');
+            const imagesCol = document.getElementById('images-col');
+
+            const shuffledWords = [...data].sort(() => Math.random() - 0.5);
+
+            shuffledWords.forEach(item => {
+                const wordCard = document.createElement('div');
+                wordCard.className = 'card';
+                wordCard.textContent = item.meaning;
+                wordCard.draggable = true;
+                wordCard.id = `word-${item.id}`;
+                wordCard.addEventListener('dragstart', (e) => e.dataTransfer.setData("text", e.target.id));
+                wordsList.appendChild(wordCard);
+            });
+
+            data.forEach(item => {
+                const imgCard = document.createElement('div');
+                imgCard.className = 'image-card';
+                imgCard.innerHTML = `
+                    <img src="${item.id}.jpg" alt="${item.name}">
+                    <span class="image-name">${item.name}</span>
+                    <div class="drop-zone" id="drop-${item.id}" 
+                         ondragover="event.preventDefault()" 
+                         ondrop="handleDrop(event)">
+                        buraya bırak
+                    </div>
+                `;
+                imagesCol.appendChild(imgCard);
+            });
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const cardId = e.dataTransfer.getData("text");
+            const draggedId = cardId.split('-')[1];
+            const dropZone = e.target.closest('.drop-zone');
+
+            if (!dropZone || dropZone.classList.contains('correct')) return;
+
+            const dropZoneId = dropZone.id.split('-')[1];
+
+            if (draggedId === dropZoneId) {
+                const card = document.getElementById(cardId);
+                dropZone.className = "drop-zone correct";
+                dropZone.textContent = card.textContent;
+                card.style.display = "none"; // Kartı listeden tamamen kaldır
+                correctMatches++;
+
+                if (correctMatches === data.length) {
+                    document.getElementById('success-msg').style.display = 'block';
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

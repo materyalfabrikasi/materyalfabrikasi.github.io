@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Emojiyle Deyim Bulmaca</title>
+
+<style>
+
+body{
+margin:0;
+padding:0;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+height:100vh;
+background:linear-gradient(135deg,#fbc2eb,#a6c1ee);
+font-family:'Segoe UI',sans-serif;
+overflow:hidden;
+}
+
+#game-screen,#start-screen{
+text-align:center;
+width:90%;
+max-width:650px;
+}
+
+#emoji-container{
+font-size:100px;
+margin:30px;
+animation:float 2s infinite ease-in-out;
+}
+
+@keyframes float{
+0%,100%{transform:translateY(0);}
+50%{transform:translateY(-20px);}
+}
+
+.option-box{
+display:flex;
+justify-content:center;
+gap:10px;
+margin:10px;
+}
+
+button{
+padding:15px 20px;
+font-size:20px;
+border:none;
+border-radius:20px;
+cursor:pointer;
+background:white;
+box-shadow:0 4px 6px rgba(0,0,0,0.1);
+}
+
+button:hover{
+transform:scale(1.05);
+}
+
+.correct{
+background:#51cf66!important;
+color:white;
+}
+
+.wrong{
+background:#ff6b6b!important;
+color:white;
+}
+
+#message{
+margin-top:20px;
+font-size:20px;
+font-weight:bold;
+color:#fff;
+text-shadow:1px 1px 2px #000;
+height:70px;
+}
+
+.fireworks{
+position:absolute;
+font-size:50px;
+animation:pop 1s forwards;
+}
+
+@keyframes pop{
+0%{transform:scale(0);opacity:1;}
+100%{transform:scale(2);opacity:0;}
+}
+
+.congrats-text{
+font-size:60px;
+font-weight:bold;
+background:linear-gradient(to right,#ff7e5f,#feb47b);
+-webkit-background-clip:text;
+color:transparent;
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="start-screen">
+<h1>🔍 Emojiyle Deyim Bulmaca</h1>
+<p>Emojilere bak, deyimi dinle ve doğru olanı seç.</p>
+<button onclick="startGame()">Oyunu Başlat</button>
+</div>
+
+<div id="game-screen" style="display:none;">
+<div id="emoji-container"></div>
+<div id="options"></div>
+<div id="message"></div>
+</div>
+
+<script>
+
+const correctSound=new Audio("https://cdn.pixabay.com/audio/2022/03/15/audio_115b9b7f9c.mp3");
+
+const questions=[
+
+{emojies:"👁️ 📉",
+correct:"Gözden düştü",
+meaning:"Eski değerini, saygınlığını kaybetmek.",
+options:["Gözü yaşlı","Gözden düştü","Gözünde büyütmek","Göz boyamak"]},
+
+{emojies:"👃 ☁️",
+correct:"Burnu havada",
+meaning:"Kendini beğenmiş, kibirli.",
+options:["Burnu sızlamak","Burnu havada","Burnundan getirmek","Burun kıvırmak"]},
+
+{emojies:"🤚 👅",
+correct:"Avucunu yalamak",
+meaning:"Umduğunu bulamamak, eli boş kalmak.",
+options:["Avucunu yalamak","Eli boş dönmek","Elini sallamak","Avuç açmak"]},
+
+{emojies:"👅 🪶",
+correct:"Dilinde tüy bitti",
+meaning:"Bir şeyi söylemekten bıkmak, yorulmak.",
+options:["Dil dökmek","Dili tutulmak","Dilinde tüy bitti","Dili çözülmek"]},
+
+{emojies:"🦶 🛌 📏",
+correct:"Ayağını yorganına göre uzat",
+meaning:"Harcamalarını gelirine göre ayarla.",
+options:["Ayağını yorganına göre uzat","Ayak diremek","Ayakları yerden kesilmek","Ayak altına almak"]}
+
+];
+
+let currentIndex=0;
+
+function speak(text){
+
+const speech=new SpeechSynthesisUtterance(text);
+speech.lang="tr-TR";
+speech.rate=0.9;
+
+speechSynthesis.cancel();
+speechSynthesis.speak(speech);
+
+}
+
+function startGame(){
+
+document.getElementById("start-screen").style.display="none";
+document.getElementById("game-screen").style.display="block";
+
+loadQuestion();
+
+}
+
+function createFireworks(){
+
+for(let i=0;i<5;i++){
+
+let fw=document.createElement("div");
+fw.innerHTML="🎆";
+fw.className="fireworks";
+
+fw.style.left=Math.random()*80+10+"%";
+fw.style.top=Math.random()*50+20+"%";
+
+document.body.appendChild(fw);
+
+setTimeout(()=>fw.remove(),1000);
+
+}
+
+}
+
+function loadQuestion(){
+
+const container=document.getElementById("options");
+const message=document.getElementById("message");
+const emojiDiv=document.getElementById("emoji-container");
+
+container.innerHTML="";
+message.innerText="";
+
+const q=questions[currentIndex];
+
+emojiDiv.innerText=q.emojies;
+
+q.options.forEach(opt=>{
+
+const box=document.createElement("div");
+box.className="option-box";
+
+const listenBtn=document.createElement("button");
+listenBtn.innerHTML="🔊 Dinle";
+
+listenBtn.onclick=()=>{
+speak(opt);
+};
+
+const chooseBtn=document.createElement("button");
+chooseBtn.innerHTML="✅ Seç";
+
+chooseBtn.onclick=()=>{
+
+if(opt===q.correct){
+
+chooseBtn.classList.add("correct");
+
+correctSound.play();
+
+const text="Tebrikler. Bu deyimin anlamı şudur. "+q.meaning;
+
+setTimeout(()=>{
+speak(text);
+},500);
+
+createFireworks();
+
+message.innerText="Doğru cevap!";
+
+setTimeout(()=>{
+
+currentIndex++;
+
+if(currentIndex<questions.length){
+
+loadQuestion();
+
+}else{
+
+container.innerHTML="";
+emojiDiv.style.display="none";
+
+message.innerHTML='<div class="congrats-text">Tebrikler!</div>';
+
+}
+
+},6000);
+
+}
+
+else{
+
+chooseBtn.classList.add("wrong");
+message.innerText="Tekrar dene";
+
+}
+
+};
+
+box.appendChild(listenBtn);
+box.appendChild(chooseBtn);
+
+container.appendChild(box);
+
+});
+
+}
+
+</script>
+
+</body>
+</html>
