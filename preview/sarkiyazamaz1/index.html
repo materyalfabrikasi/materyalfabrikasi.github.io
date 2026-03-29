@@ -1,0 +1,274 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Müzik Bahçesi - Eskiz Defteri</title>
+    <style>
+        :root {
+            --ana-renk: #a04000;
+            --cerceve-renk: #d4af37;
+            --kagit-renk: #f4e4bc;
+            --yazi-tipi: "Comic Sans MS", "Comic Sans", cursive, sans-serif;
+        }
+
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            overflow: hidden; font-family: var(--yazi-tipi);
+            background: url('11.png') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        /* Uçuşan Notalar */
+        .floating-note {
+            position: fixed; font-size: 2.5rem; color: rgba(255, 255, 255, 0.6);
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3); pointer-events: none;
+            z-index: 1; animation: fly 10s linear infinite;
+        }
+
+        @keyframes fly {
+            0% { transform: translate(-5vw, 110vh) rotate(0deg); opacity: 0; }
+            100% { transform: translate(105vw, -10vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* Giriş Ekranı */
+        #intro-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6); display: flex;
+            align-items: center; justify-content: center; z-index: 100;
+        }
+
+        .instruction-card {
+            background: var(--kagit-renk); padding: 40px; border-radius: 20px;
+            border: 6px double var(--ana-renk); text-align: center;
+            max-width: 550px; box-shadow: 0 0 50px rgba(0,0,0,0.5);
+        }
+
+        #start-btn {
+            background: var(--ana-renk); color: white; border: none;
+            padding: 15px 45px; font-size: 1.8rem; border-radius: 10px;
+            cursor: pointer; font-family: var(--yazi-tipi);
+            box-shadow: 3px 3px 0 #5d2500; transition: 0.2s;
+        }
+
+        #start-btn:disabled { background: #ccc; box-shadow: none; cursor: wait; }
+
+        /* Oyun Konteynırı */
+        #game-container {
+            display: none; height: 100vh; width: 100%;
+            justify-content: center; align-items: center; 
+        }
+
+        /* ESKİ SAYFA GÖRÜNÜMÜ */
+        .book-page {
+            width: 85%; max-width: 750px; height: 90vh;
+            background: var(--kagit-renk);
+            background-image: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.05) 100%);
+            border-radius: 5px; padding: 30px; position: relative;
+            box-shadow: 10px 10px 30px rgba(0,0,0,0.5);
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: space-around;
+            border-left: 15px solid #3d1f00;
+            transition: all 0.8s ease-in-out;
+        }
+
+        /* SİHİRLİ GEÇİŞ EFEKTİ */
+        .page-magic-transition {
+            transform: scale(1.1);
+            filter: brightness(1.5) contrast(1.2);
+            opacity: 0;
+        }
+
+        /* GÖRSEL ÇERÇEVESİ */
+        .img-frame {
+            padding: 15px; background: #fff; border: 8px solid var(--cerceve-renk);
+            outline: 2px solid #5d2500; box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            max-height: 40%; width: auto; display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
+        }
+
+        .instrument-img { max-height: 100%; max-width: 100%; object-fit: contain; }
+
+        .audio-play-btn {
+            background: #e67e22; border: 2px solid #a04000; border-radius: 50%;
+            width: 50px; height: 50px; cursor: pointer; font-size: 1.5rem;
+            color: white; margin-top: 5px; box-shadow: 0 4px #a04000;
+        }
+
+        #drop-zone {
+            width: 320px; height: 70px; border: 4px dashed var(--ana-renk);
+            border-radius: 10px; display: flex; align-items: center;
+            justify-content: center; font-size: 3rem; color: #5d2500;
+            background: rgba(255,255,255,0.3);
+        }
+
+        #drop-zone.drag-over { background: rgba(212, 175, 55, 0.2); transform: scale(1.05); }
+
+        .word-cards-container { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+
+        .word-card {
+            background: #fff; border: 2px solid var(--cerceve-renk);
+            padding: 10px 20px; border-radius: 5px; cursor: grab;
+            font-size: 1.8rem; box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .star {
+            position: absolute; color: #f1c40f; font-size: 2.5rem;
+            animation: star-pop 0.8s ease-out forwards; pointer-events: none;
+            z-index: 10;
+        }
+        @keyframes star-pop {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(2) translate(var(--tx), var(--ty)); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="intro-screen">
+        <div class="instruction-card">
+            <h1>Müzik Bahçesi Günlüğü 📜</h1>
+            <p>Sesi dinle, sonra oyuna başla!</p>
+            <button id="start-btn">Sesi Dinle ve Başla!</button>
+        </div>
+    </div>
+
+    <audio id="main-audio" src="11.mp3"></audio>
+    <audio id="inst-audio"></audio>
+    <audio id="card-audio"></audio>
+
+    <div id="game-container">
+        <div class="book-page" id="page">
+            <div class="img-frame">
+                <img id="ins-img" class="instrument-img" src="" alt="Çalgı">
+            </div>
+            
+            <button class="audio-play-btn" onclick="playInstAudio()">🔊</button>
+            
+            <div id="drop-zone">?</div>
+            
+            <div class="word-cards-container" id="word-container"></div>
+        </div>
+    </div>
+
+    <script>
+        const totalInstruments = 10;
+        let currentIndex = 1;
+        const page = document.getElementById('page');
+        const dropZone = document.getElementById('drop-zone');
+        const mainAudio = document.getElementById('main-audio');
+        const startBtn = document.getElementById('start-btn');
+
+        startBtn.onclick = () => {
+            startBtn.disabled = true;
+            startBtn.textContent = "Sesi Dinliyorsun...";
+            mainAudio.play();
+            
+            mainAudio.onended = () => {
+                document.getElementById('intro-screen').style.display = 'none';
+                document.getElementById('game-container').style.display = 'flex';
+                loadInstrument();
+                createNotes();
+            };
+        };
+
+        function loadInstrument() {
+            document.getElementById('ins-img').src = `${currentIndex}.png`;
+            document.getElementById('inst-audio').src = `${currentIndex}.mp3`;
+            dropZone.textContent = "?";
+            dropZone.style.borderStyle = "dashed";
+            
+            const container = document.getElementById('word-container');
+            container.innerHTML = '';
+            
+            // Kartları oluştur ve bir diziye at
+            let cardIds = [];
+            for (let i = 1; i <= totalInstruments; i++) {
+                cardIds.push(i);
+            }
+
+            // KARTLARI KARIŞTIR (Fisher-Yates Shuffle)
+            for (let i = cardIds.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [cardIds[i], cardIds[j]] = [cardIds[j], cardIds[i]];
+            }
+            
+            // Karışık kartları ekrana bas
+            cardIds.forEach(id => {
+                const card = document.createElement('div');
+                card.className = 'word-card';
+                card.textContent = "🎵";
+                card.draggable = true;
+                card.onmousedown = () => {
+                    document.getElementById('card-audio').src = `${id}a.mp3`;
+                    document.getElementById('card-audio').play();
+                };
+                card.ondragstart = (e) => e.dataTransfer.setData('text', id);
+                container.appendChild(card);
+            });
+        }
+
+        function playInstAudio() { document.getElementById('inst-audio').play(); }
+
+        dropZone.ondragover = (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); };
+        dropZone.ondragleave = () => dropZone.classList.remove('drag-over');
+
+        dropZone.ondrop = (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            const draggedId = e.dataTransfer.getData('text');
+            
+            if (parseInt(draggedId) === currentIndex) {
+                dropZone.textContent = "🌟";
+                dropZone.style.borderStyle = "solid";
+                triggerStars();
+                setTimeout(triggerMagicTransition, 1200);
+            } else {
+                dropZone.textContent = "❌";
+                setTimeout(() => dropZone.textContent = "?", 1000);
+            }
+        };
+
+        function triggerStars() {
+            for(let i=0; i<12; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.innerHTML = '⭐';
+                star.style.setProperty('--tx', (Math.random()*300 - 150)+'px');
+                star.style.setProperty('--ty', (Math.random()*300 - 150)+'px');
+                star.style.left = '50%'; star.style.top = '50%';
+                page.appendChild(star);
+                setTimeout(() => star.remove(), 800);
+            }
+        }
+
+        function triggerMagicTransition() {
+            if (currentIndex < totalInstruments) {
+                page.classList.add('page-magic-transition');
+                
+                setTimeout(() => {
+                    currentIndex++;
+                    loadInstrument();
+                    page.classList.remove('page-magic-transition');
+                }, 800);
+            } else {
+                alert("Müthişsin! Bütün günlüğü tamamladın! 🌟🥳");
+                location.reload();
+            }
+        }
+
+        function createNotes() {
+            const symbols = ['♪', '♫', '♩', '♬'];
+            setInterval(() => {
+                const note = document.createElement('div');
+                note.className = 'floating-note';
+                note.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+                note.style.left = Math.random() * 100 + 'vw';
+                document.body.appendChild(note);
+                setTimeout(() => note.remove(), 10000);
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

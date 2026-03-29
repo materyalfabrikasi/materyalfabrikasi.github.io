@@ -1,0 +1,235 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Şarkı Çarkı Oyunu</title>
+<style>
+    body {
+        font-family: "Comic Sans MS", cursive, sans-serif;
+        background-image: url('1.png');
+        background-size: 100% 100%;
+        background-position: center;
+        background-repeat: no-repeat;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        width: 100vw;
+        overflow: hidden;
+    }
+
+    #overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.8);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        color: white;
+    }
+
+    #overlay h1 { font-size: 50px; margin-bottom: 20px; }
+
+    #game-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        width: 95%;
+        max-width: 1200px;
+        filter: drop-shadow(0 0 15px rgba(0,0,0,0.3));
+    }
+
+    #wheel-wrapper {
+        position: relative;
+        width: 550px;
+        height: 550px;
+    }
+
+    #pointer {
+        position: absolute;
+        top: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 0;
+        border-left: 25px solid transparent;
+        border-right: 25px solid transparent;
+        border-top: 50px solid #333;
+        z-index: 10;
+    }
+
+    #wheel-svg {
+        width: 100%;
+        height: 100%;
+        transition: transform 4s cubic-bezier(0.15, 0, 0.15, 1);
+        border-radius: 50%;
+        box-shadow: 0 0 0 10px #333;
+        background-color: white;
+    }
+
+    #ui-panel {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+        width: 400px;
+    }
+
+    #result-box {
+        background: rgba(255, 255, 255, 0.95);
+        width: 100%;
+        min-height: 250px;
+        padding: 25px;
+        border-radius: 30px;
+        border: 6px solid #333;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        font-size: 24px;
+        box-sizing: border-box;
+    }
+
+    button {
+        padding: 18px 60px;
+        font-size: 28px;
+        font-family: "Comic Sans MS", cursive, sans-serif;
+        background: #ff9800;
+        color: white;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        box-shadow: 0 6px #e68900;
+    }
+
+    button:active { transform: translateY(4px); box-shadow: 0 2px #e68900; }
+</style>
+</head>
+<body>
+
+    <div id="overlay">
+        <h1>Şarkı Çarkı Oyunu</h1>
+        <button onclick="startGame()">OYUNA BAŞLA 🎵</button>
+    </div>
+
+    <audio id="bgMusic" src="1.mp3"></audio>
+
+    <div id="game-container">
+        <div id="wheel-wrapper">
+            <div id="pointer"></div>
+            <svg id="wheel-svg" viewBox="0 0 200 200">
+                <g id="wheel-group" transform="rotate(-30 100 100)">
+                    <path d="M100,100 L100,0 A100,100 0 0,1 186.6,50 Z" fill="#FFFFFF" stroke="#333" stroke-width="1"/>
+                    <image href="balik.png" x="115" y="15" width="50" height="50" transform="rotate(30 140 40)"/>
+                    
+                    <path d="M100,100 L186.6,50 A100,100 0 0,1 186.6,150 Z" fill="#FFFFFF" stroke="#333" stroke-width="1"/>
+                    <image href="kus.png" x="140" y="75" width="50" height="50" transform="rotate(90 165 100)"/>
+                    
+                    <path d="M100,100 L186.6,150 A100,100 0 0,1 100,200 Z" fill="#FFFFFF" stroke="#333" stroke-width="1"/>
+                    <image href="ari.png" x="115" y="135" width="50" height="50" transform="rotate(150 140 160)"/>
+                    
+                    <path d="M100,100 L100,200 A100,100 0 0,1 13.4,150 Z" fill="#FFFFFF" stroke="#333" stroke-width="1"/>
+                    <image href="ciftlik.png" x="35" y="135" width="50" height="50" transform="rotate(210 60 160)"/>
+                    
+                    <path d="M100,100 L13.4,150 A100,100 0 0,1 13.4,50 Z" fill="#FFFFFF" stroke="#333" stroke-width="1"/>
+                    <image href="bakkal.png" x="10" y="75" width="50" height="50" transform="rotate(270 35 100)"/>
+                    
+                    <path d="M100,100 L13.4,50 A100,100 0 0,1 100,0 Z" fill="#FFFFFF" stroke="#333" stroke-width="1"/>
+                    <image href="postaci.png" x="35" y="15" width="50" height="50" transform="rotate(330 60 40)"/>
+                </g>
+            </svg>
+        </div>
+
+        <div id="ui-panel">
+            <div id="result-box">
+                Döndür butonuna bas, şarkını seç! 🎤
+            </div>
+            <button onclick="spin()">DÖNDÜR 🚀</button>
+        </div>
+    </div>
+
+    <audio id="audioPlayer"></audio>
+
+<script>
+    const gameData = [
+        { name: "Kırmızı Balık", file: "balik.mp3", start: 10, end: 40, task: "Balık gibi yüzme hareketi yap!" },
+        { name: "Mini Kuş", file: "kus.mp3", start: 29, end: 54, task: "Kollarını çırparak zıpla!" },
+        { name: "Arı Vız Vız", file: "ari.mp3", start: 15, end: 50, task: "Parmaklarınla çiçekten çiçeğe kon ve vızılda! 🐝" },
+        { name: "Ali Baba'nın Çiftliği", file: "ciftlik.mp3", start: 4, end: 42, task: "Bir hayvanın sesini taklit et!" },
+        { name: "Bakkal Amca", file: "bakkal.mp3", start: 20, end: 56, task: "Elinde ağır poşetler varmış gibi bakkaldan eve yürü! 🛍️" },
+        { name: "Bak Postacı Geliyor", file: "postaci.mp3", start: 7, end: 43, task: "Selam vererek yerinde marş yap!" }
+    ];
+
+    const wheel = document.getElementById("wheel-svg");
+    const resultBox = document.getElementById("result-box");
+    const audio = document.getElementById("audioPlayer");
+    const bgMusic = document.getElementById("bgMusic");
+    const overlay = document.getElementById("overlay");
+
+    let currentAngle = 0;
+    let isSpinning = false;
+    let lastIndex = -1;
+    let currentEndTime = 0;
+
+    function startGame() {
+        overlay.style.display = "none";
+        bgMusic.volume = 0.3; 
+        bgMusic.play();
+    }
+
+    audio.ontimeupdate = function() {
+        if (audio.currentTime >= currentEndTime) {
+            audio.pause();
+            // bgMusic.play() satırı kaldırıldı, müzik bittiğinde giriş müziği tekrar başlamaz.
+        }
+    };
+
+    function spin() {
+        if (isSpinning) return;
+        isSpinning = true;
+        
+        audio.pause();
+        audio.currentTime = 0;
+        
+        // Çark dönmeye başladığında giriş müziğini tamamen durduruyoruz
+        bgMusic.pause();
+        bgMusic.currentTime = 0; 
+        
+        resultBox.innerHTML = "Çark dönüyor... 🎡";
+
+        let randomIndex;
+        do {
+            randomIndex = Math.floor(Math.random() * 6);
+        } while (randomIndex === lastIndex);
+        lastIndex = randomIndex;
+
+        const targetAngle = (6 * 360) + (randomIndex * 60); 
+        currentAngle += targetAngle - (currentAngle % 360);
+
+        wheel.style.transform = `rotate(-${currentAngle}deg)`;
+
+        setTimeout(() => {
+            const selected = gameData[randomIndex];
+            resultBox.innerHTML = `🌟 <b>${selected.name}</b><br><br>${selected.task}`;
+            
+            audio.src = selected.file;
+            currentEndTime = selected.end;
+            audio.currentTime = selected.start;
+            
+            audio.play().catch(e => console.log("Ses dosyası bulunamadı."));
+            
+            isSpinning = false;
+        }, 4000);
+    }
+</script>
+
+</body>
+</html>
