@@ -1,0 +1,286 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sesli Deyim Eşleştirme</title>
+    <style>
+        body {
+            background-color: #232b2b;
+            font-family: "Comic Sans MS", "Comic Sans", cursive;
+            margin: 0;
+            color: #ecf0f1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Üst Bilgi Çubuğu */
+        #status-bar {
+            width: 100%;
+            background: #00ced1;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 14pt;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        #game-container {
+            display: flex;
+            width: 95%;
+            max-width: 1300px;
+            padding: 20px;
+            gap: 30px;
+            justify-content: center;
+            /* Yönerge bitene kadar tıklamayı engelle */
+            pointer-events: none; 
+            opacity: 0.5;
+            transition: opacity 0.5s ease;
+        }
+
+        #game-container.active {
+            pointer-events: auto;
+            opacity: 1;
+        }
+
+        #images-col {
+            flex: 2;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        #words-col-wrapper {
+            flex: 0.8;
+            position: sticky;
+            top: 80px;
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 20px;
+        }
+
+        #words-list {
+            overflow-y: auto;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Görsel Kart Tasarımı */
+        .image-card {
+            background: #2c3e50;
+            padding: 15px;
+            border-radius: 18px;
+            text-align: center;
+            border: 3px solid #7f8c8d;
+        }
+
+        .image-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: contain;
+            background-color: #1a252f;
+            border-radius: 10px;
+        }
+
+        .audio-btn {
+            background: #FFDB58;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            margin: 10px 0;
+            font-size: 20px;
+            box-shadow: 0 4px #b8860b;
+        }
+
+        .audio-btn:active {
+            box-shadow: 0 2px #b8860b;
+            transform: translateY(2px);
+        }
+
+        .drop-zone {
+            border: 2px dashed #95a5a6;
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            color: #bdc3c7;
+            font-size: 10pt;
+        }
+
+        .drop-zone.correct {
+            background-color: #27ae60 !important;
+            border: 2px solid #fff;
+            color: white;
+        }
+
+        /* Sağ Taraf - Ses Kartları */
+        .card {
+            background-color: #FFDB58;
+            color: #232b2b;
+            padding: 20px;
+            border-radius: 15px;
+            cursor: grab;
+            border: 2px solid #b8860b;
+            text-align: center;
+            font-weight: bold;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        #success-msg {
+            display: none;
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 60px;
+            border-radius: 50px;
+            border: 12px solid #27ae60;
+            color: #27ae60;
+            z-index: 2000;
+            font-size: 40pt;
+            box-shadow: 0 0 100px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="status-bar">📢 Lütfen yönergeyi dinle...</div>
+
+    <audio id="intro-audio" src="11.mp3"></audio>
+
+    <div id="game-container">
+        <div id="images-col"></div>
+
+        <div id="words-col-wrapper">
+            <h3 style="text-align: center; color: #FFDB58; margin-top: 0;">Sesleri Eşleştir</h3>
+            <div id="words-list"></div>
+        </div>
+    </div>
+
+    <div id="success-msg">🥳 HARİKASIN! 🥳</div>
+
+    <script>
+        const data = [
+            { id: 1, img_audio: "1a.mp3", card_audio: "1.mp3" },
+            { id: 2, img_audio: "2a.mp3", card_audio: "2.mp3" },
+            { id: 3, img_audio: "3a.mp3", card_audio: "3.mp3" },
+            { id: 4, img_audio: "4a.mp3", card_audio: "4.mp3" },
+            { id: 5, img_audio: "5a.mp3", card_audio: "5.mp3" },
+            { id: 6, img_audio: "6a.mp3", card_audio: "6.mp3" },
+            { id: 7, img_audio: "7a.mp3", card_audio: "7.mp3" },
+            { id: 8, img_audio: "8a.mp3", card_audio: "8.mp3" },
+            { id: 9, img_audio: "9a.mp3", card_audio: "9.mp3" },
+            { id: 10, img_audio: "10a.mp3", card_audio: "10.mp3" }
+        ];
+
+        let correctMatches = 0;
+        const introAudio = document.getElementById('intro-audio');
+        const statusBar = document.getElementById('status-bar');
+        const gameContainer = document.getElementById('game-container');
+
+        // Sayfa yüklendiğinde hazırlık yap
+        window.onload = () => {
+            initGame();
+            
+            // Kullanıcı herhangi bir yere tıkladığında yönerge başlasın
+            statusBar.textContent = "🔊 Başlamak için ekrana tıkla!";
+            document.body.onclick = () => {
+                introAudio.play().catch(e => console.log("Ses çalma hatası:", e));
+                statusBar.textContent = "📢 Yönerge çalıyor... Dinle ve bekle.";
+                document.body.onclick = null; // Tıklama olayını kaldır
+            };
+        };
+
+        // Yönerge bitince oyunu aktif et
+        introAudio.onended = function() {
+            gameContainer.classList.add('active');
+            statusBar.style.backgroundColor = "#27ae60";
+            statusBar.textContent = "✅ Oyun başladı! Sesleri sürükle ve eşleştir.";
+        };
+
+        function playSnd(file) {
+            const a = new Audio(file);
+            a.play();
+        }
+
+        function initGame() {
+            const wordsList = document.getElementById('words-list');
+            const imagesCol = document.getElementById('images-col');
+
+            const shuffledData = [...data].sort(() => Math.random() - 0.5);
+            
+            shuffledData.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.draggable = true;
+                card.id = `card-${item.id}`;
+                card.innerHTML = `
+                    <button class="audio-btn" onclick="playSnd('${item.card_audio}')">▶️</button>
+                    <span>Dinle</span>
+                `;
+                card.addEventListener('dragstart', (e) => e.dataTransfer.setData("text", e.target.id));
+                wordsList.appendChild(card);
+            });
+
+            data.forEach(item => {
+                const imgCard = document.createElement('div');
+                imgCard.className = 'image-card';
+                imgCard.innerHTML = `
+                    <img src="${item.id}.jpg">
+                    <button class="audio-btn" onclick="playSnd('${item.img_audio}')">📢</button>
+                    <div class="drop-zone" id="drop-${item.id}" 
+                         ondragover="event.preventDefault()" 
+                         ondrop="handleDrop(event)">
+                        Burası
+                    </div>
+                `;
+                imagesCol.appendChild(imgCard);
+            });
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const cardId = e.dataTransfer.getData("text");
+            const draggedId = cardId.split('-')[1];
+            const dropZone = e.target.closest('.drop-zone');
+            
+            if (!dropZone || dropZone.classList.contains('correct')) return;
+
+            const dropZoneId = dropZone.id.split('-')[1];
+
+            if (draggedId === dropZoneId) {
+                const card = document.getElementById(cardId);
+                dropZone.className = "drop-zone correct";
+                dropZone.innerHTML = "✅";
+                card.style.display = "none";
+                correctMatches++;
+                
+                if (correctMatches === data.length) {
+                    document.getElementById('success-msg').style.display = 'block';
+                    statusBar.textContent = "🥳 Tebrikler, Oyunu Bitirdin!";
+                }
+            }
+        }
+    </script>
+</body>
+</html>

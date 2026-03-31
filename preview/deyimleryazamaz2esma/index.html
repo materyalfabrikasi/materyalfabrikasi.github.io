@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sesli Deyim Oyunu</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+            user-select: none;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        #main-layout {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            margin-top: 20px;
+        }
+
+        .side-column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100px;
+        }
+
+        #game-container {
+            position: relative;
+            width: 910px;
+            height: 600px;
+            background-color: #fff;
+            border: 2px solid #ccc;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        #center-image {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 900px;
+            height: auto;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        #score-board {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+            z-index: 10;
+        }
+
+        /* --- SADECE SES SİMGESİ OLAN KUTULAR --- */
+        .draggable-item {
+            background-color: #3498db;
+            color: white;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            cursor: grab;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 30px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.2s;
+        }
+
+        .draggable-item:hover {
+            background-color: #2980b9;
+            transform: scale(1.1);
+        }
+
+        /* --- HEDEF KUTULAR (Konumlar Korundu) --- */
+        .drop-zone {
+            position: absolute;
+            width: 160px;
+            height: 80px;
+            background-color: #ecf0f1;
+            border: 2px dashed #95a5a6;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: #7f8c8d;
+            z-index: 5;
+            transition: all 0.3s;
+        }
+
+        #box1 {
+            top: 25px;
+            left: 180px;
+        }
+
+        #box2 {
+            top: 0px;
+            left: 390px;
+        }
+
+        #box3 {
+            top: 42%;
+            left: 90px;
+            transform: translateY(-50%);
+        }
+
+        #box4 {
+            top: 15%;
+            right: 180px;
+            transform: translateY(-50%);
+        }
+
+        #box5 {
+            bottom: 350px;
+            left: 80%;
+            transform: translateX(-50%);
+        }
+
+        .drop-zone.hovered {
+            background-color: #d6eaf8;
+            border-color: #3498db;
+        }
+
+        .drop-zone.correct {
+            background-color: #2ecc71 !important;
+            color: white;
+            border: 2px solid #27ae60;
+            border-style: solid;
+        }
+
+        .drop-zone.wrong {
+            background-color: #e74c3c !important;
+            color: white;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            50% {
+                transform: translateX(5px);
+            }
+
+            75% {
+                transform: translateX(-5px);
+            }
+        }
+
+        .instruction {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            margin: 10px 0 20px 0;
+            text-align: center;
+        }
+
+        #message-area {
+            height: 30px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .msg-success {
+            color: green;
+        }
+
+        .msg-error {
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Sesli Deyim Oyunu</h1>
+    <div class="instruction">Simgelere tıklayarak deyimleri dinleyin ve "yardım etme, yardımlaşma" ile ilgili olanları
+        sürükleyin. 🔊</div>
+
+    <div id="main-layout">
+        <div class="side-column">
+            <div class="draggable-item" draggable="true" id="drag1" data-type="correct" data-audio="elvermek"
+                data-name="El vermek">🔊</div>
+            <div class="draggable-item" draggable="true" id="drag2" data-type="wrong" data-audio="elsurmemek">🔊</div>
+            <div class="draggable-item" draggable="true" id="drag3" data-type="correct" data-audio="elatmak"
+                data-name="El atmak">🔊</div>
+            <div class="draggable-item" draggable="true" id="drag4" data-type="correct" data-audio="elelevermek"
+                data-name="El ele vermek">🔊</div>
+        </div>
+
+        <div id="game-container">
+            <div id="score-board">Puan: <span id="score">0</span> / 5</div>
+            <img src="el.jpg" alt="El Resmi" id="center-image">
+            <div class="drop-zone" id="box1">?</div>
+            <div class="drop-zone" id="box2">?</div>
+            <div class="drop-zone" id="box3">?</div>
+            <div class="drop-zone" id="box4">?</div>
+            <div class="drop-zone" id="box5">?</div>
+        </div>
+
+        <div class="side-column">
+            <div class="draggable-item" draggable="true" id="drag5" data-type="wrong" data-audio="eliayaginadolasmak">🔊
+            </div>
+            <div class="draggable-item" draggable="true" id="drag6" data-type="correct" data-audio="elbirligietmek"
+                data-name="El birliği etmek">🔊</div>
+            <div class="draggable-item" draggable="true" id="drag7" data-type="correct" data-audio="eluzatmak"
+                data-name="El uzatmak">🔊</div>
+        </div>
+    </div>
+
+    <div id="message-area"></div>
+
+    <script>
+        const draggables = document.querySelectorAll('.draggable-item');
+        const dropZones = document.querySelectorAll('.drop-zone');
+        const scoreElement = document.getElementById('score');
+        const messageArea = document.getElementById('message-area');
+
+        let score = 0;
+        let correctCount = 0;
+
+        function playSound(audioName) {
+            const audio = new Audio(`${audioName}.mp3`);
+            audio.play().catch(e => console.error("Ses dosyası hatası:", audioName));
+        }
+
+        draggables.forEach(item => {
+            item.addEventListener('click', () => playSound(item.getAttribute('data-audio')));
+
+            item.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', JSON.stringify({
+                    id: item.id,
+                    type: item.getAttribute('data-type'),
+                    name: item.getAttribute('data-name')
+                }));
+            });
+        });
+
+        dropZones.forEach(zone => {
+            zone.addEventListener('dragover', (e) => e.preventDefault());
+
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                if (zone.classList.contains('correct')) return;
+
+                const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+                const draggedElement = document.getElementById(data.id);
+
+                if (data.type === 'correct') {
+                    zone.classList.add('correct');
+                    zone.innerText = data.name;
+                    draggedElement.style.visibility = 'hidden';
+
+                    score += 10;
+                    correctCount++;
+                    scoreElement.innerText = score;
+                    showMessage("Doğru! 👏", "success");
+                    if (correctCount === 5) alert("TEBRİKLER! Hepsini buldun! 🎉");
+                } else {
+                    zone.classList.add('wrong');
+                    showMessage("Bu deyim yardımlaşma ile ilgili değil!", "error");
+                    setTimeout(() => zone.classList.remove('wrong'), 1000);
+                }
+            });
+        });
+
+        function showMessage(text, type) {
+            messageArea.innerText = text;
+            messageArea.className = type === 'success' ? 'msg-success' : 'msg-error';
+            setTimeout(() => { messageArea.innerText = ""; }, 2000);
+        }
+    </script>
+</body>
+
+</html>

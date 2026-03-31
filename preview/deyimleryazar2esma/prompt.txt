@@ -1,0 +1,8 @@
+Şimdi bir oyun tasarlayacağız. 
+el.jpg oyunun merkezinde yer alacak (ayni kloasorde olacak)
+5 tane kutumuz olacak bunun icerisine suruklenebilecek 7 tane atasozu var asagida verdim. Her kutuya her atasozu suruklenebilir.
+Kutularin konumlarini sen yaptiktan sonra kodda manuel olarak ben ayarlayacagim o yuzden her kutunun konumunu ayriayri olustur ve kod icerisine isimi kolaylastiracak yorumlar ekle. olay su ki el.jpg uzerinde degisik yerler icin kendim ayarlamak istiyorum konumlari.
+Yardım etme yardımlaşma anlamındaki deyimleri kutucuklara sürükleyelim. Deyimleri söylüyorum. El sürmemek el vermek el atmak El ele vermek el birliği etmek el uzatmak eli ayağına dolaşmak bunlardan yanlış olanlar : el sürmemek eli ayağına dolaşmak söylemediğim 5 tanesi doğru cevap buna uygun bir oyun tasarla. yanlış yaparsa kırmızıyla uyarı ver. Doğru yaparsa da yeşille haber ver ve puan ver ve oyun bitince tebrik et.
+html+js+css kullan tabi ki
+
+ARAC:QWEN

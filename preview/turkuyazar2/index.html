@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Aşık Veysel - Kara Toprak Etkinliği</title>
+    <style>
+        :root {
+            --primary: #ff7f50;
+            --secondary: #6b8e23;
+            --accent: #ffa500;
+            --bg-color: #fdf5e6;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        /* Arka Plan Flu Video */
+        #bg-blur {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            filter: blur(15px) brightness(0.7);
+            object-fit: cover;
+        }
+
+        #game-container {
+            background: rgba(255, 255, 255, 0.92);
+            padding: 25px;
+            border-radius: 30px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 900px;
+            text-align: center;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        #intro-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: white;
+            z-index: 100;
+            border-radius: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 40px;
+            box-sizing: border-box;
+        }
+
+        video#main-video {
+            width: 100%;
+            max-width: 500px;
+            border-radius: 20px;
+            border: 5px solid var(--accent);
+            margin-bottom: 20px;
+        }
+
+        .lyrics-area {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #444;
+            text-align: left;
+            padding: 20px;
+            background: #fff9f0;
+            border-radius: 15px;
+            display: inline-block;
+        }
+
+        .drop-zone {
+            display: inline-block;
+            width: 100px;
+            height: 25px;
+            border-bottom: 3px dashed var(--primary);
+            margin: 0 5px;
+            vertical-align: middle;
+            transition: all 0.3s;
+            background: #fff;
+        }
+
+        .drop-zone.correct { 
+            border: none; 
+            background: #c8e6c9; 
+            color: #2e7d32;
+            padding: 0 10px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        .drop-zone.wrong { border-color: #ff4757; background: #ffebee; }
+
+        .word-bank {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 25px;
+            padding: 20px;
+            background: #ffe0b2;
+            border-radius: 20px;
+            position: sticky;
+            bottom: 0;
+        }
+
+        .word {
+            background: var(--primary);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: grab;
+            user-select: none;
+            font-weight: bold;
+            box-shadow: 0 5px 0 #d35400;
+        }
+
+        .word:active { transform: translateY(3px); box-shadow: none; }
+
+        button {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.3rem;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #3d5214;
+        }
+
+        #feedback-msg {
+            font-size: 1.2rem;
+            margin: 10px 0;
+            height: 30px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<video id="bg-blur" autoplay muted loop>
+    <source src="1.mp4" type="video/mp4">
+</video>
+
+<div id="game-container">
+    <div id="intro-overlay">
+        <h1 style="color: #d35400;">Dostlar Beni Hatırlasın!</h1>
+        <p style="font-size: 1.2rem;">Aşık Veysel, Anadolu'nun kalbinden gelen bir sestir. Gözleri dünyaya kapalı olsa da, "Kara Toprak" dediği doğayı en güzel o görmüştür. Şimdi onun bu güzel türküsünü birlikte tamamlayalım.</p>
+        <button onclick="startGame()">Hadi Başlayalım!</button>
+    </div>
+
+    <video id="main-video" controls>
+        <source src="1.mp4" type="video/mp4">
+    </video>
+
+    <div id="feedback-msg"></div>
+
+    <div class="lyrics-area">
+        Dost dost diye nice nicesine <span class="drop-zone" data-answer="sarıldım"></span><br>
+        Dost dost diye nice nicesine sarıldım<br>
+        Benim sadık yârim <span class="drop-zone" data-answer="kara"></span> topraktır<br>
+        Beyhude dolandım ey yar boşa <span class="drop-zone" data-answer="yoruldum"></span><br>
+        Benim sadık yârim kara topraktır kara topraktır<br>
+        Beyhude dolandım ey yar boşa yoruldum<br>
+        Benim sadık yârim kara topraktır kara topraktır<br>
+        Nice güzellere ey yar <span class="drop-zone" data-answer="bağlandım"></span> kaldım bağlandım kaldım<br>
+        Ne bir <span class="drop-zone" data-answer="vefa"></span> gördüm ne faydalandım<br>
+        Her türlü <span class="drop-zone" data-answer="isteğim"></span> ey yar topraktan aldım<br>
+        Benim sadık yârim kara topraktır kara topraktır<br>
+        Her türlü isteğim ey yar <span class="drop-zone" data-answer="topraktan"></span> aldım<br>
+        Benim sadık yârim kara topraktır kara topraktır
+    </div>
+
+    <div class="word-bank" id="word-bank">
+        <div class="word" draggable="true">sarıldım</div>
+        <div class="word" draggable="true">kara</div>
+        <div class="word" draggable="true">yoruldum</div>
+        <div class="word" draggable="true">bağlandım</div>
+        <div class="word" draggable="true">vefa</div>
+        <div class="word" draggable="true">isteğim</div>
+        <div class="word" draggable="true">topraktan</div>
+    </div>
+</div>
+
+<script>
+    function startGame() {
+        document.getElementById('intro-overlay').style.display = 'none';
+        document.getElementById('main-video').play();
+    }
+
+    const words = document.querySelectorAll('.word');
+    const zones = document.querySelectorAll('.drop-zone');
+    const msg = document.getElementById('feedback-msg');
+
+    words.forEach(word => {
+        word.addEventListener('dragstart', (e) => {
+            e.dataTransfer.setData('text', e.target.innerText);
+        });
+    });
+
+    zones.forEach(zone => {
+        zone.addEventListener('dragover', (e) => e.preventDefault());
+        
+        zone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const droppedWord = e.dataTransfer.getData('text');
+            const correctAnswer = zone.getAttribute('data-answer');
+
+            if (droppedWord === correctAnswer) {
+                zone.innerText = droppedWord;
+                zone.classList.add('correct');
+                msg.innerText = "Süpersin! 🌟";
+                msg.style.color = "#2e7d32";
+                removeWord(droppedWord);
+            } else {
+                zone.classList.add('wrong');
+                msg.innerText = "Küçük bir hata oldu, tekrar dene! 🌸";
+                msg.style.color = "#d32f2f";
+                setTimeout(() => zone.classList.remove('wrong'), 1000);
+            }
+        });
+    });
+
+    function removeWord(wordText) {
+        document.querySelectorAll('.word').forEach(el => {
+            if (el.innerText === wordText) el.remove();
+        });
+    }
+</script>
+
+</body>
+</html>

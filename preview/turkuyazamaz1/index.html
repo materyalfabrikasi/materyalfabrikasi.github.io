@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Türkü Dedektifi 🎶</title>
+    <style>
+        :root {
+            --primary: #4b4b4b;
+            /* Yanlış Cevap - Koyu Gri */
+            --secondary: #a0a0a0;
+            /* Doğru Cevap - Açık Gri */
+            --accent: #2c3e50;
+            /* Oynat Butonu - Koyu Mavi/Siyah */
+            --btn-choice-bg: #34495e;
+            /* Seçenek Butonları - Koyu Gri */
+            --btn-choice-text: #ecf0f1;
+            --text-color: #f5f5f5;
+            --card-bg: rgba(44, 62, 80, 0.85);
+            /* Kart arka planı */
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-image: url('1.png');
+            /* Arka plan görseli */
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+            color: var(--text-color);
+        }
+
+        /* Yarı saydam bir katman ekleyerek içeriği daha okunabilir hale getirelim */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.3);
+            /* Siyah yarı saydam katman, daha düşük opaklık */
+            z-index: -1;
+        }
+
+        h1 {
+            color: var(--text-color);
+            margin-top: 30px;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
+            font-size: 3.5rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .instruction {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px 30px;
+            border-radius: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            margin-bottom: 35px;
+            max-width: 700px;
+            text-align: center;
+            font-size: 1.3rem;
+            border: 1px solid #444;
+            color: #fff;
+        }
+
+        .game-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            width: 95%;
+            max-width: 1100px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 2px solid #444;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: lightgray;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
+        }
+
+        .audio-controls {
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            border-radius: 15px;
+            padding: 12px 24px;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: all 0.2s ease-in-out;
+            margin: 8px 0;
+            /* Butonlar arası dikey boşluk */
+            width: 100%;
+            /* Butonlar kart genişliğini kaplasın */
+            box-sizing: border-box;
+        }
+
+        button:hover {
+            opacity: 0.9;
+            transform: scale(1.03);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .play-btn {
+            background-color: var(--accent);
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .choices-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            /* Butonlar arası boşluk */
+        }
+
+        .check-btn {
+            background-color: var(--btn-choice-bg);
+            color: var(--btn-choice-text);
+            border: 1px solid #555;
+        }
+
+        .check-btn:hover {
+            background-color: #456789;
+            color: white;
+        }
+
+        /* Geri Bildirim Efektleri (Kart kenarlıkları) */
+        .correct {
+            border-color: var(--secondary);
+            background-color: rgba(46, 213, 115, 0.1);
+            /* Hafif yeşil arka plan */
+        }
+
+        .wrong {
+            border-color: var(--primary);
+            background-color: rgba(255, 71, 87, 0.1);
+            /* Hafif kırmızı arka plan */
+        }
+
+        /* Doğru/Yanlış İşareti (Kartın köşesinde) */
+        .feedback-icon {
+            font-size: 2rem;
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .correct .feedback-icon.success {
+            opacity: 1;
+            color: var(--secondary);
+        }
+
+        .wrong .feedback-icon.error {
+            opacity: 1;
+            color: var(--primary);
+        }
+
+        /* Emoji Animasyonu (Uçuşan Emojiler) */
+        .emoji {
+            position: fixed;
+            font-size: 2.5rem;
+            pointer-events: none;
+            z-index: 100;
+            animation: fly 2.5s ease-out forwards;
+        }
+
+        @keyframes fly {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-600px) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* Mesaj (Toast) Popup */
+        #message-toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 18px 50px;
+            border-radius: 50px;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.6s, fadeOut 0.5s 2.5s forwards;
+            /* slideUp + 2s bekleme + fadeOut */
+        }
+
+        @keyframes slideUp {
+            from {
+                bottom: -80px;
+                opacity: 0;
+            }
+
+            to {
+                bottom: 30px;
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+
+            to {
+                opacity: 0;
+            }
+        }
+
+        /* Yanlış Cevap Sallanma Efekti */
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20%,
+            60% {
+                transform: translateX(-15px);
+            }
+
+            40%,
+            80% {
+                transform: translateX(15px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>🎶 Türkü Dedektifi</h1>
+
+    <div class="instruction">
+        <p>Aşağıdaki sesleri dinle. Sence bu bir türkü mü?</p>
+    </div>
+
+    <div class="game-container" id="gameBoard">
+    </div>
+
+    <div id="message-toast"></div>
+
+    <script>
+        // Oyun Verileri
+        const items = [
+            { id: 1, file: 'turku1.mp3', type: 'turku' },
+            { id: 2, file: 'sarki1.mp3', type: 'sarki' },
+            { id: 3, file: 'turku2.mp3', type: 'turku' },
+            { id: 4, file: 'sarki2.mp3', type: 'sarki' },
+            { id: 5, file: 'turku3.mp3', type: 'turku' },
+            { id: 6, file: 'turku4.mp3', type: 'turku' }
+        ];
+
+        let activeAudio = null; // Şu an çalan ses
+        let activePlayButton = null; // Şu an aktif olan oynat butonu
+
+        const gameBoard = document.getElementById('gameBoard');
+        const toast = document.getElementById('message-toast');
+
+        // Oyun Kartlarını Oluştur ve Karıştır
+        items.sort(() => Math.random() - 0.5).forEach((item, index) => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.style.position = 'relative'; // Simge yerleşimi için
+
+            // Ses öğesi
+            const audio = document.createElement('audio');
+            audio.id = `audio-${index}`;
+            audio.src = item.file;
+            card.appendChild(audio);
+
+            // Başlık (Numarasız)
+            const h3 = document.createElement('h3');
+            h3.innerText = "Dinle 👇";
+            card.appendChild(h3);
+
+            // Oynat/Durdur Butonu
+            const playBtn = document.createElement('button');
+            playBtn.className = 'play-btn';
+            playBtn.innerText = '▶ Oynat';
+            playBtn.onclick = () => toggleAudio(audio, playBtn);
+            card.appendChild(playBtn);
+
+            // Seçenekler Konteyneri
+            const choicesContainer = document.createElement('div');
+            choicesContainer.className = 'choices-container';
+
+            // "Bu bir türküdür.. " butonu
+            const turkuBtn = document.createElement('button');
+            turkuBtn.className = 'check-btn';
+            turkuBtn.innerText = 'Bu bir türküdür';
+            turkuBtn.onclick = () => checkAnswer(card, item.type, 'turku');
+            choicesContainer.appendChild(turkuBtn);
+
+            // "Bu bir türkü değildir.." butonu
+            const degilBtn = document.createElement('button');
+            degilBtn.className = 'check-btn';
+            degilBtn.innerText = 'Bu bir türkü değildir';
+            degilBtn.onclick = () => checkAnswer(card, item.type, 'degil');
+            choicesContainer.appendChild(degilBtn);
+
+            card.appendChild(choicesContainer);
+
+            // Doğru/Yanlış İkonları (Başlangıçta gizli)
+            const successIcon = document.createElement('span');
+            successIcon.className = 'feedback-icon success';
+            successIcon.innerText = '✅';
+            card.appendChild(successIcon);
+
+            const errorIcon = document.createElement('span');
+            errorIcon.className = 'feedback-icon error';
+            errorIcon.innerText = '❌';
+            card.appendChild(errorIcon);
+
+            gameBoard.appendChild(card);
+        });
+
+        // Ses Kontrol Fonksiyonu
+        function toggleAudio(audio, btn) {
+            // Eğer başka bir ses çalıyorsa, onu durdur
+            if (activeAudio && activeAudio !== audio) {
+                activeAudio.pause();
+                activeAudio.currentTime = 0;
+                if (activePlayButton) {
+                    activePlayButton.innerText = '▶ Oynat';
+                }
+            }
+
+            if (audio.paused) {
+                audio.play();
+                btn.innerText = '⏸ Durdur';
+                activeAudio = audio;
+                activePlayButton = btn;
+            } else {
+                audio.pause();
+                btn.innerText = '▶ Oynat';
+                activeAudio = null;
+                activePlayButton = null;
+            }
+
+            // Ses bittiğinde butonu sıfırla
+            audio.onended = () => {
+                btn.innerText = '▶ Oynat';
+                activeAudio = null;
+                activePlayButton = null;
+            };
+        }
+
+        // Cevap Kontrol Fonksiyonu
+        function checkAnswer(card, actualType, selectedType) {
+            // Eğer kart zaten işaretlendiyse, bir şey yapma
+            if (card.classList.contains('correct') || card.classList.contains('wrong')) {
+                return;
+            }
+
+            // Sesi durdur
+            if (activeAudio) {
+                activeAudio.pause();
+                activeAudio.currentTime = 0;
+                if (activePlayButton) {
+                    activePlayButton.innerText = '▶ Oynat';
+                }
+                activeAudio = null;
+                activePlayButton = null;
+            }
+
+            let isCorrect = false;
+
+            if (actualType === 'turku' && selectedType === 'turku') {
+                isCorrect = true;
+            } else if (actualType === 'sarki' && selectedType === 'degil') {
+                isCorrect = true;
+            }
+
+            if (isCorrect) {
+                card.classList.add('correct');
+                showToast("Harika! Doğru bildin. 👏👏👏", "var(--secondary)");
+                createEmojis();
+            } else {
+                card.classList.add('wrong');
+                card.style.animation = "shake 0.6s"; // Sallanma efekti
+                setTimeout(() => card.style.animation = "", 600);
+                showToast("Tüh! Yanlış cevap. Bir dahakine! 😢", "var(--primary)");
+            }
+
+            // Kart üzerindeki butonları devre dışı bırak
+            const buttons = card.querySelectorAll('button');
+            buttons.forEach(btn => btn.disabled = true);
+        }
+
+        // Toast Mesajı Göster
+        function showToast(msg, color) {
+            // Animasyonları sıfırla
+            toast.style.animation = 'none';
+            toast.offsetHeight; /* Tetikleyici */
+            toast.style.animation = null;
+
+            toast.innerText = msg;
+            toast.style.backgroundColor = color;
+            toast.style.display = 'block';
+        }
+
+        // Emoji Animasyonu Oluştur
+        function createEmojis() {
+            const emojis = ['🎻', '🌾', '🎶', '🇹🇷', '🎸', '✨', '🎈', '🎉'];
+            for (let i = 0; i < 20; i++) {
+                const el = document.createElement('div');
+                el.className = 'emoji';
+                el.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+                el.style.left = Math.random() * 100 + 'vw';
+                el.style.bottom = '-80px'; // Ekranın altından başla
+                el.style.animationDelay = Math.random() * 0.7 + 's';
+                el.style.fontSize = (Math.random() * 1.5 + 2) + 'rem'; // Rastgele boyut
+                document.body.appendChild(el);
+                setTimeout(() => el.remove(), 2500); // 2.5s sonra emojiyi kaldır
+            }
+        }
+    </script>
+</body>
+
+</html>
