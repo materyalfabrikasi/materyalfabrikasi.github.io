@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="tr" class="h-full">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meddahın Yarım Kalan Hikâyesi</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@400;500;600;700;800&amp;family=Caveat:wght@500;700&amp;display=swap"
+    rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    .sparkle {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      animation: sparkleFloat 3s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes sparkleFloat {
+
+      0%,
+      100% {
+        opacity: 0;
+        transform: translateY(0) scale(0.5);
+      }
+
+      50% {
+        opacity: 1;
+        transform: translateY(-20px) scale(1);
+      }
+    }
+
+    @keyframes bounceIn {
+      0% {
+        opacity: 0;
+        transform: scale(0.3);
+      }
+
+      50% {
+        transform: scale(1.05);
+      }
+
+      70% {
+        transform: scale(0.9);
+      }
+
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes wiggle {
+
+      0%,
+      100% {
+        transform: rotate(-3deg);
+      }
+
+      50% {
+        transform: rotate(3deg);
+      }
+    }
+
+    @keyframes pulse-glow {
+
+      0%,
+      100% {
+        box-shadow: 0 0 20px rgba(255, 183, 77, 0.4);
+      }
+
+      50% {
+        box-shadow: 0 0 40px rgba(255, 183, 77, 0.8);
+      }
+    }
+
+    .anim-bounce-in {
+      animation: bounceIn 0.8s ease-out forwards;
+    }
+
+    .anim-slide-up {
+      animation: slideUp 0.6s ease-out forwards;
+    }
+
+    .anim-wiggle {
+      animation: wiggle 1s ease-in-out infinite;
+    }
+
+    .video-fullscreen-btn {
+      transition: all 0.3s;
+    }
+
+    .video-fullscreen-btn:hover {
+      transform: scale(1.1);
+    }
+
+    .btn-primary {
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .curtain-pattern {
+      background-image:
+        radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 50%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+    }
+
+    video::-webkit-media-controls-fullscreen-button {
+      display: none;
+    }
+  </style>
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+  </style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+</head>
+
+<body class="h-full overflow-auto" style="font-family: 'Baloo Bhaijaan 2', cursive;">
+  <div id="app-wrapper" class="w-full h-full relative"
+    style="background: linear-gradient(135deg, #1a0a2e 0%, #2d1b69 30%, #5b2c8e 60%, #e84393 100%);">
+    <!-- Sparkles Background -->
+    <div id="sparkles-container" class="absolute inset-0 overflow-hidden pointer-events-none"></div>
+    <!-- SCREEN 1: YÖNERGE -->
+    <div id="screen-instruction" class="w-full h-full flex items-center justify-center p-4 relative"
+      style="z-index: 10;">
+      <div class="w-full max-w-lg relative"><!-- Meddah Hat Icon -->
+        <div class="flex justify-center mb-4 anim-bounce-in">
+          <div class="w-28 h-28 rounded-full flex items-center justify-center anim-wiggle"
+            style="background: linear-gradient(135deg, #FFB74D, #FF8A65); box-shadow: 0 8px 30px rgba(255,138,101,0.5);">
+            <span class="text-6xl">🎭</span>
+          </div>
+        </div><!-- Title -->
+        <h1 id="el-title" class="text-center text-3xl md:text-4xl font-extrabold mb-4 anim-slide-up"
+          style="color: #FFE082; text-shadow: 2px 2px 8px rgba(0,0,0,0.4); animation-delay: 0.2s; opacity: 0;">Meddah
+          Hikaye Oyunu</h1><!-- Instruction Card -->
+        <div class="rounded-3xl p-6 md:p-8 anim-slide-up curtain-pattern"
+          style="background: rgba(255,255,255,0.12); backdrop-filter: blur(10px); border: 2px solid rgba(255,224,130,0.3); animation-delay: 0.4s; opacity: 0;">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background: #FFB74D;"><i
+                data-lucide="info" style="width:20px;height:20px;color:#1a0a2e;"></i>
+            </div>
+            <h2 class="text-xl font-bold" style="color: #FFE082;">Yönerge</h2>
+          </div>
+          <p id="el-instruction" class="text-lg leading-relaxed" style="color: #f0e6ff;">🎤 Meddah sana bir hikâye
+            anlatacak. Onu <strong style="color:#FFE082;">dikkatle dinle!</strong><br><br>
+            🔄 İstersen videoyu <strong style="color:#FFE082;">tekrar izleyebilirsin.</strong><br><br>
+            🌟 Hikayenin devamını <strong style="color:#FFE082;">sen tamamlayacaksın!</strong></p>
+        </div><!-- Start Button -->
+        <div class="flex justify-center mt-6 anim-slide-up" style="animation-delay: 0.6s; opacity: 0;"><button
+            id="btn-start" onclick="startGame()"
+            class="btn-primary px-10 py-4 rounded-full text-xl font-bold cursor-pointer border-0"
+            style="background: linear-gradient(135deg, #FFB74D, #FF8A65); color: #1a0a2e; animation: pulse-glow 2s infinite;">
+            <span class="flex items-center gap-2"> <i data-lucide="play-circle" style="width:24px;height:24px;"></i>
+              <span id="el-btn-start-text">Tamam, Hazırım!</span> </span> </button>
+        </div>
+      </div>
+    </div><!-- SCREEN 2: VIDEO -->
+    <div id="screen-game" class="w-full h-full overflow-auto p-4 md:p-6 hidden" style="z-index: 10;">
+      <div class="w-full max-w-3xl mx-auto"><!-- Header -->
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-2"><span class="text-3xl">🎭</span>
+            <h2 id="el-game-title" class="text-xl md:text-2xl font-bold" style="color: #FFE082;">Meddahı Dinle</h2>
+          </div><button onclick="goBack()"
+            class="btn-primary px-4 py-2 rounded-full text-sm font-semibold cursor-pointer border-0 flex items-center gap-1"
+            style="background: rgba(255,255,255,0.15); color: #FFE082; border: 1px solid rgba(255,224,130,0.3);"> <i
+              data-lucide="arrow-left" style="width:16px;height:16px;"></i> Geri </button>
+        </div><!-- Video Container -->
+        <div class="rounded-2xl overflow-hidden relative mb-4"
+          style="background: #000; border: 3px solid rgba(255,224,130,0.3);">
+          <video id="meddah-video" class="w-full" style="max-height: 420px; display: block;" playsinline>
+            <source src="1.mp4" type="video/mp4"> Tarayıcınız video etiketini desteklemiyor.
+          </video><!-- Custom Controls Overlay -->
+          <div class="absolute bottom-0 left-0 right-0 p-3 flex items-center justify-between"
+            style="background: linear-gradient(transparent, rgba(0,0,0,0.7));">
+            <div class="flex items-center gap-2"><button onclick="togglePlay()" id="btn-play"
+                class="video-fullscreen-btn w-10 h-10 rounded-full flex items-center justify-center cursor-pointer border-0"
+                style="background: rgba(255,183,77,0.9); color: #1a0a2e;"> <i data-lucide="play"
+                  style="width:18px;height:18px;" id="icon-play"></i> </button> <button onclick="replayVideo()"
+                class="video-fullscreen-btn w-10 h-10 rounded-full flex items-center justify-center cursor-pointer border-0"
+                style="background: rgba(255,255,255,0.2); color: #FFE082;" title="Tekrar İzle"> <i
+                  data-lucide="rotate-ccw" style="width:18px;height:18px;"></i> </button>
+            </div><button onclick="toggleFullscreen()"
+              class="video-fullscreen-btn w-10 h-10 rounded-full flex items-center justify-center cursor-pointer border-0"
+              style="background: rgba(255,255,255,0.2); color: #FFE082;" title="Tam Ekran"> <i data-lucide="maximize"
+                style="width:18px;height:18px;"></i> </button>
+          </div>
+        </div><!-- Replay Button -->
+        <div class="flex justify-center"><button onclick="replayVideo()"
+            class="btn-primary px-6 py-3 rounded-full text-base font-bold cursor-pointer border-0 flex items-center gap-2"
+            style="background: linear-gradient(135deg, #7c3aed, #a78bfa); color: #fff;"> <i data-lucide="rotate-ccw"
+              style="width:20px;height:20px;"></i> Tekrar Dinle </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Config & SDK
+    const defaultConfig = {
+      page_title: 'Meddahın Yarım Kalan Hikâyesi',
+      instruction_text: '',
+      button_start: 'Tamam, Hazırım!'
+    };
+
+    function applyConfig(config) {
+      const c = { ...defaultConfig, ...config };
+
+      const titleEl = document.getElementById('el-title');
+      if (titleEl) titleEl.textContent = c.page_title;
+
+      const btnStartText = document.getElementById('el-btn-start-text');
+      if (btnStartText) btnStartText.textContent = c.button_start;
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange: async (config) => applyConfig(config),
+        mapToCapabilities: (config) => {
+          return {
+            recolorables: [],
+            borderables: [],
+            fontEditable: undefined,
+            fontSizeable: undefined
+          };
+        },
+        mapToEditPanelValues: (config) => {
+          const c = { ...defaultConfig, ...config };
+          return new Map([
+            ['page_title', c.page_title],
+            ['instruction_text', c.instruction_text],
+            ['button_start', c.button_start]
+          ]);
+        }
+      });
+    }
+
+    applyConfig(defaultConfig);
+
+    // Sparkles
+    (function createSparkles() {
+      const container = document.getElementById('sparkles-container');
+      const colors = ['#FFE082', '#FF8A65', '#a78bfa', '#00cec9', '#fd79a8'];
+      for (let i = 0; i < 30; i++) {
+        const s = document.createElement('div');
+        s.className = 'sparkle';
+        s.style.left = Math.random() * 100 + '%';
+        s.style.top = Math.random() * 100 + '%';
+        s.style.background = colors[Math.floor(Math.random() * colors.length)];
+        s.style.animationDelay = Math.random() * 3 + 's';
+        s.style.animationDuration = (2 + Math.random() * 3) + 's';
+        container.appendChild(s);
+      }
+    })();
+
+    // Screens
+    function showScreen(id) {
+      ['screen-instruction', 'screen-game'].forEach(s => {
+        document.getElementById(s).classList.add('hidden');
+      });
+      document.getElementById(id).classList.remove('hidden');
+    }
+
+    function startGame() {
+      showScreen('screen-game');
+      const video = document.getElementById('meddah-video');
+      video.currentTime = 0;
+      video.play().catch(() => { });
+      updatePlayIcon(true);
+    }
+
+    function goBack() {
+      const video = document.getElementById('meddah-video');
+      video.pause();
+      showScreen('screen-instruction');
+    }
+
+    // Video controls
+    const video = document.getElementById('meddah-video');
+
+    function togglePlay() {
+      if (video.paused) {
+        video.play();
+        updatePlayIcon(true);
+      } else {
+        video.pause();
+        updatePlayIcon(false);
+      }
+    }
+
+    function updatePlayIcon(playing) {
+      const btn = document.getElementById('icon-play');
+      btn.setAttribute('data-lucide', playing ? 'pause' : 'play');
+      lucide.createIcons();
+    }
+
+    video.addEventListener('play', () => updatePlayIcon(true));
+    video.addEventListener('pause', () => updatePlayIcon(false));
+    video.addEventListener('ended', () => updatePlayIcon(false));
+
+    function replayVideo() {
+      video.currentTime = 0;
+      video.play().catch(() => { });
+      updatePlayIcon(true);
+    }
+
+    function toggleFullscreen() {
+      if (video.requestFullscreen) video.requestFullscreen();
+      else if (video.webkitRequestFullscreen) video.webkitRequestFullscreen();
+      else if (video.webkitEnterFullscreen) video.webkitEnterFullscreen();
+    }
+
+    // Auto fullscreen on play
+    video.addEventListener('play', () => {
+      setTimeout(() => toggleFullscreen(), 500);
+    });
+
+    lucide.createIcons();
+  </script>
+  <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'9e4f3d6393a1d613',t:'MTc3NDk1ODkxMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
+</body>
+
+</html>

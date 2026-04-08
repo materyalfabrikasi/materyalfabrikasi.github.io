@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meddah Sahnesi- Sürükle Bırak</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            /* Arka planı sağa sola ve yukarı aşağı tam yayar */
+            background: url('1.jpg') no-repeat center center fixed;
+            background-size: 100% 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .instruction-box {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 450px;
+            border: 5px solid #5d4037;
+        }
+
+        .game-container {
+            background-color: rgba(255, 255, 255, 0.98);
+            padding: 20px 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.7);
+            max-width: 900px;
+            width: 95%;
+            display: none;
+            text-align: center;
+        }
+
+        /* Üstteki görselin sağa sola tam yayılması */
+        .image-wrapper {
+            width: 100%;
+            height: 250px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .top-image {
+            width: 100%;
+            height: 100%;
+            /* Görseli kutunun içine sağa sola tam yayar */
+            object-fit: fill;
+        }
+
+        h2 {
+            color: #5d4037;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sentence-list {
+            text-align: left;
+            line-height: 2.6;
+            font-size: 1.15rem;
+            margin-bottom: 25px;
+            color: #222;
+        }
+
+        .drop-zone {
+            display: inline-flex;
+            min-width: 130px;
+            height: 35px;
+            border-bottom: 3px solid #5d4037;
+            background: #fdf5e6;
+            vertical-align: middle;
+            margin: 0 5px;
+            padding: 0 10px;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            color: #5d4037;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+
+        .word-bank {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            background: #efebe9;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #d7ccc8;
+        }
+
+        .draggable-word {
+            background-color: #5d4037;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 8px;
+            cursor: grab;
+            user-select: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .draggable-word:active {
+            cursor: grabbing;
+        }
+
+        .controls {
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 14px 40px;
+            background: #5d4037;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #3e2723;
+            transform: scale(1.05);
+        }
+
+        #result-msg {
+            margin-top: 20px;
+            font-weight: bold;
+            font-size: 1.3rem;
+            min-height: 35px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="overlay">
+        <div class="instruction-box">
+            <h2>Meddah Sahnesi</h2>
+            <p>Metinde boş bırakılan yerlere kutucuklardaki uygun kelimeleri sürükleyip bırakın. Tüm boşlukları
+                doldurduktan sonra kontrol edin!</p>
+            <button onclick="startGame()">Anladım, Başla!</button>
+        </div>
+    </div>
+
+    <div class="game-container" id="gameBox">
+        <div class="image-wrapper">
+            <img src="1.jpg" alt="Meddah Görseli" class="top-image">
+        </div>
+
+        <h2>Meddahlık Geleneğini Öğrenelim</h2>
+
+        <div class="sentence-list">
+            1. Meddahlık, taklitlere ve konuşmalara dayanan <span class="drop-zone" data-answer="tek kişilik"></span>
+            bir tiyatrodur.<br>
+            2. Anlatıcı; dinî konulardan efsanelere kadar zengin bir <span class="drop-zone"
+                data-answer="hikâye"></span> arşivine sahiptir.<br>
+            3. Meddah, gösteri sırasında dinleyicilerden daha <span class="drop-zone" data-answer="yüksek"></span> bir
+            yerde oturur.<br>
+            4. Sanatçı elindeki <span class="drop-zone" data-answer="mendil"></span> ile çeşitli başlıklar ve
+            aksesuarlar yapar.<br>
+            5. Elindeki <span class="drop-zone" data-answer="sopa"></span> tüfek, at veya süpürge yerine
+            kullanılabilir.<br>
+            6. Gösteriye başlamadan önce <span class="drop-zone" data-answer="Hak dostum hak!"></span> diye bağırır.<br>
+            7. Oyun bitince, <span class="drop-zone" data-answer="sürçülisan"></span> ettikse affola diyerek seyirciden
+            özür diler.
+        </div>
+
+        <div class="word-bank" id="bank"></div>
+
+        <div class="controls">
+            <button onclick="checkAnswers()">Kontrol Et</button>
+            <div id="result-msg"></div>
+        </div>
+    </div>
+
+    <script>
+        const correctWords = ["tek kişilik", "hikâye", "yüksek", "mendil", "sopa", "Hak dostum hak!", "sürçülisan"];
+        const bank = document.getElementById('bank');
+        const zones = document.querySelectorAll('.drop-zone');
+
+        function startGame() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('gameBox').style.display = 'block';
+            initBank();
+        }
+
+        function initBank() {
+            const shuffled = [...correctWords].sort(() => Math.random() - 0.5);
+            shuffled.forEach(word => {
+                const el = document.createElement('div');
+                el.className = 'draggable-word';
+                el.textContent = word;
+                el.draggable = true;
+                el.ondragstart = (e) => e.dataTransfer.setData('text', word);
+                bank.appendChild(el);
+            });
+        }
+
+        zones.forEach(zone => {
+            zone.ondragover = (e) => e.preventDefault();
+            zone.ondrop = (e) => {
+                e.preventDefault();
+                const data = e.dataTransfer.getData('text');
+                zone.textContent = data;
+                zone.style.background = "#fff";
+            };
+        });
+
+        function checkAnswers() {
+            let score = 0;
+            zones.forEach(zone => {
+                if (zone.textContent.trim() === zone.getAttribute('data-answer')) {
+                    zone.style.color = "#2e7d32";
+                    zone.style.borderBottomColor = "#2e7d32";
+                    score++;
+                } else {
+                    zone.style.color = "#c62828";
+                    zone.style.borderBottomColor = "#c62828";
+                }
+            });
+
+            const msg = document.getElementById('result-msg');
+            if (score === correctWords.length) {
+                msg.textContent = "Tebrikler! Meddahlığı mükemmel öğrendin. 🎉";
+                msg.style.color = "#2e7d32";
+            } else {
+                msg.textContent = "Hatalı yerleşimler var, lütfen kontrol et! ❌";
+                msg.style.color = "#c62828";
+            }
+        }
+    </script>
+
+</body>
+
+</html>

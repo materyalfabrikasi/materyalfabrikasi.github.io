@@ -1,0 +1,230 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ninni Dünyası - Soru Cevap</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            font-family: "Comic Sans MS", "Comic Sans", cursive;
+            background-color: #050b14;
+        }
+
+        /* Arka Plan Video Zemini */
+        #bg-video {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%;
+            min-height: 100%;
+            z-index: -2;
+            filter: blur(12px) brightness(0.5);
+            object-fit: cover;
+        }
+
+        .game-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .content-box {
+            position: relative;
+            width: 80%;
+            max-width: 850px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        /* Yeni Yönerge Ekranı: Masalsı Gece Mavisi */
+        #instruction-screen {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 25px;
+            border: 3px solid #64b5f6;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+        }
+
+        #instruction-screen h2 { font-size: 2.2rem; margin-bottom: 15px; color: #fff; }
+        #instruction-screen p { font-size: 1.3rem; line-height: 1.6; color: #e3f2fd; }
+
+        video#main-video {
+            width: 100%;
+            border-radius: 20px;
+            display: none;
+            border: 4px solid rgba(255,255,255,0.3);
+        }
+
+        .btn {
+            background-color: #ff9800;
+            color: white;
+            padding: 15px 35px;
+            font-size: 1.4rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: "Comic Sans MS", cursive;
+            margin-top: 20px;
+            box-shadow: 0 4px 0 #e65100;
+            transition: 0.2s;
+        }
+
+        .btn:hover { transform: scale(1.05); }
+
+        /* Küçültülmüş ve Hizalanmış Soru Modalı */
+        #question-box {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 25px;
+            border-radius: 25px;
+            border: 6px solid #1e3c72; /* Zemin rengiyle uyumlu çerçeve */
+            z-index: 1000;
+            width: 50%; /* Kutucuk küçültüldü */
+            min-height: 150px;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            text-align: center;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #question-text { 
+            font-size: 1.4rem; 
+            color: #1e3c72; 
+            font-weight: bold; 
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        /* Tebrik Kartı */
+        #finish-card {
+            display: none;
+            background: #fff;
+            padding: 40px;
+            border-radius: 30px;
+            border: 8px solid #ffcc00;
+            text-align: center;
+        }
+        #finish-card h1 { color: #f39c12; font-size: 3rem; margin: 0; }
+        #finish-card p { font-size: 1.5rem; color: #333; }
+
+        .overlay-dim {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+
+<video id="bg-video" autoplay muted loop playsinline>
+    <source src="1.mp4" type="video/mp4">
+</video>
+
+<div class="game-container">
+    <div class="content-box">
+        
+        <div id="instruction-screen">
+            <h2>🌙 Tatlı Rüyalar Yolculuğu</h2>
+            <p>Merhaba! Videoyu dikkatle izle, karşına çıkan soruları cevapla ve ninnilerin sihirli dünyasını keşfet.</p>
+            <button class="btn" onclick="startGame()">Oyunu Başlat</button>
+        </div>
+
+        <video id="main-video" controls controlsList="nodownload">
+            <source src="1.mp4" type="video/mp4">
+        </video>
+
+        <div id="finish-card">
+            <h1>🎉 Tebrikler!</h1>
+            <p>Tüm soruları başarıyla tamamladın.<br>Harika bir dinleyiciydin!</p>
+            <button class="btn" onclick="location.reload()">Tekrar Oyna</button>
+        </div>
+
+    </div>
+</div>
+
+<div id="overlay-dim" class="overlay-dim"></div>
+<div id="question-box">
+    <div id="question-text"></div>
+    <button class="btn" style="background-color: #1e3c72; box-shadow: 0 4px 0 #0d1b33; font-size: 1.1rem; padding: 10px 25px;" onclick="resumeVideo()">Devam Et</button>
+</div>
+
+<script>
+    const mainVideo = document.getElementById('main-video');
+    const bgVideo = document.getElementById('bg-video');
+    const instructionScreen = document.getElementById('instruction-screen');
+    const questionBox = document.getElementById('question-box');
+    const questionText = document.getElementById('question-text');
+    const overlayDim = document.getElementById('overlay-dim');
+    const finishCard = document.getElementById('finish-card');
+
+    const startTime = 7;
+    const endTime = 146; 
+    const questions = [
+        { time: 15, text: "Ninni nedir? 🤔" },
+        { time: 40, text: "Ninniye sen de eşlik et. 🎵" },
+        { time: 144, text: "Bildiğin bir ninni örneği verebilir misin? ✨" }
+    ];
+
+    let currentQ = 0;
+
+    function startGame() {
+        instructionScreen.style.display = 'none';
+        mainVideo.style.display = 'block';
+        mainVideo.currentTime = startTime;
+        mainVideo.play();
+        bgVideo.play();
+    }
+
+    mainVideo.ontimeupdate = function() {
+        if (mainVideo.currentTime >= endTime) {
+            mainVideo.pause();
+            showFinish();
+        }
+
+        if (currentQ < questions.length && mainVideo.currentTime >= questions[currentQ].time) {
+            showQuestion(questions[currentQ].text);
+            currentQ++;
+        }
+    };
+
+    function showQuestion(text) {
+        mainVideo.pause();
+        bgVideo.pause();
+        questionText.innerText = text;
+        questionBox.style.display = 'flex'; // Flex ile merkezleme sağlandı
+        overlayDim.style.display = 'block';
+    }
+
+    function resumeVideo() {
+        questionBox.style.display = 'none';
+        overlayDim.style.display = 'none';
+        mainVideo.play();
+        bgVideo.play();
+    }
+
+    function showFinish() {
+        mainVideo.style.display = 'none';
+        finishCard.style.display = 'block';
+        bgVideo.play(); // Arka plan akmaya devam etsin
+    }
+</script>
+
+</body>
+</html>
