@@ -105,7 +105,7 @@
         <div id="deco-layer"></div>
         <div class="intro-container">
             <h1 style="color:#FF9800; font-size: 2.5rem; margin: 0;">Ramazan Neşesi</h1>
-            <img src="12.png" alt="Ramazan" class="intro-img-main">
+            <img src="12.jpg" alt="Ramazan" class="intro-img-main">
             <p style="font-size: 1.2rem; color: #444; font-weight: bold;">
                 Görselleri doğru açıklamalarla eşleştirin.<br>
                 Mani bitince oyun başlayacak!
@@ -191,7 +191,7 @@
             shR.forEach(item => {
                 const c = document.createElement('div');
                 c.className = 'card img-card';
-                c.innerHTML = `<img src="${item.id}.png">`;
+                c.innerHTML = `<img src="${item.id}.jpg">`;
                 c.onclick = () => { if(selR) selR.classList.remove('selected'); selR = c; c.classList.add('selected'); check(); };
                 c.matchId = item.id; rDiv.appendChild(c);
             });

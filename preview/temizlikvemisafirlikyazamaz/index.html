@@ -156,7 +156,7 @@
             indices.forEach(i => {
                 const card = document.createElement('div');
                 card.className = 'card';
-                card.innerHTML = `<img src="resim${i}.png" alt="Resim ${i}">`;
+                card.innerHTML = `<img src="resim${i}.jpg" alt="Resim ${i}">`;
                 card.onclick = () => checkAnswer(i, card);
                 grid.appendChild(card);
             });

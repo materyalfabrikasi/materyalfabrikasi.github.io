@@ -225,7 +225,7 @@
             const imgCard = document.createElement('div');
             imgCard.className = 'image-card';
             imgCard.dataset.id = imgIds[i];
-            imgCard.innerHTML = `<img src="${imgIds[i]}.png" alt="Sağlık ${imgIds[i]}">`;
+            imgCard.innerHTML = `<img src="${imgIds[i]}.jpg" alt="Sağlık ${imgIds[i]}">`;
             imgCard.onclick = () => {
                 document.querySelectorAll('.image-card').forEach(c => c.classList.remove('selected'));
                 imgCard.classList.add('selected');

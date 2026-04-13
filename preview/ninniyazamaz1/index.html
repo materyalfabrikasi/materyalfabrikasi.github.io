@@ -20,7 +20,7 @@
         #game-container {
             width: 100%;
             height: 100%;
-            background-image: url('8.png');
+            background-image: url('8.jpg');
             background-size: cover;
             background-position: center;
             display: flex;
@@ -108,7 +108,7 @@
 
         .card-front {
             background-color: #2c3e50;
-            background-image: url('14.png');
+            background-image: url('14.jpg');
             background-size: 60%;
             background-repeat: no-repeat;
             background-position: center;
@@ -212,7 +212,7 @@
         </div>
 
         <div id="intro-screen" class="overlay-screen">
-            <div style="display: flex;"><img src="3.png" class="intro-img"><img src="2.png" class="intro-img"></div>
+            <div style="display: flex;"><img src="3.jpg" class="intro-img"><img src="2.jpg" class="intro-img"></div>
             <h1>Ninni Avcısı</h1>
             <p id="intro-text">Ninniyi dinlerken birbirine karışmış olan görselleri eşleştir. Doğru eşleştirme için
                 yirmi beş can hakkın var. Başarılar dilerim.</p>
@@ -295,7 +295,7 @@
                 const card = document.createElement('div');
                 card.className = 'card';
                 card.dataset.id = num;
-                card.innerHTML = `<div class="card-front"></div><div class="card-back" style="background-image: url('${num}.png')"></div>`;
+                card.innerHTML = `<div class="card-front"></div><div class="card-back" style="background-image: url('${num}.jpg')"></div>`;
                 card.onclick = () => flipCard(card);
                 grid.appendChild(card);
             });

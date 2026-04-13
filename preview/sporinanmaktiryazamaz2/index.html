@@ -201,7 +201,7 @@
                 card.className = 'card img-card';
                 card.draggable = true;
                 card.id = `img-box-${id}`;
-                card.innerHTML = `<img src="${id}.png">`;
+                card.innerHTML = `<img src="${id}.jpg">`;
                 card.ondragstart = (e) => e.dataTransfer.setData("text", id);
                 imgRow.appendChild(card);
             });
