@@ -1,0 +1,582 @@
+<!doctype html>
+<html lang="tr" class="h-full">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&amp;family=Nunito:wght@600;700;800&amp;display=swap"
+    rel="stylesheet">
+  <style>
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+    }
+
+    .box-container {
+      perspective: 800px;
+      cursor: pointer;
+    }
+
+    .gift-box {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.3s ease;
+    }
+
+    .box-container:hover .gift-box:not(.opened) {
+      transform: scale(1.08) rotate(-2deg);
+    }
+
+    .box-container:hover .gift-box:not(.opened) .box-lid {
+      transform: translateY(-6px);
+    }
+
+    .box-body {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .box-lid {
+      position: absolute;
+      top: -18px;
+      left: -6px;
+      right: -6px;
+      height: 40px;
+      border-radius: 12px 12px 4px 4px;
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .box-lid::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.35);
+    }
+
+    .ribbon-v {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 18px;
+      background: rgba(255, 255, 255, 0.25);
+      z-index: 1;
+    }
+
+    .ribbon-h {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 18px;
+      background: rgba(255, 255, 255, 0.25);
+      z-index: 1;
+    }
+
+    .question-mark {
+      font-family: 'Baloo 2', cursive;
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: rgba(255, 255, 255, 0.9);
+      z-index: 3;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      animation: float 2s ease-in-out infinite;
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-6px);
+      }
+    }
+
+    @keyframes boxOpen {
+      0% {
+        transform: translateY(0) rotate(0);
+        opacity: 1;
+      }
+
+      50% {
+        transform: translateY(-80px) rotate(-15deg);
+        opacity: 0.7;
+      }
+
+      100% {
+        transform: translateY(-120px) rotate(-25deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes boxShake {
+
+      0%,
+      100% {
+        transform: rotate(0);
+      }
+
+      20% {
+        transform: rotate(-8deg);
+      }
+
+      40% {
+        transform: rotate(8deg);
+      }
+
+      60% {
+        transform: rotate(-5deg);
+      }
+
+      80% {
+        transform: rotate(5deg);
+      }
+    }
+
+    @keyframes revealCard {
+      0% {
+        transform: scale(0.3) rotateY(90deg);
+        opacity: 0;
+      }
+
+      50% {
+        transform: scale(1.1) rotateY(0deg);
+        opacity: 1;
+      }
+
+      100% {
+        transform: scale(1) rotateY(0deg);
+        opacity: 1;
+      }
+    }
+
+    @keyframes confettiFall {
+      0% {
+        transform: translateY(-10px) rotate(0deg);
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateY(60px) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes sparkle {
+
+      0%,
+      100% {
+        transform: scale(0) rotate(0deg);
+        opacity: 0;
+      }
+
+      50% {
+        transform: scale(1) rotate(180deg);
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideUp {
+      0% {
+        transform: translateY(30px);
+        opacity: 0;
+      }
+
+      100% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes bounceIn {
+      0% {
+        transform: scale(0);
+      }
+
+      50% {
+        transform: scale(1.2);
+      }
+
+      70% {
+        transform: scale(0.9);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .opened .box-lid {
+      animation: boxOpen 0.6s ease forwards;
+    }
+
+    .opening .gift-box {
+      animation: boxShake 0.5s ease;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(6px);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      padding: 16px;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal-card {
+      background: white;
+      border-radius: 24px;
+      padding: 32px 28px;
+      max-width: 460px;
+      width: 100%;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      transform: scale(0.3) rotateY(90deg);
+      opacity: 0;
+    }
+
+    .modal-overlay.active .modal-card {
+      animation: revealCard 0.6s 0.1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    .confetti-piece {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      animation: confettiFall 1.5s ease forwards;
+    }
+
+    .sparkle-star {
+      position: absolute;
+      font-size: 1.2rem;
+      animation: sparkle 1s ease infinite;
+    }
+
+    .progress-bar-track {
+      height: 10px;
+      background: rgba(255, 255, 255, 0.25);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .box-number {
+      position: absolute;
+      top: 6px;
+      right: 10px;
+      font-family: 'Baloo 2', cursive;
+      font-weight: 800;
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.6);
+      z-index: 4;
+    }
+
+    .opened-check {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 5;
+      animation: bounceIn 0.4s ease;
+    }
+  </style>
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+  </style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+</head>
+
+<body class="h-full overflow-auto" style="background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);">
+  <div id="app" class="h-full w-full flex flex-col items-center py-6 px-4" style="font-family: 'Nunito', sans-serif;">
+    <!-- Header -->
+    <div class="text-center mb-4" style="animation: slideUp 0.8s ease;">
+      <div class="text-4xl mb-2">
+        🎁✨🎉
+      </div>
+      <h1 id="mainTitle" class="text-3xl md:text-4xl font-extrabold text-white mb-1"
+        style="font-family: 'Baloo 2', cursive; text-shadow: 0 4px 20px rgba(139,92,246,0.5);">Kutuyu Aç, Bilgiyi Öğren!
+      </h1>
+      <p class="text-purple-300 text-sm md:text-base">Seçtiğin kutuya tıkla ve sürpriz bilgiyi keşfet! 🌟</p>
+    </div><!-- Progress -->
+    <div class="w-full max-w-xl mb-5 px-2" style="animation: slideUp 1s ease;">
+      <div class="flex justify-between items-center mb-1">
+        <span class="text-purple-300 text-sm font-bold">📦 Açılan Kutular</span> <span id="progressText"
+          class="text-white font-extrabold text-sm" style="font-family: 'Baloo 2', cursive;">0 / 6</span>
+      </div>
+      <div class="progress-bar-track">
+        <div id="progressFill" class="progress-bar-fill"
+          style="width: 0%; background: linear-gradient(90deg, #f472b6, #a855f7, #6366f1);"></div>
+      </div>
+    </div><!-- Boxes Grid -->
+    <div id="boxGrid" class="grid grid-cols-2 md:grid-cols-3 gap-5 md:gap-6 w-full max-w-xl px-2">
+    </div><!-- Completion Message -->
+    <div id="completionMsg" class="hidden text-center mt-6 px-4" style="animation: bounceIn 0.6s ease;">
+      <div class="text-5xl mb-2">
+        🎊🇹🇷🎊
+      </div>
+      <p class="text-white text-xl font-extrabold" style="font-family: 'Baloo 2', cursive;">Tebrikler! Tüm kutuları
+        açtın! 🥳</p><button id="resetBtn" class="mt-4 px-6 py-2 rounded-full font-bold text-white text-sm"
+        style="background: linear-gradient(135deg, #f472b6, #a855f7); font-family: 'Baloo 2', cursive;"
+        onclick="resetGame()"> 🔄 Tekrar Oyna </button>
+    </div>
+  </div><!-- Modal -->
+  <div id="modal" class="modal-overlay" onclick="closeModal(event)">
+    <div class="modal-card" id="modalCard">
+      <div id="confettiContainer"></div>
+      <div id="modalEmoji" class="text-5xl mb-3"></div>
+      <div id="modalNumber" class="inline-block px-3 py-1 rounded-full text-xs font-extrabold text-white mb-3"
+        style="background: linear-gradient(135deg, #a855f7, #6366f1); font-family: 'Baloo 2', cursive;"></div>
+      <p id="modalText" class="text-gray-800 text-lg leading-relaxed font-bold mb-5"
+        style="font-family: 'Nunito', sans-serif;"></p><button onclick="closeModalDirect()"
+        class="px-8 py-2.5 rounded-full font-extrabold text-white text-sm"
+        style="background: linear-gradient(135deg, #f472b6, #a855f7); font-family: 'Baloo 2', cursive;"> Tamam ✨
+      </button>
+    </div>
+  </div>
+  <script>
+    const boxData = [
+      { emoji: "🏛️", color: "linear-gradient(135deg, #ef4444, #dc2626)", lidColor: "#b91c1c", text: "23 Nisan 1920'de Türkiye Büyük Millet Meclisi açılmıştır. 🇹🇷", modalEmoji: "🏛️🇹🇷" },
+      { emoji: "👧👦", color: "linear-gradient(135deg, #f59e0b, #d97706)", lidColor: "#b45309", text: "23 Nisan Ulusal Egemenlik ve Çocuk Bayramı, dünyada çocuklara armağan edilen ilk ve tek bayramdır. 💫", modalEmoji: "👧👦💫" },
+      { emoji: "❤️", color: "linear-gradient(135deg, #ec4899, #db2777)", lidColor: "#be185d", text: "Atatürk, çocuklara çok önem verirdi. 🌸", modalEmoji: "❤️🌸" },
+      { emoji: "🎉", color: "linear-gradient(135deg, #8b5cf6, #7c3aed)", lidColor: "#6d28d9", text: "Atatürk ülkemiz ve dünya çocuklarına bir bayram hediye etti. Bu bayram, 23 Nisan Ulusal Egemenlik ve Çocuk Bayramı'dır. 🎊", modalEmoji: "🎉🎊" },
+      { emoji: "🌍", color: "linear-gradient(135deg, #10b981, #059669)", lidColor: "#047857", text: "Her 23 Nisan'da ülkemize farklı ülkelerden çocuklar gelir. Oyunlar ve şenlikler ile dünyadaki tek çocuk bayramını kutlarız. 🎈", modalEmoji: "🌍🎈" },
+      { emoji: "🎶", color: "linear-gradient(135deg, #3b82f6, #2563eb)", lidColor: "#1d4ed8", text: "Atatürk çocukları, çocuklar da onu çok sever. Çocuklar her 23 Nisan'da Atatürk'ü ne kadar çok sevdiklerini şiirler ve şarkılar ile anlatırlar. 🎤", modalEmoji: "🎶🎤" }
+    ];
+
+    let openedBoxes = new Set();
+    let config = { game_title: "Kutuyu Aç, Bilgiyi Öğren!" };
+
+    function buildBoxes() {
+      const grid = document.getElementById('boxGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      boxData.forEach((box, i) => {
+        const delay = 0.1 + i * 0.1;
+        const div = document.createElement('div');
+        div.className = 'box-container';
+        div.id = `box-${i}`;
+        div.style.animation = `slideUp 0.6s ${delay}s ease both`;
+        div.onclick = () => openBox(i);
+
+        div.innerHTML = `
+      <div class="gift-box" style="height: 130px;">
+        <div class="box-body" style="background: ${box.color};">
+          <div class="ribbon-v"></div>
+          <div class="ribbon-h"></div>
+          <div class="box-lid" style="background: ${box.lidColor};"></div>
+          <span class="question-mark">${box.emoji}</span>
+          <span class="box-number">#${i + 1}</span>
+        </div>
+      </div>
+    `;
+        grid.appendChild(div);
+      });
+    }
+
+    function openBox(index) {
+      if (openedBoxes.has(index)) {
+        showModal(index);
+        return;
+      }
+
+      const container = document.getElementById(`box-${index}`);
+      if (!container) return;
+
+      const giftBox = container.querySelector('.gift-box');
+      if (!giftBox) return;
+
+      container.classList.add('opening');
+
+      setTimeout(() => {
+        container.classList.remove('opening');
+        giftBox.classList.add('opened');
+
+        setTimeout(() => {
+          openedBoxes.add(index);
+          updateProgress();
+          showModal(index);
+
+          const boxBody = container.querySelector('.box-body');
+          if (boxBody) {
+            boxBody.innerHTML = `
+          <div class="opened-check">
+            <span style="font-size: 2.5rem;">✅</span>
+          </div>
+        `;
+            boxBody.style.opacity = '0.6';
+          }
+          container.style.cursor = 'pointer';
+        }, 500);
+      }, 500);
+    }
+
+    function showModal(index) {
+      const box = boxData[index];
+      const modal = document.getElementById('modal');
+      const card = document.getElementById('modalCard');
+
+      if (!modal || !card) return;
+
+      const modalEmoji = document.getElementById('modalEmoji');
+      const modalNumber = document.getElementById('modalNumber');
+      const modalText = document.getElementById('modalText');
+
+      if (modalEmoji) modalEmoji.textContent = box.modalEmoji;
+      if (modalNumber) modalNumber.textContent = `Bilgi #${index + 1}`;
+      if (modalText) modalText.textContent = box.text;
+
+      const cc = document.getElementById('confettiContainer');
+      if (cc) {
+        cc.innerHTML = '';
+        const colors = ['#f472b6', '#a855f7', '#6366f1', '#f59e0b', '#10b981', '#ef4444'];
+        for (let j = 0; j < 20; j++) {
+          const piece = document.createElement('div');
+          piece.className = 'confetti-piece';
+          piece.style.left = Math.random() * 100 + '%';
+          piece.style.top = -10 + 'px';
+          piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+          piece.style.animationDelay = Math.random() * 0.5 + 's';
+          piece.style.animationDuration = (1 + Math.random()) + 's';
+          cc.appendChild(piece);
+        }
+
+        ['✨', '⭐', '💫'].forEach((s, si) => {
+          const star = document.createElement('div');
+          star.className = 'sparkle-star';
+          star.textContent = s;
+          star.style.left = (10 + si * 35) + '%';
+          star.style.top = (10 + Math.random() * 20) + '%';
+          star.style.animationDelay = si * 0.3 + 's';
+          cc.appendChild(star);
+        });
+      }
+
+      card.style.transform = 'scale(0.3) rotateY(90deg)';
+      card.style.opacity = '0';
+      modal.classList.add('active');
+    }
+
+    function closeModal(e) {
+      if (e && e.target === document.getElementById('modal')) {
+        closeModalDirect();
+      }
+    }
+
+    function closeModalDirect() {
+      const modal = document.getElementById('modal');
+      if (modal) {
+        modal.classList.remove('active');
+      }
+    }
+
+    function updateProgress() {
+      const count = openedBoxes.size;
+      const progressText = document.getElementById('progressText');
+      const progressFill = document.getElementById('progressFill');
+
+      if (progressText) progressText.textContent = `${count} / 6`;
+      if (progressFill) progressFill.style.width = `${(count / 6) * 100}%`;
+
+      if (count === 6) {
+        setTimeout(() => {
+          const completionMsg = document.getElementById('completionMsg');
+          if (completionMsg) completionMsg.classList.remove('hidden');
+        }, 600);
+      }
+    }
+
+    function resetGame() {
+      openedBoxes.clear();
+      updateProgress();
+      const completionMsg = document.getElementById('completionMsg');
+      if (completionMsg) completionMsg.classList.add('hidden');
+      buildBoxes();
+    }
+
+    // Initialize game
+    document.addEventListener('DOMContentLoaded', () => {
+      buildBoxes();
+      lucide.createIcons();
+    });
+
+    // Element SDK initialization
+    if (window.elementSdk) {
+      const defaultConfig = {
+        game_title: "Kutuyu Aç, Bilgiyi Öğren!"
+      };
+
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange: async (cfg) => {
+          config = cfg;
+          const title = cfg.game_title || defaultConfig.game_title;
+          const mainTitle = document.getElementById('mainTitle');
+          if (mainTitle) {
+            mainTitle.textContent = title;
+          }
+        },
+        mapToCapabilities: (cfg) => ({
+          recolorables: [],
+          borderables: [],
+          fontEditable: undefined,
+          fontSizeable: undefined
+        }),
+        mapToEditPanelValues: (cfg) => new Map([
+          ["game_title", cfg.game_title || defaultConfig.game_title]
+        ])
+      });
+    }
+  </script>
+  <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'9e7b662b47f8f43f',t:'MTc3NTQyMTk1NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
+</body>
+
+</html>
