@@ -213,7 +213,7 @@
             const div = document.createElement('div');
             div.className = 'drop-zone';
             div.dataset.id = item.id;
-            div.innerHTML = `<img src="${item.id}.png" onerror="this.src='https://via.placeholder.com/500?text=${item.label}'">`;
+            div.innerHTML = `<img src="${item.id}.jpg" onerror="this.src='https://via.placeholder.com/500?text=${item.label}'">`;
             
             div.ondragover = e => e.preventDefault();
             div.ondragenter = () => div.classList.add('hover');

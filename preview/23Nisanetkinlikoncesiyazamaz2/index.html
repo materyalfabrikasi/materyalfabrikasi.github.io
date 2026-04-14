@@ -1,0 +1,295 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>23 Nisan Sesli Eşleştirme Oyunu</title>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Comic Sans MS", "Trebuchet MS", sans-serif;
+      background: #f0f4f8; 
+      color: #243447;
+      overflow: hidden; 
+    }
+    .screen { display: none; min-height: 100vh; width: 100%; position: relative; }
+    .screen.active { display: flex; flex-direction: column; }
+
+    /* GİRİŞ VE BİTİŞ EKRANI (8.jpg Arka Plan) */
+    #startScreen, #endScreen {
+      background: url('8.jpg') no-repeat center center;
+      background-size: cover;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .panel-container {
+      background: rgba(255, 255, 255, 0.96);
+      border-radius: 30px;
+      padding: 40px;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+      border: 6px solid #d62828;
+    }
+    .intro-panel { width: min(800px, 90vw); }
+
+    /* OYUN EKRANI - BEĞENİLEN SABİT DÜZEN */
+    #gameScreen { padding: 20px; background: #eef2f7; height: 100vh; }
+    .topbar {
+      display: flex; justify-content: space-between; align-items: center;
+      background: white; padding: 12px 25px; border-radius: 20px;
+      margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      flex-shrink: 0;
+    }
+
+    /* SOL GÖRSELLER - SAĞ KAVRAMLAR DÜZENİ */
+    .layout { 
+      display: grid; 
+      grid-template-columns: 1.5fr 0.6fr; 
+      gap: 20px; 
+      flex: 1; 
+      min-height: 0; 
+    }
+    
+    .panel-box {
+      background: rgba(255,255,255,0.7);
+      border-radius: 25px; padding: 20px;
+      display: flex; flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* KAYDIRMA ALANLARI */
+    .scroll-area { overflow-y: auto; padding-right: 10px; flex: 1; }
+    .scroll-area::-webkit-scrollbar { width: 8px; }
+    .scroll-area::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 10px; }
+
+    /* GÖRSEL KARTLAR DÜZENİ (2 SÜTUN) */
+    .image-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    .image-card {
+      background: white; padding: 15px; border-radius: 25px;
+      border: 3px solid #dee2e6; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+    .image-card img { 
+      width: 100%; aspect-ratio: 4/3; 
+      object-fit: contain; background: #f8f9fa; border-radius: 18px; 
+    }
+    
+    .drop-zone {
+      min-height: 60px; border: 3px dashed #3182ce; border-radius: 15px;
+      margin-top: 12px; display: flex; align-items: center; justify-content: center;
+      background: #ebf8ff; font-weight: bold; text-align: center; padding: 8px; font-size: 0.9rem;
+    }
+    .drop-zone.done { background: #f0fff4; border: 3px solid #38a169; color: #22543d; }
+    
+    /* AÇIKLAMALAR */
+    .fact-text {
+      display: none; margin-top: 10px; font-size: 0.95rem; color: #c53030;
+      font-weight: bold; line-height: 1.4; background: #fff5f5; 
+      padding: 10px; border-radius: 10px; border-left: 5px solid #d62828;
+    }
+    .fact-text.show { display: block; }
+
+    /* KAVRAM KARTLARI DÜZENİ */
+    .concepts { display: flex; flex-direction: column; gap: 12px; }
+    .concept-card {
+      background: #ffecb3; border: 2px solid #ffc107; padding: 20px;
+      border-radius: 15px; cursor: grab; font-weight: bold; text-align: center; 
+      font-size: 1.2rem; box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .concept-card:active { cursor: grabbing; transform: scale(0.98); }
+    .concept-card.matched { opacity: 0.2; pointer-events: none; }
+
+    /* ATATÜRK SAHNESİ (7.jpg) */
+    #sunriseOverlay {
+      position: fixed; inset: 0; display: none; align-items: center; justify-content: center;
+      background: #000; z-index: 2000; overflow: hidden;
+    }
+    #sunriseOverlay.show { display: flex; animation: bgBright 2s forwards; }
+    @keyframes bgBright { from { background: #000; } to { background: radial-gradient(circle, #fff9c4 0%, #fbc02d 50%, #ff8f00 100%); } }
+
+    .sun-rays {
+      position: absolute; width: 250vmax; height: 250vmax;
+      background: repeating-conic-gradient(from 0deg, rgba(255, 235, 59, 0.6) 0deg 15deg, transparent 15deg 30deg);
+      animation: rotateRays 12s linear infinite; z-index: 2001; pointer-events: none;
+    }
+    @keyframes rotateRays { to { transform: rotate(360deg); } }
+
+    .ata-frame { text-align: center; transform: scale(0.3); opacity: 0; transition: all 2.5s ease-out; z-index: 2002; }
+    #sunriseOverlay.animate .ata-frame { transform: scale(1); opacity: 1; }
+    .ata-frame img { width: 320px; height: 420px; object-fit: cover; border-radius: 50% / 40%; border: 10px solid white; box-shadow: 0 0 80px rgba(255,215,0,0.8); }
+
+    .btn { background: #d62828; color: white; border: none; padding: 18px 45px; border-radius: 50px; font-size: 1.4rem; font-weight: bold; cursor: pointer; margin-top: 25px; }
+  </style>
+</head>
+<body>
+
+  <audio id="instructionAudio" src="8.mp3"></audio> <audio id="cardAudio"></audio> <audio id="factAudio"></audio> <audio id="victoryMusic" src="9.mp3" preload="auto"></audio> <section id="startScreen" class="screen active">
+    <div class="intro-panel panel-container">
+      <h1>Hoş Geldiniz Çocuklar! 🎈</h1>
+      <p style="font-size:1.3rem">Butona tıkla, yönergeyi dinle ve oyuna başla!</p>
+      <button class="btn" id="startBtn" onclick="handleStart()">Oyunu Başlat ⭐</button>
+    </div>
+  </section>
+
+  <section id="gameScreen" class="screen">
+    <div class="topbar">
+      <div style="font-weight: bold; font-size: 1.2rem;">Eşleşen: <span id="matchedCount">0</span> / 6</div>
+      <div style="color: #d62828; font-size: 1.8rem;">⭐⭐⭐</div>
+    </div>
+    <div class="layout">
+      <div class="panel-box">
+        <h3 style="margin-top:0">🖼️ Görsel Kartlar</h3>
+        <div class="scroll-area" id="imageGrid"></div>
+      </div>
+      <div class="panel-box">
+        <h3 style="margin-top:0">🧩 Kavramlar</h3>
+        <div class="scroll-area" id="conceptsContainer"></div>
+      </div>
+    </div>
+  </section>
+
+  <div id="sunriseOverlay">
+    <div class="sun-rays"></div>
+    <div class="ata-frame">
+      <img src="7.jpg" alt="Atatürk">
+      <div class="ata-info" style="color: black; margin-top: 25px;">
+        <h2 style="font-size: 2.2rem; margin-bottom: 10px;">Gazi Mustafa Kemal Atatürk</h2>
+        <p style="font-size: 1.35rem; font-weight: bold; max-width: 580px; margin: 0 auto; line-height: 1.5;">"23 Nisan Ulusal Egemenlik ve Çocuk Bayramı'nı bütün dünya çocuklarına armağan etmiştir."</p>
+      </div>
+    </div>
+  </div>
+
+  <section id="endScreen" class="screen">
+    <div class="final-message panel-container">
+      "Bu vatan size minnettar Ata'm! Sonsuz teşekkürler."
+      <br>
+      "Seni çok seviyoruz Ata'm!"
+      <br>
+      <button class="btn" onclick="location.reload()">Yeniden Oyna</button>
+    </div>
+  </section>
+
+  <script>
+    const data = [
+      { id: 1, img: '1.jpg', audio: '1.mp3', factAudio: '1a.mp3' },
+      { id: 2, img: '2.jpg', audio: '2.mp3', factAudio: '2a.mp3' },
+      { id: 3, img: '3.jpg', audio: '3.mp3', factAudio: '3a.mp3' },
+      { id: 4, img: '4.jpg', audio: '4.mp3', factAudio: '4a.mp3' },
+      { id: 5, img: '5.jpg', audio: '5.mp3', factAudio: '5a.mp3' },
+      { id: 6, img: '6.jpg', audio: '6.mp3', factAudio: '6a.mp3' }
+    ];
+
+    function handleStart() {
+      const audio = document.getElementById('instructionAudio');
+      const btn = document.getElementById('startBtn');
+      btn.disabled = true;
+      btn.textContent = "Yönerge Çalıyor...";
+      
+      audio.play();
+      audio.onended = () => {
+        document.getElementById('startScreen').classList.remove('active');
+        document.getElementById('gameScreen').classList.add('active');
+        init();
+      };
+    }
+
+    function init() {
+      const conceptsContainer = document.getElementById('conceptsContainer');
+      const gridContainer = document.getElementById('imageGrid');
+      let matched = 0;
+
+      // Sağ Panel - Kavramlar
+      const cWrap = document.createElement('div');
+      cWrap.className = 'concepts';
+      [...data].sort(() => Math.random() - 0.5).forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'concept-card';
+        card.draggable = true;
+        card.innerHTML = "🔊 Dinle";
+        card.dataset.id = item.id;
+        
+        card.onclick = () => {
+          const sfx = document.getElementById('cardAudio');
+          sfx.src = item.audio;
+          sfx.play();
+        };
+
+        card.ondragstart = (e) => {
+          e.dataTransfer.setData('text', item.id);
+          const sfx = document.getElementById('cardAudio');
+          sfx.src = item.audio;
+          sfx.play();
+        };
+        cWrap.appendChild(card);
+      });
+      conceptsContainer.appendChild(cWrap);
+
+      // Sol Panel - Görseller
+      const gWrap = document.createElement('div');
+      gWrap.className = 'image-grid';
+      data.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'image-card';
+        div.innerHTML = `<img src="${item.img}"><div class="drop-zone" id="dz-${item.id}">Buraya Bırak</div>`;
+        const zone = div.querySelector('.drop-zone');
+        
+        zone.ondragover = e => e.preventDefault();
+        zone.ondrop = e => {
+          const dragId = e.dataTransfer.getData('text');
+          if(dragId == item.id) {
+            zone.textContent = "Harika! ✅";
+            zone.classList.add('done');
+            document.querySelector(`.concept-card[data-id="${dragId}"]`).classList.add('matched');
+            
+            // Başarı cümlesini seslendir
+            const fAudio = document.getElementById('factAudio');
+            fAudio.src = item.factAudio;
+            fAudio.play();
+            
+            matched++;
+            document.getElementById('matchedCount').textContent = matched;
+            if(matched === 6) startVictorySequence();
+          }
+        };
+        gWrap.appendChild(div);
+      });
+      gridContainer.appendChild(gWrap);
+    }
+
+    function startVictorySequence() {
+      // 1. Müzik (9.mp3) Oyun Ekranında Başlar
+      const music = document.getElementById('victoryMusic');
+      music.play();
+
+      const duration = 40 * 1000;
+      const end = Date.now() + duration;
+
+      // Coşkulu konfeti yağmuru (Müzik bitene kadar devam eder)
+      (function frame() {
+        confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#ff0000', '#ffd700'] });
+        confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#ff0000', '#ffd700'] });
+        if (Date.now() < end) requestAnimationFrame(frame);
+      }());
+
+      // 2. Müzikle uyumlu: 13. saniyede Atatürk Sahnesi gelir
+      setTimeout(() => {
+        const overlay = document.getElementById('sunriseOverlay');
+        overlay.style.display = 'flex';
+        overlay.classList.add('show');
+        setTimeout(() => overlay.classList.add('animate'), 100);
+
+        // 3. Atatürk görseli tam 15 saniye ekranda kalır (15000ms)
+        setTimeout(() => {
+          overlay.style.display = 'none';
+          document.getElementById('gameScreen').classList.remove('active');
+          document.getElementById('endScreen').classList.add('active');
+        }, 15000); 
+
+      }, 13000); // 13 saniye oyun ekranında kutlama sürecek
+    }
+  </script>
+</body>
+</html>

@@ -21,7 +21,7 @@
             overflow: hidden;
             font-family: var(--yazi-tipi);
             /* Arka Plan Görseli */
-            background: url('11.png') no-repeat center center fixed;
+            background: url('11.jpg') no-repeat center center fixed;
             background-size: cover;
         }
 
@@ -243,7 +243,7 @@
 
         function loadInstrument() {
             const current = data[currentIndex];
-            document.getElementById('ins-img').src = `${current.id}.png`;
+            document.getElementById('ins-img').src = `${current.id}.jpg`;
             document.getElementById('ins-desc').textContent = current.desc;
             dropZone.textContent = "Çalgının İsmini Buraya Bırak";
             dropZone.style.borderStyle = "dashed";

@@ -24,23 +24,23 @@
 </div>
 
 <div class="container">
-    <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)" data-match="11.png">
-        <img src="11.png" alt="Evi temizleme">
+    <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)" data-match="11.jpg">
+        <img src="11.jpg" alt="Evi temizleme">
     </div>
-    <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)" data-match="12.png">
-        <img src="12.png" alt="Temizlik imandan gelir">
+    <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)" data-match="12.jpg">
+        <img src="12.jpg" alt="Temizlik imandan gelir">
     </div>
-    <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)" data-match="13.png">
-        <img src="13.png" alt="Kişisel temizlik">
+    <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)" data-match="13.jpg">
+        <img src="13.jpg" alt="Kişisel temizlik">
     </div>
-    <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)" data-match="14.png">
-        <img src="14.png" alt="Kolonya ikramı">
+    <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)" data-match="14.jpg">
+        <img src="14.jpg" alt="Kolonya ikramı">
     </div>
-    <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)" data-match="15.png">
-        <img src="15.png" alt="Kapıda ayakkabı çıkarma">
+    <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)" data-match="15.jpg">
+        <img src="15.jpg" alt="Kapıda ayakkabı çıkarma">
     </div>
-    <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)" data-match="16.png">
-        <img src="16.png" alt="El yıkama">
+    <div class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)" data-match="16.jpg">
+        <img src="16.jpg" alt="El yıkama">
     </div>
 </div>
 
@@ -69,7 +69,7 @@
         var dropZone = ev.currentTarget;
         
         // Basit kontrol: ID'nin son iki rakamı görsel adıyla eşleşiyor mu?
-        if (data.replace('s', '') === dropZone.getAttribute('data-match').replace('.png', '')) {
+        if (data.replace('s', '') === dropZone.getAttribute('data-match').replace('.jpg', '')) {
             dropZone.appendChild(draggedElement);
             dropZone.classList.add('matched');
             draggedElement.setAttribute("draggable", "false");

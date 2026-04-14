@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meclis Tarihi Yolculuğu</title>
+    <style>
+        body {
+            font-family: "Comic Sans MS", cursive;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: url('1.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            overflow: hidden;
+        }
+
+        #game-container {
+            width: 85%;
+            max-width: 900px;
+            background-color: rgba(255, 255, 255, 0.92);
+            border: 6px solid #FFD700;
+            border-radius: 25px;
+            padding: 25px;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .active {
+            display: block;
+        }
+
+        h2 {
+            color: #d35400;
+            font-size: 1.8rem;
+            margin-top: 0;
+        }
+
+        p {
+            font-size: 1.1rem;
+            line-height: 1.5;
+            color: #2c3e50;
+        }
+
+        .btn {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 12px 35px;
+            font-size: 1.1rem;
+            font-family: "Comic Sans MS", cursive;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            background-color: #2ecc71;
+            transform: scale(1.05);
+        }
+
+        #video-wrapper {
+            position: relative;
+        }
+
+        video {
+            width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Soru Kutusu ve Mavi Renkli Soru Metni */
+        #question-overlay {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            background-color: #fff;
+            border: 5px solid #3498db;
+            border-radius: 20px;
+            padding: 25px;
+            z-index: 10;
+        }
+
+        #question-text {
+            font-size: 1.25rem;
+            color: #2980b9;
+            /* İstediğin o mavi renk */
+            font-weight: bold;
+            display: block;
+            margin-bottom: 20px;
+        }
+
+        /* TEBRİK KARTI - Katmansız, doğrudan 1.jpg görünüyor */
+        #finish-screen {
+            background-image: url('1.jpg');
+            background-size: cover;
+            background-position: center;
+            border: 5px solid #27ae60;
+            border-radius: 20px;
+            padding: 60px 20px;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 300px;
+        }
+
+        #finish-screen.active {
+            display: flex;
+        }
+
+        .finish-title {
+            color: #fff;
+            font-size: 3rem;
+            text-shadow: 3px 3px 6px #000;
+            margin: 0 0 20px 0;
+        }
+
+        .finish-p {
+            color: #fff;
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px #000;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="game-container">
+        <!-- Orijinal Yönerge -->
+        <div id="intro-screen" class="screen active">
+            <h2>Merhaba Genç Kâşif! 🌟</h2>
+            <p>Meclisimizin tarihine bir yolculuğa çıkalım mı?<br><br>
+                Videoyu izlerken karşına sürpriz sorular çıkacak. Video durduğunda soruyu düşün,
+                cevabı aklından ver ve <b>"Devam Et"</b> butonuna bas!</p>
+            <button class="btn" onclick="startGame()">Macerayı Başlat! 🚀</button>
+        </div>
+
+        <!-- Video Alanı -->
+        <div id="video-area" class="screen">
+            <div id="video-wrapper">
+                <video id="myVideo" controls>
+                    <source src="1.mp4" type="video/mp4">
+                </video>
+                <div id="question-overlay">
+                    <span id="question-text">Soru buraya gelecek...</span>
+                    <button class="btn" onclick="resumeVideo()">Cevabım Hazır, Devam Et! ➡️</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tebrik Kartı (Orijinal Metinler ve Katmansız Görsel) -->
+        <div id="finish-screen" class="screen">
+            <h2 class="finish-title">Harikasın! 🎉</h2>
+            <p class="finish-p">Yolculuğu başarıyla tamamladın.</p>
+            <p class="finish-p">Meclis tarihimiz hakkında çok şey öğrendin!</p>
+            <p class="finish-p">Bu vatan sana emanet!</p>
+            <button class="btn" onclick="location.reload()">Tekrar Oyna 🔄</button>
+        </div>
+    </div>
+
+    <script>
+        const video = document.getElementById('myVideo');
+        const intro = document.getElementById('intro-screen');
+        const videoArea = document.getElementById('video-area');
+        const finish = document.getElementById('finish-screen');
+        const questionOverlay = document.getElementById('question-overlay');
+        const questionText = document.getElementById('question-text');
+
+        // Soru Zamanları (Saniye cinsinden)
+        const questions = [
+            { time: 26, text: "Meclis binası kim tarafından yaptırılmıştır?" },
+            { time: 84, text: "Meclis binası yapılırken halk hangi fedakârlıklarda bulunmuştur?" },
+            { time: 135, text: "Mustafa Kemal Paşa tarafından meclise hangi isim önerilmiştir?" },
+            { time: 184, text: "Büyük Millet Meclisi ne zaman ve nerede açılacaktır?" }
+        ];
+
+        let currentQ = 0;
+
+        function startGame() {
+            intro.classList.remove('active');
+            videoArea.classList.add('active');
+            video.play();
+        }
+
+        video.ontimeupdate = function () {
+            if (currentQ < questions.length) {
+                if (video.currentTime >= questions[currentQ].time) {
+                    video.pause();
+                    video.controls = false;
+                    questionText.innerText = questions[currentQ].text;
+                    questionOverlay.style.display = 'block';
+                    currentQ++;
+                }
+            }
+        };
+
+        function resumeVideo() {
+            questionOverlay.style.display = 'none';
+            video.controls = true;
+            video.play();
+        }
+
+        video.onended = function () {
+            videoArea.classList.remove('active');
+            finish.classList.add('active');
+        };
+    </script>
+
+</body>
+
+</html>

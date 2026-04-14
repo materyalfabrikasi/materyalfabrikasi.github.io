@@ -1,0 +1,821 @@
+<!doctype html>
+<html lang="tr" class="h-full">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&amp;family=Nunito:wght@400;600;700;800&amp;display=swap"
+    rel="stylesheet">
+  <style>
+    html,
+    body {
+      min-height: 100%;
+      margin: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: #0a0a2e;
+      position: relative;
+    }
+
+    /* Animated background lights */
+    .light-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.5;
+      animation: float 8s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .light-orb:nth-child(1) {
+      width: 300px;
+      height: 300px;
+      background: #ff006e;
+      top: -50px;
+      left: -50px;
+      animation-delay: 0s;
+    }
+
+    .light-orb:nth-child(2) {
+      width: 250px;
+      height: 250px;
+      background: #3a86ff;
+      top: 30%;
+      right: -40px;
+      animation-delay: 2s;
+    }
+
+    .light-orb:nth-child(3) {
+      width: 200px;
+      height: 200px;
+      background: #ffbe0b;
+      bottom: -30px;
+      left: 30%;
+      animation-delay: 4s;
+    }
+
+    .light-orb:nth-child(4) {
+      width: 280px;
+      height: 280px;
+      background: #06d6a0;
+      bottom: 10%;
+      right: 20%;
+      animation-delay: 1s;
+    }
+
+    .light-orb:nth-child(5) {
+      width: 180px;
+      height: 180px;
+      background: #e040fb;
+      top: 50%;
+      left: 10%;
+      animation-delay: 3s;
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translate(0, 0) scale(1);
+      }
+
+      33% {
+        transform: translate(30px, -40px) scale(1.1);
+      }
+
+      66% {
+        transform: translate(-20px, 20px) scale(0.9);
+      }
+    }
+
+    /* Confetti */
+    .confetti-piece {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    .confetti-piece.active {
+      animation: confettiFall 3s ease-out forwards;
+    }
+
+    @keyframes confettiFall {
+      0% {
+        opacity: 1;
+        transform: translateY(0) rotate(0deg) scale(1);
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateY(600px) rotate(720deg) scale(0.3);
+      }
+    }
+
+    /* Stars */
+    .star {
+      position: fixed;
+      width: 3px;
+      height: 3px;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle 2s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    @keyframes twinkle {
+
+      0%,
+      100% {
+        opacity: 0.2;
+      }
+
+      50% {
+        opacity: 1;
+      }
+    }
+
+    /* Game container */
+    .game-wrapper {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .game-title {
+      font-family: 'Baloo 2', cursive;
+      background: linear-gradient(135deg, #ffbe0b, #ff006e, #3a86ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: none;
+    }
+
+    /* Lyrics area */
+    .lyrics-container {
+      padding: 0 16px 8px;
+    }
+
+    .lyrics-container::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .lyrics-container::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+    }
+
+    .lyrics-line {
+      font-family: 'Nunito', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: #e0e0ff;
+      line-height: 2.2;
+      text-align: center;
+    }
+
+    /* Drop zone */
+    .drop-zone {
+      display: inline-block;
+      min-width: 90px;
+      height: 32px;
+      border: 2px dashed rgba(255, 255, 255, 0.4);
+      border-radius: 8px;
+      vertical-align: middle;
+      margin: 0 4px;
+      transition: all 0.3s;
+      position: relative;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .drop-zone.drag-over {
+      border-color: #ffbe0b;
+      background: rgba(255, 190, 11, 0.15);
+      transform: scale(1.05);
+    }
+
+    .drop-zone.filled {
+      border-style: solid;
+      border-color: #06d6a0;
+      background: rgba(6, 214, 160, 0.15);
+    }
+
+    .drop-zone.wrong {
+      border-color: #ff006e;
+      background: rgba(255, 0, 110, 0.15);
+      animation: shake 0.4s;
+    }
+
+    .drop-zone.correct {
+      border-color: #06d6a0;
+      background: rgba(6, 214, 160, 0.2);
+    }
+
+    @keyframes shake {
+
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+
+      25% {
+        transform: translateX(-6px);
+      }
+
+      75% {
+        transform: translateX(6px);
+      }
+    }
+
+    .filled-word {
+      display: inline-block;
+      padding: 2px 10px;
+      font-weight: 700;
+      color: #fff;
+      font-size: 14px;
+      cursor: grab;
+      line-height: 28px;
+    }
+
+    /* Word bank */
+    .word-bank {
+      padding: 10px 16px 16px;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .word-chip {
+      display: inline-block;
+      padding: 6px 16px;
+      margin: 4px;
+      background: linear-gradient(135deg, #3a86ff, #6c5ce7);
+      color: white;
+      font-weight: 700;
+      font-size: 14px;
+      border-radius: 20px;
+      cursor: grab;
+      transition: all 0.2s;
+      user-select: none;
+      font-family: 'Nunito', sans-serif;
+    }
+
+    .word-chip:hover {
+      transform: scale(1.08);
+      box-shadow: 0 4px 15px rgba(58, 134, 255, 0.4);
+    }
+
+    .word-chip:active {
+      cursor: grabbing;
+      transform: scale(0.95);
+    }
+
+    .word-chip.used {
+      opacity: 0.3;
+      pointer-events: none;
+      transform: scale(0.9);
+    }
+
+    /* Score */
+    .score-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 16px;
+    }
+
+    /* Buttons */
+    .btn-check {
+      background: linear-gradient(135deg, #06d6a0, #00b894);
+      color: #0a0a2e;
+      font-family: 'Baloo 2', cursive;
+      font-weight: 700;
+      padding: 8px 24px;
+      border-radius: 25px;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.2s;
+    }
+
+    .btn-check:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 20px rgba(6, 214, 160, 0.4);
+    }
+
+    .btn-reset {
+      background: linear-gradient(135deg, #ff006e, #e040fb);
+      color: white;
+      font-family: 'Baloo 2', cursive;
+      font-weight: 700;
+      padding: 8px 20px;
+      border-radius: 25px;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .btn-reset:hover {
+      transform: scale(1.05);
+    }
+
+    /* Success overlay */
+    .success-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 10, 46, 0.9);
+      z-index: 50;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    .success-overlay.show {
+      display: flex;
+    }
+
+    .success-text {
+      font-family: 'Baloo 2', cursive;
+      font-size: 36px;
+      background: linear-gradient(135deg, #ffbe0b, #ff006e, #3a86ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.08);
+      }
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-100px);
+      padding: 10px 24px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 14px;
+      z-index: 60;
+      transition: transform 0.4s;
+      font-family: 'Nunito', sans-serif;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .toast.success {
+      background: #06d6a0;
+      color: #0a0a2e;
+    }
+
+    .toast.error {
+      background: #ff006e;
+      color: white;
+    }
+
+    /* Video area */
+    .video-area {
+      width: 95%;
+      max-width: 800px;
+      margin: 0 auto 12px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      background: #000;
+    }
+
+    .video-area video {
+      width: 100%;
+      display: block;
+      border-radius: 10px;
+    }
+  </style>
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+  </style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+</head>
+
+<body>
+  <!-- Background lights -->
+  <div class="light-orb"></div>
+  <div class="light-orb"></div>
+  <div class="light-orb"></div>
+  <div class="light-orb"></div>
+  <div class="light-orb"></div><!-- Stars -->
+  <script>
+    (function () {
+      for (let i = 0; i < 40; i++) {
+        const s = document.createElement('div');
+        s.className = 'star';
+        s.style.left = Math.random() * 100 + '%';
+        s.style.top = Math.random() * 100 + '%';
+        s.style.animationDelay = Math.random() * 3 + 's';
+        s.style.width = s.style.height = (1 + Math.random() * 3) + 'px';
+        document.body.appendChild(s);
+      }
+    })();
+  </script><!-- Confetti container -->
+  <div id="confetti-container"></div><!-- Toast -->
+  <div id="toast" class="toast"></div>
+  <div class="game-wrapper">
+    <!-- Header -->
+    <div class="score-bar">
+      <h1 id="gameTitle" class="game-title text-xl md:text-2xl m-0">🎉 23 Nisan Şarkı Oyunu</h1>
+      <div class="flex items-center gap-3">
+        <span id="scoreDisplay" class="text-white font-bold text-sm">⭐ 0 / 0</span> <button class="btn-reset"
+          onclick="resetGame()"> <i data-lucide="rotate-ccw"
+            style="width:14px;height:14px;display:inline;vertical-align:middle;"></i> Sıfırla </button>
+      </div>
+    </div><!-- Video -->
+    <div class="video-area">
+      <video id="songVideo" controls>
+        <source src="1.mp4" type="video/mp4">
+      </video>
+    </div><!-- Lyrics -->
+    <div class="lyrics-container" id="lyricsContainer"></div><!-- Word Bank -->
+    <div class="word-bank" id="wordBank">
+      <div class="text-center text-white text-xs font-bold mb-1 opacity-60">
+        📦 Kelime Bankası — Sürükle ve Bırak
+      </div>
+      <div id="wordChips" class="text-center"></div>
+    </div><!-- Check button -->
+    <div class="text-center py-2">
+      <button class="btn-check" onclick="checkAnswers()"> <i data-lucide="check-circle"
+          style="width:18px;height:18px;display:inline;vertical-align:middle;"></i> Kontrol Et </button>
+    </div>
+  </div><!-- Instructions overlay -->
+  <div class="success-overlay" id="instructionsOverlay" style="display: flex;">
+    <div style="max-width: 500px; text-align: center;">
+      <div class="success-text" style="font-size: 40px; margin-bottom: 20px;">
+        📚 Oyun Talimatları
+      </div>
+      <p style="color:#e0e0ff; font-size: 18px; margin: 12px 0; font-family:'Nunito',sans-serif; line-height: 1.6;">
+        <strong>Şarkıyı Tamamla: 23 Nisan!</strong>
+      </p>
+      <div
+        style="background: rgba(255,255,255,0.08); padding: 16px; border-radius: 12px; margin: 16px 0; text-align: left;">
+        <p style="color:#ffbe0b; font-size: 16px; font-weight: bold; margin: 8px 0;">📝 Nasıl Oynanır?</p>
+        <ul
+          style="color:#e0e0ff; font-size: 15px; margin: 8px 0; padding-left: 20px; text-align: left; line-height: 1.8;">
+          <li>Şarkı sözlerinde <strong>boşluklar</strong> göreceksin.</li>
+          <li>Alttaki <strong>kelime bankasından</strong> kelimeleri sürükle.</li>
+          <li>Doğru yere <strong>bırak.</strong></li>
+          <li><strong>Kontrol Et</strong> butonuna tıkla.</li>
+          <li>Tüm kelimeleri doğru yerleştirmeye çalış!</li>
+        </ul>
+      </div>
+      <p style="color:#06d6a0; font-size: 14px; margin: 12px 0; font-style: italic;">💡 İpucu: Şarkıyı dikkatle dinlemek
+        sana yardımcı olabilir!</p><button class="btn-check" onclick="startGame()"
+        style="padding: 12px 40px; font-size: 18px; margin-top: 16px;">✅ Tamam, Başla!</button>
+    </div>
+  </div><!-- Success overlay -->
+  <div class="success-overlay" id="successOverlay">
+    <div class="success-text">
+      🎊 Tebrikler! 🎊
+    </div>
+    <p style="color:#e0e0ff;font-size:18px;margin:12px 0;font-family:'Nunito',sans-serif;text-align:center;">Tüm
+      kelimeleri doğru yerleştirdin!</p>
+    <p style="font-size:40px;margin:8px;">🇹🇷🎈🎉</p><button class="btn-check"
+      onclick="resetGame();document.getElementById('successOverlay').classList.remove('show');">Tekrar Oyna</button>
+  </div>
+  <script>
+    // Lyrics data: text with blanks marked as {word}
+    const lyricsData = [
+      { text: "Gözlerimde {ışık} gibi" },
+      { text: "{Bağımsızlık} hediyesi" },
+      { text: "Uyandırır bir {bayrama}" },
+      { text: "Bu dünyada bir tek {bizi}" },
+      { text: "" },
+      { text: "Gurur bizim, {inanç} bizim" },
+      { text: "{Yarınlar} bizim sen buna inan" },
+      { text: "Atamızdan {armağan}" },
+      { text: "Yüzyıllar yaşa 23 {Nisan}" },
+      { text: "" },
+      { text: "Kanatlanan {kuşlar} gibi" },
+      { text: "Sonsuz mavi {gökler} gibi" },
+      { text: "Selam gönder tüm {dünyaya}" },
+      { text: "Dalgalanan {bayrağım} gibi" },
+      { text: "" },
+      { text: "Gurur bizim, {sevinç} bizim" },
+      { text: "Yarınlar bizim sen buna {inan}" },
+      { text: "Atamızdan armağan" },
+      { text: "Yüzyıllar yaşa {23 Nisan}" }
+    ];
+
+    let blanks = []; // {id, answer, element, filled}
+    let draggedWord = null;
+    let totalBlanks = 0;
+
+    function buildLyrics() {
+      const container = document.getElementById('lyricsContainer');
+      container.innerHTML = '';
+      blanks = [];
+      let blankId = 0;
+
+      lyricsData.forEach(line => {
+        const div = document.createElement('div');
+        div.className = 'lyrics-line';
+        if (!line.text) { div.innerHTML = '&nbsp;'; container.appendChild(div); return; }
+
+        const regex = /\{([^}]+)\}/g;
+        let lastIdx = 0;
+        let html = '';
+        let match;
+        while ((match = regex.exec(line.text)) !== null) {
+          html += escapeHtml(line.text.slice(lastIdx, match.index));
+          const id = 'blank-' + blankId;
+          const answer = match[1];
+          html += `<span class="drop-zone" id="${id}" data-answer="${escapeAttr(answer)}" 
+        ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event,'${id}')"
+        ontouchstart="handleTouchZone(event)" role="listitem" aria-label="Boşluk: ${answer}"></span>`;
+          blanks.push({ id, answer, filled: null });
+          blankId++;
+          lastIdx = regex.lastIndex;
+        }
+        html += escapeHtml(line.text.slice(lastIdx));
+        div.innerHTML = html;
+        container.appendChild(div);
+      });
+      totalBlanks = blanks.length;
+      updateScore();
+    }
+
+    function escapeHtml(t) { const d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
+    function escapeAttr(t) { return t.replace(/'/g, "\\'").replace(/"/g, '&quot;'); }
+
+    function buildWordBank() {
+      const words = blanks.map(b => b.answer);
+      // Shuffle
+      for (let i = words.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [words[i], words[j]] = [words[j], words[i]];
+      }
+      const container = document.getElementById('wordChips');
+      container.innerHTML = '';
+      words.forEach((word, i) => {
+        const chip = document.createElement('span');
+        chip.className = 'word-chip';
+        chip.textContent = word;
+        chip.draggable = true;
+        chip.dataset.word = word;
+        chip.id = 'chip-' + i;
+        chip.addEventListener('dragstart', (e) => {
+          draggedWord = { word, chipId: chip.id };
+          e.dataTransfer.setData('text/plain', word);
+          chip.style.opacity = '0.5';
+        });
+        chip.addEventListener('dragend', () => { chip.style.opacity = ''; });
+        // Touch support
+        chip.addEventListener('touchstart', (e) => {
+          draggedWord = { word, chipId: chip.id };
+          chip.style.opacity = '0.5';
+        });
+        chip.addEventListener('touchend', (e) => {
+          chip.style.opacity = '';
+          handleTouchDrop(e);
+        });
+        container.appendChild(chip);
+      });
+    }
+
+    function onDragOver(e) { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
+    function onDragLeave(e) { e.currentTarget.classList.remove('drag-over'); }
+
+    function onDrop(e, zoneId) {
+      e.preventDefault();
+      const zone = document.getElementById(zoneId);
+      zone.classList.remove('drag-over');
+      if (!draggedWord) return;
+      placeWord(zoneId, draggedWord.word, draggedWord.chipId);
+      draggedWord = null;
+    }
+
+    function handleTouchDrop(e) {
+      if (!draggedWord) return;
+      const touch = e.changedTouches[0];
+      const el = document.elementFromPoint(touch.clientX, touch.clientY);
+      if (el && (el.classList.contains('drop-zone') || el.closest('.drop-zone'))) {
+        const zone = el.classList.contains('drop-zone') ? el : el.closest('.drop-zone');
+        placeWord(zone.id, draggedWord.word, draggedWord.chipId);
+      }
+      draggedWord = null;
+    }
+
+    function placeWord(zoneId, word, chipId) {
+      const blank = blanks.find(b => b.id === zoneId);
+      if (!blank) return;
+
+      // If already filled, return old word to bank
+      if (blank.filled) {
+        returnWordToBank(blank.filled.chipId);
+      }
+
+      blank.filled = { word, chipId };
+      const zone = document.getElementById(zoneId);
+      zone.classList.add('filled');
+      zone.classList.remove('wrong', 'correct');
+      zone.innerHTML = `<span class="filled-word" draggable="true" 
+    ondragstart="startDragFromZone(event,'${zoneId}')">${escapeHtml(word)}</span>`;
+
+      // Mark chip as used
+      const chip = document.getElementById(chipId);
+      if (chip) chip.classList.add('used');
+
+      // Allow clicking filled zone to return word
+      zone.querySelector('.filled-word').addEventListener('click', () => {
+        returnWordFromZone(zoneId);
+      });
+    }
+
+    function startDragFromZone(e, zoneId) {
+      const blank = blanks.find(b => b.id === zoneId);
+      if (!blank || !blank.filled) return;
+      draggedWord = { word: blank.filled.word, chipId: blank.filled.chipId };
+      e.dataTransfer.setData('text/plain', blank.filled.word);
+      setTimeout(() => returnWordFromZone(zoneId), 0);
+    }
+
+    function returnWordFromZone(zoneId) {
+      const blank = blanks.find(b => b.id === zoneId);
+      if (!blank || !blank.filled) return;
+      returnWordToBank(blank.filled.chipId);
+      blank.filled = null;
+      const zone = document.getElementById(zoneId);
+      zone.innerHTML = '';
+      zone.classList.remove('filled', 'wrong', 'correct');
+    }
+
+    function returnWordToBank(chipId) {
+      const chip = document.getElementById(chipId);
+      if (chip) chip.classList.remove('used');
+    }
+
+    function checkAnswers() {
+      let correct = 0;
+      blanks.forEach(b => {
+        const zone = document.getElementById(b.id);
+        zone.classList.remove('wrong', 'correct');
+        if (b.filled && b.filled.word === b.answer) {
+          zone.classList.add('correct');
+          correct++;
+        } else if (b.filled) {
+          zone.classList.add('wrong');
+        }
+      });
+      updateScore(correct);
+
+      if (correct === totalBlanks) {
+        showToast('Harika! Hepsini doğru bildin! 🎉', 'success');
+        launchConfetti();
+        setTimeout(() => document.getElementById('successOverlay').classList.add('show'), 1000);
+      } else if (correct > 0) {
+        showToast(`${correct}/${totalBlanks} doğru! Devam et! 💪`, 'success');
+      } else {
+        showToast('Tekrar dene! Yapabilirsin! 🌟', 'error');
+      }
+    }
+
+    function updateScore(correct) {
+      const c = correct !== undefined ? correct : 0;
+      document.getElementById('scoreDisplay').textContent = `⭐ ${c} / ${totalBlanks}`;
+    }
+
+    function resetGame() {
+      buildLyrics();
+      buildWordBank();
+      document.getElementById('successOverlay').classList.remove('show');
+    }
+
+    function startGame() {
+      document.getElementById('instructionsOverlay').style.display = 'none';
+      buildLyrics();
+      buildWordBank();
+    }
+
+    function showToast(msg, type) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = 'toast ' + type + ' show';
+      setTimeout(() => t.classList.remove('show'), 2500);
+    }
+
+    function launchConfetti() {
+      const container = document.getElementById('confetti-container');
+      const colors = ['#ff006e', '#ffbe0b', '#3a86ff', '#06d6a0', '#e040fb', '#ff4444'];
+      for (let i = 0; i < 50; i++) {
+        const p = document.createElement('div');
+        p.className = 'confetti-piece';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.top = -10 + 'px';
+        p.style.background = colors[Math.floor(Math.random() * colors.length)];
+        p.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+        p.style.width = (6 + Math.random() * 10) + 'px';
+        p.style.height = (6 + Math.random() * 10) + 'px';
+        p.style.animationDelay = Math.random() * 2 + 's';
+        container.appendChild(p);
+        requestAnimationFrame(() => p.classList.add('active'));
+        setTimeout(() => p.remove(), 5000);
+      }
+    }
+
+    // Default config
+    const defaultConfig = {
+      game_title: '🎉 23 Nisan Şarkı Oyunu',
+      background_color: '#0a0a2e',
+      text_color: '#e0e0ff',
+      accent_color: '#ffbe0b',
+      button_color: '#06d6a0',
+      chip_color: '#3a86ff',
+      font_family: 'Nunito',
+      font_size: 15
+    };
+
+    window.elementSdk.init({
+      defaultConfig,
+      onConfigChange: async (config) => {
+        const title = config.game_title || defaultConfig.game_title;
+        const bg = config.background_color || defaultConfig.background_color;
+        const textCol = config.text_color || defaultConfig.text_color;
+        const accent = config.accent_color || defaultConfig.accent_color;
+        const btnCol = config.button_color || defaultConfig.button_color;
+        const chipCol = config.chip_color || defaultConfig.chip_color;
+        const font = config.font_family || defaultConfig.font_family;
+        const fontSize = config.font_size || defaultConfig.font_size;
+
+        document.getElementById('gameTitle').textContent = title;
+        document.body.style.background = bg;
+
+        document.querySelectorAll('.lyrics-line').forEach(el => {
+          el.style.color = textCol;
+          el.style.fontFamily = `${font}, Nunito, sans-serif`;
+          el.style.fontSize = fontSize + 'px';
+        });
+
+        document.querySelectorAll('.word-chip').forEach(el => {
+          el.style.background = `linear-gradient(135deg, ${chipCol}, ${accent})`;
+        });
+
+        document.querySelectorAll('.btn-check').forEach(el => {
+          el.style.background = `linear-gradient(135deg, ${btnCol}, ${btnCol}dd)`;
+        });
+      },
+      mapToCapabilities: (config) => ({
+        recolorables: [
+          { get: () => config.background_color || defaultConfig.background_color, set: (v) => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); } },
+          { get: () => config.text_color || defaultConfig.text_color, set: (v) => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); } },
+          { get: () => config.accent_color || defaultConfig.accent_color, set: (v) => { config.accent_color = v; window.elementSdk.setConfig({ accent_color: v }); } },
+          { get: () => config.button_color || defaultConfig.button_color, set: (v) => { config.button_color = v; window.elementSdk.setConfig({ button_color: v }); } },
+          { get: () => config.chip_color || defaultConfig.chip_color, set: (v) => { config.chip_color = v; window.elementSdk.setConfig({ chip_color: v }); } }
+        ],
+        borderables: [],
+        fontEditable: { get: () => config.font_family || defaultConfig.font_family, set: (v) => { config.font_family = v; window.elementSdk.setConfig({ font_family: v }); } },
+        fontSizeable: { get: () => config.font_size || defaultConfig.font_size, set: (v) => { config.font_size = v; window.elementSdk.setConfig({ font_size: v }); } }
+      }),
+      mapToEditPanelValues: (config) => new Map([
+        ['game_title', config.game_title || defaultConfig.game_title]
+      ])
+    });
+
+    // Init game
+    buildLyrics();
+    buildWordBank();
+    lucide.createIcons();
+  </script>
+  <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'9e9350a197029904',t:'MTc3NTY3MjczMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
+</body>
+
+</html>

@@ -1,0 +1,315 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Egemenlik Kahramanı</title>
+  <style>
+    * { box-sizing: border-box; }
+    :root {
+      --red: #d62828; --blue: #1d4ed8; --gold: #ffb703; --white: rgba(255,255,255,.96);
+    }
+    body {
+      margin: 0; font-family: "Trebuchet MS", sans-serif; min-height: 100vh;
+      display: flex; align-items: center; justify-content: center; padding: 10px; color: #2c2c2c;
+      overflow-x: hidden; position: relative;
+      background: #dfefff url('1.jpg') center center / cover no-repeat fixed;
+    }
+    body::before {
+      content: ""; position: fixed; inset: 0; background: rgba(255,255,255,0.1); z-index: 0;
+      backdrop-filter: saturate(1.1);
+    }
+    .container {
+      width: 100%; max-width: 800px; background: var(--white); border-radius: 20px; padding: 15px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2); border: 4px solid #ffffff; position: relative; z-index: 2;
+    }
+    .title { text-align: center; font-size: 1.8rem; color: var(--red); margin: 5px 0; animation: bounceSoft 2.8s infinite; }
+    .subtitle { text-align: center; font-size: 1rem; color: #444; margin-bottom: 15px; }
+    
+    .screen { display: none; animation: fadeIn 0.45s ease; }
+    .screen.active { display: block; }
+    
+    .box-style {
+      background: #fffdf7; border: 3px dashed var(--gold); border-radius: 20px; padding: 15px; position: relative;
+    }
+
+    .btn {
+      display: inline-block; border: none; border-radius: 15px; padding: 12px 20px; font-size: 1rem; font-weight: bold; cursor: pointer;
+      transition: all 0.2s ease; margin-top: 10px;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 10px rgba(0,0,0,0.1); }
+    .start-btn, .continue-btn { background: var(--red); color: white; display: block; margin: 15px auto 0; }
+
+    .video-wrapper { width: 100%; border-radius: 15px; overflow: hidden; background: #000; line-height: 0; }
+    video { width: 100%; height: auto; display: block; }
+
+    .progress { display: flex; justify-content: space-between; margin-bottom: 10px; font-weight: bold; color: #1d3557; font-size: 0.9rem; }
+    .progress-bar { width: 100%; height: 12px; background: #e8edf2; border-radius: 10px; overflow: hidden; margin-bottom: 15px; }
+    .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #ffb703, #fb8500); transition: width 0.3s; }
+    
+    .question { font-size: 1.15rem; font-weight: bold; margin-bottom: 15px; color: #1d3557; text-align: center; min-height: 50px; }
+    
+    .options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .option-btn {
+      width: 100%; text-align: left; padding: 12px; border: 2px solid #dbe7f0; background: white; border-radius: 12px; 
+      font-size: 0.9rem; cursor: pointer; transition: all 0.2s; min-height: 55px;
+    }
+    .option-btn:hover:not(:disabled) { border-color: var(--gold); background: #fffdf0; }
+    .option-btn.correct { background: #d8f3dc; border-color: #2d6a4f; font-weight: bold; }
+    .option-btn.wrong { background: #ffe5e5; border-color: #c1121f; }
+
+    .feedback { margin-top: 12px; padding: 10px; border-radius: 12px; font-size: 0.9rem; line-height: 1.4; display: none; }
+    .feedback.show { display: block; }
+    .next-btn { background: #219ebc; color: white; display: none; margin: 10px 0 0 auto; }
+
+    .confetti-p {
+      position: fixed; width: 8px; height: 8px; z-index: 9999; pointer-events: none; border-radius: 1px;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes bounceSoft { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+
+    @media (max-width: 600px) {
+      .options { grid-template-columns: 1fr; }
+      .title { font-size: 1.4rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Arka plan müziği (Final için) -->
+  <audio id="finalMusic">
+    <source src="1.mp3" type="audio/mpeg">
+  </audio>
+
+  <div class="container">
+    <h1 class="title">Egemenlik Kahramanı</h1>
+    <p class="subtitle">23 Nisan’ı öğren, yıldızları topla!</p>
+
+    <!-- 1. Giriş Ekranı -->
+    <section id="introScreen" class="screen active">
+      <div class="box-style">
+        <h2 style="text-align:center; margin-top:0;">Hoş Geldin Kahraman!</h2>
+        <p style="font-size:0.92rem;">23 Nisan Ulusal Egemenlik ve Çocuk Bayramı yolculuğuna hazır mısın?</p>
+        <ul style="font-size:0.9rem; padding-left:22px;">
+          <li>Önce kısa bir video izleyeceğiz.</li>
+          <li>Ardından 10 heyecanlı soru seni bekliyor.</li>
+          <li>Doğru cevaplarda konfetiler eşliğinde puan toplayacaksın.</li>
+        </ul>
+        <button class="btn start-btn" onclick="goToVideo()">Hadi Başlayalım!</button>
+      </div>
+    </section>
+
+    <!-- 2. Tanıtım Videosu -->
+    <section id="videoScreen" class="screen">
+      <div class="box-style">
+        <div class="video-wrapper">
+          <video id="introVideo" controls>
+            <source src="1.mp4" type="video/mp4">
+          </video>
+        </div>
+        <button class="btn continue-btn" onclick="skipVideo()">Videoyu Geç ve Sorulara Başla</button>
+      </div>
+    </section>
+
+    <!-- 3. Quiz Ekranı -->
+    <section id="quizScreen" class="screen">
+      <div class="box-style">
+        <div class="progress">
+          <span id="questionCounter">Soru 1 / 10</span>
+          <span id="scoreCounter">Puan: 0</span>
+        </div>
+        <div class="progress-bar"><div id="progressFill" class="progress-fill"></div></div>
+        <div id="questionText" class="question"></div>
+        <div id="optionsContainer" class="options"></div>
+        <div id="feedbackBox" class="feedback"></div>
+        <button id="nextBtn" class="btn next-btn" onclick="nextQuestion()">Sıradaki Soru</button>
+      </div>
+    </section>
+
+    <!-- 4. Sonuç Ekranı -->
+    <section id="resultScreen" class="screen">
+      <div class="box-style" style="text-align:center;">
+        <div id="badge" style="font-size:3rem; margin-bottom:10px;">⭐</div>
+        <h2 id="resultMessage">Harika İş Çıkardın!</h2>
+        <p id="resultDetail"></p>
+        <button class="btn continue-btn" onclick="showFinalCelebration()">Kutlama Videosunu Başlat</button>
+      </div>
+    </section>
+
+    <!-- 5. Final Kutlama Ekranı (2.mp4) -->
+    <section id="finalCelebrationScreen" class="screen">
+      <div class="box-style" style="text-align:center;">
+        <h2 style="margin-bottom:10px;">🇹🇷 Kutlu Olsun! 🇹🇷</h2>
+        <div class="video-wrapper">
+          <video id="celebrationVideo" loop muted>
+            <source src="2.mp4" type="video/mp4">
+          </video>
+        </div>
+        <button class="btn start-btn" onclick="restartQuiz()" style="margin-top:20px;">Yeniden Oyna</button>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const quizData = [
+      { question: "1. Türkiye Büyük Millet Meclisi ne zaman açılmıştır?", options: ["A) 19 Mayıs 1919","B) 29 Ekim 1923","C) 23 Nisan 1920","D) 30 Ağustos 1922"], answer: 2, explanation: "TBMM 23 Nisan 1920'de açılmıştır." },
+      { question: "2. 23 Nisan hangi bayram olarak kutlanır?", options: ["A) Cumhuriyet Bayramı","B) Ulusal Egemenlik ve Çocuk Bayramı","C) Zafer Bayramı","D) Gençlik Bayramı"], answer: 1, explanation: "23 Nisan, Ulusal Egemenlik ve Çocuk Bayramı olarak kutlanır." },
+      { question: "3. Bu bayramı çocuklara kim armağan etmiştir?", options: ["A) Fevzi Çakmak","B) İsmet İnönü","C) Mustafa Kemal Atatürk","D) Kazım Karabekir"], answer: 2, explanation: "Atatürk çocukları çok sevdiği için onlara armağan etmiştir." },
+      { question: "4. “Ulusal egemenlik” ne anlama gelir?", options: ["A) Başka devlet yönetimi","B) Milletin kendini yönetmesi","C) Sadece çocuk yönetimi","D) Sınırsız özgürlük"], answer: 1, explanation: "Milletin kendi kararlarını kendisinin vermesidir." },
+      { question: "5. TBMM nerede bulunmaktadır?", options: ["A) İstanbul","B) Ankara","C) İzmir","D) Samsun"], answer: 1, explanation: "Meclisimiz başkentimiz Ankara'dadır." },
+      { question: "6. TBMM'nin açılımı nedir?", options: ["A) Türkiye Büyük Millet Meclisi","B) Türk Birliği Merkezi","C) Türkiye Bilim Meclisi","D) Türk Millî Merkezi"], answer: 0, explanation: "Türkiye Büyük Millet Meclisi." },
+      { question: "7. Dünyada çocuklara armağan edilen ilk bayram hangisidir?", options: ["A) 23 Nisan","B) 19 Mayıs","C) Yılbaşı","D) Anneler Günü"], answer: 0, explanation: "23 Nisan dünyadaki tek çocuk bayramıdır." },
+      { question: "8. 23 Nisan'da okulda neler yaparız?", options: ["A) Sadece uyuruz","B) Şiir okur, gösteri yaparız","C) Sınav oluruz","D) Tatil yaparız"], answer: 1, explanation: "Coşkuyla törenler ve gösteriler yaparız." },
+      { question: "9. 23 Nisan bize hangi duyguyu hissettirir?", options: ["A) Korku","B) Üzüntü","C) Gurur ve Mutluluk","D) Yalnızlık"], answer: 2, explanation: "Milletçe gurur ve mutluluk duyarız." },
+      { question: "10. 23 Nisan'ın çocuklara armağan edilmesinin en önemli nedeni nedir?", options: ["A) Çocukların geleceğin güvencesi olması","B) Çocukların tatil yapmayı sevmesi","C) O gün havanın güzel olması","D) Sadece oyun oynamak için"], answer: 0, explanation: "Çocuklar geleceğin büyükleri olduğu için bayram onlara armağan edilmiştir." }
+    ];
+
+    let currentQuestion = 0, score = 0, answered = false;
+
+    function burstConfetti() {
+      const colors = ['#d62828', '#ffffff'];
+      const count = 100;
+      function create(side) {
+        for (let i = 0; i < count; i++) {
+          const p = document.createElement('div');
+          p.className = 'confetti-p';
+          p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+          const startX = side === 'left' ? -15 : window.innerWidth + 15;
+          const startY = window.innerHeight * 0.85;
+          p.style.left = startX + 'px';
+          p.style.top = startY + 'px';
+          document.body.appendChild(p);
+          const angle = side === 'left' ? (Math.random() * 50 - 45) : (Math.random() * 50 + 175);
+          const velocity = Math.random() * 20 + 15;
+          const rad = angle * (Math.PI / 180);
+          let posX = startX, posY = startY, vx = Math.cos(rad) * velocity, vy = Math.sin(rad) * velocity;
+          let gravity = 0.55, drag = 0.975;
+          const update = () => {
+            vx *= drag; vy += gravity; posX += vx; posY += vy;
+            p.style.transform = `translate(${posX - startX}px, ${posY - startY}px) rotate(${posX * 1.5}deg)`;
+            if (posY < window.innerHeight + 50) requestAnimationFrame(update);
+            else p.remove();
+          };
+          requestAnimationFrame(update);
+        }
+      }
+      create('left'); create('right');
+    }
+
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    function speak(text, onComplete) {
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = 'tr-TR';
+      utter.onstart = () => { if (text.includes("Harika")) burstConfetti(); };
+      utter.onend = () => { if (onComplete) onComplete(); };
+      speechSynthesis.speak(utter);
+    }
+
+    function goToVideo() { 
+      showScreen('videoScreen'); 
+      speak('Şimdi videomuzu izleyelim.'); 
+    }
+
+    function skipVideo() { document.getElementById('introVideo').pause(); startQuiz(); }
+    function startQuiz() { showScreen('quizScreen'); loadQuestion(); }
+
+    function loadQuestion() {
+      answered = false;
+      const current = quizData[currentQuestion];
+      document.getElementById('feedbackBox').style.display = 'none';
+      document.getElementById('nextBtn').style.display = 'none';
+      document.getElementById('questionText').textContent = current.question;
+      document.getElementById('questionCounter').textContent = `Soru ${currentQuestion+1} / 10`;
+      document.getElementById('progressFill').style.width = `${((currentQuestion)/10)*100}%`;
+      const container = document.getElementById('optionsContainer');
+      container.innerHTML = '';
+      current.options.forEach((opt, idx) => {
+        const b = document.createElement('button');
+        b.className = 'option-btn';
+        b.textContent = opt;
+        b.onclick = () => selectAnswer(idx, b);
+        container.appendChild(b);
+      });
+    }
+
+    function selectAnswer(idx, btn) {
+      if (answered) return;
+      answered = true;
+      const current = quizData[currentQuestion];
+      document.querySelectorAll('.option-btn').forEach((b, i) => {
+        b.disabled = true;
+        if (i === current.answer) b.classList.add('correct');
+      });
+      const feedback = document.getElementById('feedbackBox');
+      if (idx === current.answer) {
+        score++;
+        btn.classList.add('correct');
+        feedback.innerHTML = `🌟 <strong>Harika!</strong> ${current.explanation}`;
+        feedback.style.background = "#e9f9ee";
+        speak("Harika! " + current.explanation);
+      } else {
+        btn.classList.add('wrong');
+        feedback.innerHTML = `😊 <strong>Doğru cevap:</strong> ${current.options[current.answer]}`;
+        feedback.style.background = "#fff0f0";
+        speak("Doğru cevap " + current.options[current.answer]);
+      }
+      feedback.style.display = 'block';
+      document.getElementById('scoreCounter').textContent = `Puan: ${score}`;
+      document.getElementById('nextBtn').style.display = 'block';
+    }
+
+    function nextQuestion() {
+      window.speechSynthesis.cancel();
+      currentQuestion++;
+      if (currentQuestion < 10) loadQuestion();
+      else showResults();
+    }
+
+    function showResults() {
+      showScreen('resultScreen');
+      document.getElementById('resultMessage').textContent = `Puanın: ${score} / 10`;
+      document.getElementById('resultDetail').textContent = score > 7 ? "Mükemmel bir Egemenlik Kahramanısın!" : "Çok güzel bir deneme!";
+      burstConfetti();
+    }
+
+    function showFinalCelebration() {
+      showScreen('finalCelebrationScreen');
+      const music = document.getElementById('finalMusic');
+      const video = document.getElementById('celebrationVideo');
+      
+      // Müzik ve Videoyu Başlat (Konfeti yok)
+      music.play();
+      video.play();
+      
+      // Müzik bittiğinde video dursun ama ekran değişmesin
+      music.onended = () => {
+        video.pause();
+      };
+    }
+
+    function restartQuiz() { 
+      // Her şeyi sıfırla
+      const music = document.getElementById('finalMusic');
+      const video = document.getElementById('celebrationVideo');
+      music.pause();
+      music.currentTime = 0;
+      video.pause();
+      video.currentTime = 0;
+      
+      currentQuestion = 0; 
+      score = 0; 
+      showScreen('introScreen'); 
+    }
+    
+    document.getElementById('introVideo').onended = startQuiz;
+  </script>
+</body>
+</html>

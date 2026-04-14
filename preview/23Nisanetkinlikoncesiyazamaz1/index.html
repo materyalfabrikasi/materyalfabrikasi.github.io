@@ -1,0 +1,262 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Egemenlik Kahramanı - Çocuklar İçin</title>
+  <style>
+    * { box-sizing: border-box; }
+    :root {
+      --red: #d62828; --gold: #ffb703; --white: rgba(255,255,255,.96);
+      --orange-btn: #fb8500; --green-btn: #84cc16; --dark-green: #365314;
+    }
+    body {
+      margin: 0; font-family: "Trebuchet MS", sans-serif; min-height: 100vh;
+      display: flex; align-items: center; justify-content: center; padding: 10px; color: #2c2c2c;
+      overflow-x: hidden; position: relative;
+      background: #dfefff url('1.jpg') center center / cover no-repeat fixed;
+    }
+    body::before {
+      content: ""; position: fixed; inset: 0; background: rgba(255,255,255,0.1); z-index: 0;
+      backdrop-filter: saturate(1.1);
+    }
+    .container {
+      width: 100%; max-width: 800px; background: var(--white); border-radius: 20px; padding: 20px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2); border: 4px solid #ffffff; position: relative; z-index: 2;
+    }
+    .title { text-align: center; font-size: 1.8rem; color: var(--red); margin: 5px 0; animation: bounceSoft 2.8s infinite; }
+    
+    .screen { display: none; animation: fadeIn 0.45s ease; }
+    .screen.active { display: block; }
+    
+    .box-style { background: #fffdf7; border: 3px dashed var(--gold); border-radius: 20px; padding: 15px; }
+
+    .btn {
+      display: inline-block; border: none; border-radius: 20px; padding: 12px 20px; font-size: 1.1rem; font-weight: bold; cursor: pointer;
+      transition: all 0.2s ease; margin-top: 10px;
+    }
+    .start-btn, .continue-btn { background: var(--red); color: white; display: block; margin: 15px auto 0; }
+
+    .video-wrapper { width: 100%; border-radius: 15px; overflow: hidden; background: #000; line-height: 0; }
+    video { width: 100%; height: auto; display: block; }
+
+    .progress { display: flex; justify-content: center; margin-bottom: 10px; font-weight: bold; color: #1d3557; }
+    
+    .question { font-size: 1.3rem; font-weight: bold; margin-bottom: 15px; color: #1d3557; text-align: center; min-height: 60px; }
+    
+    .options { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    .option-card {
+      background: white; border: 3px solid #eee; border-radius: 15px; padding: 10px; text-align: center;
+      display: flex; flex-direction: column; gap: 8px; transition: 0.3s;
+    }
+    .listen-btn { background: var(--orange-btn); color: white; font-size: 1.4rem; padding: 10px; border-radius: 15px; }
+    .select-btn { background: var(--green-btn); color: var(--dark-green); width: 100%; border-radius: 15px; }
+    
+    .select-btn.correct { background: #16a34a !important; color: white; }
+    .select-btn.wrong { background: #dc2626 !important; color: white; }
+
+    .feedback { margin-top: 12px; padding: 12px; border-radius: 12px; font-size: 1rem; text-align: center; display: none; line-height: 1.4; }
+    .next-btn { background: var(--red); color: white; display: none; margin: 15px auto 0; }
+
+    .confetti-p { position: fixed; width: 8px; height: 8px; z-index: 9999; pointer-events: none; border-radius: 1px; }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes bounceSoft { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+
+    @media (max-width: 600px) {
+      .options { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <audio id="finalMusic"><source src="1.mp3" type="audio/mpeg"></audio>
+
+  <div class="container">
+    <h1 class="title">Egemenlik Kahramanı</h1>
+
+    <section id="introScreen" class="screen active">
+      <div class="box-style" style="text-align: center;">
+        <h2>Hoş Geldin Küçük Kahraman!</h2>
+        <p style="font-size: 1.1rem;">Seninle 23 Nisan'ı öğreneceğiz.</p>
+        <p>Önce videomuzu izleyelim, sonra soruları beraber çözelim!</p>
+        <button class="btn start-btn" onclick="startIntroSpeech()">Dinle ve Başla</button>
+      </div>
+    </section>
+
+    <section id="videoScreen" class="screen">
+      <div class="box-style">
+        <div class="video-wrapper">
+          <video id="introVideo" controls><source src="1.mp4" type="video/mp4"></video>
+        </div>
+        <button class="btn continue-btn" onclick="skipVideo()">Sorulara Başla</button>
+      </div>
+    </section>
+
+    <section id="quizScreen" class="screen">
+      <div class="box-style">
+        <div class="progress"><span id="questionCounter">Soru 1 / 10</span></div>
+        <div id="questionText" class="question"></div>
+        <div id="optionsContainer" class="options"></div>
+        <div id="feedbackBox" class="feedback"></div>
+        <button id="nextBtn" class="btn next-btn" onclick="nextQuestion()">Sıradaki Soru</button>
+      </div>
+    </section>
+
+    <section id="resultScreen" class="screen">
+      <div class="box-style" style="text-align:center;">
+        <div style="font-size:4rem;">🏆</div>
+        <h2>Harika İş Çıkardın!</h2>
+        <p id="resultDetail" style="font-size: 1.2rem;"></p>
+        <button class="btn continue-btn" onclick="showFinalCelebration()">Kutlama Videosunu Aç</button>
+      </div>
+    </section>
+
+    <section id="finalCelebrationScreen" class="screen">
+      <div class="box-style" style="text-align:center;">
+        <h2 style="margin-bottom:10px;">🇹🇷 23 Nisan Kutlu Olsun! 🇹🇷</h2>
+        <div class="video-wrapper">
+          <video id="celebrationVideo" loop muted><source src="2.mp4" type="video/mp4"></video>
+        </div>
+        <button class="btn start-btn" onclick="restartQuiz()" style="margin-top:15px;">Yeniden Oyna</button>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const quizData = [
+      { q: "Türkiye Büyük Millet Meclisi ne zaman açılmıştır?", correct: "23 Nisan 1920", wrong: "29 Ekim 1923", exp: "TBMM 23 Nisan 1920'de açılmıştır." },
+      { q: "23 Nisan hangi bayram olarak kutlanır?", correct: "Ulusal Egemenlik ve Çocuk Bayramı", wrong: "Cumhuriyet Bayramı", exp: "23 Nisan, Ulusal Egemenlik ve Çocuk Bayramı olarak kutlanır." },
+      { q: "Bu bayramı çocuklara kim armağan etmiştir?", correct: "Mustafa Kemal Atatürk", wrong: "İsmet İnönü", exp: "Atatürk çocukları çok sevdiği için onlara armağan etmiştir." },
+      { q: "Ulusal egemenlik ne anlama gelir?", correct: "Milletin kendini yönetmesi", wrong: "Başka devlet yönetimi", exp: "Milletin kendi kararlarını kendisinin vermesidir." },
+      { q: "TBMM nerede bulunmaktadır?", correct: "Ankara", wrong: "İstanbul", exp: "Meclisimiz başkentimiz Ankara'dadır." },
+      { q: "TBMM'nin açılımı nedir?", correct: "Türkiye Büyük Millet Meclisi", wrong: "Türk Birliği Merkezi", exp: "Türkiye Büyük Millet Meclisi." },
+      { q: "Dünyada çocuklara armağan edilen ilk bayram hangisidir?", correct: "23 Nisan", wrong: "19 Mayıs", exp: "23 Nisan dünyadaki tek çocuk bayramıdır." },
+      { q: "23 Nisan'da okulda neler yaparız?", correct: "Şiir okur, gösteri yaparız", wrong: "Sadece uyuruz", exp: "Coşkuyla törenler ve gösteriler yaparız." },
+      { q: "23 Nisan bize hangi duyguyu hissettirir?", correct: "Gurur ve Mutluluk", wrong: "Üzüntü", exp: "Milletçe gurur ve mutluluk duyarız." },
+      { q: "23 Nisan'ın çocuklara armağan edilmesinin en önemli nedeni nedir?", correct: "Çocukların geleceğin güvencesi olması", wrong: "O gün havanın güzel olması", exp: "Çocuklar geleceğin büyükleri olduğu için bayram onlara armağan edilmiştir." }
+    ];
+
+    let currentQuestion = 0, score = 0, answered = false;
+
+    function speak(text, callback) {
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = 'tr-TR';
+      utter.rate = 0.9;
+      if (callback) utter.onend = callback;
+      window.speechSynthesis.speak(utter);
+    }
+
+    function startIntroSpeech() {
+      const introText = "Hoş geldin küçük kahraman! Seninle harika bir oyun oynayacağız. Önce bir video izleyeceğiz, sonra ben sana sorular soracağım. Sen de dinle butonuna basıp cevabı duyacaksın ve doğru olanı seçeceksin. Hazırsan başlayalım!";
+      speak(introText, goToVideo);
+    }
+
+    function goToVideo() { showScreen('videoScreen'); speak('Şimdi videomuzu izleyelim.'); }
+    function skipVideo() { document.getElementById('introVideo').pause(); startQuiz(); }
+    function startQuiz() { showScreen('quizScreen'); loadQuestion(); }
+
+    function loadQuestion() {
+      answered = false;
+      const data = quizData[currentQuestion];
+      document.getElementById('questionCounter').textContent = `Soru ${currentQuestion + 1} / 10`;
+      document.getElementById('questionText').textContent = data.q;
+      document.getElementById('feedbackBox').style.display = 'none';
+      document.getElementById('nextBtn').style.display = 'none';
+
+      // Seçenekleri Rastgele Karıştır
+      const options = [
+        { text: data.correct, isCorrect: true },
+        { text: data.wrong, isCorrect: false }
+      ].sort(() => Math.random() - 0.5);
+
+      const container = document.getElementById('optionsContainer');
+      container.innerHTML = '';
+      
+      options.forEach(opt => {
+        const card = document.createElement('div');
+        card.className = 'option-card';
+        card.innerHTML = `
+          <button class="btn listen-btn" onclick="speak('${opt.text}')">🔈 Dinle</button>
+          <button class="btn select-btn" onclick="checkAnswer(${opt.isCorrect}, this)">SEÇ</button>
+        `;
+        container.appendChild(card);
+      });
+
+      speak(data.q);
+    }
+
+    function checkAnswer(isCorrect, btn) {
+      if (answered) return;
+      answered = true;
+      const data = quizData[currentQuestion];
+      const feedback = document.getElementById('feedbackBox');
+      
+      if (isCorrect) {
+        score++;
+        btn.classList.add('correct');
+        btn.textContent = "DOĞRU! 🌟";
+        feedback.innerHTML = `🌟 <strong>Harika!</strong> ${data.exp}`;
+        feedback.style.background = "#e9f9ee";
+        burstConfetti();
+        speak("Harika! " + data.exp);
+      } else {
+        btn.classList.add('wrong');
+        btn.textContent = "ÜZÜLME 😊";
+        feedback.innerHTML = `😊 Doğrusu: ${data.correct}`;
+        feedback.style.background = "#fff0f0";
+        speak("Doğru cevap: " + data.correct);
+      }
+      
+      feedback.style.display = 'block';
+      document.getElementById('nextBtn').style.display = 'block';
+    }
+
+    function nextQuestion() {
+      currentQuestion++;
+      if (currentQuestion < 10) loadQuestion();
+      else showResults();
+    }
+
+    function showResults() {
+      showScreen('resultScreen');
+      document.getElementById('resultDetail').textContent = `10 sorudan ${score} tanesini bildin!`;
+      speak(`Tebrikler kahraman! 10 sorudan ${score} tanesini bildin.`);
+    }
+
+    function showFinalCelebration() {
+      showScreen('finalCelebrationScreen');
+      document.getElementById('finalMusic').play();
+      document.getElementById('celebrationVideo').play();
+      speak("23 Nisan Kutlu Olsun! Sen bir Egemenlik Kahramanısın!");
+    }
+
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    function restartQuiz() { location.reload(); }
+
+    function burstConfetti() {
+      const colors = ['#d62828', '#ffffff', '#ffb703'];
+      for (let i = 0; i < 40; i++) {
+        const p = document.createElement('div');
+        p.className = 'confetti-p';
+        p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        p.style.left = Math.random() * 100 + 'vw';
+        p.style.top = '-10px';
+        document.body.appendChild(p);
+        p.animate([
+          { transform: 'translateY(0) rotate(0)', opacity: 1 },
+          { transform: `translateY(100vh) rotate(${Math.random() * 360}deg)`, opacity: 0 }
+        ], { duration: 2000, easing: 'ease-out' }).onfinish = () => p.remove();
+      }
+    }
+
+    document.getElementById('introVideo').onended = startQuiz;
+  </script>
+</body>
+</html>

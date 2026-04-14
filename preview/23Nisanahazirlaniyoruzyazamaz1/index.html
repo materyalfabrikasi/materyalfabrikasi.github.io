@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>23 Nisan'a Hazırlanıyoruz!</title>
+    <style>
+        :root {
+            --primary-red: #da291c;
+            --bright-blue: #00a8e8;
+            --sunny-yellow: #ffdb00;
+        }
+
+        body {
+            margin: 0;
+            padding: 40px 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to bottom, #87CEEB, #E0F7FA);
+            overflow-y: auto;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        /* Uçuşan Balonlar Animasyonu */
+        .balloon-container {
+            position: fixed;
+            bottom: -50px;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .balloon {
+            position: absolute;
+            width: 30px;
+            animation: rise linear infinite;
+        }
+
+        @keyframes rise {
+            to {
+                transform: translateY(-110vh) rotate(360deg);
+            }
+        }
+
+        /* Giriş Yönerge Ekranı */
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #da291c, #b31d14);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            overflow-y: auto;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .instruction-card {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            max-width: 500px;
+            border: 8px solid var(--primary-red);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .instruction-card h1 {
+            color: var(--primary-red);
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .instruction-card p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .btn-start {
+            margin-top: 30px;
+            padding: 15px 40px;
+            font-size: 1.5rem;
+            background-color: var(--primary-red);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .btn-start:hover {
+            transform: scale(1.1);
+            background-color: #b31d14;
+        }
+
+        /* Oyun Alanı */
+        #game-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            z-index: 5;
+            width: 100%;
+        }
+
+        .puzzle-board {
+            display: grid;
+            grid-template-columns: repeat(3, 200px);
+            grid-template-rows: repeat(3, 200px);
+            gap: 5px;
+            background: rgba(255, 255, 255, 0.3);
+            padding: 10px;
+            border-radius: 15px;
+            border: 4px dashed white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .slot {
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .piece {
+            width: 200px;
+            height: 200px;
+            background-image: url('puzzle.jpg');
+            background-size: 600px 600px;
+            cursor: grab;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s;
+        }
+
+        .piece:active {
+            cursor: grabbing;
+        }
+
+        /* Yan Paneller */
+        .game-layout {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .side-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-width: 210px;
+            min-height: 400px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 20px;
+            border: 2px solid white;
+        }
+
+        .congrats-msg {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 30px;
+            border: 8px solid var(--primary-red);
+            box-shadow: 0 0 50px rgba(218, 41, 28, 0.5);
+            z-index: 1000;
+            color: var(--primary-red);
+            font-size: 3rem;
+            font-weight: bold;
+            text-align: center;
+            text-shadow: 2px 2px rgba(0, 0, 0, 0.1);
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: translate(-50%, -50%) scale(0.5);
+                opacity: 0;
+            }
+
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <audio id="bgMusic" src="1.mp3" loop></audio>
+    <div class="balloon-container" id="balloonContainer"></div>
+
+    <div id="overlay">
+        <div class="instruction-card">
+            <h1>🇹🇷 Merhaba! 🇹🇷</h1>
+            <p><b>23 Nisan Ulusal Egemenlik ve Çocuk Bayramı yaklaşıyor!</b></p>
+            <p>Bu özel bayramı kutlamaya hazır mısın?</p>
+            <p>Önünde karışık hâlde duran parçaları birleştir, gizli görseli tamamla ve bayram coşkusunu zirveye taşı!
+                Haydi, parçaları doğru yerlere sürükle ve resmi ortaya çıkar!</p>
+            <button class="btn-start" onclick="startGame()">Başlayalım!</button>
+        </div>
+    </div>
+
+    <div id="game-container">
+        <h2 style="color: #da291c; text-align: center; font-size: 2.5rem; text-shadow: 2px 2px white;">Parçaları
+            Birleştir!</h2>
+
+        <div class="game-layout">
+            <div id="left-panel" class="side-panel"></div>
+
+            <div class="puzzle-board" id="board">
+                <!-- 9 slot oluşturulacak -->
+            </div>
+
+            <div id="right-panel" class="side-panel"></div>
+        </div>
+
+        <div class="congrats-msg" id="winMessage">🎉 Tebrikler! Bayramın Kutlu Olsun! 🎈</div>
+    </div>
+
+    <script>
+        // Balon yağmuru oluşturma
+        function createBalloons() {
+            const container = document.getElementById('balloonContainer');
+            for (let i = 0; i < 20; i++) {
+                const balloon = document.createElement('div');
+                balloon.className = 'balloon';
+                balloon.innerHTML = '🎈';
+                balloon.style.left = Math.random() * 100 + 'vw';
+                balloon.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                balloon.style.fontSize = (Math.random() * 20 + 20) + 'px';
+                container.appendChild(balloon);
+            }
+        }
+
+        function startGame() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('game-container').style.display = 'flex';
+            initPuzzle();
+
+            // Müzik çalmayı başlat
+            const music = document.getElementById('bgMusic');
+            music.play().catch(e => console.log("Müzik başlatılamadı:", e));
+        }
+
+        // Sayfa yüklendiğinde veya ilk etkileşimde müziği başlatmayı dene
+        document.addEventListener('click', function startMusicOnce() {
+            const music = document.getElementById('bgMusic');
+            if (music.paused) {
+                music.play().catch(e => console.log("Müzik başlatılamadı:", e));
+            }
+            document.removeEventListener('click', startMusicOnce);
+        }, { once: true });
+
+        function initPuzzle() {
+            const board = document.getElementById('board');
+            const leftPanel = document.getElementById('left-panel');
+            const rightPanel = document.getElementById('right-panel');
+
+            board.innerHTML = '';
+            leftPanel.innerHTML = '';
+            rightPanel.innerHTML = '';
+
+            let pieces = [];
+
+            // 9 slot oluştur
+            for (let i = 0; i < 9; i++) {
+                let slot = document.createElement('div');
+                slot.className = 'slot';
+                slot.dataset.index = i;
+                board.appendChild(slot);
+
+                // Parçayı oluştur
+                let piece = document.createElement('div');
+                piece.className = 'piece';
+                piece.draggable = true;
+                piece.id = 'piece' + i;
+
+                let x = (i % 3) * -200;
+                let y = Math.floor(i / 3) * -200;
+                piece.style.backgroundPosition = `${x}px ${y}px`;
+
+                pieces.push(piece);
+            }
+
+            // Parçaları karıştır ve yan panellere dağıt
+            pieces.sort(() => Math.random() - 0.5);
+            pieces.forEach((p, index) => {
+                if (index < 5) {
+                    leftPanel.appendChild(p);
+                } else {
+                    rightPanel.appendChild(p);
+                }
+            });
+
+            // Sürükle-Bırak Mantığı
+            let draggedPiece = null;
+
+            document.addEventListener('dragstart', (e) => {
+                if (e.target.classList.contains('piece')) {
+                    draggedPiece = e.target;
+                    e.target.style.opacity = '0.5';
+                }
+            });
+
+            document.addEventListener('dragend', (e) => {
+                if (e.target.classList.contains('piece')) {
+                    e.target.style.opacity = '1';
+                }
+            });
+
+            document.addEventListener('dragover', (e) => {
+                e.preventDefault();
+            });
+
+            document.addEventListener('drop', (e) => {
+                e.preventDefault();
+                const target = e.target;
+
+                // 1. Slota bırakma
+                if (target.classList.contains('slot')) {
+                    if (target.children.length > 0) {
+                        // Slot doluysa parçaları yer değiştir
+                        const existingPiece = target.children[0];
+                        const sourceParent = draggedPiece.parentElement;
+                        sourceParent.appendChild(existingPiece);
+                        target.appendChild(draggedPiece);
+                    } else {
+                        target.appendChild(draggedPiece);
+                    }
+                    checkWin();
+                }
+                // 2. Başka bir parçanın üzerine bırakma (slotun içindeyken)
+                else if (target.classList.contains('piece') && target !== draggedPiece) {
+                    const targetParent = target.parentElement;
+                    const sourceParent = draggedPiece.parentElement;
+
+                    targetParent.appendChild(draggedPiece);
+                    sourceParent.appendChild(target);
+                    checkWin();
+                }
+                // 3. Yan panellere geri bırakma
+                else if (target.classList.contains('side-panel')) {
+                    target.appendChild(draggedPiece);
+                }
+            });
+        }
+
+        function checkWin() {
+            const slots = document.querySelectorAll('.slot');
+            let placedCount = 0;
+            let correctCount = 0;
+
+            slots.forEach((slot, index) => {
+                if (slot.children.length > 0) {
+                    placedCount++;
+                    const piece = slot.children[0];
+                    if (piece.id === 'piece' + index) {
+                        correctCount++;
+                    }
+                }
+            });
+
+            if (correctCount === 9) {
+                const winMsg = document.getElementById('winMessage');
+                winMsg.style.display = 'block';
+                createBalloons();
+
+                // Balonları periyodik olarak yağdırmaya devam et
+                const interval = setInterval(createBalloons, 2000);
+
+                // Mesaja tıklandığında oyunu sıfırlama seçeneği (isteğe bağlı)
+                // winMsg.onclick = () => location.reload();
+            }
+        }
+
+        createBalloons();
+    </script>
+</body>
+
+</html>

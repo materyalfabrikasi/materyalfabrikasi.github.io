@@ -89,7 +89,7 @@
                 const zone = document.createElement('div');
                 zone.className = 'drop-target';
                 zone.dataset.id = id;
-                zone.innerHTML = `<img src="${id}.png">`;
+                zone.innerHTML = `<img src="${id}.jpg">`;
                 
                 zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('hover'); });
                 zone.addEventListener('dragleave', () => zone.classList.remove('hover'));
