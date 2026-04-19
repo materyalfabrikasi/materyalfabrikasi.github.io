@@ -316,6 +316,7 @@
             }
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </head>
 
 <body>
@@ -3334,6 +3335,45 @@
 
         let filteredMaterials = [...materials];
 
+        async function generateAndDownloadSCORM(name, previewUrl) {
+            try {
+                // Mevcut sayfanın ana URL'sini alır ve önizleme URL'sini mutlak URL'ye çeviririz
+                const baseUrl = window.location.href.split('/').slice(0, -1).join('/');
+                const absolutePreviewUrl = baseUrl + '/' + previewUrl;
+                
+                // İframe kodunu oluşturuyoruz
+                const newContent = `<iframe width="100%" height="800" src="${absolutePreviewUrl}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="border:none;"></iframe>`;
+
+                const zip = new JSZip();
+                
+                const response = await fetch('files/default.zip');
+                if (!response.ok) {
+                    throw new Error('ZIP dosyasına ulaşılamadı.');
+                }
+                const zipBuffer = await response.arrayBuffer();
+                const zipContent = await zip.loadAsync(zipBuffer);
+                
+                if (!zipContent.files['index.html']) {
+                    throw new Error('ZIP dosyasında index.html bulunamadı.');
+                }
+
+                zip.file('index.html', newContent);
+                
+                const updatedZip = await zip.generateAsync({ type: 'blob' });
+                
+                const downloadLink = document.createElement('a');
+                downloadLink.href = URL.createObjectURL(updatedZip);
+                
+                // Türkçe karakterleri de destekleyen güvenli dosya adı oluşturma
+                let safeName = name.replace(/[^a-zA-Z0-9çğıöşüÇĞİÖŞÜ ]/g, '').trim().replace(/\s+/g, '_');
+                downloadLink.download = safeName + '_SCORM.zip';
+                downloadLink.click();
+            } catch (error) {
+                console.error('Hata:', error);
+                alert('SCORM oluşturulurken bir hata oluştu: ' + error.message);
+            }
+        }
+
         function renderMaterials(materialsToRender) {
             const grid = document.getElementById('materialsGrid');
             const resultsCount = document.getElementById('resultsCount');
@@ -3399,9 +3439,9 @@
                     </div>
                     
                     <div class="card-actions">
-                        <a href="${material.scormPath}" class="action-btn download-btn" download>
+                        <button onclick="generateAndDownloadSCORM('${material.name.replace(/'/g, "\\'")}', '${material.previewUrl}')" class="action-btn download-btn" style="font-family: inherit;">
                             📥 SCORM
-                        </a>
+                        </button>
                         <a href="${material.previewUrl}" class="action-btn preview-btn" target="_blank">
                             👁️ Önizle
                         </a>
