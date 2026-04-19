@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>23 Nisan AI Sesli Eğitim Materyali</title>
+
+<style>
+body, html {
+    margin: 0; padding: 0;
+    font-family: "Comic Sans MS", cursive, sans-serif;
+    height: 100vh; width: 100vw; overflow: hidden;
+    background: #000;
+}
+
+/* GİRİŞ */
+#intro-screen {
+    position: fixed; inset: 0; z-index: 5000;
+    background: #fff url('14.png') no-repeat center center;
+    background-size: contain;
+    display: flex; justify-content: center; align-items: center;
+}
+
+.intro-text-box {
+    margin-top: 180px; text-align: center; color: #2d3436;
+    background: rgba(255,255,255,0.95); padding: 30px;
+    border-radius: 30px; width: 450px; box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+}
+
+/* OYUN GENEL */
+#game-container {
+    display: none; width: 100vw; height: 100vh;
+    position: relative; justify-content: center; align-items: center; gap: 40px;
+}
+
+#bg-video { position: absolute; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
+
+#flag-panel, #child-grid {
+    background: rgba(255,255,255,0.9); border-radius: 20px;
+    z-index: 10; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+#flag-panel { width: 280px; padding: 20px; text-align: center; color: black; }
+
+.flag-box {
+    width: 200px; height: 140px; background: #fff; border: 4px solid #333;
+    margin: 15px auto; display: flex; justify-content: center; align-items: center;
+    border-radius: 12px; overflow: hidden;
+}
+
+.flag-box img { max-width: 95%; max-height: 95%; object-fit: contain; }
+
+#child-grid {
+    width: 500px; max-height: 80vh; display: grid;
+    grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 20px;
+    overflow-y: auto; align-content: start;
+}
+
+.child-card { background: #fff; border-radius: 15px; padding: 10px; display: flex; flex-direction: column; align-items: center; cursor: pointer; }
+.child-card img { width: 100px; pointer-events: none; }
+
+/* AI SES DÜĞMESİ */
+.audio-btn {
+    background: #ff7675; border: none; border-radius: 50%; width: 40px; height: 40px;
+    color: white; cursor: pointer; margin-top: 8px; font-size: 1.2rem;
+    display: flex; justify-content: center; align-items: center;
+    box-shadow: 0 4px #d63031;
+}
+
+/* CELEBRATION */
+#celebration-wrapper { position: absolute; bottom: 50px; left: 50px; display: none; align-items: flex-end; z-index: 20; }
+#ata-character { height: 80vh; border: 8px solid #d4af37; border-radius: 10px; box-shadow: 0 0 30px rgba(212, 175, 55, 0.5); }
+#video-area-wrapper { display: flex; flex-direction: column; align-items: center; margin-left: 50px; }
+#side-video-container { width: 300px; height: 400px; overflow: hidden; border-radius: 20px; border: 5px solid white; background: #000; }
+#side-video { width: 100%; height: 100%; object-fit: cover; transform: scale(1.7); }
+.thanks-text { color: white; font-size: 1.8rem; font-weight: bold; margin-top: 15px; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
+
+/* SIRALAMA */
+#sorting-area {
+    display: none; position: absolute; inset: 0;
+    background: #f4ece1; background-image: radial-gradient(#dcd0c0 1px, transparent 1px);
+    background-size: 20px 20px; flex-direction: column; justify-content: center; align-items: center; z-index: 1000;
+}
+#mixed-pool, #drop-zone {
+    display: flex; flex-wrap: wrap; gap: 15px; padding: 25px; min-height: 120px;
+    width: 85%; justify-content: center; border: 2px solid #a1887f; border-radius: 15px; background: rgba(255,255,255,0.3); margin: 10px;
+}
+.word-container { display: flex; flex-direction: column; align-items: center; }
+.word-box { background: #fff; color: #000; padding: 12px 20px; border-radius: 8px; cursor: move; border: 2px solid #5d4037; font-size: 1.3rem; }
+.correct { background: #2ecc71 !important; color: white !important; }
+.wrong { background: #e74c3c !important; color: white !important; }
+
+/* FINAL */
+#final-card {
+    display: none; position: fixed; inset: 0; background: #fff url('15.png') no-repeat center center;
+    background-size: contain; z-index: 9999; flex-direction: column; justify-content: center; align-items: center;
+}
+.card-box { background: rgba(255, 255, 255, 0.9); padding: 30px; border-radius: 25px; font-size: 1.8rem; text-align: center; border: 5px solid #d63031; width: 450px; margin-bottom: 20px; }
+.restart-btn { padding: 15px 40px; font-size: 1.5rem; border-radius: 20px; border: none; background: #27ae60; color: white; cursor: pointer; }
+</style>
+</head>
+
+<body>
+
+<audio id="audio-bg" src="1.mp3"></audio>
+
+<div id="intro-screen">
+    <div class="intro-text-box">
+        <h2>🎈 23 Nisan Bayramı</h2>
+        <p id="intro-p">Gazi Mustafa Kemal Atatürk, 23 Nisan Ulusal Egemenlik ve Çocuk Bayramı'nı çocukların barış ve huzur içinde yaşamaları için bütün dünya çocuklarına armağan etmiştir.</p>
+        <button id="start-btn" onclick="handleStartProcess()" style="padding: 15px 30px; cursor: pointer; font-size: 1.2rem; border-radius: 15px; background:#00b894; color:white; border:none;">BAŞLA ✨</button>
+    </div>
+</div>
+
+<div id="game-container">
+    <video id="bg-video" loop muted><source src="13.mp4"></video>
+    
+    <div id="flag-panel">
+        <h3>Bayrağı Eşleştir</h3>
+        <div class="flag-box" id="current-flag-box"></div>
+    </div>
+
+    <div id="child-grid"></div>
+
+    <div id="celebration-wrapper">
+        <img src="13.png" id="ata-character">
+        <div id="video-area-wrapper">
+            <div id="side-video-container">
+                <video id="side-video" muted><source src="1.mp4"></video>
+            </div>
+            <div class="thanks-text">Teşekkür ederim Ata'm!</div>
+        </div>
+    </div>
+
+    <div id="sorting-area">
+        <h2>Cümleyi Dinle ve Sırala 🔊</h2>
+        <div id="mixed-pool" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <div id="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+        <button onclick="checkSentence()" style="padding:15px 40px; font-size:1.3rem; cursor:pointer; background:#fab1a0; border-radius:15px; border:2px solid #5d4037;">KONTROL ET ✅</button>
+    </div>
+</div>
+
+<div id="final-card">
+    <div class="card-box">
+        23 Nisan Ulusal Egemenlik ve Çocuk Bayramı kutlu olsun.
+    </div>
+    <button class="restart-btn" onclick="location.reload()">TEKRAR OYNA 🔄</button>
+</div>
+
+<script>
+const originalData = [
+    {id:1, country:"Amerika"}, {id:2, country:"Çin"}, {id:3, country:"Japonya"},
+    {id:4, country:"Hollanda"}, {id:5, country:"Norveç"}, {id:6, country:"Kenya"},
+    {id:7, country:"Mısır"}, {id:8, country:"Suudi Arabistan"}, {id:9, country:"Hindistan"},
+    {id:10, country:"Kazakistan"}, {id:11, country:"Azerbaycan"}, {id:12, country:"Türkiye"}
+];
+
+let shuffledChildren = [...originalData].sort(() => Math.random() - 0.5);
+let currentStep = 0;
+const targetSentence = ["23 Nisan", "dostluk", "ve", "barış", "bayramıdır."];
+const music = document.getElementById("audio-bg");
+
+// AI SES MOTORU
+function speakWithBreaks(text, callback) {
+    window.speechSynthesis.cancel();
+    // Görsel metin düzgün kalsın diye seslendirme metnini burada manipüle ediyoruz
+    const speechText = text
+        .replace("Bayramı'nı", "Bayramını...") 
+        .replace("için", "için...")
+        .replace("Haydi", "Haydi...")
+        .replace("bayrakları", "bayrakları...");
+
+    const msg = new SpeechSynthesisUtterance();
+    msg.text = speechText;
+    msg.lang = 'tr-TR';
+    msg.volume = 1;
+    msg.rate = 0.8; 
+
+    const voices = window.speechSynthesis.getVoices();
+    const femaleVoice = voices.find(v => v.lang.includes('tr') && 
+        (v.name.toLowerCase().includes('female') || 
+         v.name.toLowerCase().includes('fatma') || 
+         v.name.toLowerCase().includes('pelin') || 
+         v.name.toLowerCase().includes('google')));
+    
+    if (femaleVoice) msg.voice = femaleVoice;
+
+    msg.onstart = () => { if(!music.paused) music.volume = 0.2; };
+    msg.onend = () => {
+        if(!music.paused) music.volume = 1.0;
+        if (callback) callback();
+    };
+    
+    window.speechSynthesis.speak(msg);
+}
+
+function handleStartProcess() {
+    const btn = document.getElementById("start-btn");
+    btn.disabled = true;
+    
+    const introText = document.getElementById("intro-p").innerText;
+    const talimat = " Haydi bayrakları doğru çocuklarla eşleştirelim!";
+    
+    speakWithBreaks(introText + talimat, () => {
+        document.getElementById("intro-screen").style.display = "none";
+        document.getElementById("game-container").style.display = "flex";
+        document.getElementById("bg-video").play();
+        setupGame();
+    });
+}
+
+function setupGame(){
+    const grid = document.getElementById("child-grid");
+    grid.innerHTML = "";
+    shuffledChildren.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "child-card";
+        card.innerHTML = `
+            <img src="${item.id}.png">
+            <button class="audio-btn" onclick="event.stopPropagation(); speakWithBreaks('${item.country}')">🔊</button>
+        `;
+        card.onclick = () => {
+            if(item.id === originalData[currentStep].id){
+                card.style.opacity = "0";
+                setTimeout(() => { card.remove(); currentStep++; updateFlag(); }, 300);
+            } else {
+                speakWithBreaks("Bu değil, tekrar dene.");
+            }
+        };
+        grid.appendChild(card);
+    });
+    updateFlag();
+}
+
+function updateFlag(){
+    const box = document.getElementById("current-flag-box");
+    if(currentStep < originalData.length) {
+        box.innerHTML = `<img src="${originalData[currentStep].id}.jpg">`;
+    } else { startCelebration(); }
+}
+
+function startCelebration(){
+    document.getElementById("flag-panel").style.display = "none";
+    document.getElementById("child-grid").style.display = "none";
+    document.getElementById("celebration-wrapper").style.display = "flex";
+    music.volume = 1.0;
+    music.play(); 
+    
+    const sideVideo = document.getElementById("side-video");
+    sideVideo.play();
+    sideVideo.onended = () => {
+        document.getElementById("celebration-wrapper").style.display = "none";
+        music.pause(); 
+        
+        document.getElementById("sorting-area").style.display = "flex";
+        setupSorting();
+        setTimeout(() => {
+            speakWithBreaks("Kelimeleri dinle ve cümleyi doğru sıraya koy.");
+        }, 2000);
+    };
+}
+
+function setupSorting(){
+    const pool = document.getElementById("mixed-pool");
+    const words = [...targetSentence].sort(() => Math.random() - 0.5);
+    pool.innerHTML = "";
+    words.forEach((word, index) => {
+        const container = document.createElement("div");
+        container.className = "word-container";
+        container.draggable = true;
+        container.id = "w-cont-" + index;
+        container.innerHTML = `
+            <div class="word-box">${word}</div>
+            <button class="audio-btn" onclick="speakWithBreaks('${word}')">🔊</button>
+        `;
+        container.ondragstart = (e) => e.dataTransfer.setData("text", e.currentTarget.id);
+        pool.appendChild(container);
+    });
+}
+
+function allowDrop(e) { e.preventDefault(); }
+function drop(e) {
+    e.preventDefault();
+    const id = e.dataTransfer.getData("text");
+    const el = document.getElementById(id);
+    const target = e.target.closest('#drop-zone, #mixed-pool');
+    if (target) target.appendChild(el);
+}
+
+function checkSentence(){
+    const currentElements = Array.from(document.getElementById("drop-zone").querySelectorAll(".word-box"));
+    let allCorrect = true;
+    if(currentElements.length !== targetSentence.length) return;
+
+    currentElements.forEach((el, index) => {
+        if(el.innerText === targetSentence[index]) el.classList.add('correct');
+        else { el.classList.add('wrong'); allCorrect = false; }
+    });
+
+    if(allCorrect){
+        speakWithBreaks("Harika başardın! 23 Nisan dostluk ve barış bayramıdır.", () => {
+            setTimeout(() => {
+                document.getElementById("sorting-area").style.display = "none";
+                document.getElementById("final-card").style.display = "flex";
+                speakWithBreaks("23 Nisan Ulusal Egemenlik ve Çocuk Bayramı kutlu olsun.", () => {
+                    music.volume = 1.0;
+                    music.play();
+                });
+            }, 1000);
+        });
+    } else {
+        speakWithBreaks("Bazı kelimeler yanlış yerde, tekrar dene.");
+    }
+}
+
+window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
+</script>
+</body>
+</html>

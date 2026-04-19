@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="tr" class="h-full">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&amp;family=Nunito:wght@400;600;700;800&amp;display=swap"
+    rel="stylesheet">
+  <style>
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    .bg-main {
+      background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0) rotate(0deg);
+      }
+
+      50% {
+        transform: translateY(-15px) rotate(5deg);
+      }
+    }
+
+    @keyframes floatReverse {
+
+      0%,
+      100% {
+        transform: translateY(0) rotate(0deg);
+      }
+
+      50% {
+        transform: translateY(-12px) rotate(-5deg);
+      }
+    }
+
+    @keyframes popIn {
+      0% {
+        transform: scale(0.3) translateY(40px);
+        opacity: 0;
+      }
+
+      60% {
+        transform: scale(1.08) translateY(-5px);
+        opacity: 1;
+      }
+
+      100% {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideUp {
+      0% {
+        transform: translateY(60px);
+        opacity: 0;
+      }
+
+      100% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes pulse-glow {
+
+      0%,
+      100% {
+        box-shadow: 0 0 20px rgba(255, 200, 50, 0.3);
+      }
+
+      50% {
+        box-shadow: 0 0 40px rgba(255, 200, 50, 0.6);
+      }
+    }
+
+    @keyframes confetti-fall {
+      0% {
+        transform: translateY(-10px) rotate(0deg);
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateY(100px) rotate(720deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes shimmer {
+      0% {
+        background-position: -200% center;
+      }
+
+      100% {
+        background-position: 200% center;
+      }
+    }
+
+    .animate-pop {
+      animation: popIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    .animate-slide-up {
+      animation: slideUp 0.5s ease-out forwards;
+    }
+
+    .animate-float {
+      animation: float 4s ease-in-out infinite;
+    }
+
+    .animate-float-r {
+      animation: floatReverse 5s ease-in-out infinite;
+    }
+
+    .animate-pulse-glow {
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+
+    .btn-magic {
+      background: linear-gradient(135deg, #ffc832, #ff6b35);
+      font-family: 'Baloo 2', cursive;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-magic:hover {
+      transform: translateY(-3px) scale(1.04);
+      box-shadow: 0 8px 30px rgba(255, 107, 53, 0.5);
+    }
+
+    .btn-magic:active {
+      transform: translateY(0) scale(0.98);
+    }
+
+    .btn-magic::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent 40%, rgba(255, 255, 255, 0.15) 50%, transparent 60%);
+      animation: shimmer 3s infinite;
+    }
+
+    .question-card {
+      background: rgba(255, 255, 255, 0.07);
+      backdrop-filter: blur(20px);
+      border: 1.5px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .video-container {
+      border: 3px solid rgba(255, 200, 50, 0.4);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    .progress-bar-track {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 99px;
+      height: 6px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, #ffc832, #ff6b35);
+      transition: width 0.3s;
+    }
+
+    .star {
+      position: absolute;
+      pointer-events: none;
+    }
+
+    .overlay-bg {
+      background: rgba(10, 8, 30, 0.9);
+      backdrop-filter: blur(12px);
+      z-index: 50;
+    }
+
+    .video-container:fullscreen {
+      width: 100vw;
+      height: 100vh;
+      border-radius: 0;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+    }
+
+    .video-container:fullscreen video {
+      max-height: 100vh;
+      width: auto;
+      margin: 0 auto;
+    }
+
+    .toast-msg {
+      background: linear-gradient(135deg, #1a1a3e, #2d2b55);
+      border: 1px solid rgba(255, 200, 50, 0.3);
+    }
+
+    .question-number-badge {
+      background: linear-gradient(135deg, #ffc832, #ff6b35);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 18px;
+      color: #1a1a3e;
+      font-family: 'Baloo 2', cursive;
+      flex-shrink: 0;
+    }
+  </style>
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+  </style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+</head>
+
+<body class="h-full bg-main text-white overflow-auto">
+  <div id="app" class="w-full h-full flex flex-col items-center justify-center relative"
+    style="font-family: 'Nunito', sans-serif;"><!-- Decorative stars -->
+    <div class="star animate-float" style="top:8%;left:6%;font-size:28px;opacity:0.5">
+      ✨
+    </div>
+    <div class="star animate-float-r" style="top:15%;right:10%;font-size:22px;opacity:0.4">
+      ⭐
+    </div>
+    <div class="star animate-float" style="bottom:12%;left:12%;font-size:20px;opacity:0.35">
+      🌟
+    </div>
+    <div class="star animate-float-r" style="bottom:18%;right:8%;font-size:26px;opacity:0.45">
+      ✨
+    </div>
+    <div class="star animate-float" style="top:45%;left:3%;font-size:16px;opacity:0.3">
+      ⭐
+    </div>
+    <div class="star animate-float-r" style="top:60%;right:4%;font-size:18px;opacity:0.3">
+      🌟
+    </div><!-- SCREEN 1: Instruction -->
+    <div id="screen-instruction" class="flex flex-col items-center justify-center w-full h-full px-4 py-8">
+      <div class="animate-pop max-w-xl w-full text-center">
+        <div class="text-5xl mb-4">
+          🎬
+        </div>
+        <h1 id="mainTitle" class="text-3xl md:text-4xl font-extrabold mb-3"
+          style="font-family:'Baloo 2',cursive; background: linear-gradient(90deg,#ffc832,#ff6b35,#ffc832); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-size:200% auto; animation: shimmer 3s linear infinite;">
+          BİR 23 NİSAN GÜNÜ</h1>
+        <div class="question-card rounded-2xl p-6 md:p-8 mb-8 animate-slide-up" style="animation-delay:0.2s">
+          <div class="flex items-start gap-3 mb-5">
+            <div class="text-2xl mt-0.5">
+              📋
+            </div>
+            <p class="text-lg md:text-xl text-left text-white/90 leading-relaxed font-semibold">Yönerge</p>
+          </div>
+          <p class="text-base md:text-lg text-white/80 leading-relaxed text-left">Videoyu dikkatle izleyiniz. Belirlenen
+            duraklama noktalarında size sorulacak soruları cevaplayınız.</p>
+          <div class="flex items-center gap-2 mt-5 text-sm text-white/50"><i data-lucide="info"
+              style="width:16px;height:16px"></i> <span>Toplam 3 soru sorulacaktır</span>
+          </div>
+        </div><button id="btnStart"
+          class="btn-magic text-xl font-bold text-gray-900 px-10 py-4 rounded-full shadow-lg animate-pulse-glow animate-slide-up"
+          style="animation-delay:0.4s" onclick="startVideo()"> Hazırım, Başlayalım! 🚀 </button>
+      </div>
+    </div><!-- SCREEN 2: Video -->
+    <div id="screen-video" class="hidden flex-col items-center w-full h-full px-4 py-6"
+      style="max-width:900px;margin:0 auto;">
+      <div class="w-full flex items-center justify-between mb-3 gap-2">
+        <div class="flex items-center gap-2 min-w-0">
+          <div class="p-2 rounded-lg bg-amber-400 flex-shrink-0">
+            <i data-lucide="play" class="w-5 h-5 text-gray-900 fill-current"></i>
+          </div>
+          <h2 id="videoTitle" class="text-xl md:text-2xl font-bold tracking-tight truncate"></h2>
+        </div>
+        <div class="flex items-center gap-2 flex-shrink-0">
+          <div id="questionBadge"
+            class="px-4 py-1.5 rounded-full bg-white/10 text-amber-400 text-sm font-bold border border-white/10 hidden sm:block">
+          </div>
+          <button onclick="skipForward()"
+            class="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white border border-white/10 transition-colors"
+            title="15 Sn Atla">
+            <i data-lucide="fast-forward" class="w-5 h-5"></i>
+          </button>
+          <button onclick="toggleFullscreen()"
+            class="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white border border-white/10 transition-colors"
+            title="Tam Ekran">
+            <i data-lucide="maximize" class="w-5 h-5" id="fullscreenIcon"></i>
+          </button>
+        </div>
+      </div>
+      <div class="progress-bar-track w-full mb-4">
+        <div id="progressFill" class="progress-bar-fill" style="width:0%"></div>
+      </div>
+      <div class="video-container w-full relative" style="aspect-ratio:16/9;">
+        <video id="mainVideo" class="w-full h-full object-cover" style="display:block;">
+          <source src="1.mp4" type="video/mp4">
+        </video><!-- Question Overlay -->
+        <div id="questionOverlay"
+          class="absolute inset-0 overlay-bg hidden flex-col items-center justify-center p-4 md:p-6 overflow-y-auto">
+          <div class="animate-pop max-w-lg w-full">
+            <div class="question-card rounded-2xl p-5 md:p-8">
+              <div class="flex items-center gap-3 mb-4">
+                <div id="qNumBadge" class="question-number-badge">
+                  1
+                </div><span class="text-sm font-bold text-amber-400 uppercase tracking-wider">Soru</span>
+              </div>
+              <p id="questionText" class="text-base md:text-xl text-white/90 leading-relaxed mb-6 font-semibold"></p>
+              <button id="btnContinue"
+                class="btn-magic w-full mt-4 text-gray-900 font-bold py-3 rounded-full text-lg shadow-xl"
+                onclick="continueVideo()"> Tamam, Devam Et ▶ </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="toast"
+        class="toast-msg hidden fixed bottom-6 left-1/2 -translate-x-1/2 px-5 py-3 rounded-full text-sm font-semibold text-amber-300 shadow-lg z-50 flex items-center gap-2">
+        <i data-lucide="check-circle" style="width:18px;height:18px"></i> <span id="toastText"></span>
+      </div>
+    </div><!-- SCREEN 3: Finish -->
+    <div id="screen-finish" class="hidden flex-col items-center justify-center w-full h-full px-4 py-8">
+      <div class="animate-pop max-w-lg w-full text-center">
+        <div class="text-6xl mb-4">
+          🎉
+        </div>
+        <h2 class="text-3xl md:text-4xl font-extrabold mb-3" style="font-family:'Baloo 2',cursive; color:#ffc832;">
+          Tebrikler!</h2>
+        <p class="text-lg text-white/70 mb-8">Etkinliği başarıyla tamamladınız. Harika iş çıkardınız!</p>
+        <div id="answersSummary" class="text-left space-y-4 mb-8"></div><button
+          class="btn-magic text-lg font-bold text-gray-900 px-8 py-3 rounded-full" onclick="restartActivity()"> Tekrar
+          Başla 🔄 </button>
+      </div>
+    </div>
+  </div>
+  <script>
+    const defaultConfig = {
+      activity_title: 'BİR 23 NİSAN GÜNÜ',
+      background_color: '#0f0c29',
+      surface_color: '#302b63',
+      text_color: '#ffffff',
+      primary_action_color: '#ffc832',
+      secondary_action_color: '#ff6b35'
+    };
+
+    const questions = [
+      { time: 120, text: "Aras'ın bize vermek istediği asıl mesaj nedir?" },
+      { time: 167, text: "23 Nisan Çocuk Şenliği'ne 29 ülkeden 500 çocuk katıldı. 23 Nisan'ın dünya barışına katkısını yorumlayınız." },
+      { time: 236, text: "\"El ele verelim, iyiliğe gidelim. Kötülüğü yok edip sevgide buluşalım.\" sözleri size ne ifade ediyor?" }
+    ];
+
+    let currentQ = 0;
+    let answers = [];
+    let video;
+    let progressInterval;
+
+    function startVideo() {
+      document.getElementById('screen-instruction').classList.add('hidden');
+      const sv = document.getElementById('screen-video');
+      sv.classList.remove('hidden');
+      sv.classList.add('flex');
+      video = document.getElementById('mainVideo');
+      video.play();
+      currentQ = 0;
+      answers = [];
+      updateBadge();
+      video.addEventListener('timeupdate', checkQuestions);
+      video.addEventListener('ended', finishActivity);
+    }
+
+    function checkQuestions() {
+      // Update progress bar
+      updateProgress();
+
+      if (currentQ < questions.length && video.currentTime >= questions[currentQ].time) {
+        video.pause();
+        showQuestion(currentQ);
+      }
+    }
+
+    function showQuestion(idx) {
+      const overlay = document.getElementById('questionOverlay');
+      document.getElementById('qNumBadge').textContent = idx + 1;
+      document.getElementById('questionText').textContent = questions[idx].text;
+      overlay.classList.remove('hidden');
+      overlay.classList.add('flex');
+      // Re-trigger animation
+      const card = overlay.querySelector('.animate-pop');
+      card.style.animation = 'none';
+      card.offsetHeight;
+      card.style.animation = '';
+    }
+
+    function continueVideo() {
+      const overlay = document.getElementById('questionOverlay');
+      overlay.classList.add('hidden');
+      overlay.classList.remove('flex');
+      currentQ++;
+      updateBadge();
+      showToast('Harika! Devam ediyoruz... 🚀');
+      video.play();
+    }
+
+    function updateBadge() {
+      document.getElementById('questionBadge').textContent = `Soru ${currentQ}/${questions.length}`;
+    }
+
+    function updateProgress() {
+      if (!video || !video.duration) return;
+      const pct = (video.currentTime / video.duration) * 100;
+      document.getElementById('progressFill').style.width = pct + '%';
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      document.getElementById('toastText').textContent = msg;
+      t.classList.remove('hidden');
+      setTimeout(() => t.classList.add('hidden'), 2500);
+    }
+
+    function toggleFullscreen() {
+      const container = document.querySelector('.video-container');
+      const icon = document.getElementById('fullscreenIcon');
+
+      if (!document.fullscreenElement) {
+        container.requestFullscreen().catch(err => {
+          console.error(`Error: ${err.message}`);
+        });
+        icon.setAttribute('data-lucide', 'minimize');
+      } else {
+        document.exitFullscreen();
+        icon.setAttribute('data-lucide', 'maximize');
+      }
+      lucide.createIcons();
+    }
+
+    function skipForward() {
+      if (video) {
+        video.currentTime += 15;
+        showToast('15 saniye atlandı ⏩');
+      }
+    }
+
+    function finishActivity() {
+      document.getElementById('screen-video').classList.add('hidden');
+      document.getElementById('screen-video').classList.remove('flex');
+      const sf = document.getElementById('screen-finish');
+      sf.classList.remove('hidden');
+      sf.classList.add('flex');
+
+      const summary = document.getElementById('answersSummary');
+      summary.innerHTML = '';
+    }
+
+    function restartActivity() {
+      document.getElementById('screen-finish').classList.add('hidden');
+      document.getElementById('screen-finish').classList.remove('flex');
+      document.getElementById('screen-instruction').classList.remove('hidden');
+      document.getElementById('progressFill').style.width = '0%';
+      if (video) video.currentTime = 0;
+      currentQ = 0;
+      answers = [];
+    }
+
+    // Element SDK
+    window.elementSdk.init({
+      defaultConfig,
+      onConfigChange: async (config) => {
+        const title = config.activity_title || defaultConfig.activity_title;
+        document.getElementById('mainTitle').textContent = title;
+      },
+      mapToCapabilities: (config) => ({
+        recolorables: [
+          { get: () => config.background_color || defaultConfig.background_color, set: v => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); } },
+          { get: () => config.surface_color || defaultConfig.surface_color, set: v => { config.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); } },
+          { get: () => config.text_color || defaultConfig.text_color, set: v => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); } },
+          { get: () => config.primary_action_color || defaultConfig.primary_action_color, set: v => { config.primary_action_color = v; window.elementSdk.setConfig({ primary_action_color: v }); } },
+          { get: () => config.secondary_action_color || defaultConfig.secondary_action_color, set: v => { config.secondary_action_color = v; window.elementSdk.setConfig({ secondary_action_color: v }); } }
+        ],
+        borderables: [],
+        fontEditable: undefined,
+        fontSizeable: undefined
+      }),
+      mapToEditPanelValues: (config) => new Map([
+        ['activity_title', config.activity_title || defaultConfig.activity_title]
+      ])
+    });
+
+    lucide.createIcons();
+  </script>
+  <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'9ece27671387d175',t:'MTc3NjI4OTcwMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
+</body>
+
+</html>

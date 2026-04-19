@@ -1,0 +1,798 @@
+<!doctype html>
+<html lang="tr" class="h-full">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&amp;family=Crimson+Text:ital,wght@0,400;0,600;1,400&amp;display=swap"
+    rel="stylesheet">
+  <style>
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #1a1410;
+      --surface: #2a2118;
+      --text: #e8dcc8;
+      --accent: #8b2020;
+      --muted: #6b5d4f;
+    }
+
+    .app-root {
+      height: 100%;
+      width: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
+      background: var(--bg);
+      font-family: 'Crimson Text', Georgia, serif;
+      color: var(--text);
+    }
+
+    .heading-font {
+      font-family: 'Playfair Display', Georgia, serif;
+    }
+
+    /* Intro overlay */
+    .intro-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+
+    .intro-overlay.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .intro-content {
+      text-align: center;
+      max-width: 560px;
+      padding: 2rem;
+      animation: introFadeIn 1.2s ease forwards;
+    }
+
+    @keyframes introFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .intro-line {
+      width: 60px;
+      height: 2px;
+      background: var(--accent);
+      margin: 1.5rem auto;
+    }
+
+    .start-btn {
+      margin-top: 2rem;
+      padding: 14px 48px;
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--text);
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      letter-spacing: 2px;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      text-transform: uppercase;
+    }
+
+    .start-btn:hover {
+      background: var(--accent);
+    }
+
+    /* Cards grid */
+    .cards-section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+    }
+
+    .card-box {
+      position: relative;
+      cursor: pointer;
+      aspect-ratio: 3/4;
+      border-radius: 4px;
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid rgba(139, 32, 32, 0.3);
+      transition: transform 0.5s ease, box-shadow 0.5s ease;
+    }
+
+    .card-box:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Closed card face */
+    .card-closed {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(160deg, #2a2118 0%, #1a1410 100%);
+      transition: opacity 0.5s ease;
+    }
+
+    .card-closed .ornament {
+      width: 80px;
+      height: 80px;
+      border: 2px solid var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+      position: relative;
+    }
+
+    .card-closed .ornament::before {
+      content: '';
+      position: absolute;
+      inset: 6px;
+      border: 1px solid rgba(139, 32, 32, 0.4);
+      border-radius: 50%;
+    }
+
+    .card-closed .card-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .card-closed .card-label {
+      font-size: 0.85rem;
+      color: var(--muted);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-top: 0.5rem;
+    }
+
+    /* Open card */
+    .card-open {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      transition: opacity 0.5s ease;
+    }
+
+    .card-box.opened .card-closed {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .card-box.opened .card-open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .card-img-wrap {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+      background: #111;
+    }
+
+    .card-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: sepia(0.3) contrast(1.1);
+      transition: transform 6s ease;
+    }
+
+    .card-box.opened .card-img-wrap img {
+      transform: scale(1.05);
+    }
+
+    .card-info {
+      padding: 1rem;
+      background: linear-gradient(to top, var(--surface), rgba(42, 33, 24, 0.95));
+      position: relative;
+    }
+
+    .card-info p {
+      font-size: 0.85rem;
+      line-height: 1.5;
+      color: var(--text);
+      margin: 0;
+    }
+
+    .card-info .info-line {
+      width: 24px;
+      height: 1px;
+      background: var(--accent);
+      margin-bottom: 0.6rem;
+    }
+
+    .card-magnify-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(139, 32, 32, 0.85);
+      border: 1px solid var(--accent);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 10;
+      opacity: 0;
+      transform: scale(0.8);
+    }
+
+    .card-box.opened .card-magnify-btn {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .card-magnify-btn:hover {
+      background: var(--accent);
+      transform: scale(1.1);
+    }
+
+    /* Stagger reveal */
+    .card-reveal {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+
+    .card-reveal.visible {
+      animation: cardUp 0.7s ease forwards;
+    }
+
+    @keyframes cardUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Modal */
+    .modal-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(10, 8, 6, 0.92);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: flex-start;
+      /* For scrolling */
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.4s ease;
+      padding: 3rem 1.5rem;
+    }
+
+    .modal-bg.active {
+      opacity: 1;
+      visibility: visible;
+      overflow-y: auto;
+    }
+
+    .modal-card {
+      max-width: 600px;
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid rgba(139, 32, 32, 0.3);
+      border-radius: 6px;
+      overflow: hidden;
+      transform: scale(0.9);
+      transition: transform 0.4s ease;
+      margin: auto;
+      /* Center when scrollable */
+    }
+
+    .modal-bg.active .modal-card {
+      transform: scale(1);
+    }
+
+    .modal-img {
+      width: 100%;
+      max-height: 55%;
+      object-fit: cover;
+      filter: sepia(0.2) contrast(1.1);
+      transition: transform 0.3s ease;
+    }
+
+    .img-magnify-btn {
+      position: absolute;
+      bottom: 1rem;
+      right: 1rem;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(139, 32, 32, 0.8);
+      border: 1px solid var(--accent);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.3s;
+      z-index: 5;
+    }
+
+    .img-magnify-btn:hover {
+      background: var(--accent);
+    }
+
+    /* Fullscreen image viewer */
+    .fullscreen-viewer {
+      position: fixed;
+      inset: 0;
+      z-index: 300;
+      background: rgba(10, 8, 6, 0.98);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      /* Ensure content starts at top when scrollable */
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      padding: 4rem 1rem 2rem;
+      /* Add padding for close button and bottom space */
+    }
+
+    .fullscreen-viewer.active {
+      opacity: 1;
+      visibility: visible;
+      overflow-y: auto;
+    }
+
+    .fullscreen-viewer img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      filter: sepia(0.15) contrast(1.15);
+    }
+
+    .fullscreen-viewer .close-fullscreen {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: rgba(26, 20, 16, 0.9);
+      border: 1px solid var(--muted);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.3s;
+      z-index: 10;
+    }
+
+    .fullscreen-viewer .close-fullscreen:hover {
+      background: var(--accent);
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+    }
+
+    .modal-body .info-line {
+      width: 30px;
+      height: 2px;
+      background: var(--accent);
+      margin-bottom: 1rem;
+    }
+
+    .modal-body p {
+      line-height: 1.7;
+      font-size: 1.25rem;
+      font-weight: 400;
+      color: var(--text);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(26, 20, 16, 0.8);
+      border: 1px solid var(--muted);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .modal-close:hover {
+      background: var(--accent);
+    }
+
+    /* Quote */
+    .quote-section {
+      text-align: center;
+      padding: 3rem 1.5rem;
+      max-width: 700px;
+      margin: 0 auto;
+      border-top: 1px solid rgba(107, 93, 79, 0.3);
+    }
+
+    /* Audio btn */
+    .audio-btn {
+      position: fixed;
+      bottom: 1.2rem;
+      right: 1.2rem;
+      z-index: 50;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 1px solid var(--muted);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .audio-btn:hover {
+      background: var(--accent);
+    }
+
+    /* Particles */
+    .particle {
+      position: fixed;
+      width: 2px;
+      height: 2px;
+      background: rgba(139, 32, 32, 0.4);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 1;
+      animation: drift 12s linear infinite;
+    }
+
+    @keyframes drift {
+      0% {
+        transform: translateY(0) translateX(0);
+        opacity: 0;
+      }
+
+      10% {
+        opacity: 1;
+      }
+
+      90% {
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateY(-100%) translateX(30px);
+        opacity: 0;
+      }
+    }
+  </style>
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+  </style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+</head>
+
+<body class="h-full">
+  <div class="app-root" id="appRoot"><!-- Particles -->
+    <div id="particles" style="position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden;"></div>
+    <!-- INTRO -->
+    <div class="intro-overlay" id="introOverlay">
+      <div class="intro-content">
+        <div
+          style="color:var(--accent);font-size:0.85rem;letter-spacing:6px;text-transform:uppercase;margin-bottom:0.5rem;">
+          Türkiye Cumhuriyeti
+        </div>
+        <h1 class="heading-font" style="font-size:3.2rem;font-weight:700;margin:0;line-height:1.1;" id="mainTitleEl">23
+          Nisan</h1>
+        <div class="intro-line"></div>
+        <h2 class="heading-font" style="font-size:1.3rem;font-weight:400;font-style:italic;color:var(--muted);margin:0;"
+          id="subtitleEl">Ulusal Egemenlik ve Çocuk Bayramı</h2>
+        <p style="margin-top:4.5rem;color:var(--muted);font-size:1.5rem;line-height:2.5;">Atatürk'ün çocuklara armağan
+          ettiği bu özel günde, onun çocuklarla birlikte çekilmiş 5 tarihî fotoğrafını keşfedin. Her kutuya tıklayarak
+          fotoğrafı ve hikâyesini açın.</p><button class="start-btn" id="startBtn"
+          aria-label="Oyuna Başla">Başla</button>
+      </div>
+    </div><!-- MAIN CONTENT -->
+    <div id="mainContent" style="opacity:0;transition:opacity 0.8s ease 0.3s;"><!-- Header -->
+      <header style="text-align:center;padding:2.5rem 1.5rem 1rem;">
+        <div style="color:var(--accent);font-size:0.75rem;letter-spacing:5px;text-transform:uppercase;">
+          Atatürk ve Çocuklar
+        </div>
+        <h1 class="heading-font" style="font-size:2.2rem;margin:0.3rem 0 0;" id="mainTitleEl2">23 Nisan</h1>
+        <div style="width:40px;height:1px;background:var(--accent);margin:1rem auto 0;"></div>
+      </header><!-- Cards -->
+      <div class="cards-section">
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:1.5rem;" id="cardsGrid">
+        </div>
+      </div><!-- Quote -->
+      <div class="quote-section">
+        <div style="color:var(--accent);font-size:2rem;margin-bottom:0.5rem;">
+          ❝
+        </div>
+        <p class="heading-font" style="font-size:1.3rem;font-style:italic;line-height:1.7;margin:0;">Küçük hanımlar,
+          küçük beyler! Sizler hepiniz geleceğin bir gülü, yıldızı, bir mutluluk parıltısısınız.</p>
+        <p style="color:var(--accent);margin-top:1rem;font-size:0.9rem;letter-spacing:2px;">— Mustafa Kemal Atatürk</p>
+      </div>
+    </div><!-- MODAL -->
+    <div class="modal-bg" id="modalBg" role="dialog" aria-modal="true"><button class="modal-close" id="modalClose"
+        aria-label="Kapat"><i data-lucide="x" style="width:20px;height:20px;"></i></button>
+      <div class="modal-card"><img class="modal-img" id="modalImg" src="" alt="" loading="lazy"
+          onerror="this.style.background='#2a2118';this.alt='Fotoğraf yüklenemedi';"> <button class="img-magnify-btn"
+          id="magnifyBtn" aria-label="Tam Ekran"><i data-lucide="search" style="width:20px;height:20px;"></i></button>
+        <div class="modal-body">
+          <div class="info-line"></div>
+          <p id="modalText" class="heading-font"></p>
+        </div>
+      </div>
+      <div class="fullscreen-viewer" id="fullscreenViewer"><button class="close-fullscreen" id="closeFullscreen"
+          aria-label="Kapat"><i data-lucide="x" style="width:24px;height:24px;"></i></button>
+        <div
+          style="max-width:90%; width: 100%; display:flex;flex-direction:column;gap:1.5rem;align-items:center; margin-bottom: 2rem;">
+          <img id="fullscreenImg" src="" alt="" loading="lazy" onerror="this.alt='Fotoğraf yüklenemedi';"
+            style="max-width:100%; height:auto; max-height: 70vh; object-fit:contain;">
+          <p id="fullscreenText" class="heading-font"
+            style="color:var(--text);text-align:center;font-size:1.6rem;line-height:1.6;margin:0;max-width:800px;font-weight:400;">
+          </p>
+        </div>
+      </div><!-- Audio toggle --> <button class="audio-btn" id="audioBtn" aria-label="Müzik Aç/Kapat"> <i
+          data-lucide="volume-2" id="audioIcon" style="width:20px;height:20px;"></i> </button>
+      <script>
+        const CARDS = [
+          { id: 1, img: "1.jpg", text: "Cumhurbaşkanı Atatürk, Ege Vapuru'nda küçük Ülkü ile (Şubat 1935)" },
+          { id: 2, img: "2.jpg", text: "Cumhurbaşkanı Atatürk, Feneryolu İstasyonu'nda küçük Ülkü ile merdivenden inerken (17 Mayıs 1936)" },
+          { id: 3, img: "3.jpg", text: "Cumhurbaşkanı Gazi Mustafa Kemal, Ankara Palas'taki çocuk balosunda, Ömer İnönü ile (23 Nisan 1929)" },
+          { id: 4, img: "4.jpg", text: "TBMM Başkanı Gazi Mustafa Kemal, Bilecik Osmaneli İstasyonu'nda bir öğrencinin okuduğu şiiri dinlerken (16 Ocak 1923)" },
+          { id: 5, img: "5.jpg", text: "Cumhurbaşkanı Atatürk, Florya'da Kılıç Ali'nin evinde küçük Ülkü ile (1936)" }
+        ];
+
+        const defaultConfig = {
+          main_title: "23 Nisan",
+          subtitle: "Ulusal Egemenlik ve Çocuk Bayramı",
+          background_color: "#1a1410",
+          surface_color: "#2a2118",
+          text_color: "#e8dcc8",
+          accent_color: "#8b2020",
+          muted_color: "#6b5d4f",
+          font_family: "Playfair Display",
+          font_size: 16
+        };
+
+        // Build cards
+        const grid = document.getElementById('cardsGrid');
+        CARDS.forEach((c, i) => {
+          const div = document.createElement('div');
+          div.className = 'card-box card-reveal';
+          div.dataset.idx = i;
+          div.style.animationDelay = (i * 0.15) + 's';
+          div.innerHTML = `
+    <div class="card-closed">
+      <div class="ornament"><span class="card-num">${c.id}</span></div>
+      <div class="card-label">Keşfet</div>
+    </div>
+    <div class="card-open">
+      <div class="card-img-wrap">
+        <img src="${c.img}" alt="${c.text}" loading="lazy" onerror="this.style.background='#2a2118';this.alt='Fotoğraf yüklenemedi';">
+      </div>
+      <button class="card-magnify-btn" data-idx="${i}" aria-label="Büyüt">
+        <i data-lucide="zoom-in" style="width:18px;height:18px;"></i>
+      </button>
+      <div class="card-info">
+        <div class="info-line"></div>
+        <p>${c.text}</p>
+      </div>
+    </div>`;
+          div.addEventListener('click', (e) => {
+            if (e.target.closest('.card-magnify-btn')) {
+              openModal(i);
+              return;
+            }
+            div.classList.toggle('opened');
+          });
+          div.addEventListener('dblclick', () => openModal(i));
+          // Re-wire card-magnify-btn to open modal which now handles scrolling and text consistently
+          grid.appendChild(div);
+        });
+
+        // Modal
+        function openModal(i) {
+          const c = CARDS[i];
+          document.getElementById('modalImg').src = c.img;
+          document.getElementById('modalImg').alt = c.text;
+          document.getElementById('modalText').textContent = c.text;
+          document.getElementById('modalBg').classList.add('active');
+        }
+        document.getElementById('modalClose').addEventListener('click', () => {
+          document.getElementById('modalBg').classList.remove('active');
+        });
+        document.getElementById('modalBg').addEventListener('click', (e) => {
+          if (e.target === e.currentTarget) document.getElementById('modalBg').classList.remove('active');
+        });
+
+        // Fullscreen image viewer
+        document.getElementById('modalImg').addEventListener('click', () => {
+          const src = document.getElementById('modalImg').src;
+          if (src) {
+            document.getElementById('fullscreenImg').src = src;
+            document.getElementById('fullscreenText').textContent = document.getElementById('modalText').textContent;
+            document.getElementById('fullscreenViewer').classList.add('active');
+          }
+        });
+
+        document.getElementById('magnifyBtn').addEventListener('click', () => {
+          const src = document.getElementById('modalImg').src;
+          if (src) {
+            document.getElementById('fullscreenImg').src = src;
+            document.getElementById('fullscreenText').textContent = document.getElementById('modalText').textContent;
+            document.getElementById('fullscreenViewer').classList.add('active');
+          }
+        });
+
+        document.getElementById('closeFullscreen').addEventListener('click', () => {
+          document.getElementById('fullscreenViewer').classList.remove('active');
+        });
+
+        document.getElementById('fullscreenViewer').addEventListener('click', (e) => {
+          if (e.target === e.currentTarget) document.getElementById('fullscreenViewer').classList.remove('active');
+        });
+
+        // Keyboard shortcut for fullscreen - ESC to close
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') {
+            document.getElementById('fullscreenViewer').classList.remove('active');
+          }
+        });
+
+        // Audio
+        let audio = null;
+        let audioPlaying = false;
+        function tryPlayAudio() {
+          if (!audio) {
+            audio = new Audio('1.mp3');
+            audio.loop = true;
+            audio.volume = 0.4;
+          }
+          audio.play().then(() => {
+            audioPlaying = true;
+            updateAudioIcon();
+          }).catch((e) => {
+            console.log("Audio play failed:", e);
+          });
+        }
+
+        // Intro
+        document.getElementById('startBtn').addEventListener('click', (e) => {
+          e.stopPropagation(); // Prevent duplicate trigger from body listener
+          document.getElementById('introOverlay').classList.add('hidden');
+          document.getElementById('mainContent').style.opacity = '1';
+
+          // Start audio on user interaction
+          tryPlayAudio();
+
+          // Reveal cards
+          setTimeout(() => {
+            document.querySelectorAll('.card-reveal').forEach(el => el.classList.add('visible'));
+            lucide.createIcons(); // Initialize icons for new buttons
+          }, 400);
+        });
+
+        // Global listener to start audio with instructions (on first interaction)
+        document.body.addEventListener('click', () => {
+          tryPlayAudio();
+        }, { once: true });
+        document.getElementById('audioBtn').addEventListener('click', () => {
+          if (!audio) { tryPlayAudio(); return; }
+          if (audioPlaying) { audio.pause(); audioPlaying = false; }
+          else { audio.play(); audioPlaying = true; }
+          updateAudioIcon();
+        });
+        function updateAudioIcon() {
+          document.getElementById('audioIcon').setAttribute('data-lucide', audioPlaying ? 'volume-2' : 'volume-x');
+          lucide.createIcons();
+        }
+
+        // Particles
+        const particlesEl = document.getElementById('particles');
+        for (let i = 0; i < 15; i++) {
+          const p = document.createElement('div');
+          p.className = 'particle';
+          p.style.left = Math.random() * 100 + '%';
+          p.style.top = (60 + Math.random() * 40) + '%';
+          p.style.animationDelay = Math.random() * 12 + 's';
+          p.style.animationDuration = (8 + Math.random() * 8) + 's';
+          particlesEl.appendChild(p);
+        }
+
+        // Element SDK
+        function applyConfig(config) {
+          const r = document.documentElement.style;
+          r.setProperty('--bg', config.background_color || defaultConfig.background_color);
+          r.setProperty('--surface', config.surface_color || defaultConfig.surface_color);
+          r.setProperty('--text', config.text_color || defaultConfig.text_color);
+          r.setProperty('--accent', config.accent_color || defaultConfig.accent_color);
+          r.setProperty('--muted', config.muted_color || defaultConfig.muted_color);
+
+          const font = config.font_family || defaultConfig.font_family;
+          const base = config.font_size || defaultConfig.font_size;
+          document.querySelectorAll('.heading-font').forEach(el => el.style.fontFamily = `${font}, Georgia, serif`);
+
+          const t1 = document.getElementById('mainTitleEl');
+          const t2 = document.getElementById('mainTitleEl2');
+          const sub = document.getElementById('subtitleEl');
+          if (t1) { t1.textContent = config.main_title || defaultConfig.main_title; t1.style.fontSize = base * 2 + 'px'; }
+          if (t2) { t2.textContent = config.main_title || defaultConfig.main_title; t2.style.fontSize = base * 1.4 + 'px'; }
+          if (sub) sub.textContent = config.subtitle || defaultConfig.subtitle;
+        }
+
+        window.elementSdk.init({
+          defaultConfig,
+          onConfigChange: async (config) => applyConfig(config),
+          mapToCapabilities: (config) => ({
+            recolorables: [
+              { get: () => config.background_color || defaultConfig.background_color, set: v => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); } },
+              { get: () => config.surface_color || defaultConfig.surface_color, set: v => { config.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); } },
+              { get: () => config.text_color || defaultConfig.text_color, set: v => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); } },
+              { get: () => config.accent_color || defaultConfig.accent_color, set: v => { config.accent_color = v; window.elementSdk.setConfig({ accent_color: v }); } },
+              { get: () => config.muted_color || defaultConfig.muted_color, set: v => { config.muted_color = v; window.elementSdk.setConfig({ muted_color: v }); } }
+            ],
+            borderables: [],
+            fontEditable: { get: () => config.font_family || defaultConfig.font_family, set: v => { config.font_family = v; window.elementSdk.setConfig({ font_family: v }); } },
+            fontSizeable: { get: () => config.font_size || defaultConfig.font_size, set: v => { config.font_size = v; window.elementSdk.setConfig({ font_size: v }); } }
+          }),
+          mapToEditPanelValues: (config) => new Map([
+            ["main_title", config.main_title || defaultConfig.main_title],
+            ["subtitle", config.subtitle || defaultConfig.subtitle]
+          ])
+        });
+
+        lucide.createIcons();
+      </script>
+    </div>
+  </div>
+  <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'9ec254c2b23387aa',t:'MTc3NjE2NTcyOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
+</body>
+
+</html>
