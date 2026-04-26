@@ -1,0 +1,280 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ebru Sanatı Sıralama Macerası</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: url('8.jpg') no-repeat center center fixed;
+            background-size: cover;
+            overflow-x: hidden;
+        }
+
+        /* Yönerge Ekranı */
+        #intro-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('8.jpg') no-repeat center center;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+        }
+
+        .instruction-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 25px;
+            border: 4px solid #000;
+            max-width: 450px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+        }
+
+        /* Oyun Paneli */
+        #game-container {
+            display: none;
+            width: 95%;
+            max-width: 1200px;
+            background: rgba(255, 255, 255, 0.92);
+            padding: 20px;
+            border-radius: 25px;
+            text-align: center;
+            border: 2px solid #000;
+            position: relative;
+        }
+
+        .image-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .slot-container, .image-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .drop-slot {
+            width: 170px;
+            height: 170px;
+            border: 3px solid #000;
+            border-radius: 12px;
+            background: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-sizing: border-box;
+        }
+
+        .draggable-img {
+            width: 160px;
+            height: 160px;
+            object-fit: contain;
+            cursor: grab;
+            background-color: white;
+            transition: transform 0.2s;
+        }
+
+        /* Büyütme (Zoom) Özelliği */
+        .draggable-img.zoomed {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(3.5);
+            z-index: 1000;
+            cursor: zoom-out;
+            box-shadow: 0 0 100px rgba(0,0,0,0.8);
+            border: 5px solid #000;
+        }
+
+        .speaker-btn, .hint-speaker {
+            background: #FF8C00;
+            color: white;
+            border: 2px solid #000;
+            border-radius: 50%;
+            cursor: pointer;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.2s;
+        }
+
+        .speaker-btn { width: 55px; height: 55px; font-size: 26px; margin-bottom: 15px; }
+        .hint-speaker { width: 35px; height: 35px; font-size: 18px; }
+        .speaker-btn:hover, .hint-speaker:hover { transform: scale(1.1); }
+
+        .start-btn {
+            background: #000;
+            color: white;
+            padding: 15px 40px;
+            font-size: 20px;
+            border: none;
+            border-radius: 35px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .correct { border: 6px solid #FF8C00 !important; }
+        .wrong { border: 6px solid #F44336 !important; animation: shake 0.4s; }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="intro-screen">
+        <div class="instruction-card">
+            <button class="speaker-btn" onclick="speakText('Merhaba minik kaşif! Ebru sanatının adımlarını öğrenip doğru sırayla dizelim mi? Resimlerin altındaki hoparlörlere basarak ne yapman gerektiğini dinleyebilirsin. Resimlerin üzerine tıklayarak onları büyütebilirsin. Hadi başlayalım!')">🔊</button>
+            <h1>Ebru Sanatı Sıralama</h1>
+            <p style="font-size: 13pt;">Adımları dinlemek için hoparlöre tıkla ve doğru sırayla yerleştir! Resimleri büyütmek için üzerlerine tıkla.</p>
+            <button class="start-btn" onclick="startGame()">Oyunu Başlat</button>
+        </div>
+    </div>
+
+    <div id="game-container">
+        <h3 style="color: #000;">Ebru Sanatını Sıralayalım</h3>
+        <div class="image-container" id="source-images"></div>
+        <div style="margin: 30px 0; border-top: 2px solid #000;"></div>
+        <div class="slot-container" id="target-slots"></div>
+        <div id="feedback" style="margin-top: 15px; font-weight: bold; font-size: 1.4rem; color: #FF8C00; min-height: 1.5em;"></div>
+    </div>
+
+    <script>
+        const totalImages = 7;
+        
+        const hints = {
+            1: "Öncelikle kitreli su hazırlanır.",
+            2: "Ardından toprak boyalar taşla ezilir ve sığır ödüyle karıştırılır.",
+            3: "Hazırlanan kitreli su dikdörtgen tekneye dökülür.",
+            4: "At kılı ve gül dalından yapılan fırça ile boyalar suya damlatılır.",
+            5: "Biz adı verilen metal çubuklarla desen şekil verilir.",
+            6: "Desen verilen ebru, kağıda aktarılır.",
+            7: "Kağıtlar güneşsiz ve temiz bir ortamda kurumaya bırakılır."
+        };
+
+        function speakText(text) {
+            window.speechSynthesis.cancel(); 
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'tr-TR';
+            utterance.rate = 0.85; 
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function startGame() {
+            document.getElementById('intro-screen').style.display = 'none';
+            document.getElementById('game-container').style.display = 'block';
+            initGame();
+        }
+
+        function initGame() {
+            const sourceContainer = document.getElementById('source-images');
+            const targetContainer = document.getElementById('target-slots');
+            const imageIds = [1, 2, 3, 4, 5, 6, 7];
+            const shuffledIds = [...imageIds].sort(() => Math.random() - 0.5);
+
+            for (let i = 1; i <= totalImages; i++) {
+                const slot = document.createElement('div');
+                slot.className = 'drop-slot';
+                slot.dataset.index = i;
+                slot.ondragover = (e) => e.preventDefault();
+                slot.ondrop = handleDrop;
+                targetContainer.appendChild(slot);
+            }
+
+            shuffledIds.forEach(id => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'image-wrapper';
+
+                const img = document.createElement('img');
+                img.src = `${id}.jpg`;
+                img.className = 'draggable-img';
+                img.id = `img-${id}`;
+                img.draggable = true;
+                img.dataset.value = id;
+                
+                const sBtn = document.createElement('button');
+                sBtn.className = 'hint-speaker';
+                sBtn.innerHTML = '🔊';
+                sBtn.onclick = (e) => {
+                    e.stopPropagation(); // Resmin büyümesini engelle, sadece konuşsun
+                    speakText(hints[id]);
+                };
+
+                img.ondragstart = (e) => {
+                    if(img.classList.contains('zoomed')) return false;
+                    e.dataTransfer.setData('text', e.target.id);
+                };
+
+                // Büyütme Özelliği
+                img.onclick = (e) => {
+                    e.target.classList.toggle('zoomed');
+                };
+
+                wrapper.appendChild(img);
+                wrapper.appendChild(sBtn);
+                sourceContainer.appendChild(wrapper);
+            });
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const imgId = e.dataTransfer.getData('text');
+            const imgElement = document.getElementById(imgId);
+            const slot = e.currentTarget;
+            const feedback = document.getElementById('feedback');
+
+            if (slot.children.length > 0 || imgElement.classList.contains('zoomed')) return;
+
+            if (imgElement.dataset.value === slot.dataset.index) {
+                const wrapper = imgElement.parentElement;
+                slot.appendChild(imgElement);
+                imgElement.classList.add('correct');
+                imgElement.draggable = false;
+                
+                speakText("Harika! Doğru adım.");
+                feedback.innerText = "Mükemmel! 🍊";
+                
+                if(wrapper && wrapper.classList.contains('image-wrapper')) wrapper.remove(); 
+
+                checkWin();
+            } else {
+                imgElement.classList.add('wrong');
+                speakText("Hımm, bu adım buraya uygun değil.");
+                setTimeout(() => imgElement.classList.remove('wrong'), 500);
+            }
+        }
+
+        function checkWin() {
+            const placed = document.querySelectorAll('.drop-slot .draggable-img').length;
+            if (placed === totalImages) {
+                setTimeout(() => {
+                    speakText("Tebrikler! Ebru sanatının tüm adımlarını başarıyla sıraladın!");
+                    document.getElementById('feedback').innerText = "TEBRİKLER! 🏆";
+                }, 500);
+            }
+        }
+    </script>
+</body>
+</html>

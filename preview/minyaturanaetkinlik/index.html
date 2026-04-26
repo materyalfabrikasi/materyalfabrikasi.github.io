@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minyatür Sanatı Etkileşimli Video</title>
+    <style>
+        /* Arka plan görseli */
+        body {
+            margin: 0;
+            padding: 0;
+            background-image: url('1.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #video-container {
+            position: relative;
+            width: 80%;
+            max-width: 800px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        video {
+            width: 100%;
+            display: block;
+        }
+
+        /* Yönerge ve Soru Paneli */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            z-index: 10;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .overlay h2 {
+            margin-bottom: 15px;
+        }
+
+        textarea {
+            width: 80%;
+            height: 60px;
+            margin: 15px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px 25px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #d4a017;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #b8860b;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="video-container">
+        <video id="myVideo" controls>
+            <source src="1.mp4" type="video/mp4">
+            Tarayıcınız video etiketini desteklemiyor.
+        </video>
+
+        <div id="instructionOverlay" class="overlay">
+            <h2>Yönerge</h2>
+            <p>Minyatür sanatı ile ilgili videoyu dikkatle dinleyiniz/izleyiniz. <br> Belirlenen duraklama noktalarında
+                size sorulacak soruları cevaplandırınız.</p>
+            <button onclick="startVideo()">Tamam</button>
+        </div>
+
+        <div id="questionOverlay" class="overlay hidden">
+            <h3 id="questionText">Soru buraya gelecek.</h3>
+            <textarea id="answerInput" placeholder="Cevabınızı buraya yazınız..."></textarea>
+            <button onclick="resumeVideo()">Tamam</button>
+        </div>
+    </div>
+
+    <script>
+        const video = document.getElementById('myVideo');
+        const instructionOverlay = document.getElementById('instructionOverlay');
+        const questionOverlay = document.getElementById('questionOverlay');
+        const questionText = document.getElementById('questionText');
+        const answerInput = document.getElementById('answerInput');
+
+        // Sorular ve duraklama saniyeleri
+        const questions = [
+            { time: 8, text: "Minyatür sanatı nedir? Daha önce bu sanatı duydunuz mu?" },
+            { time: 29, text: "Minyatür sanatına daha önce ne denirdi?" },
+            { time: 92, text: "Minyatür sanatına ait bir özellik söyleyiniz." } // 01:32 = 92. saniye
+        ];
+
+        let currentQuestionIndex = 0;
+
+        // Videoyu başlat
+        function startVideo() {
+            instructionOverlay.classList.add('hidden');
+            video.play();
+        }
+
+        // Zamanlayıcı kontrolü
+        video.addEventListener('timeupdate', function () {
+            if (currentQuestionIndex < questions.length) {
+                const nextQuestion = questions[currentQuestionIndex];
+
+                // Mevcut saniye soru saniyesine ulaştıysa durdur
+                if (video.currentTime >= nextQuestion.time) {
+                    video.pause();
+                    showQuestion(nextQuestion.text);
+                }
+            }
+        });
+
+        // Soruyu göster
+        function showQuestion(text) {
+            questionText.innerText = text;
+            answerInput.value = ""; // Temizle
+            questionOverlay.classList.remove('hidden');
+            // Kontrolleri gizle ki kullanıcı devam ettiremesin
+            video.controls = false;
+        }
+
+        // Cevap verildikten sonra devam et
+        function resumeVideo() {
+            questionOverlay.classList.add('hidden');
+            video.controls = true;
+            currentQuestionIndex++;
+            video.play();
+        }
+    </script>
+
+</body>
+
+</html>

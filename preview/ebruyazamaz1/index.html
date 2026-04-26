@@ -1,0 +1,253 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ebru Atölyesi - Net Seslendirmeli Oyun</title>
+    <style>
+        body, html {
+            margin: 0; padding: 0; height: 100%;
+            font-family: "Comic Sans MS", cursive, sans-serif;
+            overflow: hidden;
+        }
+
+        .bg-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('ebru3.jpg'); background-size: cover;
+            filter: blur(8px) brightness(0.8); z-index: -1; transform: scale(1.1);
+        }
+
+        #intro-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), url('ebru3.jpg');
+            background-size: cover; display: flex; align-items: center; justify-content: center; z-index: 2000;
+        }
+
+        .yonerge-box {
+            background: rgba(255, 255, 255, 0.95); padding: 40px; border-radius: 30px;
+            border: 5px solid #00695C; max-width: 600px; text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        }
+
+        .game-wrapper { display: flex; height: 100vh; padding: 20px; gap: 20px; box-sizing: border-box; }
+
+        .main-content {
+            width: 70%; height: 100%; overflow-y: auto;
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;
+            padding-right: 10px;
+        }
+
+        .sidebar {
+            width: 30%; height: 100%; overflow-y: auto;
+            display: flex; flex-direction: column; gap: 15px;
+            background: rgba(255, 255, 255, 0.3); backdrop-filter: blur(10px);
+            padding: 15px; border-radius: 20px;
+        }
+
+        .image-card {
+            background: white; padding: 15px; border-radius: 20px;
+            text-align: center; box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+
+        .image-card img { 
+            width: 100%; height: 160px; object-fit: cover; 
+            border-radius: 15px; cursor: zoom-in;
+        }
+
+        .image-name {
+            font-weight: bold; margin: 10px 0; font-size: 22px; color: #004D40;
+            cursor: pointer; background: #e0f2f1; border-radius: 10px;
+            padding: 8px; display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+
+        .drop-zone {
+            min-height: 80px; border: 3px dashed #00695C; border-radius: 15px;
+            display: flex; align-items: center; justify-content: center;
+            padding: 10px; font-size: 16px; font-weight: bold; background: rgba(255,255,255,0.5);
+        }
+
+        .drop-zone.correct { background-color: #27ae60 !important; color: white !important; border: none; }
+
+        .word-card {
+            background-color: #FFEB3B; padding: 18px; border-radius: 15px;
+            cursor: grab; font-size: 18px; font-weight: bold; color: #000;
+            text-align: center; border: 2px solid #FDD835;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+            display: flex; align-items: center; gap: 10px;
+        }
+
+        #zoom-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 3000;
+            justify-content: center; align-items: center; cursor: zoom-out;
+        }
+
+        #zoom-modal img { max-width: 85%; max-height: 85%; border: 5px solid white; border-radius: 15px; }
+
+        #success-msg {
+            display: none; position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%); background: white;
+            padding: 50px; border-radius: 40px; text-align: center;
+            z-index: 4000; border: 4px solid #D4AF37;
+        }
+
+        .speaker-btn { background: none; border: none; font-size: 24px; cursor: pointer; }
+
+        button.start-btn {
+            background: #00695C; color: white; border: none; padding: 15px 40px;
+            font-size: 24px; border-radius: 50px; cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="bg-container"></div>
+
+<div id="intro-screen">
+    <div class="yonerge-box">
+        <h1 style="color: #00695C;">Hoş Geldin!</h1>
+        <p style="font-size: 24px; color: #333;">
+            🔊 Hoparlör butonlarına bas ve dinle! <br>
+            🖼️ Resimleri büyütmek için üzerine tıkla.
+        </p>
+        <button class="start-btn" onclick="startGame()">Oyuna Başla ▶️</button>
+    </div>
+</div>
+
+<div class="game-wrapper">
+    <div class="main-content" id="image-grid"></div>
+    <div class="sidebar" id="word-list"></div>
+</div>
+
+<div id="zoom-modal" onclick="closeZoom()">
+    <img id="zoomed-img" src="">
+</div>
+
+<div id="success-msg">
+    <h2 style="font-size: 50px; color: #004D40;">Harikasın!</h2>
+    <p style="font-size: 24px; color: #D4AF37;">Hepsini doğru bildin.</p>
+    <button class="start-btn" onclick="location.reload()">Tekrar Oyna 🔄</button>
+</div>
+
+<script>
+    const data = [
+        { id: 1, name: "Tekne", img: "1.jpg", text: "Ebrunun yapıldığı su teknesi." },
+        { id: 2, name: "Boya", img: "2.jpg", text: "Renkli toprak boyalar." },
+        { id: 3, name: "Kitre", img: "3.jpg", text: "Suyu koyulaştıran özel sıvı." },
+        { id: 4, name: "Fırça", img: "4.jpg", text: "Gül dalından yapılmış fırça." },
+        { id: 5, name: "Tarak", img: "5.jpg", text: "Desen yapmak için kullanılan tarak." },
+        { id: 6, name: "Kağıt", img: "6.jpg", text: "Deseni aldığımız özel kağıt." },
+        { id: 7, name: "Öd", img: "7.jpg", text: "Boyayı açan doğal sıvı." },
+        { id: 8, name: "Biz", img: "8.jpg", text: "Şekil vermek için metal çubuk." },
+        { id: 9, name: "Bez", img: "9.jpg", text: "Eşyaları silmek için temizlik bezi." }
+    ];
+
+    // GELİŞTİRİLMİŞ SESLENDİRME AYARLARI
+    function speak(text) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        
+        // Sistemdeki Türkçe sesleri tara ve en iyisini bulmaya çalış
+        const voices = window.speechSynthesis.getVoices();
+        const trVoice = voices.find(v => v.lang.includes('tr-TR'));
+        
+        if (trVoice) utterance.voice = trVoice;
+        
+        utterance.lang = 'tr-TR';
+        utterance.rate = 0.75;  // Hız yavaşlatıldı (0.75 ideal netlik sağlar)
+        utterance.pitch = 1.1; // Sesi biraz daha çocuk dostu/neşeli yapar
+        utterance.volume = 1.0; 
+
+        window.speechSynthesis.speak(utterance);
+    }
+
+    // Bazı tarayıcılarda ses listesinin yüklenmesi zaman alır
+    window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
+
+    function openZoom(src) {
+        const modal = document.getElementById('zoom-modal');
+        document.getElementById('zoomed-img').src = src;
+        modal.style.display = 'flex';
+    }
+
+    function closeZoom() { document.getElementById('zoom-modal').style.display = 'none'; }
+
+    function initGame() {
+        const wordList = document.getElementById('word-list');
+        const imageGrid = document.getElementById('image-grid');
+        const shuffledWords = [...data].sort(() => Math.random() - 0.5);
+
+        shuffledWords.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'word-card';
+            card.innerHTML = `<button class="speaker-btn">🔊</button> <span>${item.text}</span>`;
+            card.draggable = true;
+            card.id = `word-${item.id}`;
+            
+            // Kartın tamamına tıklayınca seslendir
+            card.onclick = () => speak(item.text);
+            
+            card.addEventListener('dragstart', (ev) => {
+                ev.dataTransfer.setData("text", ev.target.id);
+                speak(item.text);
+            });
+            wordList.appendChild(card);
+        });
+
+        data.forEach(item => {
+            const container = document.createElement('div');
+            container.className = 'image-card';
+            container.innerHTML = `
+                <img src="${item.img}" onclick="openZoom('${item.img}')">
+                <div class="image-name" onclick="speak('${item.name}')">
+                    <button class="speaker-btn">🔊</button> ${item.name}
+                </div>
+                <div class="drop-zone" id="drop-${item.id}" ondrop="drop(event)" ondragover="allowDrop(event)">
+                    Buraya Bırak
+                </div>
+            `;
+            imageGrid.appendChild(container);
+        });
+    }
+
+    function startGame() {
+        document.getElementById('intro-screen').style.display = 'none';
+        speak("Hoş geldin! Hoparlör butonlarına basarak kartları dinle ve doğru resmin altına sürükle.");
+    }
+
+    function allowDrop(ev) { ev.preventDefault(); }
+
+    function drop(ev) {
+        ev.preventDefault();
+        const dataId = ev.dataTransfer.getData("text");
+        const draggedElement = document.getElementById(dataId);
+        const targetZone = ev.target.closest('.drop-zone');
+        
+        if (!targetZone) return;
+
+        const wordId = dataId.split('-')[1];
+        const targetId = targetZone.id.split('-')[1];
+
+        if (wordId === targetId) {
+            targetZone.classList.add('correct');
+            // İkonu kaldırıp sadece metni koyalım
+            targetZone.innerHTML = draggedElement.innerText.replace('🔊', ''); 
+            speak("Aferin! Doğru oldu.");
+            draggedElement.remove();
+            
+            if (document.querySelectorAll('.word-card').length === 0) {
+                setTimeout(() => {
+                    document.getElementById('success-msg').style.display = 'block';
+                    speak("Tebrikler! Hepsini başardın. Harikasın!");
+                }, 500);
+            }
+        } else {
+            speak("Hayır, bu değil. Tekrar dene.");
+        }
+    }
+
+    initGame();
+</script>
+</body>
+</html>
