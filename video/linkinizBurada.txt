@@ -14,9 +14,11 @@ https://materyalfabrikasi.github.io/video/23nisan/11.mp4
 https://materyalfabrikasi.github.io/video/bayrak/bayrak.mp4
 https://materyalfabrikasi.github.io/video/benveailem/niloya1.mp4
 https://materyalfabrikasi.github.io/video/bursa/bursa.mp4
+https://materyalfabrikasi.github.io/video/cocukbayrami/.DS_Store
 https://materyalfabrikasi.github.io/video/cocukbayrami/1.mp4
 https://materyalfabrikasi.github.io/video/cocukbayrami/11.mp4
 https://materyalfabrikasi.github.io/video/cocukbayrami/111.mp4
+https://materyalfabrikasi.github.io/video/ebru/1.mp4
 https://materyalfabrikasi.github.io/video/karagoz/karagozhacivat.mp4
 https://materyalfabrikasi.github.io/video/oyun/devecuce.mp4
 https://materyalfabrikasi.github.io/video/oyun/himbil.mp4
