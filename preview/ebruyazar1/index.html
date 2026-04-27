@@ -14,7 +14,7 @@
             overflow: hidden;
         }
 
-        /* Ana Arka Plan (Oyun Alanı İçin Bulanık) */
+        /* Ana Arka Plan */
         .bg-container {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -26,7 +26,7 @@
             transform: scale(1.1);
         }
 
-        /* Netleştirilmiş Giriş Ekranı */
+        /* İlk Haliyle Giriş Ekranı */
         #intro-screen {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -42,7 +42,6 @@
             padding: 20px;
         }
 
-        /* Yönerge Kutusu */
         .yonerge-box {
             background: rgba(255, 255, 255, 0.95);
             padding: 40px;
@@ -54,7 +53,7 @@
             z-index: 2001;
         }
 
-        /* Oyun Alanı Stilleri */
+        /* Oyun Alanı */
         .game-wrapper {
             display: flex;
             height: 100vh;
@@ -110,7 +109,8 @@
             align-items: center;
             justify-content: center;
             padding: 12px;
-            font-size: 11pt;
+            font-size: 12pt;
+            font-weight: bold;
             color: #555;
             background: rgba(255,255,255,0.5);
             transition: all 0.3s;
@@ -128,7 +128,8 @@
             padding: 18px;
             border-radius: 12px;
             cursor: grab;
-            font-size: 11pt;
+            font-size: 12pt; /* 12 punto */
+            font-weight: bold; /* Kalın */
             border: none;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             color: #000;
@@ -158,18 +159,6 @@
             to { transform: translate(-50%, -50%); opacity: 1; }
         }
 
-        .success-title {
-            font-size: 48px;
-            color: #004D40;
-            margin-bottom: 10px;
-        }
-
-        .success-subtitle {
-            font-size: 24px;
-            color: #D4AF37;
-            font-weight: bold;
-        }
-
         /* Modal */
         #zoom-modal {
             display: none;
@@ -188,10 +177,6 @@
             border: 8px solid white;
             border-radius: 15px;
         }
-
-        ::-webkit-scrollbar { width: 10px; }
-        ::-webkit-scrollbar-track { background: rgba(255,255,255,0.1); }
-        ::-webkit-scrollbar-thumb { background: #00695C; border-radius: 10px; }
     </style>
 </head>
 <body>
@@ -220,22 +205,22 @@
 </div>
 
 <div id="success-msg">
-    <div class="success-title">Tebrikler!</div>
-    <div class="success-subtitle">✨ Harikasın ✨</div>
+    <div style="font-size: 48px; color: #004D40; margin-bottom: 10px;">Tebrikler!</div>
+    <div style="font-size: 24px; color: #D4AF37; font-weight: bold;">✨ Harikasın ✨</div>
     <button onclick="location.reload()" style="background-color: #D4AF37; color: white; border: none; padding: 12px 30px; font-size: 18px; border-radius: 50px; cursor: pointer; margin-top: 20px; font-family: 'Comic Sans MS', cursive, sans-serif;">Tekrar Oyna 🔄</button>
 </div>
 
 <script>
     const data = [
-        { id: 1, name: "Tekne", img: "1.jpg", text: "Ebrunun yapıldığı su teknesidir. Genellikle paslanmaz çelikten yapılır." },
-        { id: 2, name: "Toprak boyalar", img: "2.jpg", text: "Su üzerinde desenleri renklendirmek için kullanılan boyalardır. Toprak boyalar taş ile ezilerek toz haline getirilir." },
-        { id: 3, name: "Kitre", img: "3.jpg", text: "Suyun içine karıştırılarak boyaların yüzeyde kalmasını sağlar. Suyun kıvamını arttırır." },
-        { id: 4, name: "Fırça", img: "4.jpg", text: "Suya dayanıklı olmasından dolayı gül ağacının dallarından yapılır. Boyaları su üzerine damlatmak için kullanılır." },
-        { id: 5, name: "Tarak", img: "5.jpg", text: "Desen oluşturmak için kullanılır. Dalga, çizgi ve taraklı ebru oluşturmak için kullanılır." },
-        { id: 6, name: "Kağıt", img: "6.jpg", text: "Ebru deseninin su üzerinden alınarak yapıştırıldığı özel bir kağıttır." },
-        { id: 7, name: "Sığır ödü", img: "7.jpg", text: "Boyaların su üzerinde daha iyi yayılması için boyaların içine karıştırılır. Boyaların akışkanlığını arttırır. Doğal bir malzemedir." },
-        { id: 8, name: "Biz", img: "8.jpg", text: "Desenleri şekillendirmek, çiçek, yaprak gibi motifleri oluşturmak için kullanılır. Farklı kalınlıkta uçlara sahiptir." },
-        { id: 9, name: "El bezi", img: "9.jpg", text: "Fırçaları, bizleri, tarakları ve elleri temizlemek için kullanılır. Fazla boyayı almak için de kullanılabilir." }
+        { id: 1, name: "Tekne", img: "1.jpg", text: "Ebrunun yapıldığı içi su dolu kaptır." },
+        { id: 2, name: "Toprak boyalar", img: "2.jpg", text: "Doğal yollarla elde edilen renkli boyalardır." },
+        { id: 3, name: "Kitre", img: "3.jpg", text: "Suyun kıvamını koyulaştıran özel maddedir." },
+        { id: 4, name: "Fırça", img: "4.jpg", text: "Gül dalı ve at kılından yapılan araçtır." },
+        { id: 5, name: "Tarak", img: "5.jpg", text: "Su üzerinde çizgili desenler yapmaya yarar." },
+        { id: 6, name: "Kağıt", img: "6.jpg", text: "Sudaki deseni üzerine çeken özel yüzeydir." },
+        { id: 7, name: "Sığır ödü", img: "7.jpg", text: "Boyanın su yüzeyinde yayılmasını sağlar." },
+        { id: 8, name: "Biz", img: "8.jpg", text: "Boyalara şekil ve çiçek deseni veren alettir." },
+        { id: 9, name: "El bezi", img: "9.jpg", text: "Kirli elleri ve aletleri temizlemek içindir." }
     ];
 
     let correctMatches = 0;
@@ -270,9 +255,8 @@
     }
 
     function openZoom(src) {
-        const modal = document.getElementById('zoom-modal');
         document.getElementById('zoomed-img').src = src;
-        modal.style.display = 'flex';
+        document.getElementById('zoom-modal').style.display = 'flex';
     }
 
     function closeZoom() { document.getElementById('zoom-modal').style.display = 'none'; }
