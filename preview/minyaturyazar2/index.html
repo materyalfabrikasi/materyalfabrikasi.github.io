@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="tr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minyatür Kavramları Oyunu</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow: hidden;
+      background-image: url('1.jpeg');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      background-repeat: no-repeat;
+    }
+
+    #app {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Video Ekranı */
+    .video-screen {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(26, 26, 46, 0.7);
+      gap: 20px;
+      position: relative;
+    }
+
+    .video-container {
+      width: 90%;
+      max-width: 800px;
+      aspect-ratio: 16 / 9;
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+    }
+
+    .video-container video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .video-button {
+      padding: 14px 40px;
+      font-size: 18px;
+      font-weight: 600;
+      background: linear-gradient(135deg, #e94560 0%, #d63447 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 20px rgba(233, 69, 96, 0.4);
+    }
+
+    .video-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(233, 69, 96, 0.6);
+    }
+
+    .video-button:active {
+      transform: translateY(0);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Oyun Ekranı */
+    .game-screen {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+      background: transparent;
+    }
+
+    .background-image {
+      display: none;
+    }
+
+    .game-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      padding: 30px;
+      overflow-y: auto;
+    }
+
+    .instructions {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 20px 30px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(10px);
+    }
+
+    .instructions h2 {
+      color: #1a1a2e;
+      margin-bottom: 10px;
+      font-size: 22px;
+    }
+
+    .instructions p {
+      color: #555;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    /* Matching Game */
+    .game-container {
+      display: flex;
+      gap: 40px;
+      justify-content: center;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 3;
+      perspective: 1000px;
+    }
+
+    .concepts-column,
+    .definitions-column {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      min-width: 280px;
+    }
+
+    .column-title {
+      font-weight: 700;
+      font-size: 18px;
+      color: white;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      margin-bottom: 10px;
+    }
+
+    .concept-item,
+    .definition-item {
+      background: rgba(255, 255, 255, 0.92);
+      padding: 16px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 3px solid transparent;
+      font-weight: 600;
+      color: #1a1a2e;
+      font-size: 15px;
+      text-align: center;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+      user-select: none;
+      position: relative;
+    }
+
+    .concept-item:hover,
+    .definition-item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+    }
+
+    .concept-item.selected,
+    .definition-item.selected {
+      background: linear-gradient(135deg, #e94560 0%, #d63447 100%);
+      color: white;
+      border-color: #fff;
+      transform: scale(1.05);
+    }
+
+    .concept-item.matched,
+    .definition-item.matched {
+      background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+      color: white;
+      border-color: #fff;
+      cursor: default;
+      opacity: 0.9;
+    }
+
+    .concept-item.matched:hover,
+    .definition-item.matched:hover {
+      transform: none;
+    }
+
+    /* SVG Bağlantıları */
+    svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .connection-line {
+      stroke: #e94560;
+      stroke-width: 3;
+      fill: none;
+      stroke-linecap: round;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    }
+
+    /* Sonuç Mesajı */
+    .completion-message {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+      color: white;
+      padding: 40px 60px;
+      border-radius: 12px;
+      font-size: 24px;
+      font-weight: 700;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+      z-index: 1000;
+      display: none;
+      animation: slideIn 0.5s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translate(-50%, -50%) scale(0.8);
+        opacity: 0;
+      }
+
+      to {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .game-container {
+        flex-direction: column;
+        gap: 30px;
+      }
+
+      .instructions {
+        padding: 15px 20px;
+      }
+
+      .instructions h2 {
+        font-size: 18px;
+      }
+
+      .instructions p {
+        font-size: 14px;
+      }
+
+      .concept-item,
+      .definition-item {
+        padding: 14px 16px;
+        font-size: 14px;
+      }
+    }
+  </style>
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com/3.4.17" type="text/javascript"></script>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+</head>
+
+<body>
+  <div id="app"><!-- Video Ekranı -->
+    <div id="videoScreen" class="video-screen">
+      <div class="video-container">
+        <video id="mainVideo" controls>
+          <source src="1.mp4" type="video/mp4"> Tarayıcınız video oynatmayı desteklemiyor.
+        </video>
+      </div><button class="video-button" onclick="startGame()">Tamam</button>
+    </div><!-- Oyun Ekranı -->
+    <div id="gameScreen" class="game-screen hidden">
+      <div class="game-overlay">
+        <div class="instructions">
+          <h2>🎨 Minyatür Kavramlarını Eşleştir</h2>
+          <p>Sol taraftaki kavramları sağ taraftaki tanımlarıyla eşleştirmek için tıkla. Doğru eşleştirmeleri bul!</p>
+        </div>
+        <div class="game-container" id="gameContainer">
+          <svg id="connectionSvg"></svg>
+          <div class="concepts-column">
+            <div class="column-title">
+              📚 Kavramlar
+            </div>
+            <div id="conceptsList"></div>
+          </div>
+          <div class="definitions-column">
+            <div class="column-title">
+              📖 Tanımlar
+            </div>
+            <div id="definitionsList"></div>
+          </div>
+        </div>
+      </div>
+      <div class="completion-message" id="completionMessage">
+        ✨ Tebrikler! Tüm eşleştirmeleri doğru yaptın! ✨
+      </div>
+    </div>
+  </div>
+  <script>
+    const concepts = [
+      { id: 1, text: "Nakkaş" },
+      { id: 2, text: "Minyatür" },
+      { id: 3, text: "Perspektif" },
+      { id: 4, text: "Detay" },
+      { id: 5, text: "Figür" }
+    ];
+
+    const definitions = [
+      { id: 1, text: "Minyatür yapan sanatçı.", conceptId: 1 },
+      { id: 2, text: "El yazması kitaplarda yer alan ışık, gölge ve hacim duygusu yansıtılmayan resim sanatı.", conceptId: 2 },
+      { id: 3, text: "Nesneleri bir yüzey üzerine görüldükleri gibi çizme.", conceptId: 3 },
+      { id: 4, text: "Bir şeyin ince, küçük ayrıntısı.", conceptId: 4 },
+      { id: 5, text: "Resimde yer alan insan veya varlık.", conceptId: 5 }
+    ];
+
+    let selectedConcept = null;
+    let selectedDefinition = null;
+    let matches = new Set();
+
+    function startGame() {
+      document.getElementById("videoScreen").classList.add("hidden");
+      document.getElementById("gameScreen").classList.remove("hidden");
+      initializeGame();
+    }
+
+    function initializeGame() {
+      renderConcepts();
+      renderDefinitions();
+      setupEventListeners();
+    }
+
+    function renderConcepts() {
+      const conceptsList = document.getElementById("conceptsList");
+      conceptsList.innerHTML = concepts
+        .map(concept => `<div class="concept-item" data-id="${concept.id}">${concept.text}</div>`)
+        .join("");
+    }
+
+    function renderDefinitions() {
+      const definitionsList = document.getElementById("definitionsList");
+      const shuffledDefs = [...definitions].sort(() => Math.random() - 0.5);
+      definitionsList.innerHTML = shuffledDefs
+        .map(def => `<div class="definition-item" data-id="${def.id}" data-concept-id="${def.conceptId}">${def.text}</div>`)
+        .join("");
+    }
+
+    function setupEventListeners() {
+      document.querySelectorAll(".concept-item").forEach(item => {
+        item.addEventListener("click", function () {
+          selectConcept(this);
+        });
+      });
+
+      document.querySelectorAll(".definition-item").forEach(item => {
+        item.addEventListener("click", function () {
+          selectDefinition(this);
+        });
+      });
+    }
+
+    function selectConcept(element) {
+      if (matches.has(element.dataset.id)) return;
+
+      document.querySelectorAll(".concept-item").forEach(item => item.classList.remove("selected"));
+      element.classList.add("selected");
+      selectedConcept = element;
+
+      checkMatch();
+    }
+
+    function selectDefinition(element) {
+      if (matches.has(element.dataset.conceptId)) return;
+
+      document.querySelectorAll(".definition-item").forEach(item => item.classList.remove("selected"));
+      element.classList.add("selected");
+      selectedDefinition = element;
+
+      checkMatch();
+    }
+
+    function checkMatch() {
+      if (!selectedConcept || !selectedDefinition) return;
+
+      const conceptId = selectedConcept.dataset.id;
+      const conceptIdFromDef = selectedDefinition.dataset.conceptId;
+
+      if (conceptId === conceptIdFromDef) {
+        // Doğru eşleştirme
+        selectedConcept.classList.add("matched");
+        selectedConcept.classList.remove("selected");
+        selectedDefinition.classList.add("matched");
+        selectedDefinition.classList.remove("selected");
+
+        matches.add(conceptId);
+
+        drawConnection(selectedConcept, selectedDefinition);
+
+        selectedConcept = null;
+        selectedDefinition = null;
+
+        if (matches.size === concepts.length) {
+          showCompletion();
+        }
+      } else {
+        // Yanlış eşleştirme - animasyonla uyar
+        selectedConcept.style.animation = "none";
+        selectedDefinition.style.animation = "none";
+
+        setTimeout(() => {
+          selectedConcept.style.animation = "shake 0.4s";
+          selectedDefinition.style.animation = "shake 0.4s";
+        }, 10);
+      }
+    }
+
+    function drawConnection(conceptEl, defEl) {
+      const svg = document.getElementById("connectionSvg");
+      const gameContainer = document.getElementById("gameContainer");
+
+      const conceptRect = conceptEl.getBoundingClientRect();
+      const defRect = defEl.getBoundingClientRect();
+      const containerRect = gameContainer.getBoundingClientRect();
+
+      const x1 = conceptRect.right - containerRect.left;
+      const y1 = conceptRect.top - containerRect.top + conceptRect.height / 2;
+      const x2 = defRect.left - containerRect.left;
+      const y2 = defRect.top - containerRect.top + defRect.height / 2;
+
+      const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      line.setAttribute("x1", x1);
+      line.setAttribute("y1", y1);
+      line.setAttribute("x2", x2);
+      line.setAttribute("y2", y2);
+      line.setAttribute("class", "connection-line");
+
+      svg.appendChild(line);
+    }
+
+    function showCompletion() {
+      const message = document.getElementById("completionMessage");
+      message.style.display = "block";
+      setTimeout(() => {
+        message.style.display = "none";
+      }, 3000);
+    }
+
+    // CSS shake animasyonu
+    const style = document.createElement("style");
+    style.textContent = `
+      @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-10px); }
+        75% { transform: translateX(10px); }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+  <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'9f05970db687f182',t:'MTc3Njg3MDk5MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
+</body>
+
+</html>

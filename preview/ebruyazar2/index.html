@@ -1,0 +1,243 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Süper Sıralama Macerası!</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: url('8.jpg') no-repeat center center fixed;
+            background-size: cover;
+            overflow-x: hidden;
+        }
+
+        /* Yönerge Ekranı */
+        #intro-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('8.jpg') no-repeat center center;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .instruction-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 20px;
+            border: 4px solid #000;
+            max-width: 380px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .instruction-card h1 {
+            font-size: 18px;
+            color: #000;
+            margin-bottom: 10px;
+        }
+
+        .instruction-card p {
+            font-size: 12pt;
+            color: #000;
+            line-height: 1.4;
+            margin-bottom: 15px;
+        }
+
+        /* Oyun Alanı */
+        #game-container {
+            display: none;
+            width: 95%;
+            max-width: 1200px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 25px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            border: 2px solid #000;
+        }
+
+        .slot-container, .image-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        /* Siyah ve Belirgin Çerçeveler */
+        .drop-slot {
+            width: 170px;
+            height: 170px;
+            border: 3px solid #000;
+            border-radius: 12px;
+            background: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        .draggable-img {
+            width: 160px;
+            height: 160px;
+            object-fit: contain;
+            border-radius: 5px;
+            cursor: grab;
+            transition: transform 0.3s ease;
+            background-color: white;
+            border: 1px solid #333;
+        }
+
+        /* Tıklayınca Büyütme Özelliği */
+        .draggable-img.zoomed {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(3.5);
+            z-index: 1000;
+            cursor: zoom-out;
+            box-shadow: 0 0 50px rgba(0,0,0,0.6);
+            background: white;
+            padding: 5px;
+            border: 3px solid #000;
+        }
+
+        .start-btn {
+            background: #000;
+            color: white;
+            padding: 10px 25px;
+            font-size: 16px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+        }
+
+        /* Doğru (TURUNCU) ve Yanlış Durumları */
+        .correct { 
+            border: 6px solid #FF8C00 !important; /* Koyu Turuncu */
+            background-color: #FFF5EE !important;
+        } 
+        .wrong { 
+            border: 6px solid #F44336 !important; 
+            animation: shake 0.4s; 
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="intro-screen">
+        <div class="instruction-card">
+            <h1>Merhaba Minik Kaşif!</h1>
+            <p>Resimleri 1'den 7'ye kadar doğru sırayla kutucuklara yerleştirir misin? İpuçlarını görmek için resimlere tıklayıp onları büyütebilirsin!</p>
+            <button class="start-btn" onclick="startGame()">Oyunu Başlat</button>
+        </div>
+    </div>
+
+    <div id="game-container">
+        <h3 style="color: #000; margin-top: 0;">Resimleri Sırala</h3>
+        <div class="image-container" id="source-images"></div>
+        <div class="slot-container" id="target-slots"></div>
+        <div id="feedback" style="margin-top: 15px; font-weight: bold; font-size: 1.2rem; min-height: 1.5em;"></div>
+    </div>
+
+    <script>
+        const totalImages = 7;
+        
+        function startGame() {
+            document.getElementById('intro-screen').style.display = 'none';
+            document.getElementById('game-container').style.display = 'block';
+            initGame();
+        }
+
+        function initGame() {
+            const sourceContainer = document.getElementById('source-images');
+            const targetContainer = document.getElementById('target-slots');
+            const imageIds = [1, 2, 3, 4, 5, 6, 7];
+            const shuffledIds = [...imageIds].sort(() => Math.random() - 0.5);
+
+            for (let i = 1; i <= totalImages; i++) {
+                const slot = document.createElement('div');
+                slot.className = 'drop-slot';
+                slot.dataset.index = i;
+                slot.ondragover = (e) => e.preventDefault();
+                slot.ondrop = handleDrop;
+                targetContainer.appendChild(slot);
+            }
+
+            shuffledIds.forEach(id => {
+                const img = document.createElement('img');
+                img.src = `${id}.jpg`;
+                img.className = 'draggable-img';
+                img.id = `img-${id}`;
+                img.draggable = true;
+                img.dataset.value = id;
+                
+                img.ondragstart = (e) => {
+                    if(img.classList.contains('zoomed')) return false;
+                    e.dataTransfer.setData('text', e.target.id);
+                };
+
+                img.onclick = (e) => {
+                    e.target.classList.toggle('zoomed');
+                };
+
+                sourceContainer.appendChild(img);
+            });
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const imgId = e.dataTransfer.getData('text');
+            const imgElement = document.getElementById(imgId);
+            const slot = e.currentTarget;
+            const feedback = document.getElementById('feedback');
+
+            if (slot.children.length > 0) return;
+
+            if (imgElement.dataset.value === slot.dataset.index) {
+                slot.appendChild(imgElement);
+                imgElement.classList.add('correct');
+                imgElement.draggable = false;
+                feedback.innerText = "Harika! Doğru yer! 🍊";
+                feedback.style.color = "#FF8C00";
+                checkWin();
+            } else {
+                imgElement.classList.add('wrong');
+                feedback.innerText = "Tekrar dene! 🤔";
+                feedback.style.color = "#F44336";
+                setTimeout(() => imgElement.classList.remove('wrong'), 500);
+            }
+        }
+
+        function checkWin() {
+            const placed = document.querySelectorAll('.drop-slot .draggable-img').length;
+            if (placed === totalImages) {
+                document.getElementById('feedback').innerText = "TEBRİKLER! Hepsini mükemmel sıraladın! 🏆";
+            }
+        }
+    </script>
+</body>
+</html>
