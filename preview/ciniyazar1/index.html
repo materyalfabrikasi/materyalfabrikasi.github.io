@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Çini Atölyesi: Desenden Sırra</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f4f8;
+            background-image: url("https://www.transparenttextures.com/patterns/cubes.png");
+        }
+        .cini-title {
+            font-family: 'Playfair Display', serif;
+            color: #005691;
+        }
+        .cini-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 4px solid transparent;
+        }
+        .cini-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .selected {
+            border-color: #00ADB5 !important;
+            background-color: #e0f7f8;
+        }
+        .stage-transition {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .info-box {
+            border-top: 4px solid #005691;
+            background: #fff;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center p-4">
+
+    <!-- Header -->
+    <header class="text-center my-8 stage-transition">
+        <h1 class="cini-title text-4xl md:text-5xl mb-2">Çini Atölyesi</h1>
+        <p class="text-gray-600 italic">"Toprağın Renkle Dansı: Geleneksel Türk Sanatı"</p>
+        <div class="h-1 w-32 bg-[#005691] mx-auto mt-4 rounded-full"></div>
+    </header>
+
+    <main class="w-full max-w-4xl bg-white rounded-3xl shadow-2xl p-6 md:p-10 relative overflow-hidden">
+        
+        <!-- Game Progress Bar -->
+        <div class="flex justify-between mb-8 text-xs font-bold text-gray-400">
+            <div id="prog-1" class="text-[#005691]">1. MOTİF</div>
+            <div id="prog-2">2. RENK</div>
+            <div id="prog-3">3. BİLGİ</div>
+            <div id="prog-4">4. SERGİ</div>
+        </div>
+
+        <!-- Dynamic Info Corner -->
+        <div id="info-corner" class="hidden mb-6 info-box p-4 rounded-xl stage-transition">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-100 p-2 rounded-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#005691" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                </div>
+                <div>
+                    <h4 class="text-xs font-bold text-blue-900 uppercase tracking-wider">Sanat Notu</h4>
+                    <p id="fact-text" class="text-sm text-gray-700"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- STAGE 1: Motif Selection -->
+        <section id="stage-1" class="stage-transition">
+            <h2 class="text-2xl font-semibold mb-6 text-center text-gray-800">Hoş Geldin Genç Sanatçı! Önce bir motif seç:</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="cini-card p-4 rounded-xl text-center bg-gray-50" onclick="selectMotif('lale', this)">
+                    <div class="h-32 flex items-center justify-center mb-4">
+                        <svg viewBox="0 0 100 100" class="w-20 h-20 text-[#D72323]">
+                            <path fill="currentColor" d="M50 95c0-30 20-40 20-60 0-20-20-30-20-30s-20 10-20 30c0 20 20 30 20 60z"/>
+                            <path fill="currentColor" opacity="0.7" d="M50 95c0-20-15-30-25-45C15 35 30 15 30 15s5 15 20 25z"/>
+                            <path fill="currentColor" opacity="0.7" d="M50 95c0-20 15-30 25-45C85 35 70 15 70 15s-5 15-20 25z"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-lg">Lale</h3>
+                    <p class="text-sm text-gray-500 mt-2">Zarafeti ve birliği temsil eder.</p>
+                </div>
+
+                <div class="cini-card p-4 rounded-xl text-center bg-gray-50" onclick="selectMotif('rumi', this)">
+                    <div class="h-32 flex items-center justify-center mb-4">
+                        <svg viewBox="0 0 100 100" class="w-20 h-20 text-[#005691]">
+                            <path fill="currentColor" d="M20 80c20-5 40-30 40-50s-10-20-20-20c15 0 30 15 30 40s-20 35-50 30z"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-lg">Rumi</h3>
+                    <p class="text-sm text-gray-500 mt-2">Hayvan ve bitki formlarının stilize hâlidir.</p>
+                </div>
+
+                <div class="cini-card p-4 rounded-xl text-center bg-gray-50" onclick="selectMotif('hatai', this)">
+                    <div class="h-32 flex items-center justify-center mb-4">
+                        <svg viewBox="0 0 100 100" class="w-20 h-20 text-[#00ADB5]">
+                            <circle cx="50" cy="50" r="10" fill="currentColor"/>
+                            <circle cx="50" cy="30" r="8" fill="currentColor" opacity="0.6"/>
+                            <circle cx="50" cy="70" r="8" fill="currentColor" opacity="0.6"/>
+                            <circle cx="30" cy="50" r="8" fill="currentColor" opacity="0.6"/>
+                            <circle cx="70" cy="50" r="8" fill="currentColor" opacity="0.6"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-lg">Hatai</h3>
+                    <p class="text-sm text-gray-500 mt-2">Çiçeklerin dikine kesitini gösteren bir desendir.</p>
+                </div>
+            </div>
+            <div class="mt-10 text-center">
+                <button id="next-1" disabled class="bg-gray-300 text-white px-10 py-3 rounded-full font-bold cursor-not-allowed transition-all" onclick="goToStage(2)">Renk Belirle</button>
+            </div>
+        </section>
+
+        <!-- STAGE 2: Color Palette -->
+        <section id="stage-2" class="hidden stage-transition">
+            <h2 class="text-2xl font-semibold mb-6 text-center text-gray-800">Şimdi renklerini belirle:</h2>
+            
+            <div class="flex flex-wrap justify-center gap-4 mb-10">
+                <div class="color-btn w-16 h-16 rounded-full border-4 border-white shadow-md cursor-pointer hover:scale-110 transition" style="background-color: #005691;" onclick="selectColor('#005691', 'Kobalt Mavisi')"></div>
+                <div class="color-btn w-16 h-16 rounded-full border-4 border-white shadow-md cursor-pointer hover:scale-110 transition" style="background-color: #00ADB5;" onclick="selectColor('#00ADB5', 'Turkuaz')"></div>
+                <div class="color-btn w-16 h-16 rounded-full border-4 border-white shadow-md cursor-pointer hover:scale-110 transition" style="background-color: #D72323;" onclick="selectColor('#D72323', 'Mercan Kırmızısı')"></div>
+                <div class="color-btn w-16 h-16 rounded-full border-4 border-white shadow-md cursor-pointer hover:scale-110 transition" style="background-color: #2D5D4F;" onclick="selectColor('#2D5D4F', 'Adaçayı Yeşili')"></div>
+                <div class="color-btn w-16 h-16 rounded-full border-4 border-white shadow-md cursor-pointer hover:scale-110 transition" style="background-color: #1A1A1A;" onclick="selectColor('#1A1A1A', 'Tahrir Siyahı')"></div>
+            </div>
+
+            <div class="bg-blue-50 p-4 rounded-xl text-center mb-8">
+                <p class="text-blue-800 font-medium">Seçilen Renk: <span id="selected-color-name">Henüz seçilmedi</span></p>
+            </div>
+
+            <div class="text-center">
+                <button id="next-2" disabled class="bg-gray-300 text-white px-10 py-3 rounded-full font-bold cursor-not-allowed transition-all" onclick="goToStage(3)">Devam Et</button>
+            </div>
+        </section>
+
+        <!-- STAGE 3: Firing & Information -->
+        <section id="stage-3" class="hidden stage-transition">
+            <h2 class="text-2xl font-semibold mb-6 text-center text-[#005691]">Fırınlama Öncesi Son Bilgi</h2>
+            
+            <div class="bg-orange-50 p-8 rounded-2xl border-2 border-orange-200 text-center">
+                <div class="mb-6 inline-block bg-white p-4 rounded-full shadow-inner">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a3 3 0 0 0-3-3H5a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h12a3 3 0 0 0 3-3V8Z"/><path d="M10 10v4"/><path d="M14 10v4"/></svg>
+                </div>
+                <p id="final-fact" class="text-lg text-gray-800 font-medium leading-relaxed"></p>
+            </div>
+
+            <div class="mt-8 text-center">
+                <button id="next-3" class="bg-[#005691] text-white px-10 py-3 rounded-full font-bold hover:bg-[#003d66] transition-all" onclick="finishGame()">Fırınla ve Eseri Tamamla!</button>
+            </div>
+        </section>
+
+        <!-- STAGE 4: Final Gallery -->
+        <section id="stage-4" class="hidden stage-transition text-center">
+            <h2 class="text-3xl font-bold mb-4 text-[#005691]">Müthiş Bir Eser!</h2>
+            <p class="text-gray-600 mb-8 italic">Geleneksel yöntemlerle harika bir çini tabağı hazırladın.</p>
+            
+            <div class="relative inline-block mb-10">
+                <div id="final-cini-display" class="w-64 h-64 md:w-80 md:h-80 rounded-full border-8 border-white shadow-2xl overflow-hidden bg-white mx-auto flex items-center justify-center p-8"></div>
+                <div class="absolute -bottom-4 -right-4 bg-yellow-400 text-black px-4 py-2 rounded-lg font-bold shadow-lg transform rotate-12 uppercase">
+                    Eserin Hazır
+                </div>
+            </div>
+
+            <div class="bg-[#005691] text-white p-6 rounded-2xl mb-8">
+                <h3 class="font-bold text-xl mb-2">Biliyor muydun?</h3>
+                <p class="text-sm opacity-90">Kültür ve Turizm Bakanlığı verilerine göre, 16. yüzyılda İznik çiniciliği zirveye ulaşmıştır. Bu sanat mirası bugün UNESCO tarafından da korunmaktadır.</p>
+            </div>
+
+            <button class="bg-gray-800 text-white px-10 py-3 rounded-full font-bold hover:bg-black transition-all" onclick="location.reload()">Yeni Atölye Aç</button>
+        </section>
+
+    </main>
+
+    <footer class="mt-12 text-gray-500 text-sm text-center">
+        <p>&copy; 2026 Türkçe ve Türk Kültürü Dersi - İnteraktif Materyal</p>
+        <p class="mt-1 italic">Kaynak: Kültür ve Turizm Bakanlığı Geleneksel El Sanatları Verileri</p>
+    </footer>
+
+    <script>
+        const facts = [
+            "Çini, killi toprağın şekillendirilip pişirilmesiyle yapılan ve renkli motiflerle süslenen geleneksel bir Türk sanatıdır.",
+            "Bu sanat, özellikle 'sıraltı tekniği' gibi yöntemlerle yüzyıllardır ustalar tarafından titizlikle uygulanmaktadır.",
+            "Çini yapımı; hamurun hazırlanması, şekillendirme, boyama ve fırınlama gibi aşamalardan oluşur. Sabır ve ustalık gerektirir.",
+            "Desenlerde genellikle geometrik şekiller, bitkiler ve hayvan figürleri kullanılır ve bunların her biri derin kültürel anlamlar taşır.",
+            "Çinicilik, ustadan çırağa aktarılan bir gelenek olup kültürel mirasın korunmasına ve gelecek nesillere aktarılmasına katkı sağlar."
+        ];
+
+        let factIndex = 0;
+        let gameState = {
+            motif: '',
+            color: '',
+            score: 0
+        };
+
+        const motifSVGs = {
+            lale: `<svg viewBox="0 0 100 100" class="w-full h-full"><path fill="COLOR" d="M50 95c0-30 20-40 20-60 0-20-20-30-20-30s-20 10-20 30c0 20 20 30 20 60z"/><path fill="COLOR" opacity="0.6" d="M50 95c0-20-15-30-25-45C15 35 30 15 30 15s5 15 20 25z"/><path fill="COLOR" opacity="0.6" d="M50 95c0-20 15-30 25-45C85 35 70 15 70 15s-5 15-20 25z"/></svg>`,
+            rumi: `<svg viewBox="0 0 100 100" class="w-full h-full"><path fill="COLOR" d="M50 50m-30 30c20-5 40-30 40-50s-10-20-20-20c15 0 30 15 30 40s-20 35-50 30z"/><path fill="COLOR" opacity="0.5" d="M50 50m30-30c-20 5-40 30-40 50s10 20 20 20c-15 0-30-15-30-40s20-35 50-30z"/></svg>`,
+            hatai: `<svg viewBox="0 0 100 100" class="w-full h-full"><circle cx="50" cy="50" r="15" fill="COLOR"/><circle cx="50" cy="20" r="10" fill="COLOR" opacity="0.6"/><circle cx="50" cy="80" r="10" fill="COLOR" opacity="0.6"/><circle cx="20" cy="50" r="10" fill="COLOR" opacity="0.6"/><circle cx="80" cy="50" r="10" fill="COLOR" opacity="0.6"/></svg>`
+        };
+
+        function showNextFact() {
+            const infoCorner = document.getElementById('info-corner');
+            const factText = document.getElementById('fact-text');
+            
+            factText.innerText = facts[factIndex];
+            infoCorner.classList.remove('hidden');
+            
+            // Increment index for next call
+            factIndex = (factIndex + 1) % facts.length;
+        }
+
+        function selectMotif(type, element) {
+            gameState.motif = type;
+            document.querySelectorAll('.cini-card').forEach(c => c.classList.remove('selected'));
+            element.classList.add('selected');
+            
+            const btn = document.getElementById('next-1');
+            btn.disabled = false;
+            btn.classList.remove('bg-gray-300', 'cursor-not-allowed');
+            btn.classList.add('bg-[#005691]', 'hover:bg-[#003d66]');
+
+            showNextFact();
+        }
+
+        function selectColor(hex, name) {
+            gameState.color = hex;
+            document.getElementById('selected-color-name').innerText = name;
+            document.getElementById('selected-color-name').style.color = hex;
+            
+            document.querySelectorAll('.color-btn').forEach(b => b.style.borderColor = 'white');
+            event.target.style.borderColor = '#00ADB5';
+
+            const btn = document.getElementById('next-2');
+            btn.disabled = false;
+            btn.classList.remove('bg-gray-300', 'cursor-not-allowed');
+            btn.classList.add('bg-[#005691]', 'hover:bg-[#003d66]');
+
+            showNextFact();
+        }
+
+        function goToStage(num) {
+            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+            document.getElementById(`stage-${num}`).classList.remove('hidden');
+            
+            if(num === 3) {
+                document.getElementById('final-fact').innerText = facts[factIndex];
+            }
+
+            for(let i=1; i<=4; i++) {
+                const el = document.getElementById(`prog-${i}`);
+                if(i <= num) {
+                    el.classList.add('text-[#005691]');
+                }
+            }
+        }
+
+        function finishGame() {
+            const display = document.getElementById('final-cini-display');
+            let svgMarkup = motifSVGs[gameState.motif].replace(/COLOR/g, gameState.color);
+            display.innerHTML = svgMarkup;
+            
+            display.style.boxShadow = `inset 0 0 50px ${gameState.color}22, 0 10px 30px rgba(0,0,0,0.2)`;
+            
+            // Hide info corner on final stage
+            document.getElementById('info-corner').classList.add('hidden');
+            
+            goToStage(4);
+        }
+    </script>
+</body>
+</html>
