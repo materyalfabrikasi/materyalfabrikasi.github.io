@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Türk Çini Sanatı Yapbozu</title>
+    <style>
+        :root {
+            --primary-blue: #005b96;
+            --turquoise: #40E0D0;
+            --accent-red: #D21F3C;
+            --bg-light: #f4f7f6;
+            --text-dark: #2c3e50;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: var(--primary-blue);
+            color: white;
+            width: 100%;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .container {
+            max-width: 900px;
+            width: 90%;
+            margin: 20px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .info-section {
+            border-left: 5px solid var(--turquoise);
+            padding-left: 20px;
+            margin-bottom: 40px;
+        }
+
+        .info-section h2 {
+            color: var(--primary-blue);
+            margin-top: 0;
+        }
+
+        .audio-container {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .audio-container p {
+            margin: 0;
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+
+        audio {
+            width: 100%;
+        }
+
+        .game-section {
+            text-align: center;
+            padding: 20px;
+            background: #eef2f3;
+            border-radius: 10px;
+        }
+
+        h3 {
+            color: var(--accent-red);
+        }
+
+        /* Puzzle Styling */
+        #puzzle-board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 4px;
+            width: 450px;
+            height: 450px;
+            margin: 20px auto;
+            border: 5px solid var(--primary-blue);
+            background-color: #ccc;
+            position: relative;
+        }
+
+        .tile {
+            width: 150px;
+            height: 150px;
+            background-image: url('1.png');
+            background-size: 450px 450px;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: transparent;
+            user-select: none;
+        }
+
+        .tile:hover {
+            transform: scale(0.98);
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .tile.selected {
+            outline: 4px solid var(--accent-red);
+            z-index: 10;
+        }
+
+        #message-box {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+            font-weight: bold;
+        }
+
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        button {
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color: #004471;
+        }
+
+        .source {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+            margin-top: 10px;
+            display: block;
+        }
+
+        @media (max-width: 500px) {
+            #puzzle-board {
+                width: 300px;
+                height: 300px;
+            }
+
+            .tile {
+                width: 100px;
+                height: 100px;
+                background-size: 300px 300px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Geleneksel Türk Çini Sanatı</h1>
+    </header>
+
+    <div class="container">
+        <div class="info-section">
+            <h2>Çini Nedir?</h2>
+            <div class="audio-container">
+                <p>Çini hakkında bilgi edinmek için aşağıdaki butona tıklayarak sesi dinleyin:</p>
+                <audio controls>
+                    <source src="1.mp3" type="audio/mpeg">
+                    Tarayıcınız ses öğesini desteklemiyor.
+                </audio>
+            </div>
+        </div>
+
+        <div class="game-section">
+            <h3>Etkileşimli Çini Deseni Yapbozu</h3>
+            <p>Aşağıdaki çini deseni parçalara ayrıldı. İki parçaya sırayla tıklayarak yerlerini değiştir ve deseni
+                doğru şekilde birleştir!</p>
+
+            <div id="puzzle-board">
+                <!-- Parçalar JavaScript ile eklenecek -->
+            </div>
+
+            <div id="message-box"></div>
+
+            <div style="margin-top: 20px;">
+                <button onclick="shuffleTiles()">Karıştır ve Yeniden Başla</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const board = document.getElementById('puzzle-board');
+        const messageBox = document.getElementById('message-box');
+        let tiles = [];
+        let selectedTile = null;
+        const correctOrder = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+        let currentOrder = [...correctOrder];
+
+        // Oyunu başlat
+        function initGame() {
+            createTiles();
+            shuffleTiles();
+        }
+
+        function createTiles() {
+            board.innerHTML = '';
+            tiles = [];
+            for (let i = 0; i < 9; i++) {
+                const tile = document.createElement('div');
+                tile.classList.add('tile');
+                tile.dataset.index = i;
+
+                // Background position ayarı (3x3 grid için)
+                const row = Math.floor(i / 3);
+                const col = i % 3;
+                tile.style.backgroundPosition = `-${col * 100}% -${row * 100}%`;
+
+                tile.addEventListener('click', () => handleTileClick(i));
+                tiles.push(tile);
+            }
+        }
+
+        function renderBoard() {
+            board.innerHTML = '';
+            currentOrder.forEach((originalIdx) => {
+                board.appendChild(tiles[originalIdx]);
+            });
+            checkWin();
+        }
+
+        function shuffleTiles() {
+            messageBox.style.display = 'none';
+            // Rastgele karıştırma (Fisher-Yates)
+            for (let i = currentOrder.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [currentOrder[i], currentOrder[j]] = [currentOrder[j], currentOrder[i]];
+            }
+
+            renderBoard();
+        }
+
+        function handleTileClick(index) {
+            const clickedPos = currentOrder.indexOf(index);
+            const clickedElement = tiles[index];
+
+            if (selectedTile === null) {
+                // İlk parça seçildi
+                selectedTile = clickedPos;
+                clickedElement.classList.add('selected');
+            } else {
+                // İkinci parça seçildi, yer değiştir
+                const firstTilePos = selectedTile;
+                const secondTilePos = clickedPos;
+
+                // Görsel seçimi kaldır
+                tiles[currentOrder[firstTilePos]].classList.remove('selected');
+
+                // Array içinde yer değiştir
+                [currentOrder[firstTilePos], currentOrder[secondTilePos]] = [currentOrder[secondTilePos], currentOrder[firstTilePos]];
+
+                selectedTile = null;
+                renderBoard();
+            }
+        }
+
+        function checkWin() {
+            const isWin = currentOrder.every((val, index) => val === correctOrder[index]);
+            if (isWin) {
+                messageBox.textContent = "Tebrikler! Çini desenini başarıyla tamamladın. Harika bir iş çıkardın!";
+                messageBox.style.display = 'block';
+                messageBox.className = 'success';
+                document.querySelectorAll('.tile').forEach(t => t.style.border = 'none');
+            }
+        }
+
+        // Resim yüklenemezse kullanıcıya uyarı ver
+        const img = new Image();
+        img.src = '1.png';
+        img.onerror = () => {
+            messageBox.style.display = 'block';
+            messageBox.style.backgroundColor = '#fff3cd';
+            messageBox.style.color = '#856404';
+            messageBox.textContent = "Uyarı: '1.png' dosyası bulunamadı. Lütfen HTML dosyası ile aynı klasöre 1.png isimli bir çini deseni görseli koyunuz.";
+        };
+
+        window.onload = initGame;
+    </script>
+
+</body>
+
+</html>

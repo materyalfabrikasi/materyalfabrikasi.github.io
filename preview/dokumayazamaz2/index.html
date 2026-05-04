@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Çocuklar İçin Dokuma Tezgahı</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #fdf6e3;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+        }
+        
+        /* Yeni Şık Yönerge Katmanı */
+        #welcome-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(62, 39, 35, 0.4); /* Yumuşak kahverengi şeffaflık */
+            backdrop-filter: blur(8px); /* Arka planı bulanıklaştır */
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            transition: all 0.5s ease;
+        }
+
+        .welcome-card {
+            background: white;
+            padding: 3rem;
+            border-radius: 4rem;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.2);
+            max-width: 550px;
+            text-align: center;
+            border: 4px solid #fdf6e3;
+            animation: slideUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .loom-grid {
+            display: grid;
+            grid-template-columns: repeat(15, 1fr);
+            gap: 1px;
+            background-color: #5d4037;
+            border: 12px solid #3e2723;
+            border-radius: 12px;
+            padding: 6px;
+            width: fit-content;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        }
+        .loom-cell {
+            width: 32px;
+            height: 32px;
+            background-color: #ffffff;
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+            border: 0.5px solid #f0f0f0;
+        }
+        .loom-cell::before, .loom-cell::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 141.4%;
+            height: 1px;
+            background-color: #f0f0f0;
+            z-index: 5;
+            pointer-events: none;
+        }
+        .loom-cell::before { transform: rotate(45deg); transform-origin: top left; }
+        .loom-cell::after { transform: rotate(-45deg); transform-origin: top right; left: auto; right: 0; }
+
+        .triangle {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transition: background-color 0.15s ease;
+            z-index: 2;
+        }
+
+        .tri-top { clip-path: polygon(0 0, 100% 0, 50% 50%); }
+        .tri-right { clip-path: polygon(100% 0, 100% 100%, 50% 50%); }
+        .tri-bottom { clip-path: polygon(0 100%, 100% 100%, 50% 50%); }
+        .tri-left { clip-path: polygon(0 0, 0 100%, 50% 50%); }
+
+        .palette-color {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            cursor: pointer;
+            border: 3px solid white;
+            box-shadow: 0 3px 5px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+        }
+        .palette-color.active {
+            border-color: #3e2723;
+            transform: scale(1.15);
+        }
+        .motif-list {
+            max-height: 550px;
+            overflow-y: auto;
+        }
+        
+        #motif-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .modal-content {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 2.5rem;
+            max-width: 550px;
+            width: 100%;
+            text-align: center;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+        @keyframes popIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .motif-img-small {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+        }
+        .motif-img-large {
+            max-width: 250px;
+            max-height: 250px;
+            object-fit: contain;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-6">
+
+    <!-- Şık Yönerge Modalı -->
+    <div id="welcome-overlay">
+        <div class="welcome-card">
+            <div class="text-6xl mb-6">🎨</div>
+            <h1 class="text-4xl font-black text-brown-900 mb-4">Küçük Dokumacı, Merhaba!</h1>
+            <p class="text-lg text-gray-600 mb-8 leading-relaxed">
+                Kendi kilimini dokumaya ve motiflerin gizemli dünyasını keşfetmeye hazır mısın? 
+            </p>
+            <div class="space-y-4">
+                <button onclick="startGame()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-5 px-8 rounded-2xl shadow-xl transition-all transform hover:scale-105 active:scale-95 flex items-center justify-center gap-3 text-xl">
+                    <span>🔊</span>
+                    Yönergeyi Dinle ve Başla
+                </button>
+                <p class="text-xs text-gray-400 font-medium italic">Sesin gelmesi için butona basman yeterli!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ana İçerik (Her Zaman Arkada Görünür Ama Bulanık) -->
+    <div class="max-w-full mx-auto" id="main-content">
+        <header class="text-center mb-6">
+            <h1 class="text-4xl font-extrabold text-brown-900 mb-2 tracking-tight">🧶 GELENEKSEL DOKUMA DÜNYASI</h1>
+            <p class="text-orange-900 font-semibold opacity-80 italic">Anadolu'nun kadim motiflerini keşfet ve doku!</p>
+        </header>
+
+        <div class="flex flex-col lg:flex-row gap-6 items-start">
+            
+            <!-- Sol Panel: Araçlar -->
+            <div class="w-full lg:w-1/4 space-y-4">
+                <div class="bg-white p-5 rounded-3xl shadow-lg border-t-8 border-red-500">
+                    <h2 class="text-xl font-bold mb-3 text-gray-800">🎨 Renk Paleti</h2>
+                    <div class="grid grid-cols-4 gap-2 mb-4" id="palette"></div>
+                    
+                    <div class="flex gap-2">
+                        <button onclick="undo()" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 rounded-xl transition shadow-md active:scale-95 flex items-center justify-center gap-1">
+                            <span>↩️</span> Geri Al
+                        </button>
+                        <button onclick="resetLoom()" class="flex-1 bg-stone-800 hover:bg-black text-white font-bold py-2 rounded-xl transition shadow-md active:scale-95 flex items-center justify-center gap-1">
+                            <span>🔄</span> Sıfırla
+                        </button>
+                    </div>
+                </div>
+
+                <div id="info-box" class="bg-white p-5 rounded-3xl shadow-lg border-l-8 border-orange-500">
+                    <h3 class="font-bold text-orange-800 mb-1">İpucu</h3>
+                    <p class="text-xs text-gray-700 leading-relaxed">
+                        Motiflerin üzerine tıklayarak onları <b>büyütebilir</b> ve anlamlarını detaylıca okuyabilirsin.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Orta Panel: Yatay Tezgah -->
+            <div class="w-full lg:w-2/4 flex flex-col items-center bg-stone-50 p-6 rounded-[32px] shadow-inner border-2 border-stone-200">
+                <div id="loom" class="loom-grid"></div>
+                <div class="mt-4 flex items-center gap-2">
+                    <span class="px-3 py-1 bg-brown-100 text-brown-700 text-[10px] font-bold rounded-full uppercase tracking-widest">Yatay Dokuma Tezgahı</span>
+                </div>
+            </div>
+
+            <!-- Sağ Panel: Motifler -->
+            <div class="w-full lg:w-1/4 bg-white p-5 rounded-3xl shadow-lg border-t-8 border-green-600">
+                <h2 class="text-xl font-bold mb-3 text-gray-800 flex items-center gap-2">
+                    📜 Temel Motifler
+                </h2>
+                <div class="motif-list space-y-3 pr-2" id="motif-container"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Motif Büyütme Modalı -->
+    <div id="motif-modal" onclick="closeModal()">
+        <div class="modal-content shadow-2xl" onclick="event.stopPropagation()">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-black text-2xl font-bold">&times;</button>
+            <h2 id="modal-title" class="text-3xl font-black text-brown-900 mb-6"></h2>
+            <div class="mb-6 bg-stone-50 p-8 rounded-3xl border-2 border-stone-100 flex items-center justify-center">
+                <img id="modal-img" src="" alt="Motif Detay" class="motif-img-large">
+            </div>
+            <p id="modal-desc" class="text-lg text-gray-600 mb-8 leading-relaxed px-2"></p>
+            <button onclick="closeModal()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-2xl shadow-lg transition transform active:scale-95 text-lg">
+                Hemen Dokumaya Başla
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const loom = document.getElementById('loom');
+        const palette = document.getElementById('palette');
+        const motifContainer = document.getElementById('motif-container');
+        const modal = document.getElementById('motif-modal');
+        const welcomeOverlay = document.getElementById('welcome-overlay');
+        const mainContent = document.getElementById('main-content');
+        
+        // Ses Dosyaları Tanımı
+        const instructionAudio = new Audio('1.mp3');
+
+        // Oyunu başlatan fonksiyon
+        function startGame() {
+            // Sesi oynat
+            instructionAudio.play().catch(e => console.log("Ses oynatılamadı:", e));
+            
+            // Ekranları değiştir - Yumuşak geçiş
+            welcomeOverlay.style.opacity = '0';
+            welcomeOverlay.style.pointerEvents = 'none';
+            setTimeout(() => {
+                welcomeOverlay.style.display = 'none';
+            }, 500);
+        }
+
+        const colors = [
+            '#8B0000', '#FFC107', '#2E7D32', '#0A3D62', 
+            '#5D4037', '#E64A19', '#4B2C20', '#0097A7',
+            '#C2185B', '#455A64', '#FFFFFF', '#212121'
+        ];
+        
+        const motifs = [
+            { name: 'Eli Belinde', img: '1.png', audio: 'a.mp3', desc: 'Kadını, doğurganlığı ve bereketi simgeler. Anadolu motiflerinin en eskisidir.', mainColor: '#8B0000' },
+            { name: 'Koç Boynuzu', img: '2.png', audio: 'b.mp3', desc: 'Güç, kuvvet ve erkekliği temsil eder. Koç boynuzuna benzer eğrilerle çizilir.', mainColor: '#0A3D62' },
+            { name: 'Göz', img: '3.png', audio: 'c.mp3', desc: 'Kötü bakıştan koruduğuna inanılır. Nazar motifi olarak kilimlerin ortasına dokunur.', mainColor: '#0A3D62' },
+            { name: 'Su Yolu', img: '4.png', audio: 'd.mp3', desc: 'Suyun akışını ve hayatın sürekliliğini sembolize eder. Yaşam enerjisini temsil eder.', mainColor: '#0097A7' },
+            { name: 'Yılan', img: '5.png', audio: 'e.mp3', desc: 'Koruyucu bir güçtür. Kötülüklerden sakındırdığına ve şifa verdiğine inanılır.', mainColor: '#2E7D32' },
+            { name: 'Muska', img: '6.png', audio: 'f.mp3', desc: 'Koruma ve güç anlamı taşır. Uğur getirir, nazara karşı bir kalkandır.', mainColor: '#FFC107' }
+        ];
+
+        let selectedColor = colors[0];
+        let history = [];
+
+        // Palet oluştur
+        colors.forEach((color, index) => {
+            const btn = document.createElement('div');
+            btn.className = `palette-color ${index === 0 ? 'active' : ''}`;
+            btn.style.backgroundColor = color;
+            btn.onclick = () => {
+                document.querySelectorAll('.palette-color').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedColor = color;
+            };
+            palette.appendChild(btn);
+        });
+
+        // Motif kartlarını yükle
+        motifs.forEach(m => {
+            const card = document.createElement('div');
+            card.className = `p-3 rounded-2xl flex items-center gap-4 bg-stone-50 border border-stone-200 cursor-pointer hover:bg-white hover:shadow-lg hover:-translate-x-1 transition-all group`;
+            card.innerHTML = `
+                <div class="w-14 h-14 rounded-xl bg-white flex items-center justify-center p-2 shadow-inner group-hover:scale-105 transition">
+                    <img src="${m.img}" class="motif-img-small" alt="${m.name}">
+                </div>
+                <div class="flex-1">
+                    <h4 class="font-bold text-brown-900 text-sm">${m.name}</h4>
+                    <p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest">Detaylı İncele 🔍</p>
+                </div>
+            `;
+            card.onclick = () => {
+                const audio = new Audio(m.audio);
+                audio.play();
+                openModal(m);
+            };
+            motifContainer.appendChild(card);
+        });
+
+        function openModal(motif) {
+            document.getElementById('modal-title').innerText = motif.name;
+            document.getElementById('modal-desc').innerText = motif.desc;
+            document.getElementById('modal-img').src = motif.img;
+            modal.style.display = 'flex';
+            
+            selectedColor = motif.mainColor;
+            document.querySelectorAll('.palette-color').forEach(b => {
+                b.classList.remove('active');
+                const temp = document.createElement('div');
+                temp.style.color = motif.mainColor;
+                if(b.style.backgroundColor === temp.style.color) b.classList.add('active');
+            });
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+
+        // Tezgah oluşturma
+        for (let i = 0; i < 150; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'loom-cell';
+            
+            ['top', 'right', 'bottom', 'left'].forEach(pos => {
+                const tri = document.createElement('div');
+                tri.className = `triangle tri-${pos}`;
+                tri.onclick = (e) => { 
+                    e.stopPropagation(); 
+                    const oldColor = tri.style.backgroundColor || 'transparent';
+                    if (oldColor !== selectedColor) {
+                        history.push({ element: tri, prevColor: oldColor });
+                        tri.style.backgroundColor = selectedColor; 
+                    }
+                };
+                cell.appendChild(tri);
+            });
+            loom.appendChild(cell);
+        }
+
+        function undo() {
+            const lastAction = history.pop();
+            if (lastAction) {
+                lastAction.element.style.backgroundColor = lastAction.prevColor;
+            }
+        }
+
+        function resetLoom() {
+            if(confirm('Tezgahı tamamen temizlemek istiyor musunuz?')) {
+                document.querySelectorAll('.triangle').forEach(tri => tri.style.backgroundColor = 'transparent');
+                history = [];
+            }
+        }
+    </script>
+</body>
+</html>
