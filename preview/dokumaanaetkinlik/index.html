@@ -1,0 +1,205 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Etkileşimli Video Eğitimi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+
+        body {
+            background-color: #fdf6e3;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: #2d241e;
+        }
+
+        .video-container {
+            position: relative;
+            max-width: 900px;
+            margin: 2rem auto;
+            border-radius: 2rem;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            background: #2d241e;
+        }
+
+        video {
+            width: 100%;
+            display: block;
+        }
+
+        #question-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(45, 36, 30, 0.8);
+            backdrop-filter: blur(10px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            padding: 20px;
+        }
+
+        /* Sütlü Kahve Tasarımlı Soru Kartı */
+        .question-card {
+            background: #f4ece2; /* Sütlü kahve tonu */
+            padding: 2.5rem;
+            border-radius: 2.5rem;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            transform: scale(0.9);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            border: 2px solid #d7ccc8;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+        }
+
+        .question-card.active {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .question-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            line-height: 1.5;
+            color: #4e342e;
+            margin-bottom: 2rem;
+            font-weight: 700;
+        }
+
+        .tag {
+            display: inline-block;
+            background: #efe5d9;
+            color: #795548;
+            padding: 0.4rem 1.2rem;
+            border-radius: 99px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 1.2rem;
+            border: 1px solid #d7ccc8;
+        }
+
+        .continue-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: #6d4c41; /* Sütlü kahve ile uyumlu buton */
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 1rem;
+            font-weight: 700;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .continue-btn:hover {
+            background: #5d4037;
+            transform: translateY(-2px);
+        }
+
+        .continue-btn:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="p-4">
+
+    <div class="max-w-4xl mx-auto text-center mt-8 mb-4">
+        <h1 class="text-3xl font-black text-amber-900 mb-2">🎬 İnteraktif Etkileşimli Video</h1>
+        <p class="text-amber-800 text-sm">Anadolu Dokuma Kültürü: Videoyu izleyin ve soruları yanıtlayın.</p>
+    </div>
+
+    <div class="video-container">
+        <!-- Video Etiketi -->
+        <video id="myVideo" controls>
+            <source src="1.mp4" type="video/mp4">
+            Tarayıcınız video etiketini desteklemiyor.
+        </video>
+
+        <!-- Soru Katmanı -->
+        <div id="question-overlay">
+            <div class="question-card" id="qCard">
+                <div class="tag">Bilgi Durağı</div>
+                <h2 id="question-text" class="question-title"></h2>
+                
+                <button onclick="closeQuestion()" class="continue-btn">
+                    <span>▶️</span> Videoya Devam Et
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-4xl mx-auto mt-6 bg-white p-6 rounded-2xl shadow-sm border border-amber-100">
+        <h3 class="font-bold text-amber-900 mb-2 text-sm">Nasıl İlerlerim?</h3>
+        <ul class="text-xs text-slate-600 space-y-1">
+            <li>• Video belirli saniyelerde durarak size sorular yöneltecek.</li>
+            <li>• Soruyu okuyup üzerine düşündükten sonra devam butonuna basabilirsiniz.</li>
+        </ul>
+    </div>
+
+    <script>
+        const video = document.getElementById('myVideo');
+        const overlay = document.getElementById('question-overlay');
+        const qCard = document.getElementById('qCard');
+        const qText = document.getElementById('question-text');
+
+        // Sorular ve Süreler
+        const quizData = [
+            {
+                time: 16,
+                question: "Videoya göre dokuma nedir?",
+                asked: false
+            },
+            {
+                time: 51,
+                question: "Videodaki teyze duygularını neyle anlatmıştır?",
+                asked: false
+            },
+            {
+                time: 147,
+                question: "“Dokuma Fatıma Ana'nın ..................” cümlesini nasıl tamamlarsın?",
+                asked: false
+            }
+        ];
+
+        video.addEventListener('timeupdate', () => {
+            const currentTime = Math.floor(video.currentTime);
+            const currentQuestion = quizData.find(q => q.time === currentTime && !q.asked);
+            
+            if (currentQuestion) {
+                pauseAndShowQuestion(currentQuestion);
+            }
+        });
+
+        function pauseAndShowQuestion(qData) {
+            video.pause();
+            qData.asked = true; 
+            qText.innerText = qData.question;
+            overlay.style.display = 'flex';
+            setTimeout(() => qCard.classList.add('active'), 10);
+        }
+
+        function closeQuestion() {
+            qCard.classList.remove('active');
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                video.play();
+            }, 300);
+        }
+    </script>
+</body>
+</html>

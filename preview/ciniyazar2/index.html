@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Çini Sanatı: Simetriyi Tamamla</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Quicksand:wght@300;500&display=swap');
+
+        :root {
+            --cini-blue: #005596;
+            --cini-turquoise: #00A59D;
+            --cini-red: #C41E3A;
+            --cini-white: #F9F7F2;
+        }
+
+        body {
+            background-color: #f0ede5;
+            font-family: 'Quicksand', sans-serif;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Cinzel', serif;
+        }
+
+        .cini-border {
+            border: 12px solid transparent;
+            border-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect fill="none" stroke="%23005596" stroke-width="5" x="5" y="5" width="90" height="90"/><circle fill="%23005596" cx="50" cy="5" r="5"/><circle fill="%23005596" cx="50" cy="95" r="5"/><circle fill="%23005596" cx="5" cy="50" r="5"/><circle fill="%23005596" cx="95" cy="50" r="5"/></svg>') 30 stretch;
+        }
+
+        .canvas-container {
+            position: relative;
+            cursor: crosshair;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            touch-action: none;
+        }
+
+        .guide-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: rgba(0, 85, 150, 0.3);
+            border-left: 1px dashed var(--cini-blue);
+            z-index: 10;
+        }
+
+        .info-card {
+            background: white;
+            border-left: 5px solid var(--cini-blue);
+            transition: all 0.5s ease;
+            transform: translateY(20px);
+            opacity: 0;
+        }
+
+        .info-card.active {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .btn-cini {
+            background: var(--cini-blue);
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .btn-cini:hover {
+            background: var(--cini-turquoise);
+            transform: scale(1.05);
+        }
+
+        #pattern-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            opacity: 0.15;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col items-center p-4">
+
+    <!-- Header -->
+    <header class="text-center mb-6">
+        <h1 class="text-3xl md:text-5xl font-bold text-[#005596] mb-2">ÇİNİ MOZAİĞİ</h1>
+        <p class="text-lg text-gray-600 italic">Deseni Tamamla, Geleneği Keşfet</p>
+    </header>
+
+    <main class="w-full max-w-4xl grid grid-cols-1 md:grid-cols-3 gap-8">
+
+        <!-- Oyun Alanı -->
+        <div class="md:col-span-2 flex flex-col items-center">
+            <div class="canvas-container cini-border overflow-hidden" id="canvas-wrapper">
+                <div class="guide-line"></div>
+                <canvas id="mainCanvas"></canvas>
+                <canvas id="pattern-overlay"></canvas>
+            </div>
+
+            <div class="mt-6 flex gap-4">
+                <button id="clearBtn"
+                    class="px-6 py-2 border-2 border-[#005596] text-[#005596] rounded-full font-bold hover:bg-[#005596] hover:text-white transition">Temizle</button>
+                <button id="checkBtn" class="btn-cini px-8 py-2 rounded-full font-bold shadow-lg">Simeriyi Kontrol
+                    Et</button>
+            </div>
+        </div>
+
+        <!-- Bilgi Paneli -->
+        <div class="flex flex-col gap-6">
+            <div id="level-indicator" class="text-[#005596] font-bold text-xl mb-2">Bölüm 1: Lale Motifi</div>
+
+            <div id="info-box" class="info-card p-6 rounded-lg shadow-inner">
+                <h3 class="text-xl font-bold text-[#005596] mb-3" id="info-title">Geleneksel Sanat</h3>
+                <p class="text-gray-700 leading-relaxed italic" id="info-text">
+                    Lütfen sol taraftaki deseni sağ tarafa simetrik olarak çizmeye çalışın. Tamamladığınızda size bu
+                    motif hakkında bilgi vereceğim.
+                </p>
+                <div class="mt-4 text-xs text-gray-400 font-medium italic">Kaynak: T.C. Kültür ve Turizm Bakanlığı
+                    (ktb.gov.tr)</div>
+            </div>
+
+            <div class="mt-auto bg-[#005596] text-white p-4 rounded-lg text-center hidden" id="next-btn-container">
+                <p class="mb-3 font-medium text-sm">Harika iş! Yeni bir motif öğrenmeye hazır mısın?</p>
+                <button id="nextLevelBtn"
+                    class="w-full bg-white text-[#005596] py-2 rounded font-bold hover:bg-gray-100 transition">Sonraki
+                    Motife Geç</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const canvas = document.getElementById('mainCanvas');
+        const overlay = document.getElementById('pattern-overlay');
+        const ctx = canvas.getContext('2d');
+        const octx = overlay.getContext('2d');
+        const wrapper = document.getElementById('canvas-wrapper');
+
+        let isDrawing = false;
+        let currentLevel = 0;
+        let points = [];
+
+        const levels = [
+            {
+                name: "Klasik Lale",
+                title: "Lale Motifi",
+                info: "Türk çini sanatında lale en kutsal motiflerden biridir.16. yüzyıl İznik çinilerinde bu desen zirveye ulaşmıştır.",
+                draw: (c, width, height) => {
+                    const mid = width / 2;
+                    c.strokeStyle = '#C41E3A';
+                    c.lineWidth = 4;
+                    c.beginPath();
+                    // Lale sol yarısı
+                    c.moveTo(mid, height * 0.8);
+                    c.bezierCurveTo(mid - 80, height * 0.7, mid - 100, height * 0.4, mid - 10, height * 0.2);
+                    c.stroke();
+                    c.beginPath();
+                    c.moveTo(mid, height * 0.5);
+                    c.bezierCurveTo(mid - 40, height * 0.4, mid - 50, height * 0.3, mid - 20, height * 0.15);
+                    c.stroke();
+                }
+            },
+            {
+                name: "Bahar Karanfili",
+                title: "Karanfil Motifi",
+                info: "Karanfil, çini sanatında baharın gelişini, bolluk ve bereketi temsil eder. Genellikle yelpaze formunda açılmış yapraklarla betimlenir. Kütahya çini geleneğinde de sıkça kullanılan bu motif, doğanın canlanışını simgeler.",
+                draw: (c, width, height) => {
+                    const mid = width / 2;
+                    c.strokeStyle = '#00A59D';
+                    c.lineWidth = 4;
+                    c.beginPath();
+                    c.moveTo(mid, height * 0.9);
+                    c.lineTo(mid - 10, height * 0.7);
+                    c.stroke();
+                    // Yelpaze sol
+                    for (let i = 0; i < 3; i++) {
+                        c.beginPath();
+                        c.moveTo(mid - 10, height * 0.7);
+                        c.quadraticCurveTo(mid - 60 - (i * 20), height * 0.5, mid - 50 - (i * 30), height * 0.3);
+                        c.stroke();
+                    }
+                }
+            },
+            {
+                name: "Rumi Geometrik",
+                title: "Rumi ve Geçme Sanatı",
+                info: "Rumi motifi, Anadolu Selçuklu döneminden bu yana kullanılan, stilize edilmiş hayvan veya kanat figürlerinden türetilen bir süslemedir. Sonsuzluğu simgeleyen geometrik geçmelerle birlikte kullanılır; evrenin düzenini temsil eder.",
+                draw: (c, width, height) => {
+                    const mid = width / 2;
+                    c.strokeStyle = '#005596';
+                    c.lineWidth = 4;
+                    c.beginPath();
+                    c.moveTo(mid, height * 0.2);
+                    c.arc(mid, height * 0.5, 80, 1.5 * Math.PI, 0.5 * Math.PI, true);
+                    c.stroke();
+                    c.beginPath();
+                    c.moveTo(mid, height * 0.5);
+                    c.lineTo(mid - 60, height * 0.5);
+                    c.lineTo(mid - 30, height * 0.3);
+                    c.closePath();
+                    c.stroke();
+                }
+            }
+        ];
+
+        function initCanvas() {
+            const size = Math.min(window.innerWidth * 0.9, 500);
+            canvas.width = size;
+            canvas.height = size;
+            overlay.width = size;
+            overlay.height = size;
+            loadLevel();
+        }
+
+        function loadLevel() {
+            const level = levels[currentLevel];
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            octx.clearRect(0, 0, overlay.width, overlay.height);
+
+            document.getElementById('level-indicator').innerText = `Bölüm ${currentLevel + 1}: ${level.name}`;
+            document.getElementById('info-box').classList.remove('active');
+            document.getElementById('next-btn-container').classList.add('hidden');
+
+            level.draw(ctx, canvas.width, canvas.height);
+
+            // Hayalet çizgi (ipucu için overlay'e)
+            octx.setLineDash([5, 5]);
+            octx.globalAlpha = 0.2;
+            const tempCtx = {
+                strokeStyle: '#333',
+                lineWidth: 2,
+                beginPath: () => octx.beginPath(),
+                moveTo: (x, y) => {
+                    const mid = canvas.width / 2;
+                    octx.moveTo(mid + (mid - x), y);
+                },
+                lineTo: (x, y) => {
+                    const mid = canvas.width / 2;
+                    octx.lineTo(mid + (mid - x), y);
+                },
+                bezierCurveTo: (cp1x, cp1y, cp2x, cp2y, x, y) => {
+                    const mid = canvas.width / 2;
+                    octx.bezierCurveTo(mid + (mid - cp1x), cp1y, mid + (mid - cp2x), cp2y, mid + (mid - x), y);
+                },
+                quadraticCurveTo: (cpx, cpy, x, y) => {
+                    const mid = canvas.width / 2;
+                    octx.quadraticCurveTo(mid + (mid - cpx), cpy, mid + (mid - x), y);
+                },
+                arc: (x, y, r, sa, ea, anti) => {
+                    const mid = canvas.width / 2;
+                    octx.arc(mid + (mid - x), y, r, Math.PI - sa, Math.PI - ea, !anti);
+                },
+                stroke: () => octx.stroke(),
+                closePath: () => octx.closePath()
+            };
+            level.draw(tempCtx, canvas.width, canvas.height);
+        }
+
+        function startDrawing(e) {
+            isDrawing = true;
+            draw(e);
+        }
+
+        function stopDrawing() {
+            isDrawing = false;
+            ctx.beginPath();
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX || e.touches[0].clientX) - rect.left;
+            const y = (e.clientY || e.touches[0].clientY) - rect.top;
+
+            // Sadece sağ tarafa çizim izni ver
+            if (x < canvas.width / 2) return;
+
+            ctx.lineWidth = 5;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = '#005596';
+
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+        }
+
+        document.getElementById('checkBtn').addEventListener('click', () => {
+            const level = levels[currentLevel];
+            const infoBox = document.getElementById('info-box');
+
+            document.getElementById('info-title').innerText = level.title;
+            document.getElementById('info-text').innerText = level.info;
+            infoBox.classList.add('active');
+
+            document.getElementById('next-btn-container').classList.remove('hidden');
+
+            // Çizimi canlandır: Tamamlanan deseni renkli yap
+            octx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.setLineDash([]);
+            const mirrorCtx = {
+                strokeStyle: ctx.strokeStyle,
+                lineWidth: 4,
+                beginPath: () => ctx.beginPath(),
+                moveTo: (x, y) => {
+                    const mid = canvas.width / 2;
+                    ctx.moveTo(mid + (mid - x), y);
+                },
+                lineTo: (x, y) => {
+                    const mid = canvas.width / 2;
+                    ctx.lineTo(mid + (mid - x), y);
+                },
+                bezierCurveTo: (cp1x, cp1y, cp2x, cp2y, x, y) => {
+                    const mid = canvas.width / 2;
+                    ctx.bezierCurveTo(mid + (mid - cp1x), cp1y, mid + (mid - cp2x), cp2y, mid + (mid - x), y);
+                },
+                quadraticCurveTo: (cpx, cpy, x, y) => {
+                    const mid = canvas.width / 2;
+                    ctx.quadraticCurveTo(mid + (mid - cpx), cpy, mid + (mid - x), y);
+                },
+                arc: (x, y, r, sa, ea, anti) => {
+                    const mid = canvas.width / 2;
+                    ctx.arc(mid + (mid - x), y, r, Math.PI - sa, Math.PI - ea, !anti);
+                },
+                stroke: () => ctx.stroke(),
+                closePath: () => ctx.closePath()
+            };
+            level.draw(mirrorCtx, canvas.width, canvas.height);
+        });
+
+        document.getElementById('nextLevelBtn').addEventListener('click', () => {
+            currentLevel = (currentLevel + 1) % levels.length;
+            loadLevel();
+        });
+
+        document.getElementById('clearBtn').addEventListener('click', () => {
+            loadLevel();
+        });
+
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+
+        canvas.addEventListener('touchstart', (e) => { e.preventDefault(); startDrawing(e); });
+        canvas.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e); });
+        canvas.addEventListener('touchend', stopDrawing);
+
+        window.onload = initCanvas;
+        window.onresize = initCanvas;
+    </script>
+</body>
+
+</html>

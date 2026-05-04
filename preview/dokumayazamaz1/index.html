@@ -1,0 +1,372 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dokuma Yolculuğu</title>
+    <style>
+        :root {
+            --primary: #e67e22; /* Sıcak Turuncu */
+            --secondary: #c0392b; /* Koyu Kırmızı/Bordo */
+            --bg-card: rgba(255, 250, 240, 0.95); /* Krem rengi cam */
+            --accent: #f1c40f; /* Altın Sarısı */
+        }
+
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            overflow: hidden;
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            background: #000;
+        }
+
+        /* Sahne Yönetimi */
+        .game-canvas {
+            position: absolute; width: 100vw; height: 100vh;
+            background: url('1.jpg') no-repeat center center;
+            background-size: cover; z-index: 1; transition: opacity 1s;
+            display: block;
+        }
+
+        #map-stage {
+            position: absolute; width: 100vw; height: 100vh;
+            background: url('2.jpg') no-repeat center center;
+            background-size: cover; z-index: 5;
+            display: none; flex-direction: column; opacity: 0; transition: opacity 1s;
+        }
+
+        #map-container { width: 100vw; height: 100vh; position: relative; }
+
+        /* Estetik ve Zarif Kartlar */
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 4000; backdrop-filter: blur(5px);
+        }
+
+        .card {
+            background: var(--bg-card);
+            padding: 20px; border-radius: 30px;
+            max-width: 340px; width: 80%;
+            border: 4px solid var(--primary);
+            display: flex; flex-direction: column; align-items: center;
+            box-shadow: 0 12px 0px rgba(230, 126, 34, 0.2);
+            text-align: center;
+        }
+
+        .card h1 { font-size: 1.5rem; margin-bottom: 8px; }
+        .card p { font-size: 0.95rem; margin-bottom: 12px; }
+
+        /* Bilgi Panelleri */
+        #info-panel, #map-info-panel {
+            position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            width: 80%; max-width: 380px;
+            background: var(--bg-card);
+            padding: 20px; border-radius: 30px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.4);
+            z-index: 3000; text-align: center;
+            border: 4px solid var(--secondary);
+            opacity: 0; visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .active-panel {
+            opacity: 1 !important; visibility: visible !important;
+            transform: translate(-50%, -50%) scale(1) !important;
+        }
+
+        /* Halı Noktaları */
+        .dot {
+            position: absolute; width: 60px; height: 60px;
+            background: #fff; border: 4px solid var(--secondary);
+            border-radius: 50%; cursor: pointer;
+            display: flex; justify-content: center; align-items: center;
+            font-weight: bold; color: var(--secondary); font-size: 1.8rem;
+            z-index: 1000;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+            transform: translate(-50%, -50%);
+        }
+        
+        #d1 { top: 25%; left: 20%; }
+        #d2 { top: 35%; left: 65%; }
+        #d3 { top: 65%; left: 30%; }
+        #d4 { top: 75%; left: 70%; }
+        #d5 { top: 50%; left: 45%; }
+
+        .dot:hover { transform: translate(-50%, -50%) scale(1.15) rotate(10deg); background: var(--accent); }
+        .dot.visited { background: #ecf0f1; color: #bdc3c7; border-color: #bdc3c7; opacity: 0.8; }
+
+        /* Şehir Noktaları */
+        .city-hotspot {
+            position: absolute; width: 32px; height: 32px;
+            background: var(--accent); border: 3px solid #fff;
+            border-radius: 50%; cursor: pointer; z-index: 1000;
+            transform: translate(-50%, -50%); box-shadow: 0 0 20px var(--accent);
+        }
+        .city-hotspot:hover { transform: translate(-50%, -50%) scale(1.4); background: var(--secondary); }
+
+        .pos-manisa  { top: 48%; left: 13%; }
+        .pos-usak    { top: 51%; left: 19%; } 
+        .pos-kocaeli { top: 21%; left: 22%; }
+        .pos-isparta { top: 67%; left: 26%; }
+        .pos-kayseri { top: 53%; left: 54%; } 
+
+        /* Butonlar */
+        .btn {
+            background: var(--secondary); color: white; border: none;
+            padding: 10px 25px; font-size: 1rem; border-radius: 50px;
+            cursor: pointer; font-weight: bold; margin-top: 10px;
+            box-shadow: 0 4px 0px #8e1e14; transition: all 0.2s;
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0px #8e1e14; }
+
+        .audio-icon-btn {
+            background: var(--accent); border: 4px solid #fff; cursor: pointer;
+            width: 80px; height: 80px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 15px; box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+        .audio-icon-btn svg { width: 40px; height: 40px; fill: var(--secondary); }
+
+        .hali-preview {
+            width: 100%; height: 180px; background: #ddd;
+            border-radius: 15px; margin: 12px 0; overflow: hidden;
+            border: 3px solid var(--primary); cursor: zoom-in;
+        }
+        .hali-preview img { width: 100%; height: 100%; object-fit: cover; }
+
+        .hidden { display: none !important; }
+        
+        /* Fullscreen */
+        #fullscreen-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 5000;
+            display: none; justify-content: center; align-items: center;
+        }
+        #fullscreen-img { max-width: 90%; max-height: 85%; border: 5px solid #fff; border-radius: 15px; }
+
+        h1, h2, h3 { margin: 8px 0; color: var(--secondary); }
+        p { color: #555; line-height: 1.4; }
+
+    </style>
+</head>
+<body>
+
+    <audio id="audio-player" preload="auto"></audio>
+    <!-- Efektler için ayrı bir ses nesnesi -->
+    <audio id="sfx-player" preload="auto" src="1.mp3"></audio>
+
+    <div id="fullscreen-overlay" onclick="this.style.display='none'">
+        <img id="fullscreen-img" src="">
+    </div>
+
+    <!-- GİRİŞ EKRANI -->
+    <div id="start-screen" class="overlay">
+        <div class="card">
+            <h1>Hoş Geldin!</h1>
+            <p>Halıların sihirli dünyasını keşfetmeye hazır mısın?</p>
+            <button class="audio-icon-btn" onclick="playIntro()">
+                <svg viewBox="0 0 24 24"><path d="M14,3.23V5.29C16.89,6.15 19,8.83 19,12C19,15.17 16.89,17.85 14,18.71V20.77C18.03,19.86 21,16.28 21,12C21,7.72 18.03,4.14 14,3.23M16.5,12C16.5,10.23 15.5,8.71 14,7.97V16.02C15.5,15.29 16.5,13.77 16.5,12M3,9V15H7L12,20V4L7,9H3Z"/></svg>
+            </button>
+            <p style="font-size: 0.75rem; color: var(--primary);">Dinlemek için düğmeye dokun!</p>
+        </div>
+    </div>
+
+    <!-- ARA GEÇİŞ EKRANI -->
+    <div id="transition-screen" class="overlay hidden">
+        <div class="card" style="border-color: #27ae60;">
+            <h1 style="color: #27ae60;">Harikasın!</h1>
+            <p>Tüm sırları buldun. Şimdi Türkiye turuna çıkalım mı?</p>
+            <!-- Sesi dinleten buton -->
+            <button id="transition-audio-btn" class="audio-icon-btn" style="background: #27ae60;" onclick="playTransitionAudio()">
+                <svg viewBox="0 0 24 24" style="fill: #fff;"><path d="M14,3.23V5.29C16.89,6.15 19,8.83 19,12C19,15.17 16.89,17.85 14,18.71V20.77C18.03,19.86 21,16.28 21,12C21,7.72 18.03,4.14 14,3.23M16.5,12C16.5,10.23 15.5,8.71 14,7.97V16.02C15.5,15.29 16.5,13.77 16.5,12M3,9V15H7L12,20V4L7,9H3Z"/></svg>
+            </button>
+            <!-- Haritaya geçiş butonu (başlangıçta gizli) -->
+            <button id="map-start-btn" class="btn hidden" style="background: #27ae60; box-shadow: 0 4px 0 #1e8449;" onclick="showMapStage()">Haritayı Aç 🗺️</button>
+        </div>
+    </div>
+
+    <!-- BİTİŞ EKRANI -->
+    <div id="final-screen" class="overlay hidden">
+        <div class="card">
+            <h1>Mükemmel!</h1>
+            <p>Sen gerçek bir dokuma ustası oldun!</p>
+            <div style="margin: 10px 0;">🌟 🏆 🌟</div>
+            <button class="btn" onclick="location.reload()">Baştan Oyna 🔄</button>
+        </div>
+    </div>
+
+    <!-- BİLGİ PANELLERİ -->
+    <div id="info-panel">
+        <h2 id="info-title"></h2>
+        <p id="info-text"></p>
+        <button class="btn" onclick="closeInfoPanel()">Anladım!</button>
+    </div>
+
+    <div id="map-info-panel">
+        <h2 id="map-province-name"></h2>
+        <div class="hali-preview" onclick="openFullscreen()">
+            <img id="map-hali-img" src="">
+        </div>
+        <p id="map-province-desc"></p>
+        <button class="btn" onclick="closeMapPanel()">Süper!</button>
+    </div>
+
+    <!-- 1. AŞAMA (Halı) -->
+    <div id="canvas-stage" class="game-canvas">
+        <div class="dot" id="d1" onclick="handleInteraction(1)">?</div>
+        <div class="dot" id="d2" onclick="handleInteraction(2)">?</div>
+        <div class="dot" id="d3" onclick="handleInteraction(3)">?</div>
+        <div class="dot" id="d4" onclick="handleInteraction(4)">?</div>
+        <div class="dot" id="d5" onclick="handleInteraction(5)">?</div>
+    </div>
+
+    <!-- 2. AŞAMA (Harita) -->
+    <div id="map-stage">
+        <div id="map-container">
+            <div class="city-hotspot pos-manisa" onclick="showProvinceInfo('manisa')"></div>
+            <div class="city-hotspot pos-usak" onclick="showProvinceInfo('usak')"></div>
+            <div class="city-hotspot pos-kocaeli" onclick="showProvinceInfo('kocaeli')"></div>
+            <div class="city-hotspot pos-isparta" onclick="showProvinceInfo('isparta')"></div>
+            <div class="city-hotspot pos-kayseri" onclick="showProvinceInfo('kayseri')"></div>
+        </div>
+        <button id="back-btn" class="btn" style="position: absolute; bottom: 20px; left: 20px;" onclick="location.reload()">🏠 Ana Menü</button>
+    </div>
+
+    <script>
+        const facts = {
+            1: { title: "Dokuma nedir?", text: "Renkli iplerin birbirine sarılarak bir kumaş oluşturmasına dokuma denir.", ses: "a.mp3" },
+            2: { title: "Hangi malzemeler kullanılır?", text: "Yumuşacık koyun yünleri, pamuklar ve parlayan ipek ipler kullanılır.", ses: "d.mp3" }, 
+            3: { title: "En çok kullanılan motifler nelerdir?", text: "Mutluluk için 'çiçek', güç için 'boynuz' ve korunmak için 'el' motifi çok kullanılır.", ses: "c.mp3" },
+            4: { title: "Kültürümüzde neden önemlidir?", text: "Eskiden insanlar duygularını konuşmak yerine halılara düğüm atarak anlatırlarmış.", ses: "b.mp3" }, 
+            5: { title: "Dokuma ile neler yapılır?", text: "Halılardan çantalara, yastıklardan kıyafetlere kadar pek çok renkli eşya yapılır.", ses: "e.mp3" }
+        };
+
+        const provinceData = {
+            kayseri: { isim: "Kayseri", bilgi: "İncecik yünlerle ve rengarenk çiçeklerle dokunan harika halılarıyla ünlüdür.", görsel: "3.jpg", ses: "aa.mp3" },
+            isparta: { isim: "Isparta", bilgi: "Mis kokulu güllerin resimleriyle süslenmiş çok sağlam halıları vardır.", görsel: "6.jpg", ses: "bb.mp3" },
+            manisa: { isim: "Manisa", bilgi: "Özel bir düğüm tekniğiyle yapılan, dünyanın en sağlam halıları buradadır.", görsel: "5.jpg", ses: "dd.mp3" }, 
+            usak: { isim: "Uşak", bilgi: "Eski zamanlarda kralların saraylarını süsleyen kocaman ve görkemli halılarıyla tanınır.", görsel: "4.jpg", ses: "cc.mp3" }, 
+            kocaeli: { isim: "Kocaeli", bilgi: "Hereke'de parlayan ipek iplerden yapılan dünyanın en değerli halıları dokunur.", görsel: "7.jpg", ses: "ee.mp3" }
+        };
+
+        let found = 0;
+        let mapFound = 0;
+        const seen = new Set();
+        const mapSeen = new Set();
+        const audioPlayer = document.getElementById('audio-player');
+        const sfxPlayer = document.getElementById('sfx-player');
+
+        let isAudioPlaying = false;
+
+        function playSound(file, onEndCallback) {
+            audioPlayer.src = file;
+            audioPlayer.currentTime = 0;
+            isAudioPlaying = true;
+            audioPlayer.onended = () => {
+                isAudioPlaying = false;
+                if(onEndCallback) onEndCallback();
+            };
+            audioPlayer.play().catch(e => {
+                console.log("Ses hatası:", e);
+                isAudioPlaying = false;
+            });
+        }
+
+        // Genel tıklama sesi (1.mp3)
+        function playClickSFX() {
+            sfxPlayer.currentTime = 0;
+            sfxPlayer.play().catch(() => {});
+        }
+
+        function playIntro() {
+            playSound('2.mp3', () => {
+                document.getElementById('start-screen').classList.add('hidden');
+            });
+        }
+
+        // Geçiş yönergesini dinleten fonksiyon
+        function playTransitionAudio() {
+            document.getElementById('transition-audio-btn').classList.add('hidden');
+            playSound('3.mp3', () => {
+                // Ses bittikten sonra harita butonu gelsin
+                document.getElementById('map-start-btn').classList.remove('hidden');
+            });
+        }
+
+        function handleInteraction(id) {
+            playClickSFX(); // Tıklama sesi geri eklendi
+            const data = facts[id];
+            document.getElementById('info-title').innerText = data.title;
+            document.getElementById('info-text').innerText = data.text;
+            document.getElementById('info-panel').classList.add('active-panel');
+            playSound(data.ses);
+
+            if (!seen.has(id)) {
+                seen.add(id);
+                const dot = document.getElementById('d' + id);
+                dot.classList.add('visited');
+                dot.innerText = "✓";
+                found++;
+            }
+        }
+
+        function closeInfoPanel() {
+            document.getElementById('info-panel').classList.remove('active-panel');
+            if (found === 5) {
+                if (isAudioPlaying) {
+                    audioPlayer.onended = () => {
+                        isAudioPlaying = false;
+                        document.getElementById('transition-screen').classList.remove('hidden');
+                    };
+                } else {
+                    document.getElementById('transition-screen').classList.remove('hidden');
+                }
+            }
+        }
+
+        function showProvinceInfo(id) {
+            playClickSFX(); // Tıklama sesi geri eklendi
+            const data = provinceData[id];
+            document.getElementById('map-province-name').innerText = data.isim;
+            document.getElementById('map-province-desc').innerText = data.bilgi;
+            document.getElementById('map-hali-img').src = data.görsel;
+            document.getElementById('map-info-panel').classList.add('active-panel');
+            playSound(data.ses);
+
+            if (!mapSeen.has(id)) {
+                mapSeen.add(id);
+                mapFound++;
+            }
+        }
+
+        function closeMapPanel() {
+            document.getElementById('map-info-panel').classList.remove('active-panel');
+            if (mapFound === 5) {
+                playSound('4.mp3');
+                document.getElementById('final-screen').classList.remove('hidden');
+            }
+        }
+
+        function showMapStage() {
+            document.getElementById('transition-screen').classList.add('hidden');
+            const canvas = document.getElementById('canvas-stage');
+            const map = document.getElementById('map-stage');
+            canvas.style.opacity = '0';
+            setTimeout(() => {
+                canvas.style.display = 'none';
+                map.style.display = 'flex';
+                setTimeout(() => map.style.opacity = '1', 50);
+            }, 1000);
+        }
+
+        function openFullscreen() {
+            document.getElementById('fullscreen-img').src = document.getElementById('map-hali-img').src;
+            document.getElementById('fullscreen-overlay').style.display = 'flex';
+        }
+    </script>
+</body>
+</html>

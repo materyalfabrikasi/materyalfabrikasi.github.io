@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Çini Sanatı ve Renklerin Dansı</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Pangolin&family=Quicksand:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: #f0f9ff;
+            touch-action: none;
+        }
+
+        h1,
+        h2 {
+            font-family: 'Pangolin', cursive;
+        }
+
+        .plate-container {
+            position: relative;
+            width: 340px;
+            height: 340px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1), inset 0 0 20px rgba(0, 0, 0, 0.05);
+            border: 10px solid #e5e7eb;
+            overflow: hidden;
+            flex-shrink: 0;
+            z-index: 10;
+        }
+
+        canvas {
+            cursor: crosshair;
+            touch-action: none;
+        }
+
+        .color-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s;
+        }
+
+        .active-color {
+            border-color: #3b82f6;
+            transform: scale(1.2);
+        }
+
+        .motif-btn {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            padding: 6px;
+        }
+
+        .motif-btn:hover {
+            border-color: #3b82f6;
+            background: #f8fafc;
+            transform: translateY(-2px);
+        }
+
+        .motif-btn.active {
+            border-color: #3b82f6;
+            background: #eff6ff;
+            box-shadow: 0 8px 15px rgba(59, 130, 246, 0.2);
+        }
+
+        .audio-card {
+            background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+        }
+
+        #custom-alert {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 100;
+            background: white;
+            padding: 2rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            border: 4px solid #0ea5e9;
+        }
+    </style>
+</head>
+
+<body class="p-4 md:p-6 lg:p-10">
+
+    <div class="max-w-6xl mx-auto">
+        <header class="text-center mb-8">
+            <h1 class="text-5xl font-bold text-blue-900 mb-2">Çini Sanatı</h1>
+            <p class="text-blue-600 text-lg italic font-medium">"Toprağın ve Ateşin Renklerle Buluşması"</p>
+        </header>
+
+        <!-- Bilgi ve Ses Paneli -->
+        <div
+            class="audio-card text-white rounded-[2rem] p-6 mb-10 shadow-2xl flex flex-col md:flex-row items-center gap-8">
+            <div class="flex-1">
+                <div class="flex items-center gap-4 mb-3">
+                    <div class="bg-white/20 p-3 rounded-2xl text-2xl">🏛️</div>
+                    <h2 class="text-2xl font-bold">Kültürümüzü Tanıyalım</h2>
+                </div>
+                <p class="text-base opacity-95 leading-relaxed mb-6 italic">
+                    Çini, Türk süsleme sanatlarının önemli bir dalıdır. Genellikle mavi, kırmızı, yeşil gibi canlı
+                    renklerle yapılan çini desenlerinde lale, karanfil, yaprak ve geometrik motifler sıkça kullanılır.
+                    Bu desenler simetrik ve düzenli bir yapıya sahiptir.
+                    Aşağıda verilen tabağı, öğrendiğiniz çini desenlerinden yararlanarak süsleyiniz.
+                </p>
+                <div
+                    class="flex items-center gap-4 bg-white/10 backdrop-blur-sm p-4 rounded-2xl border border-white/20">
+                    <span class="text-3xl animate-pulse">🎧</span>
+                    <audio id="ciniAudio" controls class="w-full h-10">
+                        <source src="1.mp3" type="audio/mpeg">
+                        Tarayıcınız ses dosyasını desteklemiyor.
+                    </audio>
+                </div>
+            </div>
+            <div
+                class="hidden lg:flex w-32 h-32 bg-white/20 rounded-full items-center justify-center text-6xl animate-bounce">
+                🏺
+            </div>
+        </div>
+
+        <div class="bg-white rounded-[3rem] p-8 shadow-2xl border border-blue-50 relative overflow-hidden">
+            <!-- Arka plan dekoru -->
+            <div class="absolute top-0 left-0 w-32 h-32 opacity-5 pointer-events-none">
+                <svg viewBox="0 0 100 100" class="fill-current text-blue-900">
+                    <path d="M50,5 L61,35 L95,35 L68,57 L79,90 L50,70 L21,90 L32,57 L5,35 L39,35 Z" />
+                </svg>
+            </div>
+
+            <!-- Ana Tasarım Alanı -->
+            <div class="flex flex-col lg:flex-row items-center justify-between gap-12">
+
+                <!-- SOL MOTİFLER -->
+                <div class="w-full lg:w-32 order-2 lg:order-1">
+                    <div class="text-xs font-bold text-blue-400 mb-4 uppercase tracking-widest text-center">Geleneksel I
+                    </div>
+                    <div class="grid grid-cols-4 lg:grid-cols-1 gap-4">
+                        <button id="mode-brush" class="motif-btn active" onclick="setMode('brush', null, this)"
+                            title="Serbest Fırça">
+                            <span class="text-3xl">🖌️</span>
+                        </button>
+                        <button id="stamp-lale" class="motif-btn" onclick="setMode('stamp', 'lale', this)"
+                            title="Lale Motifi">
+                            <svg viewBox="0 0 100 100" class="w-10 h-10 text-red-500 fill-current">
+                                <path d="M50,90 Q40,60 30,40 Q20,20 50,10 Q80,20 70,40 Q60,60 50,90 Z" />
+                            </svg>
+                        </button>
+                        <button id="stamp-karanfil" class="motif-btn" onclick="setMode('stamp', 'karanfil', this)"
+                            title="Karanfil Motifi">
+                            <svg viewBox="0 0 100 100" class="w-10 h-10 text-pink-600 fill-current">
+                                <path d="M50,90 L50,60 M50,60 Q30,50 20,30 Q30,40 50,40 Q70,40 80,30 Q70,50 50,60 Z" />
+                            </svg>
+                        </button>
+                        <button id="stamp-hatai" class="motif-btn" onclick="setMode('stamp', 'hatai', this)"
+                            title="Hatai Motifi">
+                            <svg viewBox="0 0 100 100" class="w-10 h-10 text-cyan-600 fill-current">
+                                <circle cx="50" cy="50" r="10" />
+                                <path
+                                    d="M50,40 Q60,20 50,10 Q40,20 50,40 M60,50 Q80,60 90,50 Q80,40 60,50 M50,60 Q40,80 50,90 Q60,80 50,60 M40,50 Q20,40 10,50 Q20,60 40,50 Z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- MERKEZ: TABAK VE AYARLAR -->
+                <div class="flex flex-col items-center order-1 lg:order-2 space-y-8">
+                    <div class="plate-container" id="canvasParent">
+                        <canvas id="ciniCanvas"></canvas>
+                    </div>
+
+                    <div class="w-full max-w-sm space-y-6">
+                        <!-- Renk Seçimi -->
+                        <div
+                            class="flex justify-center gap-3 bg-gray-50 p-3 rounded-full border border-gray-100 shadow-inner">
+                            <button class="color-btn active-color" style="background-color: #008080;"
+                                onclick="setColor('#008080', this)"></button>
+                            <button class="color-btn" style="background-color: #000080;"
+                                onclick="setColor('#000080', this)"></button>
+                            <button class="color-btn" style="background-color: #FF2400;"
+                                onclick="setColor('#FF2400', this)"></button>
+                            <button class="color-btn" style="background-color: #008A2E;"
+                                onclick="setColor('#008A2E', this)"></button>
+                            <button class="color-btn" style="background-color: #DAA520;"
+                                onclick="setColor('#DAA520', this)"></button>
+                            <button class="color-btn" style="background-color: #000000;"
+                                onclick="setColor('#000000', this)"></button>
+                        </div>
+
+                        <!-- Boyut Kontrolü -->
+                        <div class="flex flex-col gap-2 px-4">
+                            <div
+                                class="flex justify-between text-[10px] font-bold text-gray-400 uppercase tracking-tighter">
+                                <span>Küçük</span>
+                                <span class="text-blue-500">Desen Boyutu</span>
+                                <span>Büyük</span>
+                            </div>
+                            <input type="range" id="brushSize" min="4" max="40" value="12"
+                                class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SAĞ MOTİFLER -->
+                <div class="w-full lg:w-32 order-3">
+                    <div class="text-xs font-bold text-blue-400 mb-4 uppercase tracking-widest text-center">Geleneksel
+                        II</div>
+                    <div class="grid grid-cols-4 lg:grid-cols-1 gap-4">
+                        <button id="stamp-rose" class="motif-btn" onclick="setMode('stamp', 'rose', this)"
+                            title="Gül Motifi">
+                            <svg viewBox="0 0 100 100" class="w-10 h-10 text-red-700 fill-current">
+                                <path
+                                    d="M50,50 m-30,0 a30,30 0 1,0 60,0 a30,30 0 1,0 -60,0 M50,50 m-15,0 a15,15 0 1,0 30,0 a15,15 0 1,0 -30,0 Z"
+                                    fill="none" stroke="currentColor" stroke-width="8" />
+                            </svg>
+                        </button>
+                        <button id="stamp-cintemani" class="motif-btn" onclick="setMode('stamp', 'cintemani', this)"
+                            title="Çintemani Motifi">
+                            <svg viewBox="0 0 100 100" class="w-10 h-10 text-yellow-700 fill-current">
+                                <circle cx="35" cy="65" r="12" />
+                                <circle cx="65" cy="65" r="12" />
+                                <circle cx="50" cy="35" r="12" />
+                            </svg>
+                        </button>
+                        <button id="stamp-star" class="motif-btn" onclick="setMode('stamp', 'star', this)"
+                            title="Selçuklu Yıldızı">
+                            <svg viewBox="0 0 100 100" class="w-10 h-10 text-indigo-800 fill-current">
+                                <path d="M50,5 L61,35 L95,35 L68,57 L79,90 L50,70 L21,90 L32,57 L5,35 L39,35 Z" />
+                            </svg>
+                        </button>
+                        <button id="stamp-rumi" class="motif-btn" onclick="setMode('stamp', 'rumi', this)"
+                            title="Rumi Motifi">
+                            <svg viewBox="0 0 100 100" class="w-10 h-10 text-orange-600 fill-current">
+                                <path d="M20,80 Q40,80 60,40 Q80,0 40,20 Q10,40 20,80 Z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AKSİYON BUTONLARI -->
+            <div class="flex flex-col sm:flex-row justify-center gap-6 mt-12 pt-10 border-t border-gray-100">
+                <button onclick="clearCanvas()"
+                    class="px-8 py-4 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-red-50 hover:text-red-600 transition-all flex items-center justify-center gap-2">
+                    <span class="text-xl">🗑️</span> Tasarımı Sıfırla
+                </button>
+                <button onclick="saveArtwork()"
+                    class="px-10 py-4 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 shadow-xl transform hover:-translate-y-1 transition-all flex items-center justify-center gap-2">
+                    <span class="text-xl">✨</span> Sanat Eserimi Kaydet
+                </button>
+            </div>
+        </div>
+
+        <footer class="mt-10 text-center text-gray-400 text-sm">
+            <p>
+
+            </p>
+            <p class="mt-1 font-semibold"></p>
+        </footer>
+    </div>
+
+    <!-- Alert Modal -->
+    <div id="custom-alert">
+        <div class="text-6xl mb-6">🎨</div>
+        <h3 class="text-2xl font-bold text-blue-900 mb-2">Muhteşem Bir Eser!</h3>
+        <p class="text-gray-600 mb-8 px-4" id="alert-message"></p>
+        <button onclick="closeAlert()"
+            class="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold shadow-lg hover:bg-blue-700 transition-colors">Harika!</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('ciniCanvas');
+        const ctx = canvas.getContext('2d');
+        const brushSizeInput = document.getElementById('brushSize');
+        let isDrawing = false;
+        let color = '#008080';
+        let currentMode = 'brush';
+        let activeMotif = null;
+
+        function init() {
+            canvas.width = 340;
+            canvas.height = 340;
+            drawInitialPlate();
+        }
+
+        function drawInitialPlate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = '#f1f5f9';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.arc(170, 170, 165, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+
+        function startAction(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+            const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+
+            if (currentMode === 'stamp' && activeMotif) {
+                drawStamp(x, y);
+            } else {
+                isDrawing = true;
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+            }
+        }
+
+        function stopAction() {
+            isDrawing = false;
+        }
+
+        function draw(e) {
+            if (!isDrawing || currentMode !== 'brush') return;
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+            const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+
+            ctx.lineWidth = brushSizeInput.value / 2;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.strokeStyle = color;
+            ctx.lineTo(x, y);
+            ctx.stroke();
+        }
+
+        function drawStamp(x, y) {
+            const s = parseInt(brushSizeInput.value) * 1.5;
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.fillStyle = color;
+            ctx.strokeStyle = color;
+
+            switch (activeMotif) {
+                case 'lale':
+                    ctx.beginPath();
+                    ctx.moveTo(0, s);
+                    ctx.bezierCurveTo(-s, 0, -s / 2, -s, 0, -s * 1.8);
+                    ctx.bezierCurveTo(s / 2, -s, s, 0, 0, s);
+                    ctx.fill();
+                    break;
+                case 'karanfil':
+                    ctx.beginPath();
+                    ctx.moveTo(0, s / 2);
+                    for (let i = -2; i <= 2; i++) {
+                        const angle = i * 0.5;
+                        ctx.lineTo(Math.sin(angle) * s * 1.5, -Math.cos(angle) * s * 1.5);
+                    }
+                    ctx.closePath();
+                    ctx.fill();
+                    break;
+                case 'hatai':
+                    for (let i = 0; i < 6; i++) {
+                        ctx.rotate(Math.PI / 3);
+                        ctx.beginPath();
+                        ctx.ellipse(s, 0, s, s / 2.5, 0, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                    ctx.beginPath(); ctx.arc(0, 0, s / 3, 0, Math.PI * 2);
+                    ctx.fillStyle = 'white'; ctx.fill();
+                    break;
+                case 'cintemani':
+                    ctx.beginPath(); ctx.arc(-s / 1.5, s / 2, s / 1.8, 0, Math.PI * 2); ctx.fill();
+                    ctx.beginPath(); ctx.arc(s / 1.5, s / 2, s / 1.8, 0, Math.PI * 2); ctx.fill();
+                    ctx.beginPath(); ctx.arc(0, -s / 1.5, s / 1.8, 0, Math.PI * 2); ctx.fill();
+                    break;
+                case 'rumi':
+                    ctx.beginPath();
+                    ctx.moveTo(-s, s);
+                    ctx.quadraticCurveTo(s * 1.5, s, s, -s);
+                    ctx.quadraticCurveTo(-s, -s, -s, s);
+                    ctx.fill();
+                    break;
+                case 'star':
+                    ctx.beginPath();
+                    for (let i = 0; i < 8; i++) {
+                        ctx.rotate(Math.PI / 4);
+                        ctx.lineTo(s * 1.2, 0);
+                        ctx.lineTo(s / 1.5, s / 1.5);
+                    }
+                    ctx.closePath(); ctx.fill();
+                    break;
+                case 'rose':
+                    ctx.lineWidth = s / 4;
+                    ctx.beginPath();
+                    for (let i = 0; i < 25; i++) {
+                        const a = 0.2 * i;
+                        const rx = (s / 8 * a) * Math.cos(a);
+                        const ry = (s / 8 * a) * Math.sin(a);
+                        ctx.lineTo(rx, ry);
+                    }
+                    ctx.stroke();
+                    break;
+            }
+            ctx.restore();
+        }
+
+        canvas.addEventListener('mousedown', startAction);
+        canvas.addEventListener('mousemove', draw);
+        window.addEventListener('mouseup', stopAction);
+        canvas.addEventListener('touchstart', (e) => { e.preventDefault(); startAction(e); }, { passive: false });
+        canvas.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e); }, { passive: false });
+        canvas.addEventListener('touchend', stopAction);
+
+        function setMode(mode, motif, btn) {
+            currentMode = mode;
+            activeMotif = motif;
+            document.querySelectorAll('.motif-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        function setColor(newColor, btn) {
+            color = newColor;
+            document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active-color'));
+            btn.classList.add('active-color');
+        }
+
+        function clearCanvas() {
+            init();
+        }
+
+        function saveArtwork() {
+            const link = document.createElement('a');
+            link.download = 'benim-esiz-cinim.png';
+            link.href = canvas.toDataURL();
+            link.click();
+            showAlert("Tasarımın başarıyla indirildi. Geleneksel Türk motiflerini kullanarak harika bir kültürel köprü kurdun!");
+        }
+
+        function showAlert(msg) {
+            document.getElementById('alert-message').innerText = msg;
+            document.getElementById('custom-alert').style.display = 'block';
+        }
+
+        function closeAlert() {
+            document.getElementById('custom-alert').style.display = 'none';
+        }
+
+        init();
+    </script>
+</body>
+
+</html>

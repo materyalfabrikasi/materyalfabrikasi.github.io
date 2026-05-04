@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Motiflerle Halı Dokuyoruz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: "Comic Sans MS", "Comic Sans", cursive;
+            font-size: 12pt;
+            background-color: #fdfaf6;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+        
+        .drop-zone, .motif-card {
+            width: 140px;
+            height: 140px;
+            transition: all 0.3s ease;
+            border: 2px solid #e5e7eb;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+            background-color: #f3ece5; 
+            border-radius: 12px;
+        }
+
+        .drop-zone.drag-over {
+            background-color: #fef3c7;
+            border-color: #f59e0b;
+            transform: scale(1.05);
+        }
+
+        .motif-card {
+            cursor: grab;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        
+        .carpet-container {
+            position: relative;
+            width: 100%;
+            max-width: 950px; 
+            height: auto;
+            aspect-ratio: 16 / 10; 
+            background-color: #f7ede2; 
+            margin: 0 auto;
+            border: 15px solid #a44a3f;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            display: grid;
+            grid-template-columns: repeat(20, 1fr);
+            grid-template-rows: repeat(12, 1fr);
+            padding: 0;
+            overflow: visible; 
+            gap: 0;
+        }
+
+        .carpet-slot {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            width: 100%;
+            height: 100%;
+            background-color: #f7ede2;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .carpet-slot.filled {
+            opacity: 1;
+        }
+
+        .carpet-slot img {
+            width: 100%;
+            height: 100%;
+            object-fit: fill; 
+            display: block;
+            mix-blend-mode: multiply; 
+        }
+
+        .carpet-slot.tree-motif img, .carpet-slot.corner-motif img, .carpet-slot.elibelin-motif img {
+            object-fit: contain;
+        }
+
+        .carpet-slot.tree-motif {
+            grid-column: span 14;
+            grid-row: span 8;
+            z-index: 20; 
+        }
+
+        .carpet-slot.corner-motif {
+            grid-column: span 2;
+            grid-row: span 2;
+            z-index: 15;
+        }
+
+        .carpet-slot.elibelin-motif {
+            grid-column: span 2;
+            grid-row: span 1;
+            z-index: 14;
+            padding: 2px;
+        }
+
+        .carpet-slot.elibelin-motif img {
+            width: 90%;
+            height: 90%;
+            transform: rotate(270deg); 
+        }
+
+        .carpet-slot.diamond-motif {
+            grid-column: span 2;
+            grid-row: span 1;
+            z-index: 10;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .carpet-slot.diamond-motif img {
+            width: 40%; 
+            height: 80%; 
+            object-fit: contain;
+        }
+
+        .carpet-slot.abundance-motif {
+            grid-column: span 1;
+            grid-row: span 1;
+            z-index: 12;
+            padding: 2px;
+        }
+
+        .carpet-slot.abundance-motif img {
+            width: 80%;
+            height: 80%;
+            object-fit: contain;
+            transform: rotate(270deg);
+        }
+
+        .border-top img { transform: rotate(0deg); }
+        .border-bottom img { transform: rotate(180deg); }
+        .border-left img { transform: rotate(270deg); }
+        .border-right img { transform: rotate(90deg); }
+
+        .tree-motif img { transform: rotate(270deg); }
+
+        .success-bg { background-color: #f7ede2 !important; border-color: #10b981 !important; }
+        .error-shake { animation: shake 0.4s; }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-4px); }
+            75% { transform: translateX(4px); }
+        }
+
+        /* Yönerge Stilleri */
+        .instruction-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(43, 24, 16, 0.85);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            backdrop-filter: blur(4px);
+        }
+
+        .arrow-animation {
+            font-size: 3.5rem;
+            animation: bounce 1.5s infinite;
+            color: #f59e0b;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-20px);}
+            60% {transform: translateY(-10px);}
+        }
+
+        /* Yeni Buton Tasarımı */
+        .floating-instruction {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #a44a3f 0%, #7c2d12 100%);
+            color: #fffaf0;
+            padding: 18px 36px;
+            border-radius: 20px;
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.4), inset 0 2px 4px rgba(255,255,255,0.2);
+            cursor: pointer;
+            border: 2px solid #ea580c;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+        }
+
+        .floating-instruction:hover {
+            transform: translateX(-50%) scale(1.05);
+            background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+        }
+
+        .hidden-guide {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateX(-50%) translateY(20px);
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8">
+
+    <!-- Başlangıç Yönergesi -->
+    <div id="welcomeOverlay" class="instruction-overlay">
+        <div class="bg-stone-50 text-stone-800 p-8 rounded-3xl max-w-md shadow-2xl border-4 border-amber-600">
+            <h2 class="text-3xl font-bold mb-4 text-red-900">Hoş Geldin Dokumacı! 🎨</h2>
+            <p class="mb-6 text-lg text-stone-600">Anadolu motiflerinin sırlarını keşfetmeye hazır mısın?</p>
+            <button onclick="startGuide()" class="bg-amber-600 text-white px-10 py-4 rounded-xl font-bold hover:bg-amber-700 transition-all shadow-lg active:scale-95">Oyun sayfasına göz at.</button>
+        </div>
+    </div>
+
+    <!-- Dinamik Yönlendirici Ok -->
+    <div id="dynamicGuide" class="floating-instruction hidden">
+        <span id="guideText" class="font-bold mb-2 text-xl tracking-tight">Aşağı kaydır, kilim tezgahını gör</span>
+        <div id="guideArrow" class="arrow-animation">↓</div>
+    </div>
+
+    <div class="max-w-6xl mx-auto">
+        <header class="text-center mb-8" id="gameHeader">
+            <h1 class="text-4xl text-red-900 font-bold mb-3">Anadolu Motifleri Serüveni 🧶</h1>
+            <p class="text-lg text-stone-600">Motifleri eşleştirerek Anadolu halısını tamamla!</p>
+        </header>
+
+        <div id="matchArea" class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-10">
+            <div class="lg:col-span-5 bg-orange-50/70 p-5 rounded-3xl shadow-lg border-t-4 border-red-800">
+                <h2 class="text-xl text-stone-800 mb-4 font-bold flex items-center gap-2">
+                    <span>🎒</span> Motif Torbası
+                </h2>
+                <div id="motifPool" class="flex flex-wrap gap-4 justify-center max-h-[500px] overflow-y-auto p-1">
+                </div>
+            </div>
+
+            <div class="lg:col-span-7 bg-orange-50/70 p-5 rounded-3xl shadow-lg border-t-4 border-amber-500">
+                <h2 class="text-xl text-stone-800 mb-4 font-bold">Anlamlarla Eşleştir</h2>
+                <div id="dropGrid" class="flex flex-wrap gap-4 justify-center">
+                </div>
+            </div>
+        </div>
+
+        <div id="carpetArea" class="mt-8 bg-stone-100 p-6 md:p-10 rounded-3xl border-2 border-stone-200 relative">
+            <h2 class="text-2xl text-center text-stone-800 mb-6 font-bold">Dokunan Kilim</h2>
+            
+            <div id="carpet" class="carpet-container">
+            </div>
+            
+            <div id="finalMessage" class="hidden mt-8 text-center">
+                <h3 class="text-3xl text-emerald-700 font-bold mb-4">Harika! Anadolu Kilimin Tamamlandı! 🎊</h3>
+                <button onclick="location.reload()" class="bg-red-800 text-white px-8 py-3 rounded-full font-bold shadow-md hover:bg-red-900 transition">Yeniden Başla</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const successSound = new Audio('1.mp3');
+        let currentStep = "welcome";
+
+        function startGuide() {
+            document.getElementById('welcomeOverlay').classList.add('hidden');
+            showGuide("Aşağı kaydır, kilim tezgahını gör", "↓", "scroll-down");
+        }
+
+        function showGuide(text, arrow, step) {
+            const guide = document.getElementById('dynamicGuide');
+            const guideText = document.getElementById('guideText');
+            const guideArrow = document.getElementById('guideArrow');
+            
+            guideText.innerText = text;
+            guideArrow.innerText = arrow;
+            guide.dataset.step = step;
+            guide.classList.remove('hidden', 'hidden-guide');
+            currentStep = step;
+
+            guide.onclick = () => {
+                if(step === "scroll-down") {
+                    document.getElementById('carpetArea').scrollIntoView({behavior: 'smooth'});
+                    hideGuide();
+                    setTimeout(() => showGuide("Motifleri anlamlarıyla eşleştir.", "↑", "scroll-up"), 1200);
+                } else if(step === "scroll-up") {
+                    window.scrollTo({top: 0, behavior: 'smooth'});
+                    hideGuide();
+                } else if(step === "final-scroll") {
+                    document.getElementById('carpetArea').scrollIntoView({behavior: 'smooth'});
+                    hideGuide();
+                }
+            };
+        }
+
+        function hideGuide() {
+            const guide = document.getElementById('dynamicGuide');
+            guide.classList.add('hidden-guide');
+            setTimeout(() => { if(guide.classList.contains('hidden-guide')) guide.classList.add('hidden'); }, 300);
+        }
+
+        const motifs = [
+            { id: 'koc', name: 'Koç Boynuzu', meaning: 'Güç ve Erkeklik', img: '1.jpg' },
+            { id: 'elibelin', name: 'Eli Belinde', meaning: 'Anne ve Dişilik', img: '2.jpg' },
+            { id: 'hayat', name: 'Hayat Ağacı', meaning: 'Ölümsüzlük ve Soy', img: '3.jpg' },
+            { id: 'pitrak', name: 'Pıtrak', meaning: 'Bolluk ve Bereket', img: '4.jpg' },
+            { id: 'su', name: 'Su Yolu', meaning: 'Saflık ve Temizlik', img: '5.jpg' },
+            { id: 'goz', name: 'Göz', meaning: 'Kem Gözden Korunma', img: '6.jpg' },
+            { id: 'kurt', name: 'Kurt İzi', meaning: 'Aile Koruması', img: '7.jpg' },
+            { id: 'yildiz', name: 'Yıldız', meaning: 'Mutluluk ve Çalışkanlık', img: '8.jpg' },
+            { id: 'baklava', name: 'Baklava Dilimi', meaning: 'Düzen ve Sadakat', img: '9.jpg' },
+            { id: 'bereket', name: 'Bereket', meaning: 'Mutluluk ve Gıda', img: '10.jpg' }
+        ];
+
+        let matchedCount = 0;
+        const carpet = document.getElementById('carpet');
+        const motifPool = document.getElementById('motifPool');
+        const dropGrid = document.getElementById('dropGrid');
+
+        const COL_COUNT = 20;
+        const ROW_COUNT = 12;
+
+        function setupCarpet() {
+            carpet.innerHTML = '';
+            const occupied = Array.from({ length: ROW_COUNT }, () => Array(COL_COUNT).fill(false));
+
+            for (let row = 0; row < ROW_COUNT; row++) {
+                for (let col = 0; col < COL_COUNT; col++) {
+                    if (occupied[row][col]) continue;
+
+                    if (row === 0 || row === ROW_COUNT - 1 || col === 0 || col === COL_COUNT - 1) {
+                        createStaticSlot(row, col, 1, 1, 'su', getSuClass(row, col));
+                    } 
+                    else if ((row === 1 && col === 1) || (row === 1 && col === 17) || 
+                             (row === 9 && col === 1) || (row === 9 && col === 17)) {
+                        createStaticSlot(row, col, 2, 2, 'pitrak', 'corner-motif');
+                    }
+                    else if ((row === 3 && col === 1) || (row === 3 && col === 17) ||
+                             (row === 8 && col === 1) || (row === 8 && col === 17)) {
+                        createStaticSlot(row, col, 1, 2, 'elibelin', 'elibelin-motif');
+                    }
+                    else if ((row === 1 && col >= 3 && col <= 16) || (row === 10 && col >= 3 && col <= 16)) {
+                        createStaticSlot(row, col, 1, 1, 'bereket', 'abundance-motif');
+                    }
+                    else if ((col === 1 || col === 17) && row >= 4 && row <= 7) {
+                        createStaticSlot(row, col, 1, 2, 'baklava', 'diamond-motif');
+                    }
+                    else if (row === 2 && col === 3) {
+                        createStaticSlot(row, col, 8, 14, 'hayat', 'tree-motif');
+                    }
+                    else {
+                        const slot = document.createElement('div');
+                        slot.className = 'carpet-slot';
+                        slot.dataset.type = 'empty';
+                        carpet.appendChild(slot);
+                        occupied[row][col] = true;
+                    }
+                }
+            }
+
+            function createStaticSlot(r, c, rowSpan, colSpan, type, extraClass) {
+                const slot = document.createElement('div');
+                slot.className = `carpet-slot ${extraClass}`;
+                slot.style.gridRow = `span ${rowSpan}`;
+                slot.style.gridColumn = `span ${colSpan}`;
+                slot.dataset.type = type;
+                carpet.appendChild(slot);
+                for(let i=Math.floor(r); i<Math.floor(r)+rowSpan; i++) {
+                    for(let j=c; j<c+colSpan; j++) {
+                        if (i < ROW_COUNT && j < COL_COUNT) occupied[i][j] = true;
+                    }
+                }
+            }
+
+            function getSuClass(r, c) {
+                if (r === 0) return 'border-top';
+                if (r === ROW_COUNT - 1) return 'border-bottom';
+                if (c === 0) return 'border-left';
+                if (c === COL_COUNT - 1) return 'border-right';
+                return '';
+            }
+        }
+
+        const shuffledMotifs = [...motifs].sort(() => Math.random() - 0.5);
+        const shuffledMeanings = [...motifs].sort(() => Math.random() - 0.5);
+
+        shuffledMotifs.forEach(motif => {
+            const card = document.createElement('div');
+            card.className = 'motif-card';
+            card.draggable = true;
+            card.dataset.id = motif.id;
+            card.innerHTML = `
+                <img src="${motif.img}" alt="${motif.name}" class="w-24 h-24 object-contain mb-1 pointer-events-none" style="mix-blend-mode: multiply;">
+                <span class="font-bold text-center leading-tight">${motif.name}</span>
+            `;
+            
+            card.addEventListener('dragstart', e => e.dataTransfer.setData('text', motif.id));
+            card.addEventListener('touchstart', handleTouchStart, {passive: false});
+            motifPool.appendChild(card);
+        });
+
+        shuffledMeanings.forEach(motif => {
+            const zone = document.createElement('div');
+            zone.className = 'drop-zone';
+            zone.dataset.id = motif.id;
+            zone.innerHTML = `<span class="font-bold text-stone-700 text-center">${motif.meaning}</span>`;
+            
+            zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+            zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+            zone.addEventListener('drop', e => {
+                e.preventDefault();
+                zone.classList.remove('drag-over');
+                handleMatch(e.dataTransfer.getData('text'), zone);
+            });
+            dropGrid.appendChild(zone);
+        });
+
+        function handleMatch(draggedId, zone) {
+            if (draggedId === zone.dataset.id) {
+                successSound.currentTime = 0;
+                successSound.play().catch(e => console.log("Ses çalınamadı"));
+
+                const data = motifs.find(m => m.id === draggedId);
+                zone.innerHTML = `
+                    <img src="${data.img}" class="w-20 h-20 object-contain" style="mix-blend-mode: multiply;">
+                    <span class="font-bold text-emerald-700 mt-1">${data.name}</span>
+                `;
+                zone.classList.add('success-bg');
+                
+                const cardToRemove = document.querySelector(`.motif-card[data-id="${draggedId}"]`);
+                if (cardToRemove) cardToRemove.remove();
+                
+                const slots = document.querySelectorAll(`.carpet-slot[data-type="${draggedId}"]`);
+                slots.forEach(slot => {
+                    slot.innerHTML = `<img src="${data.img}" alt="${data.name}">`;
+                    slot.classList.add('filled');
+                });
+
+                matchedCount++;
+                if (matchedCount === motifs.length) {
+                    setTimeout(() => {
+                        showGuide("Dokuduğun kilimi görmeye hazır mısın?", "↓", "final-scroll");
+                        document.getElementById('finalMessage').classList.remove('hidden');
+                    }, 800);
+                }
+            } else {
+                zone.classList.add('error-shake');
+                setTimeout(() => zone.classList.remove('error-shake'), 400);
+            }
+        }
+
+        function handleTouchStart(e) {
+            const card = e.currentTarget;
+            const clone = card.cloneNode(true);
+            clone.style.position = 'fixed';
+            clone.style.zIndex = '1000';
+            clone.style.pointerEvents = 'none';
+            clone.style.width = card.offsetWidth + 'px';
+            clone.style.opacity = '0.9';
+            document.body.appendChild(clone);
+
+            const move = ev => {
+                const t = ev.touches[0];
+                clone.style.left = (t.pageX - clone.offsetWidth/2) + 'px';
+                clone.style.top = (t.pageY - clone.offsetHeight/2) + 'px';
+            };
+            
+            document.addEventListener('touchmove', move);
+            card.ontouchend = ev => {
+                document.removeEventListener('touchmove', move);
+                const t = ev.changedTouches[0];
+                const target = document.elementFromPoint(t.clientX, t.clientY)?.closest('.drop-zone');
+                if (target) handleMatch(card.dataset.id, target);
+                clone.remove();
+            };
+        }
+
+        setupCarpet();
+    </script>
+</body>
+</html>
