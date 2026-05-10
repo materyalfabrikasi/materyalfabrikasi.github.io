@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="tr" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Engelliler Haftası - Balon Patlatma</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Baloo 2', cursive; }
+
+    .balloon {
+      width: 140px;
+      height: 170px;
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset -15px -15px 30px rgba(0,0,0,0.15), inset 10px 10px 20px rgba(255,255,255,0.3);
+    }
+
+    .balloon:hover { transform: scale(1.1); }
+
+    .balloon::after {
+      content: '';
+      position: absolute;
+      bottom: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 3px;
+      height: 20px;
+      background: #555;
+    }
+
+    .balloon.popped {
+      animation: pop 0.4s forwards;
+      pointer-events: none;
+    }
+
+    @keyframes pop {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.4); opacity: 0.5; }
+      100% { transform: scale(0); opacity: 0; }
+    }
+
+    .confetti {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      animation: fall 2s forwards;
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    @keyframes fall {
+      0% { opacity: 1; transform: translateY(0) rotate(0deg); }
+      100% { opacity: 0; transform: translateY(300px) rotate(720deg); }
+    }
+
+    .instruction-box {
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(8px);
+      border: 3px dashed #f59e0b;
+      border-radius: 20px;
+      padding: 20px 30px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js" type="text/javascript"></script>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full">
+  <div id="app" class="h-full w-full overflow-auto relative" style="background-image: url('1.png'); background-size: contain; background-position: center; background-repeat: no-repeat; background-attachment: fixed;">
+   <div class="absolute inset-0 bg-black/30"></div>
+   <div class="relative z-10 flex flex-col items-center p-6 min-h-full">
+    <h1 id="title" class="text-4xl md:text-5xl font-extrabold text-white text-center drop-shadow-lg mt-4 mb-3">🎈 Engelliler Haftası 🎈</h1>
+    <div class="instruction-box mb-6">
+     <p id="instruction" class="text-lg md:text-xl text-center text-gray-800 font-bold">🎉 Merhaba! Aşağıdaki renkli balonları tek tek tıklayarak patlat ve her birinin içindeki sürpriz sesi dinle! Hadi başlayalım! 🎉</p>
+    </div>
+    <div id="balloon-container" class="flex flex-wrap justify-center gap-6 md:gap-8 max-w-4xl">
+    </div>
+    <div id="complete-msg" class="hidden instruction-box mt-8 text-center">
+     <p class="text-2xl font-extrabold text-green-600">🎊 Tebrikler! Tüm balonları patlattın! 🎊</p>
+     <p class="text-lg text-gray-700 mt-2">Engelliler Haftası kutlu olsun! Farklılıklarımız bizi güçlü kılar. 💪❤️</p>
+    </div>
+   </div>
+  </div>
+  <script>
+    const balloonColors = [
+      '#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899', '#06b6d4'
+    ];
+
+    const container = document.getElementById('balloon-container');
+    let poppedCount = 0;
+
+    balloonColors.forEach((color, i) => {
+      const div = document.createElement('div');
+      div.className = 'balloon';
+      div.style.backgroundColor = color;
+      div.innerHTML = `<span class="text-white text-3xl font-extrabold drop-shadow">${i + 1}</span>`;
+      div.addEventListener('click', () => popBalloon(div, i));
+      container.appendChild(div);
+    });
+
+    function popBalloon(el, index) {
+      if (el.classList.contains('popped')) return;
+
+      const audio = new Audio(`${index + 1}.mp3`);
+      audio.play().catch(() => {});
+
+      createConfetti(el);
+      el.classList.add('popped');
+      poppedCount++;
+
+      if (poppedCount === 7) {
+        setTimeout(() => {
+          document.getElementById('complete-msg').classList.remove('hidden');
+        }, 600);
+      }
+    }
+
+    function createConfetti(el) {
+      const rect = el.getBoundingClientRect();
+      const colors = ['#ef4444','#f59e0b','#10b981','#3b82f6','#8b5cf6','#ec4899'];
+      for (let i = 0; i < 12; i++) {
+        const c = document.createElement('div');
+        c.className = 'confetti';
+        c.style.left = (rect.left + rect.width/2 + (Math.random()-0.5)*80) + 'px';
+        c.style.top = (rect.top + rect.height/2) + 'px';
+        c.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
+        document.body.appendChild(c);
+        setTimeout(() => c.remove(), 2000);
+      }
+    }
+
+    // Element SDK
+    const defaultConfig = {
+      game_title: '🎈 Engelliler Haftası 🎈',
+      instruction_text: '🎉 Merhaba! Aşağıdaki renkli balonları tek tek tıklayarak patlat ve her birinin içindeki sürpriz sesi dinle! Hadi başlayalım! 🎉',
+      primary_color: '#f59e0b',
+      background_color: '#1e293b',
+      text_color: '#ffffff',
+      font_family: 'Baloo 2',
+      font_size: 18
+    };
+
+    window.elementSdk.init({
+      defaultConfig,
+      onConfigChange: async (config) => {
+        document.getElementById('title').textContent = config.game_title || defaultConfig.game_title;
+        document.getElementById('instruction').textContent = config.instruction_text || defaultConfig.instruction_text;
+        const font = config.font_family || defaultConfig.font_family;
+        document.getElementById('title').style.fontFamily = `${font}, cursive, sans-serif`;
+        document.getElementById('instruction').style.fontFamily = `${font}, cursive, sans-serif`;
+        const size = config.font_size || defaultConfig.font_size;
+        document.getElementById('title').style.fontSize = `${size * 2.5}px`;
+        document.getElementById('instruction').style.fontSize = `${size * 1.1}px`;
+        document.getElementById('title').style.color = config.text_color || defaultConfig.text_color;
+      },
+      mapToCapabilities: (config) => ({
+        recolorables: [
+          { get: () => config.background_color || defaultConfig.background_color, set: (v) => { config.background_color = v; window.elementSdk.setConfig({background_color: v}); }},
+          { get: () => config.primary_color || defaultConfig.primary_color, set: (v) => { config.primary_color = v; window.elementSdk.setConfig({primary_color: v}); }},
+          { get: () => config.text_color || defaultConfig.text_color, set: (v) => { config.text_color = v; window.elementSdk.setConfig({text_color: v}); }}
+        ],
+        borderables: [],
+        fontEditable: { get: () => config.font_family || defaultConfig.font_family, set: (v) => { config.font_family = v; window.elementSdk.setConfig({font_family: v}); }},
+        fontSizeable: { get: () => config.font_size || defaultConfig.font_size, set: (v) => { config.font_size = v; window.elementSdk.setConfig({font_size: v}); }}
+      }),
+      mapToEditPanelValues: (config) => new Map([
+        ['game_title', config.game_title || defaultConfig.game_title],
+        ['instruction_text', config.instruction_text || defaultConfig.instruction_text]
+      ])
+    });
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9f777243d5a323da',t:'MTc3ODA2NDg2MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
