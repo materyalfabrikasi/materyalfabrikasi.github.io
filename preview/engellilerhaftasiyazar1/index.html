@@ -1,359 +1,353 @@
+
 <!DOCTYPE html>
 <html lang="tr">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Farkındalık Yolculuğu</title>
+    <title>Süper Güçlü Teknolojiler Etkinliği</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .dragging {
-            opacity: 0.4;
-            transform: scale(1.02);
+        /* Türkçe karakterleri destekleyen modern ve çocuksu yazı tipi */
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f8fafc;
         }
 
-        .correct-border {
-            border: 6px solid #10b981 !important;
-        }
-
-        .wrong-border {
-            border: 6px solid #ef4444 !important;
-        }
-
-        .image-card {
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .blur-overlay {
-            backdrop-filter: blur(20px);
-            background-color: rgba(255, 255, 255, 0.4);
-            transition: all 0.5s ease;
-        }
-
-        .unlocked .blur-overlay {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .unlocked img {
-            filter: blur(0);
-        }
-
-        .locked-img {
-            filter: blur(15px);
-            transition: filter 0.5s ease;
-        }
-
-        /* Braille Styles */
-        .braille-dot {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: #e2e8f0;
+        .category-card {
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             cursor: pointer;
-            transition: all 0.2s ease;
-            border: 2px solid transparent;
+        }
+
+        .category-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 50;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 100;
+            cursor: zoom-out;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .lightbox.active {
+            display: flex;
+        }
+
+        /* Braille Dots Styling */
+        .braille-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px;
+            width: 50px;
+            height: 75px;
+            background: #ffffff;
+            padding: 8px;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .braille-dot {
+            width: 14px;
+            height: 14px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            transition: background 0.2s;
         }
 
         .braille-dot.active {
-            background-color: #2563eb;
-            box-shadow: 0 0 15px rgba(37, 99, 235, 0.4);
-            transform: scale(1.1);
+            background: #ef4444; 
+            box-shadow: 0 0 6px rgba(239, 68, 68, 0.5);
         }
 
-        .braille-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 45px);
-            grid-template-rows: repeat(3, 45px);
-            gap: 15px;
-            justify-content: center;
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        .sign-letter-img {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            border-radius: 8px;
+            cursor: zoom-in;
         }
     </style>
 </head>
+<body class="p-4 md:p-8">
 
-<body class="bg-slate-50 min-h-screen font-sans text-slate-800">
+    <header class="max-w-6xl mx-auto text-center mb-12">
+        <h1 class="text-5xl font-extrabold text-indigo-600 mb-3 tracking-tight">Süper Güçlü Teknolojiler 🚀</h1>
+        <p class="text-xl text-slate-600 font-medium">Engelleri aşan yerli buluşları keşfedin!</p>
+    </header>
 
-    <div id="app" class="max-w-5xl mx-auto p-4 md:p-8">
-
-        <!-- Sayfa 1: Sıralama Oyunu -->
-        <div id="view-sorting">
-            <header class="text-center mb-10 bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
-                <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-4">Adım Adım Farkındalık</h1>
-                <p class="text-slate-700 text-xl font-medium mb-2">Görsellerin üzerindeki anlamlı sözleri okurken
-                    tıklayın. Ardından açılan görselleri sıralayın.</p>
-                <p class="text-slate-500 italic text-sm">İlk etkinliği tamamladıktan sonra "Braille Alfabesini"
-                    keşfedin.</p>
-            </header>
-
-            <section class="bg-white p-6 md:p-10 rounded-3xl shadow-xl border border-slate-100">
-                <div id="sortable-list" class="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-10"></div>
-
-                <div class="flex flex-col items-center gap-6 pt-8 border-t border-slate-100">
-                    <div id="feedback-message" class="hidden text-xl font-bold p-4 rounded-xl w-full text-center"></div>
-                    <div class="flex flex-wrap justify-center gap-4 w-full">
-                        <button id="check-btn"
-                            class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 px-10 rounded-2xl transition-all shadow-lg active:scale-95 text-lg">Sıralamayı
-                            Kontrol Et</button>
-                        <button id="reset-btn"
-                            class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-4 px-10 rounded-2xl transition-all active:scale-95 text-lg">Yeniden
-                            Dene</button>
-                    </div>
-                </div>
-            </section>
+    <main class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div onclick="openExperience('gorme')" class="category-card bg-red-50 p-8 rounded-3xl border-4 border-red-200 shadow-xl text-center">
+            <div class="text-7xl mb-4">📖</div>
+            <h2 class="text-2xl font-black text-red-700 uppercase">Ellerim Okuyor!</h2>
+            <p class="text-red-600 mt-2 font-semibold">Braille alfabesiyle yazı yazmayı öğren.</p>
+            <button class="mt-6 bg-red-500 hover:bg-red-600 text-white px-8 py-3 rounded-full font-bold transition-all">BAŞLA</button>
         </div>
 
-        <!-- Sayfa 2: Braille Etkinliği -->
-        <div id="view-braille" class="hidden">
-            <header class="text-center mb-8 bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
-                <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-4">Braille Alfabesini Keşfet</h1>
-                <p class="text-slate-700 text-lg">Aşağıdaki hücrede noktalara tıklayarak kendi harfinizi oluşturun veya
-                    alfabeden bir harf seçin.</p>
-            </header>
+        <div onclick="openExperience('isitme')" class="category-card bg-emerald-50 p-8 rounded-3xl border-4 border-emerald-200 shadow-xl text-center">
+            <div class="text-7xl mb-4">👂</div>
+            <h2 class="text-2xl font-black text-emerald-700 uppercase">Ellerim Konuşuyor!</h2>
+            <p class="text-emerald-600 mt-2 font-semibold">Türk Parmak Alfabesi ile tanış.</p>
+            <button class="mt-6 bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-3 rounded-full font-bold transition-all">BAŞLA</button>
+        </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Braille Hücresi -->
-                <div
-                    class="lg:col-span-1 bg-white p-8 rounded-3xl shadow-lg border border-slate-100 flex flex-col items-center">
-                    <h3 class="font-bold text-slate-500 mb-6 uppercase tracking-widest text-sm">Etkileşimli Hücre</h3>
-                    <div class="braille-grid mb-8" id="interactive-cell">
-                        <div class="braille-dot" data-dot="1"></div>
-                        <div class="braille-dot" data-dot="4"></div>
-                        <div class="braille-dot" data-dot="2"></div>
-                        <div class="braille-dot" data-dot="5"></div>
-                        <div class="braille-dot" data-dot="3"></div>
-                        <div class="braille-dot" data-dot="6"></div>
-                    </div>
-                    <div class="text-center">
-                        <span class="text-sm text-slate-400 block mb-1">Tespit Edilen Harf:</span>
-                        <span id="detected-letter" class="text-6xl font-black text-blue-600">?</span>
-                    </div>
-                    <button id="clear-braille"
-                        class="mt-8 text-slate-400 hover:text-rose-500 transition-colors flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M3 6h18"></path>
-                            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-                            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></button>
-                    </button>
-                </div>
+        <div onclick="openExperience('bedensel')" class="category-card bg-amber-50 p-8 rounded-3xl border-4 border-amber-200 shadow-xl text-center">
+            <div class="text-7xl mb-4">🦾</div>
+            <h2 class="text-2xl font-black text-amber-700 uppercase">Robotik Güç!</h2>
+            <p class="text-amber-600 mt-2 font-semibold">Hareket özgürlüğü veren teknolojiler.</p>
+            <button class="mt-6 bg-amber-500 hover:bg-amber-600 text-white px-8 py-3 rounded-full font-bold transition-all">KEŞFET</button>
+        </div>
+    </main>
 
-                <!-- Alfabe Seçici -->
-                <div class="lg:col-span-2 bg-white p-8 rounded-3xl shadow-lg border border-slate-100">
-                    <h3 class="font-bold text-slate-500 mb-6 uppercase tracking-widest text-sm text-center">Harf Listesi
-                    </h3>
-                    <div id="alphabet-grid" class="grid grid-cols-5 sm:grid-cols-8 gap-3"></div>
-
-                    <div class="mt-8 p-6 bg-blue-50 rounded-2xl border border-blue-100">
-                        <h4 class="font-bold text-blue-900 mb-2 flex items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <line x1="12" y1="16" x2="12" y2="12"></line>
-                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                            </svg>
-                            Biliyor muydunuz?
-                        </h4>
-                        <p class="text-blue-800 text-sm leading-relaxed">
-                            Braille alfabesi, 1821 yılında Louis Braille tarafından geliştirilmiştir. Türkiye'de **Milli
-                            Kütüphane Konuşan Kitaplık**, binlerce görme engelli vatandaşa dijital ve kabartma baskılı
-                            materyallerle hizmet vermektedir.
-                        </p>
-                    </div>
-                </div>
+    <div id="mainModal" class="modal px-4">
+        <div class="bg-white max-w-5xl w-full rounded-3xl shadow-2xl overflow-hidden relative border-8 border-indigo-100 flex flex-col max-h-[95vh]">
+            <button onclick="closeModal()" class="absolute top-4 right-4 bg-slate-200 hover:bg-red-400 hover:text-white text-slate-600 w-10 h-10 rounded-full text-2xl font-bold z-50">&times;</button>
+            <div class="p-6 md:p-10 overflow-y-auto custom-scrollbar">
+                <div id="experienceStep"></div>
+                <div id="resultStep" class="hidden"></div>
             </div>
-
-            <div class="mt-8 text-center">
-                <button onclick="location.reload()" class="text-blue-600 font-semibold hover:underline">Başa Dön ve
-                    Sıralamayı Tekrarla</button>
+            <div id="modalFooter" class="bg-indigo-50 p-4 text-center border-t border-indigo-100">
+                <p id="footerText" class="text-indigo-900 font-bold">Türkiye'de Üretilen Süper Teknolojiler 🇹🇷</p>
             </div>
         </div>
     </div>
 
-    <!-- Modallar -->
-    <div id="zoom-modal"
-        class="fixed inset-0 bg-black/95 hidden z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
-        <img id="zoomed-image" class="max-w-full max-h-full object-contain rounded-lg shadow-2xl">
-    </div>
-
-    <div id="success-modal"
-        class="fixed inset-0 bg-blue-900/80 hidden flex items-center justify-center z-[110] p-4 backdrop-blur-md">
-        <div class="bg-white rounded-[2.5rem] p-10 max-w-md w-full text-center shadow-2xl">
-            <div class="text-8xl mb-6">🌟</div>
-            <h2 class="text-3xl font-bold text-slate-900 mb-3">Harikasınız!</h2>
-            <p class="text-slate-600 text-lg mb-8">Zihninizdeki engelleri kaldırdınız. Şimdi Braille alfabesini
-                öğrenmeye hazır mısınız?</p>
-            <button id="next-to-braille"
-                class="w-full bg-blue-600 text-white font-bold py-4 rounded-2xl hover:bg-blue-700 shadow-lg transition-all text-lg mb-3">
-                Braille Alfabesini Keşfet
-            </button>
-        </div>
+    <div id="lightbox" class="lightbox" onclick="closeLightbox()">
+        <img id="lightboxImg" class="max-w-full max-h-full rounded-lg shadow-2xl transition-transform duration-300" src="" alt="Büyütülmüş harf">
     </div>
 
     <script>
-        // Veri ve Ayarlar
-        const quoteMap = {
-            '1.jpeg': '“Engel bedende değil, zihindedir.”',
-            '2.jpeg': '“Empati varsa engel yoktur.”',
-            '3.jpeg': '“Bir gün değil, her gün yanınızdayız.”',
-            '4.jpeg': '“Asıl engel, sevgisizliktir.”'
-        };
-        const correctOrder = ['1.jpeg', '2.jpeg', '3.jpeg', '4.jpeg'];
+        const trAlphabet = ['a', 'b', 'c', 'ç', 'd', 'e', 'f', 'g', 'ğ', 'h', 'ı', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'ö', 'p', 'r', 's', 'ş', 't', 'u', 'ü', 'v', 'y', 'z'];
 
-        // Braille Alfabe Haritalama (1-6 noktaları)
+        // Braille Nokta Dizilimi (6'lı sistem: [1,4,2,5,3,6])
         const brailleAlphabet = {
-            'A': [1], 'B': [1, 2], 'C': [1, 4], 'Ç': [1, 4, 6], 'D': [1, 4, 5], 'E': [1, 5], 'F': [1, 2, 4],
-            'G': [1, 2, 4, 5], 'Ğ': [1, 2, 4, 5, 6], 'H': [1, 2, 5], 'I': [2, 4], 'İ': [3, 5], 'J': [2, 4, 5],
-            'K': [1, 3], 'L': [1, 2, 3], 'M': [1, 3, 4], 'N': [1, 3, 4, 5], 'O': [1, 3, 5], 'Ö': [2, 4, 6],
-            'P': [1, 2, 3, 4], 'R': [1, 2, 3, 5], 'S': [2, 3, 4], 'Ş': [1, 4, 6], 'T': [2, 3, 4, 5],
-            'U': [1, 3, 6], 'Ü': [1, 2, 5, 6], 'V': [1, 2, 3, 5, 6], 'Y': [1, 3, 4, 5, 6], 'Z': [1, 3, 5, 6]
+            'a': [1,0,0,0,0,0], 'b': [1,0,1,0,0,0], 'c': [1,1,0,0,0,0], 'ç': [1,0,0,0,0,1], 'd': [1,1,0,1,0,0],
+            'e': [1,0,0,1,0,0], 'f': [1,1,1,0,0,0], 'g': [1,1,1,1,0,0], 'ğ': [1,0,1,0,0,1], 'h': [1,0,1,1,0,0],
+            'ı': [0,0,0,1,1,0], 'i': [0,1,1,0,0,0], 'j': [0,1,1,1,0,0], 'k': [1,0,0,0,1,0], 'l': [1,0,1,0,1,0],
+            'm': [1,1,0,0,1,0], 'n': [1,1,0,1,1,0], 'o': [1,0,0,1,1,0], 'ö': [0,1,1,0,0,1], 'p': [1,1,1,0,1,0],
+            'r': [1,0,1,1,1,0], 's': [0,1,1,0,1,0], 'ş': [1,1,0,0,0,1], 't': [0,1,1,1,1,0], 'u': [1,0,0,0,1,1],
+            'ü': [1,0,1,1,0,1], 'v': [1,0,1,0,1,1], 'y': [1,1,0,1,1,1], 'z': [1,0,0,1,1,1], ' ': [0,0,0,0,0,0]
         };
 
-        let currentItems = [];
-        let activeDots = new Set();
+        // Yerli Teknoloji Verileri
+        const techData = {
+            gorme: { 
+                title: "Görme Alanında Yerli Mucizeler", 
+                techs: [
+                    { 
+                        name: "WeWALK Akıllı Baston", 
+                        desc: "Türkiye'de Türk mühendisler tarafından geliştirilen bu dünya çapındaki buluş, görme engelliler için göğüs ve baş hizasındaki engelleri algılar. Akıllı telefonlara bağlanarak navigasyon hizmeti sunar.", 
+                        img: "1.jpg" 
+                    },
+                    { 
+                        name: "EyeSense Uygulaması", 
+                        desc: "Türk yazılımcılar tarafından geliştirilen EyeSense, görme engellilerin ön ve arka kamera ile selfie çekebilmesine veya nesneleri tanımasına yardımcı olan, sesli yönlendirme yapan yerli bir uygulamadır.", 
+                        img: "2.jpg" 
+                    }
+                ] 
+            },
+            isitme: { 
+                title: "İşitme Alanında Yerli Mucizeler", 
+                techs: [
+                    { 
+                        name: "TİD3B Robotu", 
+                        desc: "Türk İşaret Dili (TİD) için geliştirilen bu 3 boyutlu robot, konuşmaları anında işaret diline çevirerek iletişimi kolaylaştırır. Tamamen yerli bir projedir.", 
+                        img: "3.jpg" 
+                    },
+                    { 
+                        name: "İşaret Dili Çevirici Eldiven", 
+                        desc: "Ülkemizdeki genç mucitler tarafından geliştirilen bu eldiven, el hareketlerini hoparlörden sese ve yazıya dönüştürür. Yerli teknoloji ile sessizliği bozar.", 
+                        img: "4.jpg" 
+                    }
+                ] 
+            },
+            bedensel: { 
+                title: "Hareket Alanında Yerli Mucizeler", 
+                techs: [
+                    { 
+                        name: "Walking It Yerli Dış İskelet", 
+                        desc: "Türkiye'de geliştirilen bu robotik dış iskelet (exoskeleton), fiziksel engelli bireylerin ayağa kalkmasına ve yürümesine yardımcı olan ileri seviye bir rehabilitasyon cihazıdır.", 
+                        img: "6.jpg" 
+                    },
+                    { 
+                        name: "Apollon Gözlük (Head Mouse)", 
+                        desc: "Ellerini kullanamayan bireyler için Türk girişimciler tarafından geliştirilen bu akıllı gözlük, kafa hareketlerini bilgisayar faresine dönüştürerek teknolojiye erişim sağlar.", 
+                        img: "5.jpg" 
+                    }
+                ] 
+            }
+        };
 
-        // Elemanlar
-        const sortableList = document.getElementById('sortable-list');
-        const checkBtn = document.getElementById('check-btn');
-        const resetBtn = document.getElementById('reset-btn');
-        const feedbackMessage = document.getElementById('feedback-message');
-        const successModal = document.getElementById('success-modal');
-        const nextToBrailleBtn = document.getElementById('next-to-braille');
-        const viewSorting = document.getElementById('view-sorting');
-        const viewBraille = document.getElementById('view-braille');
-        const interactiveCell = document.getElementById('interactive-cell');
-        const detectedLetterDisplay = document.getElementById('detected-letter');
-        const alphabetGrid = document.getElementById('alphabet-grid');
+        function openExperience(type) {
+            const expStep = document.getElementById('experienceStep');
+            const resStep = document.getElementById('resultStep');
+            expStep.innerHTML = '';
+            resStep.classList.add('hidden');
+            expStep.classList.remove('hidden');
 
-        // Oyun Başlatma
-        function initGame() {
-            const shuffledSources = [...correctOrder].sort(() => Math.random() - 0.5);
-            currentItems = shuffledSources.map(src => ({ src, unlocked: false }));
-            renderItems();
-            renderAlphabet();
+            if (type === 'gorme') renderBrailleEditor();
+            else if (type === 'isitme') renderSignEditor();
+            else showResults('bedensel');
+
+            document.getElementById('mainModal').classList.add('active');
         }
 
-        function renderItems() {
-            sortableList.innerHTML = '';
-            currentItems.forEach((item, index) => {
-                const container = document.createElement('div');
-                container.className = `image-card relative bg-white p-3 rounded-2xl border-2 border-slate-200 shadow-sm ${item.unlocked ? 'unlocked cursor-move' : 'cursor-pointer'}`;
-                container.draggable = item.unlocked;
-                container.dataset.index = index;
-
-                container.innerHTML = `
-                    <div class="aspect-video relative overflow-hidden rounded-xl bg-slate-800">
-                        <img src="${item.src}" class="${item.unlocked ? '' : 'locked-img'} w-full h-full object-cover pointer-events-none" onerror="this.src='https://via.placeholder.com/600x400?text=Görsel'">
-                        <div class="blur-overlay absolute inset-0 flex items-center justify-center p-6 text-center">
-                            <p class="text-blue-900 font-bold text-xl italic">${quoteMap[item.src]}</p>
-                        </div>
-                        ${item.unlocked ? `<div class="absolute top-2 left-2 bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold shadow-md border border-white">${index + 1}</div>` : ''}
+        function renderBrailleEditor() {
+            const container = document.getElementById('experienceStep');
+            container.innerHTML = `
+                <h2 class="text-3xl font-black text-red-600 mb-2 text-center">Braille Yazı Deneyimi</h2>
+                <p class="text-slate-500 text-center mb-6 font-medium">Yönerge: Klavyeden harflere bastığında kutucuklardaki kırmızı noktaların nasıl değiştiğini incele. Bu, görme engelli dostlarımızın parmaklarıyla okuduğu alfabedir.</p>
+                <div class="flex flex-col items-center gap-6">
+                    <div id="currentBraille" class="braille-grid scale-125">
+                        <div class="braille-dot"></div><div class="braille-dot"></div>
+                        <div class="braille-dot"></div><div class="braille-dot"></div>
+                        <div class="braille-dot"></div><div class="braille-dot"></div>
                     </div>
-                `;
-
-                if (!item.unlocked) container.onclick = () => { item.unlocked = true; renderItems(); };
-                if (item.unlocked) {
-                    container.ondragstart = (e) => { e.dataTransfer.setData('text', index); container.classList.add('dragging'); };
-                    container.ondragover = (e) => e.preventDefault();
-                    container.ondrop = (e) => {
-                        const fromIdx = e.dataTransfer.getData('text');
-                        const toIdx = index;
-                        [currentItems[fromIdx], currentItems[toIdx]] = [currentItems[toIdx], currentItems[fromIdx]];
-                        renderItems();
-                    };
-                    container.ondragend = () => container.classList.remove('dragging');
-                }
-                sortableList.appendChild(container);
-            });
+                    <input type="text" id="brailleInput" placeholder="Bir harf yaz..." oninput="updateBraille(this.value)" 
+                        class="w-full max-w-lg p-4 text-xl border-4 border-red-200 rounded-2xl outline-none shadow-lg font-bold">
+                    <div id="brailleDisplay" class="flex flex-wrap gap-4 justify-center bg-white p-6 rounded-2xl border min-h-[120px] w-full"></div>
+                    <button onclick="showResults('gorme')" class="bg-red-500 text-white px-10 py-3 rounded-full font-bold shadow-lg hover:bg-red-600 transition-colors uppercase">Yerli Teknolojileri Keşfet</button>
+                </div>
+            `;
         }
 
-        // Sıralama Kontrolü
-        checkBtn.onclick = () => {
-            if (!currentItems.every(i => i.unlocked)) {
-                feedback("Lütfen önce tüm görselleri açın!", "bg-amber-100 text-amber-800");
+        function renderSignEditor() {
+            const container = document.getElementById('experienceStep');
+            container.innerHTML = `
+                <h2 class="text-3xl font-black text-emerald-600 mb-2 text-center">Türk Parmak Alfabesi</h2>
+                <p class="text-slate-500 text-center mb-4 font-medium">Yönerge: Aşağıdaki kutuya ismini yazarak ellerinle nasıl 'konuşabileceğini' gör. Görsellere tıklayarak hareketleri daha yakından inceleyebilirsin.</p>
+                
+                <div class="mb-8 p-4 bg-slate-50 rounded-2xl border-2 border-emerald-100">
+                    <p class="text-center text-sm font-black text-emerald-700 mb-4 uppercase tracking-widest">Alfabe Rehberİ</p>
+                    <div class="grid grid-cols-5 md:grid-cols-10 gap-3">
+                        ${trAlphabet.map(char => `
+                            <div class="flex flex-col items-center bg-white p-1 rounded-lg border shadow-sm hover:scale-110 transition-transform">
+                                <img src="${char}.jpg" class="w-12 h-12 object-contain cursor-pointer" onclick="openLightbox('${char}.jpg')" onerror="this.src='https://via.placeholder.com/50?text=${char.toUpperCase()}'">
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div class="flex flex-col items-center gap-6">
+                    <div class="w-full max-w-lg">
+                        <label class="block text-sm font-black text-slate-500 mb-2 ml-1 uppercase">İsmini buraya yaz:</label>
+                        <input type="text" id="signInput" placeholder="Örn: Elif" oninput="updateSign(this.value)" 
+                            class="w-full p-4 text-xl border-4 border-emerald-400 rounded-2xl outline-none shadow-lg font-bold">
+                    </div>
+                    <div id="signDisplay" class="flex flex-wrap gap-4 justify-center bg-emerald-50 p-8 rounded-3xl border-4 border-dashed border-emerald-200 min-h-[180px] w-full">
+                        <p class="text-emerald-400 self-center italic font-medium">Yazdığın harfler el hareketlerine dönüşecek...</p>
+                    </div>
+                    <button onclick="showResults('isitme')" class="bg-emerald-600 text-white px-12 py-4 rounded-full font-bold shadow-xl hover:bg-emerald-700 transition-colors uppercase">Yerli Teknolojileri Keşfet</button>
+                </div>
+            `;
+        }
+
+        function openLightbox(src) {
+            const lb = document.getElementById('lightbox');
+            const lbImg = document.getElementById('lightboxImg');
+            lbImg.src = src;
+            lb.classList.add('active');
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.remove('active');
+        }
+
+        function updateBraille(val) {
+            const display = document.getElementById('brailleDisplay');
+            const current = document.getElementById('currentBraille');
+            const lastChar = val.slice(-1).toLowerCase();
+            if (lastChar && brailleAlphabet[lastChar]) {
+                const pattern = brailleAlphabet[lastChar];
+                current.querySelectorAll('.braille-dot').forEach((dot, i) => dot.className = pattern[i] ? 'braille-dot active' : 'braille-dot');
+            }
+            display.innerHTML = val.split('').map(char => {
+                const pattern = brailleAlphabet[char.toLowerCase()] || [0,0,0,0,0,0];
+                return `<div class="flex flex-col items-center"><div class="braille-grid scale-50">${pattern.map(p => `<div class="braille-dot ${p?'active':''}"></div>`).join('')}</div><span class="text-xs font-bold uppercase">${char}</span></div>`;
+            }).join('');
+        }
+
+        function updateSign(val) {
+            const display = document.getElementById('signDisplay');
+            if (!val) {
+                display.innerHTML = '<p class="text-emerald-400 self-center italic font-medium">Yazdığın harfler el hareketlerine dönüşecek...</p>';
                 return;
             }
-            const isCorrect = currentItems.every((item, i) => item.src === correctOrder[i]);
-            if (isCorrect) {
-                feedback("Mükemmel! Doğru sıralama.", "bg-emerald-100 text-emerald-800 animate-pulse");
-                setTimeout(() => successModal.classList.remove('hidden'), 800);
-            } else {
-                feedback("Bazı hatalar var, tekrar deneyin.", "bg-rose-100 text-rose-800");
-                document.querySelectorAll('.image-card').forEach((el, i) => {
-                    el.className = `image-card relative bg-white p-3 rounded-2xl border-2 shadow-sm unlocked cursor-move ${currentItems[i].src === correctOrder[i] ? 'correct-border' : 'wrong-border'}`;
-                });
-            }
-        };
-
-        function feedback(msg, cls) {
-            feedbackMessage.textContent = msg;
-            feedbackMessage.className = `text-xl font-bold p-4 rounded-xl w-full text-center ${cls}`;
-            feedbackMessage.classList.remove('hidden');
+            display.innerHTML = val.toLowerCase().split('').map(char => {
+                if (char === ' ') return '<div class="w-10"></div>';
+                if (!trAlphabet.includes(char)) return '';
+                return `
+                    <div class="flex flex-col items-center bg-white p-3 rounded-2xl shadow-md border-2 border-emerald-100 hover:scale-105 transition-transform">
+                        <img src="${char}.jpg" class="sign-letter-img" onclick="openLightbox('${char}.jpg')" onerror="this.src='https://via.placeholder.com/100?text=${char.toUpperCase()}'">
+                    </div>
+                `;
+            }).join('');
         }
 
-        // Geçiş Mantığı
-        nextToBrailleBtn.onclick = () => {
-            successModal.classList.add('hidden');
-            viewSorting.classList.add('hidden');
-            viewBraille.classList.remove('hidden');
-            window.scrollTo(0, 0);
-        };
-
-        // Braille Mantığı
-        function renderAlphabet() {
-            alphabetGrid.innerHTML = '';
-            Object.keys(brailleAlphabet).forEach(char => {
-                const btn = document.createElement('button');
-                btn.className = "p-3 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-700 hover:bg-blue-600 hover:text-white transition-all active:scale-95";
-                btn.textContent = char;
-                btn.onclick = () => showBraillePattern(char);
-                alphabetGrid.appendChild(btn);
-            });
+        function showResults(type) {
+            document.getElementById('experienceStep').classList.add('hidden');
+            const res = document.getElementById('resultStep');
+            res.classList.remove('hidden');
+            const data = techData[type];
+            res.innerHTML = `
+                <div class="text-center mb-8">
+                    <h3 class="text-3xl font-black text-slate-800 uppercase tracking-tight">${data.title}</h3>
+                    <p class="text-indigo-600 font-bold mt-2">🇹🇷 Gururumuz Yerli Tasarımlar</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-6">
+                    ${data.techs.map(tech => `
+                        <div class="bg-white p-6 rounded-3xl border-4 border-indigo-50 shadow-xl flex flex-col hover:border-indigo-200 transition-colors">
+                            <div class="w-full h-48 bg-indigo-50 flex items-center justify-center rounded-2xl mb-4 overflow-hidden border-2 border-indigo-100">
+                                ${tech.img.includes('.jpg') ? `<img src="${tech.img}" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML='<span class=\'text-indigo-400 font-bold italic text-sm\'>[Görsel Yüklenemedi]</span>'">` : `<span class="text-indigo-700 text-lg font-bold p-4 text-center">${tech.img}</span>`}
+                            </div>
+                            <h4 class="text-2xl font-black text-indigo-700 uppercase">${tech.name}</h4>
+                            <p class="text-slate-600 mt-3 leading-relaxed text-sm font-medium">${tech.desc}</p>
+                            <div class="mt-auto pt-4 border-t border-slate-100">
+                                <span class="bg-emerald-100 text-emerald-700 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-tighter">Türkiye'de Geliştirildi</span>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                <button onclick="closeModal()" class="mt-10 bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-full w-full font-black text-lg shadow-lg transition-all uppercase">Anasayfaya Dön</button>
+            `;
         }
 
-        function showBraillePattern(char) {
-            const pattern = brailleAlphabet[char];
-            activeDots.clear();
-            pattern.forEach(d => activeDots.add(d.toString()));
-            updateCellUI();
-        }
-
-        function updateCellUI() {
-            document.querySelectorAll('.braille-dot').forEach(dot => {
-                dot.classList.toggle('active', activeDots.has(dot.dataset.dot));
-            });
-            detectLetter();
-        }
-
-        function detectLetter() {
-            const currentPattern = Array.from(activeDots).map(Number).sort((a, b) => a - b);
-            let found = "?";
-            for (const [char, pattern] of Object.entries(brailleAlphabet)) {
-                if (JSON.stringify(pattern.sort((a, b) => a - b)) === JSON.stringify(currentPattern)) {
-                    found = char;
-                    break;
-                }
-            }
-            detectedLetterDisplay.textContent = found;
-        }
-
-        interactiveCell.onclick = (e) => {
-            if (e.target.classList.contains('braille-dot')) {
-                const dot = e.target.dataset.dot;
-                if (activeDots.has(dot)) activeDots.delete(dot);
-                else activeDots.add(dot);
-                updateCellUI();
-            }
-        };
-
-        document.getElementById('clear-braille').onclick = () => {
-            activeDots.clear();
-            updateCellUI();
-        };
-
-        resetBtn.onclick = initGame;
-        window.onload = initGame;
+        function closeModal() { document.getElementById('mainModal').classList.remove('active'); }
     </script>
 </body>
-
 </html>
