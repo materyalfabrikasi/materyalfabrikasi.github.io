@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Görme Engelli Bireye Yardım Etme Süreci</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .dragging {
+            opacity: 0.4;
+            transform: scale(1.02);
+        }
+        .correct-border {
+            border: 6px solid #10b981 !important;
+        }
+        .wrong-border {
+            border: 6px solid #ef4444 !important;
+        }
+        .image-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .image-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen font-sans text-slate-800">
+
+    <div id="app" class="max-w-5xl mx-auto p-4 md:p-8">
+        
+        <!-- Başlık ve Sesli Yönerge Bölümü -->
+        <header class="text-center mb-10 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+            <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-4">Farkındalık ve Yardım Süreci</h1>
+            
+            <div class="flex flex-col items-center gap-4">
+                <p class="text-slate-600 text-lg">Lütfen aşağıdaki yönergeyi dinleyin ve görselleri olay akışına göre sıralayın.</p>
+                
+                <!-- Sesli Yönerge (1.mp3) -->
+                <div class="bg-blue-50 p-4 rounded-xl flex items-center gap-4 w-full max-w-md">
+                    <span class="text-blue-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"></path><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
+                    </span>
+                    <audio id="instruction-audio" controls class="w-full h-10">
+                        <source src="1.mp3" type="audio/mpeg">
+                        Tarayıcınız ses öğesini desteklemiyor.
+                    </audio>
+                </div>
+            </div>
+        </header>
+
+        <!-- Sıralama Bölümü -->
+        <section id="game-section">
+            <div class="bg-white p-6 md:p-10 rounded-3xl shadow-xl border border-slate-100">
+                <h2 class="text-xl font-semibold mb-8 text-center text-slate-700">Görselleri Sürükleyerek Doğru Sıraya Koyun</h2>
+                
+                <!-- Görsel Listesi - Daha büyük görseller için 2 kolonlu yapı -->
+                <div id="sortable-list" class="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-10">
+                    <!-- Görseller JS ile buraya gelecek -->
+                </div>
+
+                <!-- Kontroller -->
+                <div class="flex flex-col items-center gap-6 pt-8 border-t border-slate-100">
+                    <div id="feedback-message" class="hidden text-xl font-bold p-4 rounded-xl w-full text-center animate-bounce"></div>
+                    
+                    <div class="flex flex-wrap justify-center gap-4 w-full">
+                        <button id="check-btn" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 px-10 rounded-2xl transition-all shadow-lg active:scale-95 text-lg">
+                            Sıralamayı Kontrol Et
+                        </button>
+                        <button id="reset-btn" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-4 px-10 rounded-2xl transition-all active:scale-95 text-lg">
+                            Karıştır / Yeniden Dene
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Görsel Büyütme Modalı (LightBox) -->
+    <div id="zoom-modal" class="fixed inset-0 bg-black/90 hidden z-[100] flex items-center justify-center p-4 backdrop-blur-sm cursor-zoom-out">
+        <div class="relative max-w-4xl w-full h-full flex items-center justify-center">
+            <img id="zoomed-image" src="" alt="Büyütülmüş Görsel" class="max-w-full max-h-full object-contain rounded-lg shadow-2xl">
+            <button id="close-zoom" class="absolute top-4 right-4 bg-white/20 hover:bg-white/40 text-white p-2 rounded-full transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Başarı Modalı -->
+    <div id="success-modal" class="fixed inset-0 bg-blue-900/80 hidden flex items-center justify-center z-[110] p-4 backdrop-blur-md">
+        <div class="bg-white rounded-[2.5rem] p-10 max-w-md w-full text-center shadow-2xl transform transition-all scale-100">
+            <div class="text-8xl mb-6">🏆</div>
+            <h2 class="text-3xl font-bold text-slate-900 mb-3">Harika İş Çıkardın!</h2>
+            <p class="text-slate-600 text-lg mb-8">Görme engelli bireylere yardım etme sürecindeki tüm adımları başarıyla sıraladın.</p>
+            <button onclick="location.reload()" class="w-full bg-blue-600 text-white font-bold py-4 rounded-2xl hover:bg-blue-700 shadow-lg transition-colors text-lg">
+                Yeniden Başla
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const sortableList = document.getElementById('sortable-list');
+        const checkBtn = document.getElementById('check-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const feedbackMessage = document.getElementById('feedback-message');
+        const successModal = document.getElementById('success-modal');
+        const zoomModal = document.getElementById('zoom-modal');
+        const zoomedImage = document.getElementById('zoomed-image');
+        const closeZoom = document.getElementById('close-zoom');
+
+        // Doğru sıralama (1'den 4'e)
+        const correctOrder = ['1.jpeg', '2.jpeg', '3.jpeg', '4.jpeg'];
+        let currentItems = [...correctOrder];
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function initGame() {
+            feedbackMessage.classList.add('hidden');
+            currentItems = shuffle([...correctOrder]);
+            renderItems();
+        }
+
+        function renderItems() {
+            sortableList.innerHTML = '';
+            currentItems.forEach((src, index) => {
+                const container = document.createElement('div');
+                container.className = 'image-card relative group bg-white p-3 rounded-2xl border-2 border-slate-200 cursor-move shadow-sm';
+                container.draggable = true;
+                container.dataset.index = index;
+                container.dataset.src = src;
+
+                container.innerHTML = `
+                    <div class="aspect-video relative overflow-hidden rounded-xl bg-slate-100">
+                        <img src="${src}" alt="Adım" class="w-full h-full object-cover pointer-events-none" 
+                             onerror="this.src='https://via.placeholder.com/600x400?text=Görsel+Bulunamadı'">
+                        
+                        <!-- Sıra Numarası Rozeti -->
+                        <div class="absolute top-3 left-3 bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg shadow-md border-2 border-white">
+                            ${index + 1}
+                        </div>
+
+                        <!-- Büyüteç Butonu -->
+                        <button class="zoom-trigger absolute bottom-3 right-3 bg-white/90 hover:bg-white text-slate-800 p-2 rounded-lg shadow-lg transition-all transform hover:scale-110" 
+                                title="Büyüt">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                <line x1="11" y1="8" x2="11" y2="14"></line>
+                                <line x1="8" y1="11" x2="14" y2="11"></line>
+                            </svg>
+                        </button>
+                    </div>
+                `;
+
+                // Sürükle-Bırak Eventleri
+                container.addEventListener('dragstart', handleDragStart);
+                container.addEventListener('dragover', handleDragOver);
+                container.addEventListener('drop', handleDrop);
+                container.addEventListener('dragend', handleDragEnd);
+
+                // Zoom Eventi
+                container.querySelector('.zoom-trigger').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openZoom(src);
+                });
+
+                sortableList.appendChild(container);
+            });
+        }
+
+        // Zoom Fonksiyonları
+        function openZoom(src) {
+            zoomedImage.src = src;
+            zoomModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeZoomModal() {
+            zoomModal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        zoomModal.addEventListener('click', closeZoomModal);
+        closeZoom.addEventListener('click', closeZoomModal);
+
+        // Sürükle Bırak Mantığı
+        let dragSrcIndex = null;
+
+        function handleDragStart(e) {
+            dragSrcIndex = this.dataset.index;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            return false;
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const targetIndex = this.dataset.index;
+            if (dragSrcIndex !== targetIndex) {
+                const temp = currentItems[dragSrcIndex];
+                currentItems[dragSrcIndex] = currentItems[targetIndex];
+                currentItems[targetIndex] = temp;
+                renderItems();
+            }
+        }
+
+        function handleDragEnd() {
+            this.classList.remove('dragging');
+        }
+
+        // Kontrol Et
+        checkBtn.addEventListener('click', () => {
+            const isCorrect = currentItems.every((val, index) => val === correctOrder[index]);
+            const itemElements = sortableList.querySelectorAll('.image-card');
+            
+            if (isCorrect) {
+                feedbackMessage.textContent = "Mükemmel! Doğru Sıralama.";
+                feedbackMessage.className = "text-xl font-bold p-4 rounded-xl w-full text-center bg-emerald-100 text-emerald-800 animate-pulse";
+                feedbackMessage.classList.remove('hidden');
+                
+                itemElements.forEach(el => {
+                    el.classList.add('correct-border');
+                    el.classList.remove('wrong-border');
+                });
+
+                setTimeout(() => {
+                    successModal.classList.remove('hidden');
+                }, 1000);
+            } else {
+                feedbackMessage.textContent = "Bazı adımlar hatalı, lütfen tekrar dene.";
+                feedbackMessage.className = "text-xl font-bold p-4 rounded-xl w-full text-center bg-rose-100 text-rose-800";
+                feedbackMessage.classList.remove('hidden');
+
+                currentItems.forEach((val, index) => {
+                    if (val === correctOrder[index]) {
+                        itemElements[index].classList.add('correct-border');
+                        itemElements[index].classList.remove('wrong-border');
+                    } else {
+                        itemElements[index].classList.add('wrong-border');
+                        itemElements[index].classList.remove('correct-border');
+                    }
+                });
+            }
+        });
+
+        resetBtn.addEventListener('click', initGame);
+
+        // İlk Yükleme
+        window.onload = initGame;
+    </script>
+</body>
+</html>

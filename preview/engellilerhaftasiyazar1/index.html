@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farkındalık Yolculuğu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .dragging {
+            opacity: 0.4;
+            transform: scale(1.02);
+        }
+
+        .correct-border {
+            border: 6px solid #10b981 !important;
+        }
+
+        .wrong-border {
+            border: 6px solid #ef4444 !important;
+        }
+
+        .image-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .blur-overlay {
+            backdrop-filter: blur(20px);
+            background-color: rgba(255, 255, 255, 0.4);
+            transition: all 0.5s ease;
+        }
+
+        .unlocked .blur-overlay {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .unlocked img {
+            filter: blur(0);
+        }
+
+        .locked-img {
+            filter: blur(15px);
+            transition: filter 0.5s ease;
+        }
+
+        /* Braille Styles */
+        .braille-dot {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #e2e8f0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+        }
+
+        .braille-dot.active {
+            background-color: #2563eb;
+            box-shadow: 0 0 15px rgba(37, 99, 235, 0.4);
+            transform: scale(1.1);
+        }
+
+        .braille-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 45px);
+            grid-template-rows: repeat(3, 45px);
+            gap: 15px;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 min-h-screen font-sans text-slate-800">
+
+    <div id="app" class="max-w-5xl mx-auto p-4 md:p-8">
+
+        <!-- Sayfa 1: Sıralama Oyunu -->
+        <div id="view-sorting">
+            <header class="text-center mb-10 bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
+                <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-4">Adım Adım Farkındalık</h1>
+                <p class="text-slate-700 text-xl font-medium mb-2">Görsellerin üzerindeki anlamlı sözleri okurken
+                    tıklayın. Ardından açılan görselleri sıralayın.</p>
+                <p class="text-slate-500 italic text-sm">İlk etkinliği tamamladıktan sonra "Braille Alfabesini"
+                    keşfedin.</p>
+            </header>
+
+            <section class="bg-white p-6 md:p-10 rounded-3xl shadow-xl border border-slate-100">
+                <div id="sortable-list" class="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-10"></div>
+
+                <div class="flex flex-col items-center gap-6 pt-8 border-t border-slate-100">
+                    <div id="feedback-message" class="hidden text-xl font-bold p-4 rounded-xl w-full text-center"></div>
+                    <div class="flex flex-wrap justify-center gap-4 w-full">
+                        <button id="check-btn"
+                            class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 px-10 rounded-2xl transition-all shadow-lg active:scale-95 text-lg">Sıralamayı
+                            Kontrol Et</button>
+                        <button id="reset-btn"
+                            class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-4 px-10 rounded-2xl transition-all active:scale-95 text-lg">Yeniden
+                            Dene</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Sayfa 2: Braille Etkinliği -->
+        <div id="view-braille" class="hidden">
+            <header class="text-center mb-8 bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
+                <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-4">Braille Alfabesini Keşfet</h1>
+                <p class="text-slate-700 text-lg">Aşağıdaki hücrede noktalara tıklayarak kendi harfinizi oluşturun veya
+                    alfabeden bir harf seçin.</p>
+            </header>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Braille Hücresi -->
+                <div
+                    class="lg:col-span-1 bg-white p-8 rounded-3xl shadow-lg border border-slate-100 flex flex-col items-center">
+                    <h3 class="font-bold text-slate-500 mb-6 uppercase tracking-widest text-sm">Etkileşimli Hücre</h3>
+                    <div class="braille-grid mb-8" id="interactive-cell">
+                        <div class="braille-dot" data-dot="1"></div>
+                        <div class="braille-dot" data-dot="4"></div>
+                        <div class="braille-dot" data-dot="2"></div>
+                        <div class="braille-dot" data-dot="5"></div>
+                        <div class="braille-dot" data-dot="3"></div>
+                        <div class="braille-dot" data-dot="6"></div>
+                    </div>
+                    <div class="text-center">
+                        <span class="text-sm text-slate-400 block mb-1">Tespit Edilen Harf:</span>
+                        <span id="detected-letter" class="text-6xl font-black text-blue-600">?</span>
+                    </div>
+                    <button id="clear-braille"
+                        class="mt-8 text-slate-400 hover:text-rose-500 transition-colors flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 6h18"></path>
+                            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></button>
+                    </button>
+                </div>
+
+                <!-- Alfabe Seçici -->
+                <div class="lg:col-span-2 bg-white p-8 rounded-3xl shadow-lg border border-slate-100">
+                    <h3 class="font-bold text-slate-500 mb-6 uppercase tracking-widest text-sm text-center">Harf Listesi
+                    </h3>
+                    <div id="alphabet-grid" class="grid grid-cols-5 sm:grid-cols-8 gap-3"></div>
+
+                    <div class="mt-8 p-6 bg-blue-50 rounded-2xl border border-blue-100">
+                        <h4 class="font-bold text-blue-900 mb-2 flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="16" x2="12" y2="12"></line>
+                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                            </svg>
+                            Biliyor muydunuz?
+                        </h4>
+                        <p class="text-blue-800 text-sm leading-relaxed">
+                            Braille alfabesi, 1821 yılında Louis Braille tarafından geliştirilmiştir. Türkiye'de **Milli
+                            Kütüphane Konuşan Kitaplık**, binlerce görme engelli vatandaşa dijital ve kabartma baskılı
+                            materyallerle hizmet vermektedir.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 text-center">
+                <button onclick="location.reload()" class="text-blue-600 font-semibold hover:underline">Başa Dön ve
+                    Sıralamayı Tekrarla</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modallar -->
+    <div id="zoom-modal"
+        class="fixed inset-0 bg-black/95 hidden z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
+        <img id="zoomed-image" class="max-w-full max-h-full object-contain rounded-lg shadow-2xl">
+    </div>
+
+    <div id="success-modal"
+        class="fixed inset-0 bg-blue-900/80 hidden flex items-center justify-center z-[110] p-4 backdrop-blur-md">
+        <div class="bg-white rounded-[2.5rem] p-10 max-w-md w-full text-center shadow-2xl">
+            <div class="text-8xl mb-6">🌟</div>
+            <h2 class="text-3xl font-bold text-slate-900 mb-3">Harikasınız!</h2>
+            <p class="text-slate-600 text-lg mb-8">Zihninizdeki engelleri kaldırdınız. Şimdi Braille alfabesini
+                öğrenmeye hazır mısınız?</p>
+            <button id="next-to-braille"
+                class="w-full bg-blue-600 text-white font-bold py-4 rounded-2xl hover:bg-blue-700 shadow-lg transition-all text-lg mb-3">
+                Braille Alfabesini Keşfet
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Veri ve Ayarlar
+        const quoteMap = {
+            '1.jpeg': '“Engel bedende değil, zihindedir.”',
+            '2.jpeg': '“Empati varsa engel yoktur.”',
+            '3.jpeg': '“Bir gün değil, her gün yanınızdayız.”',
+            '4.jpeg': '“Asıl engel, sevgisizliktir.”'
+        };
+        const correctOrder = ['1.jpeg', '2.jpeg', '3.jpeg', '4.jpeg'];
+
+        // Braille Alfabe Haritalama (1-6 noktaları)
+        const brailleAlphabet = {
+            'A': [1], 'B': [1, 2], 'C': [1, 4], 'Ç': [1, 4, 6], 'D': [1, 4, 5], 'E': [1, 5], 'F': [1, 2, 4],
+            'G': [1, 2, 4, 5], 'Ğ': [1, 2, 4, 5, 6], 'H': [1, 2, 5], 'I': [2, 4], 'İ': [3, 5], 'J': [2, 4, 5],
+            'K': [1, 3], 'L': [1, 2, 3], 'M': [1, 3, 4], 'N': [1, 3, 4, 5], 'O': [1, 3, 5], 'Ö': [2, 4, 6],
+            'P': [1, 2, 3, 4], 'R': [1, 2, 3, 5], 'S': [2, 3, 4], 'Ş': [1, 4, 6], 'T': [2, 3, 4, 5],
+            'U': [1, 3, 6], 'Ü': [1, 2, 5, 6], 'V': [1, 2, 3, 5, 6], 'Y': [1, 3, 4, 5, 6], 'Z': [1, 3, 5, 6]
+        };
+
+        let currentItems = [];
+        let activeDots = new Set();
+
+        // Elemanlar
+        const sortableList = document.getElementById('sortable-list');
+        const checkBtn = document.getElementById('check-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const feedbackMessage = document.getElementById('feedback-message');
+        const successModal = document.getElementById('success-modal');
+        const nextToBrailleBtn = document.getElementById('next-to-braille');
+        const viewSorting = document.getElementById('view-sorting');
+        const viewBraille = document.getElementById('view-braille');
+        const interactiveCell = document.getElementById('interactive-cell');
+        const detectedLetterDisplay = document.getElementById('detected-letter');
+        const alphabetGrid = document.getElementById('alphabet-grid');
+
+        // Oyun Başlatma
+        function initGame() {
+            const shuffledSources = [...correctOrder].sort(() => Math.random() - 0.5);
+            currentItems = shuffledSources.map(src => ({ src, unlocked: false }));
+            renderItems();
+            renderAlphabet();
+        }
+
+        function renderItems() {
+            sortableList.innerHTML = '';
+            currentItems.forEach((item, index) => {
+                const container = document.createElement('div');
+                container.className = `image-card relative bg-white p-3 rounded-2xl border-2 border-slate-200 shadow-sm ${item.unlocked ? 'unlocked cursor-move' : 'cursor-pointer'}`;
+                container.draggable = item.unlocked;
+                container.dataset.index = index;
+
+                container.innerHTML = `
+                    <div class="aspect-video relative overflow-hidden rounded-xl bg-slate-800">
+                        <img src="${item.src}" class="${item.unlocked ? '' : 'locked-img'} w-full h-full object-cover pointer-events-none" onerror="this.src='https://via.placeholder.com/600x400?text=Görsel'">
+                        <div class="blur-overlay absolute inset-0 flex items-center justify-center p-6 text-center">
+                            <p class="text-blue-900 font-bold text-xl italic">${quoteMap[item.src]}</p>
+                        </div>
+                        ${item.unlocked ? `<div class="absolute top-2 left-2 bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold shadow-md border border-white">${index + 1}</div>` : ''}
+                    </div>
+                `;
+
+                if (!item.unlocked) container.onclick = () => { item.unlocked = true; renderItems(); };
+                if (item.unlocked) {
+                    container.ondragstart = (e) => { e.dataTransfer.setData('text', index); container.classList.add('dragging'); };
+                    container.ondragover = (e) => e.preventDefault();
+                    container.ondrop = (e) => {
+                        const fromIdx = e.dataTransfer.getData('text');
+                        const toIdx = index;
+                        [currentItems[fromIdx], currentItems[toIdx]] = [currentItems[toIdx], currentItems[fromIdx]];
+                        renderItems();
+                    };
+                    container.ondragend = () => container.classList.remove('dragging');
+                }
+                sortableList.appendChild(container);
+            });
+        }
+
+        // Sıralama Kontrolü
+        checkBtn.onclick = () => {
+            if (!currentItems.every(i => i.unlocked)) {
+                feedback("Lütfen önce tüm görselleri açın!", "bg-amber-100 text-amber-800");
+                return;
+            }
+            const isCorrect = currentItems.every((item, i) => item.src === correctOrder[i]);
+            if (isCorrect) {
+                feedback("Mükemmel! Doğru sıralama.", "bg-emerald-100 text-emerald-800 animate-pulse");
+                setTimeout(() => successModal.classList.remove('hidden'), 800);
+            } else {
+                feedback("Bazı hatalar var, tekrar deneyin.", "bg-rose-100 text-rose-800");
+                document.querySelectorAll('.image-card').forEach((el, i) => {
+                    el.className = `image-card relative bg-white p-3 rounded-2xl border-2 shadow-sm unlocked cursor-move ${currentItems[i].src === correctOrder[i] ? 'correct-border' : 'wrong-border'}`;
+                });
+            }
+        };
+
+        function feedback(msg, cls) {
+            feedbackMessage.textContent = msg;
+            feedbackMessage.className = `text-xl font-bold p-4 rounded-xl w-full text-center ${cls}`;
+            feedbackMessage.classList.remove('hidden');
+        }
+
+        // Geçiş Mantığı
+        nextToBrailleBtn.onclick = () => {
+            successModal.classList.add('hidden');
+            viewSorting.classList.add('hidden');
+            viewBraille.classList.remove('hidden');
+            window.scrollTo(0, 0);
+        };
+
+        // Braille Mantığı
+        function renderAlphabet() {
+            alphabetGrid.innerHTML = '';
+            Object.keys(brailleAlphabet).forEach(char => {
+                const btn = document.createElement('button');
+                btn.className = "p-3 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-700 hover:bg-blue-600 hover:text-white transition-all active:scale-95";
+                btn.textContent = char;
+                btn.onclick = () => showBraillePattern(char);
+                alphabetGrid.appendChild(btn);
+            });
+        }
+
+        function showBraillePattern(char) {
+            const pattern = brailleAlphabet[char];
+            activeDots.clear();
+            pattern.forEach(d => activeDots.add(d.toString()));
+            updateCellUI();
+        }
+
+        function updateCellUI() {
+            document.querySelectorAll('.braille-dot').forEach(dot => {
+                dot.classList.toggle('active', activeDots.has(dot.dataset.dot));
+            });
+            detectLetter();
+        }
+
+        function detectLetter() {
+            const currentPattern = Array.from(activeDots).map(Number).sort((a, b) => a - b);
+            let found = "?";
+            for (const [char, pattern] of Object.entries(brailleAlphabet)) {
+                if (JSON.stringify(pattern.sort((a, b) => a - b)) === JSON.stringify(currentPattern)) {
+                    found = char;
+                    break;
+                }
+            }
+            detectedLetterDisplay.textContent = found;
+        }
+
+        interactiveCell.onclick = (e) => {
+            if (e.target.classList.contains('braille-dot')) {
+                const dot = e.target.dataset.dot;
+                if (activeDots.has(dot)) activeDots.delete(dot);
+                else activeDots.add(dot);
+                updateCellUI();
+            }
+        };
+
+        document.getElementById('clear-braille').onclick = () => {
+            activeDots.clear();
+            updateCellUI();
+        };
+
+        resetBtn.onclick = initGame;
+        window.onload = initGame;
+    </script>
+</body>
+
+</html>

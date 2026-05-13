@@ -1,0 +1,353 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Süper Güçlü Teknolojiler Etkinliği</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Türkçe karakterleri destekleyen modern ve çocuksu yazı tipi */
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .category-card {
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+
+        .category-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 50;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 100;
+            cursor: zoom-out;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .lightbox.active {
+            display: flex;
+        }
+
+        /* Braille Dots Styling */
+        .braille-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px;
+            width: 50px;
+            height: 75px;
+            background: #ffffff;
+            padding: 8px;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .braille-dot {
+            width: 14px;
+            height: 14px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+
+        .braille-dot.active {
+            background: #ef4444; 
+            box-shadow: 0 0 6px rgba(239, 68, 68, 0.5);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        .sign-letter-img {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            border-radius: 8px;
+            cursor: zoom-in;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <header class="max-w-6xl mx-auto text-center mb-12">
+        <h1 class="text-5xl font-extrabold text-indigo-600 mb-3 tracking-tight">Süper Güçlü Teknolojiler 🚀</h1>
+        <p class="text-xl text-slate-600 font-medium">Engelleri aşan yerli buluşları keşfedin!</p>
+    </header>
+
+    <main class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div onclick="openExperience('gorme')" class="category-card bg-red-50 p-8 rounded-3xl border-4 border-red-200 shadow-xl text-center">
+            <div class="text-7xl mb-4">📖</div>
+            <h2 class="text-2xl font-black text-red-700 uppercase">Ellerim Okuyor!</h2>
+            <p class="text-red-600 mt-2 font-semibold">Braille alfabesiyle yazı yazmayı öğren.</p>
+            <button class="mt-6 bg-red-500 hover:bg-red-600 text-white px-8 py-3 rounded-full font-bold transition-all">BAŞLA</button>
+        </div>
+
+        <div onclick="openExperience('isitme')" class="category-card bg-emerald-50 p-8 rounded-3xl border-4 border-emerald-200 shadow-xl text-center">
+            <div class="text-7xl mb-4">👂</div>
+            <h2 class="text-2xl font-black text-emerald-700 uppercase">Ellerim Konuşuyor!</h2>
+            <p class="text-emerald-600 mt-2 font-semibold">Türk Parmak Alfabesi ile tanış.</p>
+            <button class="mt-6 bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-3 rounded-full font-bold transition-all">BAŞLA</button>
+        </div>
+
+        <div onclick="openExperience('bedensel')" class="category-card bg-amber-50 p-8 rounded-3xl border-4 border-amber-200 shadow-xl text-center">
+            <div class="text-7xl mb-4">🦾</div>
+            <h2 class="text-2xl font-black text-amber-700 uppercase">Robotik Güç!</h2>
+            <p class="text-amber-600 mt-2 font-semibold">Hareket özgürlüğü veren teknolojiler.</p>
+            <button class="mt-6 bg-amber-500 hover:bg-amber-600 text-white px-8 py-3 rounded-full font-bold transition-all">KEŞFET</button>
+        </div>
+    </main>
+
+    <div id="mainModal" class="modal px-4">
+        <div class="bg-white max-w-5xl w-full rounded-3xl shadow-2xl overflow-hidden relative border-8 border-indigo-100 flex flex-col max-h-[95vh]">
+            <button onclick="closeModal()" class="absolute top-4 right-4 bg-slate-200 hover:bg-red-400 hover:text-white text-slate-600 w-10 h-10 rounded-full text-2xl font-bold z-50">&times;</button>
+            <div class="p-6 md:p-10 overflow-y-auto custom-scrollbar">
+                <div id="experienceStep"></div>
+                <div id="resultStep" class="hidden"></div>
+            </div>
+            <div id="modalFooter" class="bg-indigo-50 p-4 text-center border-t border-indigo-100">
+                <p id="footerText" class="text-indigo-900 font-bold">Türkiye'de Üretilen Süper Teknolojiler 🇹🇷</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="lightbox" class="lightbox" onclick="closeLightbox()">
+        <img id="lightboxImg" class="max-w-full max-h-full rounded-lg shadow-2xl transition-transform duration-300" src="" alt="Büyütülmüş harf">
+    </div>
+
+    <script>
+        const trAlphabet = ['a', 'b', 'c', 'ç', 'd', 'e', 'f', 'g', 'ğ', 'h', 'ı', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'ö', 'p', 'r', 's', 'ş', 't', 'u', 'ü', 'v', 'y', 'z'];
+
+        // Braille Nokta Dizilimi (6'lı sistem: [1,4,2,5,3,6])
+        const brailleAlphabet = {
+            'a': [1,0,0,0,0,0], 'b': [1,0,1,0,0,0], 'c': [1,1,0,0,0,0], 'ç': [1,0,0,0,0,1], 'd': [1,1,0,1,0,0],
+            'e': [1,0,0,1,0,0], 'f': [1,1,1,0,0,0], 'g': [1,1,1,1,0,0], 'ğ': [1,0,1,0,0,1], 'h': [1,0,1,1,0,0],
+            'ı': [0,0,0,1,1,0], 'i': [0,1,1,0,0,0], 'j': [0,1,1,1,0,0], 'k': [1,0,0,0,1,0], 'l': [1,0,1,0,1,0],
+            'm': [1,1,0,0,1,0], 'n': [1,1,0,1,1,0], 'o': [1,0,0,1,1,0], 'ö': [0,1,1,0,0,1], 'p': [1,1,1,0,1,0],
+            'r': [1,0,1,1,1,0], 's': [0,1,1,0,1,0], 'ş': [1,1,0,0,0,1], 't': [0,1,1,1,1,0], 'u': [1,0,0,0,1,1],
+            'ü': [1,0,1,1,0,1], 'v': [1,0,1,0,1,1], 'y': [1,1,0,1,1,1], 'z': [1,0,0,1,1,1], ' ': [0,0,0,0,0,0]
+        };
+
+        // Yerli Teknoloji Verileri
+        const techData = {
+            gorme: { 
+                title: "Görme Alanında Yerli Mucizeler", 
+                techs: [
+                    { 
+                        name: "WeWALK Akıllı Baston", 
+                        desc: "Türkiye'de Türk mühendisler tarafından geliştirilen bu dünya çapındaki buluş, görme engelliler için göğüs ve baş hizasındaki engelleri algılar. Akıllı telefonlara bağlanarak navigasyon hizmeti sunar.", 
+                        img: "1.jpg" 
+                    },
+                    { 
+                        name: "EyeSense Uygulaması", 
+                        desc: "Türk yazılımcılar tarafından geliştirilen EyeSense, görme engellilerin ön ve arka kamera ile selfie çekebilmesine veya nesneleri tanımasına yardımcı olan, sesli yönlendirme yapan yerli bir uygulamadır.", 
+                        img: "2.jpg" 
+                    }
+                ] 
+            },
+            isitme: { 
+                title: "İşitme Alanında Yerli Mucizeler", 
+                techs: [
+                    { 
+                        name: "TİD3B Robotu", 
+                        desc: "Türk İşaret Dili (TİD) için geliştirilen bu 3 boyutlu robot, konuşmaları anında işaret diline çevirerek iletişimi kolaylaştırır. Tamamen yerli bir projedir.", 
+                        img: "3.jpg" 
+                    },
+                    { 
+                        name: "İşaret Dili Çevirici Eldiven", 
+                        desc: "Ülkemizdeki genç mucitler tarafından geliştirilen bu eldiven, el hareketlerini hoparlörden sese ve yazıya dönüştürür. Yerli teknoloji ile sessizliği bozar.", 
+                        img: "4.jpg" 
+                    }
+                ] 
+            },
+            bedensel: { 
+                title: "Hareket Alanında Yerli Mucizeler", 
+                techs: [
+                    { 
+                        name: "Walking It Yerli Dış İskelet", 
+                        desc: "Türkiye'de geliştirilen bu robotik dış iskelet (exoskeleton), fiziksel engelli bireylerin ayağa kalkmasına ve yürümesine yardımcı olan ileri seviye bir rehabilitasyon cihazıdır.", 
+                        img: "6.jpg" 
+                    },
+                    { 
+                        name: "Apollon Gözlük (Head Mouse)", 
+                        desc: "Ellerini kullanamayan bireyler için Türk girişimciler tarafından geliştirilen bu akıllı gözlük, kafa hareketlerini bilgisayar faresine dönüştürerek teknolojiye erişim sağlar.", 
+                        img: "5.jpg" 
+                    }
+                ] 
+            }
+        };
+
+        function openExperience(type) {
+            const expStep = document.getElementById('experienceStep');
+            const resStep = document.getElementById('resultStep');
+            expStep.innerHTML = '';
+            resStep.classList.add('hidden');
+            expStep.classList.remove('hidden');
+
+            if (type === 'gorme') renderBrailleEditor();
+            else if (type === 'isitme') renderSignEditor();
+            else showResults('bedensel');
+
+            document.getElementById('mainModal').classList.add('active');
+        }
+
+        function renderBrailleEditor() {
+            const container = document.getElementById('experienceStep');
+            container.innerHTML = `
+                <h2 class="text-3xl font-black text-red-600 mb-2 text-center">Braille Yazı Deneyimi</h2>
+                <p class="text-slate-500 text-center mb-6 font-medium">Yönerge: Klavyeden harflere bastığında kutucuklardaki kırmızı noktaların nasıl değiştiğini incele. Bu, görme engelli dostlarımızın parmaklarıyla okuduğu alfabedir.</p>
+                <div class="flex flex-col items-center gap-6">
+                    <div id="currentBraille" class="braille-grid scale-125">
+                        <div class="braille-dot"></div><div class="braille-dot"></div>
+                        <div class="braille-dot"></div><div class="braille-dot"></div>
+                        <div class="braille-dot"></div><div class="braille-dot"></div>
+                    </div>
+                    <input type="text" id="brailleInput" placeholder="Bir harf yaz..." oninput="updateBraille(this.value)" 
+                        class="w-full max-w-lg p-4 text-xl border-4 border-red-200 rounded-2xl outline-none shadow-lg font-bold">
+                    <div id="brailleDisplay" class="flex flex-wrap gap-4 justify-center bg-white p-6 rounded-2xl border min-h-[120px] w-full"></div>
+                    <button onclick="showResults('gorme')" class="bg-red-500 text-white px-10 py-3 rounded-full font-bold shadow-lg hover:bg-red-600 transition-colors uppercase">Yerli Teknolojileri Keşfet</button>
+                </div>
+            `;
+        }
+
+        function renderSignEditor() {
+            const container = document.getElementById('experienceStep');
+            container.innerHTML = `
+                <h2 class="text-3xl font-black text-emerald-600 mb-2 text-center">Türk Parmak Alfabesi</h2>
+                <p class="text-slate-500 text-center mb-4 font-medium">Yönerge: Aşağıdaki kutuya ismini yazarak ellerinle nasıl 'konuşabileceğini' gör. Görsellere tıklayarak hareketleri daha yakından inceleyebilirsin.</p>
+                
+                <div class="mb-8 p-4 bg-slate-50 rounded-2xl border-2 border-emerald-100">
+                    <p class="text-center text-sm font-black text-emerald-700 mb-4 uppercase tracking-widest">Alfabe Rehberİ</p>
+                    <div class="grid grid-cols-5 md:grid-cols-10 gap-3">
+                        ${trAlphabet.map(char => `
+                            <div class="flex flex-col items-center bg-white p-1 rounded-lg border shadow-sm hover:scale-110 transition-transform">
+                                <img src="${char}.jpg" class="w-12 h-12 object-contain cursor-pointer" onclick="openLightbox('${char}.jpg')" onerror="this.src='https://via.placeholder.com/50?text=${char.toUpperCase()}'">
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div class="flex flex-col items-center gap-6">
+                    <div class="w-full max-w-lg">
+                        <label class="block text-sm font-black text-slate-500 mb-2 ml-1 uppercase">İsmini buraya yaz:</label>
+                        <input type="text" id="signInput" placeholder="Örn: Elif" oninput="updateSign(this.value)" 
+                            class="w-full p-4 text-xl border-4 border-emerald-400 rounded-2xl outline-none shadow-lg font-bold">
+                    </div>
+                    <div id="signDisplay" class="flex flex-wrap gap-4 justify-center bg-emerald-50 p-8 rounded-3xl border-4 border-dashed border-emerald-200 min-h-[180px] w-full">
+                        <p class="text-emerald-400 self-center italic font-medium">Yazdığın harfler el hareketlerine dönüşecek...</p>
+                    </div>
+                    <button onclick="showResults('isitme')" class="bg-emerald-600 text-white px-12 py-4 rounded-full font-bold shadow-xl hover:bg-emerald-700 transition-colors uppercase">Yerli Teknolojileri Keşfet</button>
+                </div>
+            `;
+        }
+
+        function openLightbox(src) {
+            const lb = document.getElementById('lightbox');
+            const lbImg = document.getElementById('lightboxImg');
+            lbImg.src = src;
+            lb.classList.add('active');
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.remove('active');
+        }
+
+        function updateBraille(val) {
+            const display = document.getElementById('brailleDisplay');
+            const current = document.getElementById('currentBraille');
+            const lastChar = val.slice(-1).toLowerCase();
+            if (lastChar && brailleAlphabet[lastChar]) {
+                const pattern = brailleAlphabet[lastChar];
+                current.querySelectorAll('.braille-dot').forEach((dot, i) => dot.className = pattern[i] ? 'braille-dot active' : 'braille-dot');
+            }
+            display.innerHTML = val.split('').map(char => {
+                const pattern = brailleAlphabet[char.toLowerCase()] || [0,0,0,0,0,0];
+                return `<div class="flex flex-col items-center"><div class="braille-grid scale-50">${pattern.map(p => `<div class="braille-dot ${p?'active':''}"></div>`).join('')}</div><span class="text-xs font-bold uppercase">${char}</span></div>`;
+            }).join('');
+        }
+
+        function updateSign(val) {
+            const display = document.getElementById('signDisplay');
+            if (!val) {
+                display.innerHTML = '<p class="text-emerald-400 self-center italic font-medium">Yazdığın harfler el hareketlerine dönüşecek...</p>';
+                return;
+            }
+            display.innerHTML = val.toLowerCase().split('').map(char => {
+                if (char === ' ') return '<div class="w-10"></div>';
+                if (!trAlphabet.includes(char)) return '';
+                return `
+                    <div class="flex flex-col items-center bg-white p-3 rounded-2xl shadow-md border-2 border-emerald-100 hover:scale-105 transition-transform">
+                        <img src="${char}.jpg" class="sign-letter-img" onclick="openLightbox('${char}.jpg')" onerror="this.src='https://via.placeholder.com/100?text=${char.toUpperCase()}'">
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function showResults(type) {
+            document.getElementById('experienceStep').classList.add('hidden');
+            const res = document.getElementById('resultStep');
+            res.classList.remove('hidden');
+            const data = techData[type];
+            res.innerHTML = `
+                <div class="text-center mb-8">
+                    <h3 class="text-3xl font-black text-slate-800 uppercase tracking-tight">${data.title}</h3>
+                    <p class="text-indigo-600 font-bold mt-2">🇹🇷 Gururumuz Yerli Tasarımlar</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-6">
+                    ${data.techs.map(tech => `
+                        <div class="bg-white p-6 rounded-3xl border-4 border-indigo-50 shadow-xl flex flex-col hover:border-indigo-200 transition-colors">
+                            <div class="w-full h-48 bg-indigo-50 flex items-center justify-center rounded-2xl mb-4 overflow-hidden border-2 border-indigo-100">
+                                ${tech.img.includes('.jpg') ? `<img src="${tech.img}" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML='<span class=\'text-indigo-400 font-bold italic text-sm\'>[Görsel Yüklenemedi]</span>'">` : `<span class="text-indigo-700 text-lg font-bold p-4 text-center">${tech.img}</span>`}
+                            </div>
+                            <h4 class="text-2xl font-black text-indigo-700 uppercase">${tech.name}</h4>
+                            <p class="text-slate-600 mt-3 leading-relaxed text-sm font-medium">${tech.desc}</p>
+                            <div class="mt-auto pt-4 border-t border-slate-100">
+                                <span class="bg-emerald-100 text-emerald-700 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-tighter">Türkiye'de Geliştirildi</span>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                <button onclick="closeModal()" class="mt-10 bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-full w-full font-black text-lg shadow-lg transition-all uppercase">Anasayfaya Dön</button>
+            `;
+        }
+
+        function closeModal() { document.getElementById('mainModal').classList.remove('active'); }
+    </script>
+</body>
+</html>

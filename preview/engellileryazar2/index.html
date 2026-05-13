@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farkındalık ve Kelime Avı</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; overflow-x: hidden; }
+        
+        .canvas-container { position: relative; cursor: crosshair; touch-action: none; }
+        .drawing-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; }
+        
+        .grid-cell {
+            width: 35px; height: 35px;
+            display: flex; align-items: center; justify-content: center;
+            background: #1e293b; border: 1px solid #334155;
+            font-weight: bold; font-size: 0.9rem; cursor: pointer;
+            user-select: none; transition: all 0.2s;
+            text-transform: uppercase;
+        }
+        @media (min-width: 768px) { .grid-cell { width: 45px; height: 45px; font-size: 1.2rem; } }
+
+        .grid-cell.selected { background: #eab308 !important; color: #000 !important; }
+        .grid-cell.found { background: #22c55e !important; color: #fff !important; pointer-events: none; border-color: #166534; }
+        .grid-cell.password-active { background: #ef4444 !important; color: #fff !important; animation: pulse 1s infinite; border-color: #991b1b; }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .word-item.found { text-decoration: line-through; opacity: 0.3; filter: grayscale(1); background: #064e3b !important; }
+        
+        .gold-frame {
+            border: 3px solid #d4af37;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.5), inset 0 0 10px rgba(212, 175, 55, 0.2);
+            background: rgba(30, 41, 59, 0.9);
+        }
+
+        .instruction-box {
+            background: rgba(30, 41, 59, 0.5);
+            border-left: 4px solid #10b981;
+        }
+
+        .color-dot {
+            width: 24px; height: 24px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: 0.2s;
+        }
+        .color-dot.active { border-color: white; transform: scale(1.2); }
+    </style>
+</head>
+<body class="p-4 md:p-8 flex flex-col items-center">
+
+    <!-- Sayfa 1: 7 Fark -->
+    <div id="page1" class="w-full max-w-7xl flex flex-col items-center">
+        <h1 class="text-4xl font-black text-amber-500 mb-6 uppercase text-center tracking-tighter">7 Farkı Bul ve İşaretle</h1>
+        
+        <!-- Yönerge ve Araçlar Paneli -->
+        <div class="flex flex-col md:flex-row items-center justify-between gap-6 w-full mb-8">
+            <div class="instruction-box p-4 rounded-r-lg flex-1">
+                <p class="text-slate-300 text-sm md:text-base">İki görsel arasındaki 7 farkı bulun. Görseller üzerine çizim araçlarını kullanarak işaretleme yapın.</p>
+            </div>
+
+            <div class="flex justify-center gap-6 items-center bg-slate-800 p-4 rounded-2xl border border-slate-700 shadow-xl">
+                <div class="flex gap-2">
+                    <div class="color-dot active" style="background: #ef4444;" onclick="setColor('#ef4444', this)"></div>
+                    <div class="color-dot" style="background: #000000;" onclick="setColor('#000000', this)"></div>
+                    <div class="color-dot" style="background: #3b82f6;" onclick="setColor('#3b82f6', this)"></div>
+                    <div class="color-dot" style="background: #eab308;" onclick="setColor('#eab308', this)"></div>
+                </div>
+                <div class="h-8 w-px bg-slate-600"></div>
+                <div class="flex items-center gap-3">
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Kalınlık</span>
+                    <input type="range" min="2" max="12" value="4" id="penWidth" class="w-24 accent-amber-500">
+                </div>
+            </div>
+        </div>
+
+        <!-- Görseller -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10 w-full">
+            <div class="canvas-container rounded-2xl overflow-hidden border-2 border-slate-700 shadow-2xl bg-slate-900">
+                <img src="11.jpg" id="refImg" class="w-full h-auto block" alt="Referans Görsel">
+                <canvas id="canvasRef" class="drawing-canvas"></canvas>
+            </div>
+            <div class="canvas-container rounded-2xl overflow-hidden border-4 border-amber-500 shadow-2xl bg-slate-900">
+                <img src="1.jpg" id="targetImg" class="w-full h-auto block" alt="Farklı Görsel">
+                <canvas id="canvasTarget" class="drawing-canvas"></canvas>
+            </div>
+        </div>
+
+        <div class="flex flex-wrap justify-center gap-6 mb-12">
+            <button onclick="clearCanvas()" class="bg-slate-700 hover:bg-slate-600 px-8 py-4 rounded-2xl font-bold transition-all shadow-lg">TEMİZLE</button>
+            <button onclick="switchPage(2)" class="bg-amber-500 text-black px-12 py-4 rounded-2xl font-black shadow-2xl hover:bg-amber-400 transition-all uppercase tracking-tight">KELİME BULMACAYA GEÇ ➔</button>
+        </div>
+    </div>
+
+    <!-- Sayfa 2: Kelime Avı -->
+    <div id="page2" class="hidden w-full max-w-5xl flex flex-col items-center">
+        <h1 class="text-4xl font-black text-emerald-500 mb-4 uppercase text-center tracking-tighter">Kelime Avı ve Gizli Mesaj</h1>
+        
+        <div class="instruction-box p-4 mb-8 rounded-r-lg w-full max-w-2xl">
+            <h2 class="text-emerald-400 font-bold text-sm uppercase mb-1 italic">Oyun Yönergesi:</h2>
+            <p class="text-slate-300 text-sm leading-relaxed">
+                1. Aşağıdaki kavramları bulmacada bulup üzerlerine tıklayarak işaretleyin. <br>
+                2. Tüm kelimeler bulunduğunda, boşta kalan harfler gizli bir mesaj ortaya çıkaracak. <br>
+                3. Mesaj harflerine tıklayarak aşağıdaki altın kutuyu doldurun.
+            </p>
+        </div>
+
+        <!-- Bulmaca (Merkezde) -->
+        <div id="puzzleContainer" class="flex flex-col items-center w-full mb-10">
+            <div id="puzzleGrid" class="grid gap-1.5 bg-slate-800 p-3 rounded-2xl border border-slate-700 shadow-2xl"></div>
+        </div>
+        
+        <!-- Alt Panel -->
+        <div class="w-full flex flex-col md:flex-row gap-6 items-stretch">
+            <div class="flex-1 bg-slate-800 p-8 rounded-3xl border border-slate-700 shadow-lg">
+                <h3 class="text-emerald-400 font-black mb-6 border-b border-slate-700 pb-3 uppercase text-sm tracking-[0.2em] text-center">Aranacak Kavramlar</h3>
+                <div id="wordList" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
+            </div>
+
+            <div id="shifreBox" class="flex-1 gold-frame p-8 rounded-3xl hidden opacity-0 transition-all duration-700 transform translate-y-4">
+                <p class="text-amber-500 font-black text-center text-xs mb-4 tracking-[0.3em] uppercase">GİZLİ MESAJINIZ</p>
+                <div id="passwordDisplay" class="text-xl font-black text-white text-center leading-relaxed tracking-widest min-h-[80px] flex items-center justify-center italic"></div>
+            </div>
+        </div>
+        
+        <div class="mt-12 mb-8 text-center">
+            <button onclick="location.reload()" class="text-slate-500 hover:text-white transition-colors uppercase text-xs font-bold tracking-widest underline underline-offset-8">Oyunu Sıfırla</button>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // SABİT SEED — bu değeri değiştirirseniz bulmaca dizilimi değişir
+        // ============================================================
+        const PUZZLE_SEED = 20250505;
+
+        // Mulberry32 PRNG — seed'e göre her zaman aynı sırayı üretir
+        function makePRNG(seed) {
+            let s = seed >>> 0;
+            return function() {
+                s += 0x6D2B79F5;
+                let t = Math.imul(s ^ (s >>> 15), 1 | s);
+                t ^= t + Math.imul(t ^ (t >>> 7), 61 | t);
+                return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+            };
+        }
+
+        let currentColor = '#ef4444';
+
+        function switchPage(num) {
+            document.getElementById('page1').classList.add('hidden');
+            document.getElementById('page2').classList.remove('hidden');
+            if(num === 2) {
+                window.scrollTo(0, 0);
+                initPuzzle();
+            }
+        }
+
+        // Çizim Sistemi
+        const canvasRef = document.getElementById('canvasRef');
+        const canvasTarget = document.getElementById('canvasTarget');
+        const imgRef = document.getElementById('refImg');
+        const imgTarget = document.getElementById('targetImg');
+        let drawing = false;
+
+        function resize() { 
+            canvasRef.width = imgRef.clientWidth; 
+            canvasRef.height = imgRef.clientHeight; 
+            canvasTarget.width = imgTarget.clientWidth; 
+            canvasTarget.height = imgTarget.clientHeight; 
+        }
+        
+        imgRef.onload = resize;
+        imgTarget.onload = resize; 
+        window.onresize = resize;
+
+        function setupCanvas(canvas) {
+            const ctx = canvas.getContext('2d');
+            canvas.addEventListener('pointerdown', e => { 
+                drawing = true; 
+                ctx.beginPath(); 
+                const rect = canvas.getBoundingClientRect();
+                ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+                draw(e, canvas, ctx); 
+            });
+            canvas.addEventListener('pointermove', e => draw(e, canvas, ctx));
+        }
+
+        setupCanvas(canvasRef);
+        setupCanvas(canvasTarget);
+        window.addEventListener('pointerup', () => drawing = false);
+
+        function setColor(color, el) {
+            currentColor = color;
+            document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function draw(e, canvas, ctx) {
+            if (!drawing) return;
+            const rect = canvas.getBoundingClientRect();
+            ctx.lineWidth = document.getElementById('penWidth').value;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.strokeStyle = currentColor;
+            ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+            ctx.stroke();
+        }
+
+        function clearCanvas() { 
+            canvasRef.getContext('2d').clearRect(0, 0, canvasRef.width, canvasRef.height); 
+            canvasTarget.getContext('2d').clearRect(0, 0, canvasTarget.width, canvasTarget.height); 
+        }
+
+        // Kelime Avı Mantığı
+        const words = ["SAYGIDUYMA", "FARKINDALIK", "DUYARLILIK", "HOŞGÖRÜ", "NEZAKET", "NORMAL", "SEVGİ", "FARKLI", "AYNI", "EMPATİ"];
+        const rawPassword = "Hayatta engel yoktur Farklıyız ama aynıyız";
+        const passwordChars = rawPassword.replace(/\s/g, "").toUpperCase().split("");
+        const size = 12; 
+        let grid = [];
+        let placements = {};
+        let foundCount = 0;
+        let selection = [];
+        let passwordCoords = [];
+
+        function initPuzzle() {
+            // Her çağrıda seed'i sıfırdan başlatıyoruz — deterministik düzen garantisi
+            const rng = makePRNG(PUZZLE_SEED);
+
+            grid = Array(size).fill().map(() => Array(size).fill(null));
+            placements = {};
+            passwordCoords = [];
+            foundCount = 0;
+            selection = [];
+
+            const dirs = [
+                [0, 1],   // Yatay
+                [1, 0],   // Dikey
+                [1, 1],   // Sağ-Aşağı
+                [-1, 1]   // Sağ-Yukarı
+            ];
+
+            // Kelimeleri seed'e göre sırala (sabit sıra)
+            const sortedWords = [...words].sort((a, b) => b.length - a.length);
+
+            sortedWords.forEach(word => {
+                let success = false;
+                let attempts = 0;
+                while(!success && attempts < 2000) {
+                    const d = dirs[Math.floor(rng() * dirs.length)];
+                    const r = Math.floor(rng() * size);
+                    const c = Math.floor(rng() * size);
+                    if(checkPlace(word, r, c, d)) {
+                        placements[word] = placeWord(word, r, c, d);
+                        success = true;
+                    }
+                    attempts++;
+                }
+            });
+
+            // Boş hücreleri bul
+            let emptyCells = [];
+            for(let r=0; r<size; r++) {
+                for(let c=0; c<size; c++) {
+                    if(!grid[r][c]) emptyCells.push({r, c});
+                }
+            }
+            
+            // Seed ile karıştır (Fisher-Yates)
+            for (let i = emptyCells.length - 1; i > 0; i--) {
+                const j = Math.floor(rng() * (i + 1));
+                [emptyCells[i], emptyCells[j]] = [emptyCells[j], emptyCells[i]];
+            }
+
+            // Şifre harflerini yerleştir, geri kalanı dolgu
+            let pIdx = 0;
+            emptyCells.forEach(cell => {
+                if(pIdx < passwordChars.length) {
+                    grid[cell.r][cell.c] = passwordChars[pIdx];
+                    passwordCoords.push({key: `${cell.r}-${cell.c}`, order: pIdx});
+                    pIdx++;
+                } else {
+                    const fillers = "ABCÇDEFGĞHİIJKLMNOÖPRSŞTUÜVYZ";
+                    grid[cell.r][cell.c] = fillers[Math.floor(rng() * fillers.length)];
+                }
+            });
+
+            renderGrid();
+            renderWordList();
+        }
+
+        function checkPlace(w, r, c, d) {
+            for(let i=0; i<w.length; i++) {
+                const nr = r + i*d[0], nc = c + i*d[1];
+                if(nr<0 || nr>=size || nc<0 || nc>=size) return false;
+                if(grid[nr][nc] && grid[nr][nc] !== w[i]) return false;
+            }
+            return true;
+        }
+
+        function placeWord(w, r, c, d) {
+            let pts = [];
+            for(let i=0; i<w.length; i++) {
+                const nr = r + i*d[0], nc = c + i*d[1];
+                grid[nr][nc] = w[i];
+                pts.push(`${nr}-${nc}`);
+            }
+            return pts;
+        }
+
+        function renderGrid() {
+            const gridEl = document.getElementById('puzzleGrid');
+            gridEl.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
+            gridEl.innerHTML = '';
+            for(let r=0; r<size; r++) {
+                for(let c=0; c<size; c++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'grid-cell';
+                    cell.innerText = grid[r][c];
+                    cell.dataset.r = r; cell.dataset.c = c;
+                    cell.onclick = () => onCellClick(r, c, cell);
+                    gridEl.appendChild(cell);
+                }
+            }
+        }
+
+        function renderWordList() {
+            const listEl = document.getElementById('wordList');
+            listEl.innerHTML = '';
+            words.forEach(w => {
+                const item = document.createElement('div');
+                item.className = 'word-item bg-slate-700 p-3 rounded-xl text-[11px] font-black text-center border border-slate-600 shadow-sm transition-all uppercase tracking-wider';
+                item.innerText = w; item.id = 'list-' + w;
+                listEl.appendChild(item);
+            });
+        }
+
+        function onCellClick(r, c, el) {
+            const key = `${r}-${c}`;
+
+            // Şifre aşaması: sadece şifre harflerine tıklanabilir
+            if(foundCount === words.length) {
+                const isPasswordChar = passwordCoords.some(p => p.key === key);
+                if(isPasswordChar && !el.classList.contains('password-active')) {
+                    el.classList.add('password-active');
+                    updatePasswordDisplay();
+                }
+                return;
+            }
+
+            // Found hücre: başka bir kelimeyle paylaşılıyor olabilir,
+            // bu yüzden seçime ekle ama görünümünü değiştirme
+            if(el.classList.contains('found')) {
+                if(!selection.includes(key)) {
+                    selection.push(key);
+                    checkMatch();
+                }
+                return;
+            }
+
+            if(el.classList.contains('selected')) {
+                el.classList.remove('selected');
+                selection = selection.filter(s => s !== key);
+            } else {
+                el.classList.add('selected');
+                selection.push(key);
+                checkMatch();
+            }
+        }
+
+        function checkMatch() {
+            words.forEach(word => {
+                const listEl = document.getElementById('list-'+word);
+                if(listEl.classList.contains('found')) return;
+                
+                const targetPoints = placements[word];
+                // Hücre seçili VEYA zaten found (paylaşımlı) ise geçerli say
+                const isMatch = targetPoints.every(p => {
+                    if(selection.includes(p)) return true;
+                    const [pr, pc] = p.split('-');
+                    const cell = document.querySelector(`[data-r="${pr}"][data-c="${pc}"]`);
+                    return cell && cell.classList.contains('found');
+                });
+                
+                if(isMatch) {
+                    targetPoints.forEach(t => {
+                        const [tr, tc] = t.split('-');
+                        const cell = document.querySelector(`[data-r="${tr}"][data-c="${tc}"]`);
+                        cell.classList.remove('selected');
+                        cell.classList.add('found');
+                    });
+                    // Sadece bu kelimeye ait seçili hücreleri temizle
+                    selection = selection.filter(s => !targetPoints.includes(s));
+                    listEl.classList.add('found');
+                    foundCount++;
+                    if(foundCount === words.length) enablePasswordPhase();
+                }
+            });
+        }
+
+        function enablePasswordPhase() {
+            const box = document.getElementById('shifreBox');
+            box.classList.remove('hidden');
+            setTimeout(() => {
+                box.classList.remove('opacity-0');
+                box.classList.remove('translate-y-4');
+            }, 100);
+            
+            const cells = document.querySelectorAll('.grid-cell');
+            cells.forEach(cell => {
+                const key = `${cell.dataset.r}-${cell.dataset.c}`;
+                if(!cell.classList.contains('found') && passwordCoords.some(p => p.key === key)) {
+                    cell.style.borderColor = "#d4af37";
+                }
+            });
+            updatePasswordDisplay();
+        }
+
+        function updatePasswordDisplay() {
+            const activeKeys = Array.from(document.querySelectorAll('.password-active'))
+                                    .map(c => `${c.dataset.r}-${c.dataset.c}`);
+            
+            const fullTarget = "Hayatta engel yoktur Farklıyız ama aynıyız";
+            let display = "";
+            let charPointer = 0;
+            const sortedPasswords = [...passwordCoords].sort((a,b) => a.order - b.order);
+
+            for(let i=0; i < fullTarget.length; i++) {
+                const char = fullTarget[i];
+                if(char === " ") {
+                    display += " ";
+                } else {
+                    const pCoord = sortedPasswords[charPointer];
+                    if(pCoord && activeKeys.includes(pCoord.key)) {
+                        display += char;
+                    } else {
+                        display += "_";
+                    }
+                    charPointer++;
+                }
+            }
+            document.getElementById('passwordDisplay').innerText = display;
+        }
+    </script>
+</body>
+</html>

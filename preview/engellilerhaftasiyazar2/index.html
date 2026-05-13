@@ -1,0 +1,249 @@
+
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Engelliler Haftası Farkındalık Testi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .fade-in { animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .correct-anim { background-color: #ecfdf5 !important; border-color: #10b981 !important; color: #065f46 !important; }
+        .wrong-anim { background-color: #fff1f2 !important; border-color: #f43f5e !important; color: #9f1239 !important; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen flex items-center justify-center p-4">
+
+    <div id="app" class="w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-100">
+        <!-- Header -->
+        <div class="bg-indigo-600 p-6 text-white text-center">
+            <div class="flex justify-center mb-2">
+                <!-- Güncellenmiş Tekerlekli Sandalye İkonu -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="4" r="2"/>
+                    <path d="M10 23v-2a2 2 0 0 1 2-2h3"/>
+                    <path d="M8 16a6 6 0 1 0 7.5 5.8"/>
+                    <path d="M15 12H9a2 2 0 0 0-2 2v5"/>
+                </svg>
+            </div>
+            <h1 class="text-2xl font-bold tracking-tight">Engelliler Haftası Farkındalık Testi</h1>
+        </div>
+
+        <div id="content" class="p-8">
+            <!-- Başlangıç Ekranı -->
+            <div id="start-screen" class="space-y-6 text-center fade-in">
+                <div class="aspect-video w-full bg-black rounded-xl overflow-hidden shadow-inner flex items-center justify-center group relative">
+                    <video id="introVideo" class="w-full h-full object-cover" controls>
+                        <source src="1.mp4" type="video/mp4">
+                        Tarayıcınız video etiketini desteklemiyor.
+                    </video>
+                </div>
+                <p class="text-slate-600 leading-relaxed font-medium">
+                    Engelleri birlikte aşmak için önce farkında olmalıyız. 
+                    Videoyu izledikten sonra 7 soruluk testimize başlayarak farkındalık düzeyini ölçebilirsin.
+                </p>
+                <button onclick="startQuiz()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-2 transition-all transform hover:scale-[1.01] active:scale-95 shadow-lg shadow-indigo-100">
+                    Testi Başlat
+                </button>
+            </div>
+
+            <!-- Quiz Ekranı (Gizli) -->
+            <div id="quiz-screen" class="hidden space-y-8 fade-in">
+                <div class="flex justify-between items-end">
+                    <span id="question-counter" class="text-indigo-600 font-black text-sm tracking-tighter uppercase">Soru 1 / 7</span>
+                    <div class="w-48 h-2 bg-slate-100 rounded-full">
+                        <div id="progress-bar" class="h-full bg-indigo-500 transition-all duration-500 rounded-full" style="width: 14.28%"></div>
+                    </div>
+                </div>
+
+                <h2 id="question-text" class="text-xl md:text-2xl font-bold text-slate-800 leading-snug min-h-[64px]">
+                    Soru yükleniyor...
+                </h2>
+
+                <div id="options-container" class="grid gap-3">
+                    <!-- Seçenekler buraya dinamik gelecek -->
+                </div>
+            </div>
+
+            <!-- Sonuç Ekranı (Gizli) -->
+            <div id="result-screen" class="hidden text-center space-y-6 fade-in">
+                <div class="inline-block p-6 bg-amber-50 text-amber-500 rounded-full border-4 border-amber-100 shadow-xl">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+                </div>
+                <div>
+                    <h2 class="text-3xl font-black text-slate-800 mb-2">Test Tamamlandı!</h2>
+                    <p id="result-text" class="text-slate-500 font-medium"></p>
+                </div>
+                <div id="feedback-box" class="p-5 bg-slate-50 rounded-2xl text-slate-600 italic border border-slate-100"></div>
+                <button onclick="resetQuiz()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-2 transition-all shadow-lg">
+                    Başa Dön
+                </button>
+            </div>
+        </div>
+
+        <div class="bg-slate-50 p-4 border-t border-slate-100 text-center text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em]">
+            10-16 Mayıs Engelliler Haftası Farkındalık Portalı
+        </div>
+    </div>
+
+    <script>
+        const quizQuestions = [
+            {
+                question: "Görme engelli bir bireye yardımcı olmak istediğinizde ilk yapmanız gereken nedir?",
+                options: [
+                    "Hemen koluna girip yönlendirmek",
+                    "İhtiyacı olup olmadığını nezaketle sormak",
+                    "Görünmezmiş gibi davranıp yanından parmak ucunda geçmek",
+                    "Yüksek sesle nereye gittiğini sormak"
+                ],
+                answer: "İhtiyacı olup olmadığını nezaketle sormak"
+            },
+            {
+                question: "Tekerlekli sandalye kullanan bir bireyle uzun süre konuşacaksanız hangi pozisyon daha doğrudur?",
+                options: [
+                    "Ayakta durarak yukarıdan konuşmak",
+                    "Sandalyesine yaslanarak destek almak",
+                    "Göz hizasına gelecek şekilde oturmak veya eğilmek",
+                    "Arkasından dolaşarak konuşmak"
+                ],
+                answer: "Göz hizasına gelecek şekilde oturmak veya eğilmek"
+            },
+            {
+                question: "Engelli bir bireye yardım teklif ettiğinizde 'Hayır, teşekkürler' yanıtını alırsanız yaklaşımınız ne olmalıdır?",
+                options: [
+                    "Israrla yardım etmeye devam etmek",
+                    "Kararına saygı duyup yolunuza devam etmek",
+                    "Neden istemediğini sorgulayıp ikna etmeye çalışmak",
+                    "Kendi başına yapamayacağını iddia etmek"
+                ],
+                answer: "Kararına saygı duyup yolunuza devam etmek"
+            },
+            {
+                question: "Sokakta görev yapan bir 'Rehber Köpek' gördüğünüzde ne yapmalısınız?",
+                options: [
+                    "Hemen sevmek ve başını okşamak",
+                    "Dikkatini dağıtmamak için dokunmamak ve yiyecek vermemek",
+                    "Köpekle oyun oynamaya çalışmak",
+                    "Köpeği sahibinden uzaklaştırmaya çalışmak"
+                ],
+                answer: "Dikkatini dağıtmamak için dokunmamak ve yiyecek vermemek"
+            },
+            {
+                question: "Beyaz baston neyi temsil eder?",
+                options: [
+                    "Sadece yaşlılığı",
+                    "Ortopedik bir rahatsızlığı",
+                    "Bireyin görme engelli olduğunu",
+                    "Bireyin işitme engelli olduğunu"
+                ],
+                answer: "Bireyin görme engelli olduğunu"
+            },
+            {
+                question: "Zihinsel özel gereksinimi olan bir bireyle iletişim kurarken hangisine dikkat edilmelidir?",
+                options: [
+                    "Karmaşık ve çok uzun cümleler kurmaya",
+                    "Sanki orada yokmuş gibi yanındakiyle konuşmaya",
+                    "Sabırlı olmaya ve basit, anlaşılır cümleler kurmaya",
+                    "Onun adına tüm kararları hızlıca vermeye"
+                ],
+                answer: "Sabırlı olmaya ve basit, anlaşılır cümleler kurmaya"
+            },
+            {
+                question: "Erişilebilirlik kavramı aşağıdakilerin hangisini kapsar?",
+                options: [
+                    "Sadece tekerlekli sandalye rampalarını",
+                    "Sadece asansör kullanımını",
+                    "Herkesin her yere ve bilgiye bağımsız ulaşabilmesini",
+                    "Sadece engellilere özel ayrı yolları"
+                ],
+                answer: "Herkesin her yere ve bilgiye bağımsız ulaşabilmesini"
+            }
+        ];
+
+        let currentStep = 0;
+        let score = 0;
+        let canAnswer = true;
+
+        function startQuiz() {
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            canAnswer = true;
+            const q = quizQuestions[currentStep];
+            document.getElementById('question-counter').innerText = `Soru ${currentStep + 1} / ${quizQuestions.length}`;
+            document.getElementById('progress-bar').style.width = `${((currentStep + 1) / quizQuestions.length) * 100}%`;
+            document.getElementById('question-text').innerText = q.question;
+            
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            
+            q.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 rounded-xl border-2 border-slate-100 hover:border-indigo-200 hover:bg-slate-50 text-slate-700 transition-all font-medium flex justify-between items-center";
+                btn.innerText = opt;
+                btn.onclick = () => handleAnswer(opt, btn);
+                container.appendChild(btn);
+            });
+        }
+
+        function handleAnswer(selected, btn) {
+            if (!canAnswer) return;
+            canAnswer = false;
+
+            const correct = quizQuestions[currentStep].answer;
+            const isCorrect = selected === correct;
+
+            if (isCorrect) {
+                score++;
+                btn.classList.add('correct-anim');
+            } else {
+                btn.classList.add('wrong-anim');
+                // Doğru olanı da göster
+                Array.from(document.getElementById('options-container').children).forEach(b => {
+                    if (b.innerText === correct) b.classList.add('correct-anim');
+                });
+            }
+
+            setTimeout(() => {
+                if (currentStep < quizQuestions.length - 1) {
+                    currentStep++;
+                    loadQuestion();
+                } else {
+                    showResults();
+                }
+            }, 1500);
+        }
+
+        function showResults() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+            document.getElementById('result-text').innerHTML = `7 soruda toplam <strong>${score}</strong> doğru yanıt verdin.`;
+            
+            let feedback = "";
+            if (score === 7) feedback = "Mükemmel! Tam bir farkındalık elçisisin.";
+            else if (score >= 4) feedback = "Harika! Güzel bir farkındalık düzeyine sahipsin.";
+            else feedback = "Farkındalık her zaman geliştirilebilir. Bilgileri gözden geçirebilirsin.";
+            
+            document.getElementById('feedback-box').innerText = feedback;
+        }
+
+        function resetQuiz() {
+            currentStep = 0;
+            score = 0;
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('start-screen').classList.remove('hidden');
+            const video = document.getElementById('introVideo');
+            video.pause();
+            video.currentTime = 0;
+        }
+    </script>
+</body>
+</html>
