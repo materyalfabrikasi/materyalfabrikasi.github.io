@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="tr" class="h-full">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&amp;family=Nunito:wght@600;700;800&amp;display=swap"
+    rel="stylesheet">
+  <style>
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      overflow: auto;
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(100%) rotate(0deg);
+        opacity: 0;
+      }
+
+      10% {
+        opacity: 1;
+      }
+
+      90% {
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateY(-120%) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes pulse-glow {
+
+      0%,
+      100% {
+        box-shadow: 0 0 20px rgba(255, 0, 0, 0.3), 0 0 40px rgba(255, 0, 0, 0.1);
+      }
+
+      50% {
+        box-shadow: 0 0 30px rgba(255, 0, 0, 0.5), 0 0 60px rgba(255, 0, 0, 0.2);
+      }
+    }
+
+    @keyframes star-spin {
+      0% {
+        transform: rotate(0deg) scale(1);
+      }
+
+      50% {
+        transform: rotate(180deg) scale(1.2);
+      }
+
+      100% {
+        transform: rotate(360deg) scale(1);
+      }
+    }
+
+    @keyframes confetti-fall {
+      0% {
+        transform: translateY(-10%) rotate(0deg);
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateY(100%) rotate(720deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(30px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes bounceIn {
+      0% {
+        transform: scale(0.3);
+        opacity: 0;
+      }
+
+      50% {
+        transform: scale(1.08);
+      }
+
+      70% {
+        transform: scale(0.95);
+      }
+
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .video-frame {
+      animation: pulse-glow 3s ease-in-out infinite;
+      border: 4px solid transparent;
+      border-image: linear-gradient(135deg, #e30a17, #ffffff, #e30a17) 1;
+    }
+
+    .floating-element {
+      position: absolute;
+      animation: floatUp linear infinite;
+      pointer-events: none;
+      font-size: 24px;
+    }
+
+    .corner-star {
+      animation: star-spin 4s linear infinite;
+    }
+
+    .question-overlay {
+      animation: slideUp 0.5s ease-out;
+    }
+
+    .bounce-in {
+      animation: bounceIn 0.6s ease-out;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #e30a17, #c40010);
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #ff1a2a, #e30a17);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(227, 10, 23, 0.4);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      transition: all 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .confetti-piece {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      animation: confetti-fall linear forwards;
+    }
+
+    .progress-bar-fill {
+      transition: width 0.5s ease;
+    }
+
+    .decoration-stripe {
+      background: repeating-linear-gradient(45deg,
+          #e30a17,
+          #e30a17 10px,
+          #ffffff 10px,
+          #ffffff 20px,
+          #e30a17 20px,
+          #e30a17 30px);
+    }
+  </style>
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+  </style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+</head>
+
+<body class="h-full bg-gradient-to-br from-[#0f0c29] via-[#1a1a3e] to-[#24243e] font-['Nunito',sans-serif]">
+  <div id="app" class="h-full w-full flex flex-col items-center overflow-auto relative">
+    <!-- Floating Background Elements -->
+    <div id="bg-floats" class="absolute inset-0 overflow-hidden pointer-events-none z-0"></div>
+    <!-- Instructions Screen -->
+    <div id="instructions-screen"
+      class="absolute inset-0 z-40 bg-gradient-to-br from-[#0f0c29] via-[#1a1a3e] to-[#24243e] flex items-center justify-center">
+      <div class="bounce-in text-center p-8 max-w-xl relative z-10">
+        <div class="text-6xl mb-6">
+          📹
+        </div>
+        <h2 class="text-3xl font-['Baloo_2',cursive] font-800 text-white mb-4">Başlamadan önce aşağıdaki yönergeyi
+          okuyunuz.</h2>
+        <div class="bg-white/10 rounded-2xl p-6 border-2 border-red-500/50 mb-6">
+          <p class="text-white text-lg leading-relaxed mb-3">✅ <span class="font-bold">Videoyu dikkatle
+              izleyiniz/dinleyiniz.</span></p>
+          <p class="text-white text-lg leading-relaxed">❓ <span class="font-bold">Belirlenen duraklama noktalarında size
+              sorulacak soruları cevaplayınız.</span></p>
+        </div>
+        <p class="text-red-300 text-sm mb-6">Hazır olduğunuzda "Başla" butonuna basın!</p><button onclick="startQuiz()"
+          class="btn-primary text-white font-bold py-3 px-8 rounded-xl text-base flex items-center gap-2 mx-auto"> <i
+            data-lucide="play-circle" class="w-5 h-5"></i> Başla </button>
+      </div>
+    </div><!-- Top Decoration -->
+    <div class="w-full decoration-stripe h-2 flex-shrink-0"></div><!-- Header -->
+    <header class="w-full text-center py-4 px-4 flex-shrink-0 relative z-10">
+      <h1 id="main-title" class="text-2xl md:text-3xl font-['Baloo_2',cursive] font-800 text-white drop-shadow-lg">🇹🇷
+        19 Mayıs Etkileşimli Video 🇹🇷</h1>
+      <p id="subtitle" class="text-red-300 text-sm mt-1 font-600">19 Mayıs Atatürk'ü Anma, Gençlik ve Spor Bayramı</p>
+      <!-- Progress -->
+      <div class="max-w-xl mx-auto mt-3 bg-white/10 rounded-full h-3 overflow-hidden">
+        <div id="progress-bar" class="progress-bar-fill h-full bg-gradient-to-r from-red-500 to-red-400 rounded-full"
+          style="width:0%"></div>
+      </div>
+      <p id="progress-text" class="text-white/60 text-xs mt-1">Soru 0 / 3</p>
+    </header><!-- Video Container -->
+    <div id="video-section"
+      class="flex-1 w-full max-w-4xl px-4 pb-4 relative z-10 flex flex-col items-center justify-center">
+      <!-- Corner decorations -->
+      <div class="relative w-full">
+        <span class="corner-star absolute -top-4 -left-4 text-2xl z-20">⭐</span> <span
+          class="corner-star absolute -top-4 -right-4 text-2xl z-20" style="animation-delay:1s">🌙</span> <span
+          class="corner-star absolute -bottom-4 -left-4 text-2xl z-20" style="animation-delay:2s">🌟</span> <span
+          class="corner-star absolute -bottom-4 -right-4 text-2xl z-20" style="animation-delay:0.5s">⭐</span>
+        <!-- Video wrapper -->
+        <div class="video-frame rounded-2xl overflow-hidden relative bg-black">
+          <video id="quiz-video" class="w-full block" preload="auto" playsinline>
+            <source src="1.mp4" type="video/mp4"> Tarayıcınız video oynatmayı desteklemiyor.
+          </video><!-- Play/Pause overlay button --> <button id="play-pause-btn" onclick="togglePlayPause()"
+            class="absolute bottom-3 left-3 bg-black/60 hover:bg-black/80 text-white rounded-full w-10 h-10 flex items-center justify-center transition-all z-10">
+            <i data-lucide="play" id="play-icon" class="w-5 h-5"></i> <i data-lucide="pause" id="pause-icon"
+              class="w-5 h-5 hidden"></i> </button> <!-- Time display -->
+          <div id="time-display"
+            class="absolute bottom-3 right-3 bg-black/60 text-white text-xs px-3 py-1 rounded-full font-mono z-10">
+            00:00
+          </div><!-- Question Overlay -->
+          <div id="question-overlay"
+            class="absolute inset-0 bg-black/85 backdrop-blur-sm flex items-center justify-center p-6 hidden z-30">
+            <div
+              class="question-overlay bg-gradient-to-br from-[#1a1a3e] to-[#0f0c29] rounded-2xl p-6 max-w-lg w-full border-2 border-red-500/50 shadow-2xl">
+              <div class="flex items-center gap-2 mb-3">
+                <span class="text-2xl">❓</span> <span id="q-number"
+                  class="text-red-400 font-bold text-sm font-['Baloo_2',cursive]">Soru 1</span>
+              </div>
+              <p id="q-text" class="text-white text-lg font-700 leading-relaxed mb-4"></p><textarea id="q-answer"
+                class="w-full bg-white/10 border border-white/20 rounded-xl p-3 text-white text-sm resize-none focus:outline-none focus:border-red-400 transition-colors placeholder-white/30"
+                rows="3" placeholder="Cevabınızı buraya yazın..."></textarea> <button id="q-ok-btn"
+                onclick="dismissQuestion()"
+                class="btn-primary mt-4 w-full text-white font-bold py-3 rounded-xl text-base flex items-center justify-center gap-2">
+                <span>Tamam</span> <i data-lucide="check-circle" class="w-5 h-5"></i> </button>
+            </div>
+          </div>
+        </div>
+      </div><!-- Controls below video -->
+      <div class="flex items-center gap-3 mt-4">
+        <button onclick="togglePlayPause()"
+          class="btn-secondary text-white font-bold py-2 px-5 rounded-xl flex items-center gap-2 text-sm"> <i
+            data-lucide="play" id="ctrl-play-icon" class="w-4 h-4"></i> <i data-lucide="pause" id="ctrl-pause-icon"
+            class="w-4 h-4 hidden"></i> <span id="ctrl-label">Oynat</span> </button> <button onclick="restartVideo()"
+          class="btn-secondary text-white font-bold py-2 px-5 rounded-xl flex items-center gap-2 text-sm"> <i
+            data-lucide="rotate-ccw" class="w-4 h-4"></i> Baştan </button>
+      </div>
+    </div><!-- Completion Screen -->
+    <div id="completion-screen"
+      class="hidden absolute inset-0 z-50 bg-gradient-to-br from-[#0f0c29] via-[#1a1a3e] to-[#24243e] flex items-center justify-center">
+      <div id="confetti-container" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
+      <div class="bounce-in text-center p-8 max-w-md relative z-10">
+        <div class="text-7xl mb-4">
+          🏆
+        </div>
+        <h2 id="comp-title" class="text-3xl font-['Baloo_2',cursive] font-800 text-white mb-2">Tebrikler!</h2>
+        <p id="comp-msg" class="text-red-300 text-lg mb-2">Etkinliği başarıyla tamamladın!</p>
+        <p class="text-white/60 text-sm mb-6">19 Mayıs Atatürk'ü Anma, Gençlik ve Spor Bayramı kutlu olsun! 🇹🇷</p>
+        <div class="flex gap-3 justify-center text-4xl mb-6">
+          <span class="corner-star">⭐</span> <span class="corner-star" style="animation-delay:0.3s">🌟</span> <span
+            class="corner-star" style="animation-delay:0.6s">⭐</span>
+        </div><button onclick="restartAll()"
+          class="btn-primary text-white font-bold py-3 px-8 rounded-xl text-base flex items-center gap-2 mx-auto"> <i
+            data-lucide="rotate-ccw" class="w-5 h-5"></i> Tekrar Oyna </button>
+      </div>
+    </div><!-- Bottom Decoration -->
+    <div class="w-full decoration-stripe h-2 flex-shrink-0"></div>
+  </div>
+  <script>
+    // Questions config
+    const questions = [
+      { time: 39, text: "Mustafa Kemal Atatürk, hangi tarih için 'Bugün benim doğum günüm.' demiştir?", num: 1 },
+      { time: 153, text: "Atatürk, yeni kurulan Türk devletini kime emanet etmiştir? Neden?", num: 2 },
+      { time: 216, text: "19 Mayıs'ın sizin için anlamı nedir?", num: 3 }
+    ];
+
+    const video = document.getElementById('quiz-video');
+    let answeredQuestions = new Set();
+    let currentQuestion = null;
+    let completed = false;
+
+    // Floating background elements
+    const emojis = ['🇹🇷', '⭐', '🌙', '🏅', '🎯', '🌟', '🔴', '⚪'];
+    const bgFloats = document.getElementById('bg-floats');
+    function spawnFloat() {
+      if (completed) return;
+      const el = document.createElement('div');
+      el.className = 'floating-element';
+      el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      el.style.left = Math.random() * 100 + '%';
+      el.style.animationDuration = (8 + Math.random() * 12) + 's';
+      el.style.opacity = '0.3';
+      bgFloats.appendChild(el);
+      setTimeout(() => el.remove(), 20000);
+    }
+    setInterval(spawnFloat, 2000);
+    for (let i = 0; i < 5; i++) setTimeout(spawnFloat, i * 400);
+
+    // Video time tracking
+    video.addEventListener('timeupdate', () => {
+      const t = video.currentTime;
+      // Update time display
+      const m = Math.floor(t / 60).toString().padStart(2, '0');
+      const s = Math.floor(t % 60).toString().padStart(2, '0');
+      document.getElementById('time-display').textContent = m + ':' + s;
+
+      // Check questions
+      for (const q of questions) {
+        if (!answeredQuestions.has(q.num) && t >= q.time && t < q.time + 1 && currentQuestion !== q.num) {
+          showQuestion(q);
+          break;
+        }
+      }
+    });
+
+    video.addEventListener('ended', () => {
+      if (!completed) showCompletion();
+      updatePlayIcons(true);
+    });
+
+    video.addEventListener('play', () => updatePlayIcons(false));
+    video.addEventListener('pause', () => updatePlayIcons(true));
+
+    function updatePlayIcons(paused) {
+      document.getElementById('play-icon').classList.toggle('hidden', !paused);
+      document.getElementById('pause-icon').classList.toggle('hidden', paused);
+      document.getElementById('ctrl-play-icon').classList.toggle('hidden', !paused);
+      document.getElementById('ctrl-pause-icon').classList.toggle('hidden', paused);
+      document.getElementById('ctrl-label').textContent = paused ? 'Oynat' : 'Duraklat';
+    }
+
+    function togglePlayPause() {
+      if (video.paused) video.play(); else video.pause();
+    }
+
+    function showQuestion(q) {
+      currentQuestion = q.num;
+      video.pause();
+      document.getElementById('q-number').textContent = 'Soru ' + q.num;
+      document.getElementById('q-text').textContent = q.text;
+      document.getElementById('q-answer').value = '';
+      document.getElementById('question-overlay').classList.remove('hidden');
+    }
+
+    function dismissQuestion() {
+      answeredQuestions.add(currentQuestion);
+      currentQuestion = null;
+      document.getElementById('question-overlay').classList.add('hidden');
+      // Update progress
+      const pct = (answeredQuestions.size / questions.length) * 100;
+      document.getElementById('progress-bar').style.width = pct + '%';
+      document.getElementById('progress-text').textContent = 'Soru ' + answeredQuestions.size + ' / ' + questions.length;
+      video.play();
+    }
+
+    function showCompletion() {
+      completed = true;
+      document.getElementById('progress-bar').style.width = '100%';
+      document.getElementById('progress-text').textContent = 'Soru 3 / 3';
+      const screen = document.getElementById('completion-screen');
+      screen.classList.remove('hidden');
+      // Confetti
+      const container = document.getElementById('confetti-container');
+      const colors = ['#e30a17', '#ffffff', '#ffd700', '#ff6b6b', '#48dbfb', '#ff9ff3'];
+      for (let i = 0; i < 60; i++) {
+        const piece = document.createElement('div');
+        piece.className = 'confetti-piece';
+        piece.style.left = Math.random() * 100 + '%';
+        piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.animationDuration = (2 + Math.random() * 3) + 's';
+        piece.style.animationDelay = Math.random() * 2 + 's';
+        piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+        piece.style.width = (6 + Math.random() * 10) + 'px';
+        piece.style.height = (6 + Math.random() * 10) + 'px';
+        container.appendChild(piece);
+      }
+    }
+
+    function restartVideo() {
+      video.currentTime = 0;
+      video.play();
+    }
+
+    function restartAll() {
+      completed = false;
+      answeredQuestions.clear();
+      currentQuestion = null;
+      video.currentTime = 0;
+      document.getElementById('instructions-screen').classList.remove('hidden');
+      document.getElementById('completion-screen').classList.add('hidden');
+      document.getElementById('confetti-container').innerHTML = '';
+      document.getElementById('progress-bar').style.width = '0%';
+      document.getElementById('progress-text').textContent = 'Soru 0 / 3';
+      updatePlayIcons(true);
+    }
+
+    function startQuiz() {
+      document.getElementById('instructions-screen').classList.add('hidden');
+      video.play();
+    }
+
+    // Element SDK
+    const defaultConfig = {
+      page_title: '19 Mayıs Etkileşimli Quiz',
+      completion_message: 'Tebrikler!',
+      background_color: '#0f0c29',
+      surface_color: '#1a1a3e',
+      text_color: '#ffffff',
+      primary_action_color: '#e30a17',
+      secondary_action_color: '#fbbf24',
+      font_family: 'Nunito',
+      font_size: 16
+    };
+
+    function applyConfig(config) {
+      const bg = config.background_color || defaultConfig.background_color;
+      const surface = config.surface_color || defaultConfig.surface_color;
+      const text = config.text_color || defaultConfig.text_color;
+      const primary = config.primary_action_color || defaultConfig.primary_action_color;
+      const secondary = config.secondary_action_color || defaultConfig.secondary_action_color;
+      const font = config.font_family || defaultConfig.font_family;
+      const size = config.font_size || defaultConfig.font_size;
+
+      const app = document.getElementById('app');
+      app.style.background = `linear-gradient(135deg, ${bg}, ${surface}, ${bg})`;
+      app.style.color = text;
+      app.style.fontFamily = `${font}, Nunito, sans-serif`;
+
+      document.getElementById('main-title').textContent = '🇹🇷 ' + (config.page_title || defaultConfig.page_title) + ' 🇹🇷';
+      document.getElementById('main-title').style.fontSize = (size * 1.8) + 'px';
+      document.getElementById('subtitle').style.fontSize = (size * 0.85) + 'px';
+      document.getElementById('subtitle').style.color = primary;
+      document.getElementById('comp-title').textContent = config.completion_message || defaultConfig.completion_message;
+
+      document.querySelectorAll('.btn-primary').forEach(b => {
+        b.style.background = `linear-gradient(135deg, ${primary}, ${primary}dd)`;
+      });
+      document.querySelectorAll('.btn-secondary').forEach(b => {
+        b.style.background = `linear-gradient(135deg, ${surface}, ${bg})`;
+      });
+      document.getElementById('q-text').style.fontSize = size + 'px';
+    }
+
+    window.elementSdk.init({
+      defaultConfig,
+      onConfigChange: async (config) => applyConfig(config),
+      mapToCapabilities: (config) => ({
+        recolorables: [
+          { get: () => config.background_color || defaultConfig.background_color, set: v => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); } },
+          { get: () => config.surface_color || defaultConfig.surface_color, set: v => { config.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); } },
+          { get: () => config.text_color || defaultConfig.text_color, set: v => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); } },
+          { get: () => config.primary_action_color || defaultConfig.primary_action_color, set: v => { config.primary_action_color = v; window.elementSdk.setConfig({ primary_action_color: v }); } },
+          { get: () => config.secondary_action_color || defaultConfig.secondary_action_color, set: v => { config.secondary_action_color = v; window.elementSdk.setConfig({ secondary_action_color: v }); } }
+        ],
+        borderables: [],
+        fontEditable: { get: () => config.font_family || defaultConfig.font_family, set: v => { config.font_family = v; window.elementSdk.setConfig({ font_family: v }); } },
+        fontSizeable: { get: () => config.font_size || defaultConfig.font_size, set: v => { config.font_size = v; window.elementSdk.setConfig({ font_size: v }); } }
+      }),
+      mapToEditPanelValues: (config) => new Map([
+        ['page_title', config.page_title || defaultConfig.page_title],
+        ['completion_message', config.completion_message || defaultConfig.completion_message]
+      ])
+    });
+
+    lucide.createIcons();
+  </script>
+  <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'9fc47a293257f26b',t:'MTc3ODg3MjU4Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
+</body>
+
+</html>

@@ -1,0 +1,196 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gençlik ve Gelecek Etkinliği</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            /* Comic Sans MS ve alternatif çocuk dostu fontlar */
+            font-family: "Comic Sans MS", "Comic Sans", "Chalkboard SE", "Comic Neue", cursive, sans-serif;
+            background-color: #fef2f2;
+        }
+        h1, h2, h3, button {
+            font-family: "Comic Sans MS", "Comic Sans", "Chalkboard SE", "Comic Neue", cursive, sans-serif;
+            font-weight: bold;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85); /* Arka plan şeffaflığı artırıldı, video görünür */
+            backdrop-filter: blur(4px);
+            border: 4px solid #ef4444;
+        }
+        .instruction-card {
+            background: #ffffff;
+            border-left: 6px solid #dc2626;
+        }
+        textarea::placeholder {
+            font-family: "Comic Sans MS", cursive, sans-serif;
+            opacity: 0.6;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center p-6 space-y-8">
+
+    <!-- Başlık ve Yönerge -->
+    <div class="max-w-4xl w-full text-center">
+        <h1 class="text-4xl md:text-5xl text-red-600 mb-4">Geleceğin Yıldızları Etkinliği 🌟</h1>
+        <div class="instruction-card p-4 rounded-xl shadow-md text-left inline-block w-full">
+            <h3 class="text-red-700 text-xl mb-2">Nasıl Oynanır? 📝</h3>
+            <p class="text-gray-700 text-lg">
+                Sevgili arkadaşım! Videoyu dikkatlice izle. Video belirli yerlerde duracak ve sana heyecan verici sorular soracak. 
+                Cevaplarını yazıp gönderdiğinde videoya devam edebilirsin. Verdiğin cevapları en alttaki panoda görebilirsin!
+            </p>
+        </div>
+    </div>
+
+    <div class="max-w-4xl w-full bg-white rounded-3xl shadow-2xl overflow-hidden border-8 border-red-100 relative">
+        <!-- Video Alanı -->
+        <div class="relative aspect-video bg-black">
+            <video id="mainVideo" class="w-full h-full" controls>
+                <source src="1.mp4" type="video/mp4">
+                Tarayıcınız video etiketini desteklemiyor.
+            </video>
+
+            <!-- Soru Overlay Katmanı (Daha şeffaf, video arkada görünüyor) -->
+            <div id="questionOverlay" class="hidden absolute inset-0 flex items-center justify-center p-6 glass-panel transition-all duration-500 z-10">
+                <div class="text-center w-full max-w-lg bg-white p-6 rounded-3xl shadow-xl border-2 border-red-500">
+                    <div class="text-6xl mb-4">📢</div>
+                    <h2 id="questionText" class="text-2xl text-red-600 mb-6 font-bold leading-tight">...</h2>
+                    
+                    <textarea 
+                        id="userAnswer" 
+                        rows="3" 
+                        class="w-full p-4 border-2 border-red-200 rounded-2xl focus:border-red-500 focus:outline-none text-lg mb-4 resize-none"
+                        placeholder="Buraya yazabilirsin..."></textarea>
+                    
+                    <button 
+                        onclick="submitAnswer()" 
+                        class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-10 rounded-full text-xl shadow-lg transform transition active:scale-95">
+                        Cevabımı Kaydet! 🚀
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tebrik Mesajı Kaldırıldı -->
+        </div>
+
+        <!-- Durum Çubuğu -->
+        <div class="p-4 bg-red-50 flex justify-between items-center border-t-2 border-red-100">
+            <div id="progress" class="text-red-700 font-bold bg-red-200 px-6 py-2 rounded-full">
+                Soru: 0 / 2
+            </div>
+            <div class="text-red-400 text-sm italic font-bold">Video durduğunda soruyu cevapla</div>
+        </div>
+    </div>
+
+    <!-- Cevapların Kaydedildiği Bölüm -->
+    <div class="max-w-4xl w-full">
+        <h3 class="text-2xl text-gray-800 mb-4 flex items-center">
+            <span class="mr-2">📂</span> Cevap Günlüğüm
+        </h3>
+        <div id="answerLog" class="space-y-4">
+            <p id="noAnswerMsg" class="text-gray-400 italic">Henüz bir cevap vermedin, videoyu izlemeye başla!</p>
+        </div>
+    </div>
+
+    <script>
+        const video = document.getElementById('mainVideo');
+        const overlay = document.getElementById('questionOverlay');
+        const questionText = document.getElementById('questionText');
+        const userAnswer = document.getElementById('userAnswer');
+        const progress = document.getElementById('progress');
+        const answerLog = document.getElementById('answerLog');
+        const noAnswerMsg = document.getElementById('noAnswerMsg');
+
+        // Soru Tanımlamaları ve Süreler (2. soru 1.15'e güncellendi)
+        const questions = [
+            {
+                time: 50, // 00:50'de duracak
+                text: "Videoda gördüğün kişiler sence genç mi yoksa yaşlı mı?",
+                asked: false
+            },
+            {
+                time: 75, // 01:15'te duracak (75 saniye)
+                text: "Atatürk'ün \"Bütün ümidim gençliktedir.\" sözünden ne anlıyorsun?",
+                asked: false
+            }
+        ];
+
+        let currentQuestionIndex = -1;
+
+        video.addEventListener('timeupdate', () => {
+            const currentTime = Math.floor(video.currentTime);
+            const questionIndex = questions.findIndex(q => q.time === currentTime && !q.asked);
+            
+            if (questionIndex !== -1) {
+                pauseAndAsk(questionIndex);
+            }
+        });
+
+        function pauseAndAsk(index) {
+            video.pause();
+            currentQuestionIndex = index;
+            questions[index].asked = true;
+            
+            questionText.innerText = questions[index].text;
+            overlay.classList.remove('hidden');
+            userAnswer.value = '';
+            userAnswer.focus();
+            
+            progress.innerText = `Soru: ${index + 1} / ${questions.length}`;
+        }
+
+        function submitAnswer() {
+            const answer = userAnswer.value.trim();
+            if (answer.length < 2) {
+                userAnswer.classList.add('ring-4', 'ring-red-300');
+                setTimeout(() => userAnswer.classList.remove('ring-4', 'ring-red-300'), 1000);
+                return;
+            }
+
+            saveAnswerToUI(questions[currentQuestionIndex].text, answer);
+
+            // Overlay hemen kapatılır ve video beklemeden devam eder
+            overlay.classList.add('hidden');
+            video.play();
+        }
+
+        function saveAnswerToUI(q, a) {
+            if (noAnswerMsg) noAnswerMsg.remove();
+
+            const card = document.createElement('div');
+            card.className = "bg-white p-4 rounded-xl shadow border-l-4 border-red-500 animate-bounce-short";
+            card.innerHTML = `
+                <div class="flex justify-between items-start">
+                    <p class="text-xs font-bold text-red-500 uppercase tracking-wider">Soru ${currentQuestionIndex + 1}</p>
+                </div>
+                <p class="text-gray-800 font-semibold mb-1">${q}</p>
+                <div class="bg-red-50 p-3 rounded-lg border border-red-100">
+                    <p class="text-red-700"><strong>Cevabın:</strong> ${a}</p>
+                </div>
+            `;
+            answerLog.appendChild(card);
+        }
+
+        userAnswer.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                submitAnswer();
+            }
+        });
+    </script>
+
+    <style>
+        @keyframes bounce-short {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        .animate-bounce-short {
+            animation: bounce-short 0.5s ease-in-out;
+        }
+    </style>
+</body>
+</html>

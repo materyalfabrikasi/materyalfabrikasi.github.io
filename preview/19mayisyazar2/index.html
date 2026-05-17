@@ -1,0 +1,352 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>19 Mayıs Gençlik Marşı Etkinliği</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap');
+        
+        :root {
+            --ataturk-red: #da291c;
+            --parchment: #f4e4bc;
+            --dot-color: #d4c39a;
+        }
+
+        body {
+            font-family: "Comic Sans MS", "Comic Sans", "Comic Neue", cursive, sans-serif;
+            background-color: #f3f4f6;
+            background-image: radial-gradient(var(--dot-color) 1px, transparent 1px);
+            background-size: 20px 20px;
+            min-height: 100vh;
+            color: #1e293b;
+        }
+
+        /* Tarihi belge / Parşömen görünümü */
+        .parchment-paper {
+            background-color: var(--parchment);
+            background-image: url("https://www.transparenttextures.com/patterns/natural-paper.png");
+            box-shadow: 
+                inset 0 0 100px rgba(139, 69, 19, 0.2),
+                0 10px 30px rgba(0,0,0,0.15);
+            border: 1px solid #d4c39a;
+            position: relative;
+        }
+
+        .parchment-paper::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border: 2px solid rgba(139, 69, 19, 0.1);
+            margin: 10px;
+            pointer-events: none;
+        }
+
+        .drop-zone {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 110px;
+            height: 32px;
+            border-bottom: 2px solid #8b4513;
+            margin: 0 4px;
+            vertical-align: middle;
+            transition: all 0.3s ease;
+            background: rgba(139, 69, 19, 0.05);
+            border-radius: 2px;
+        }
+
+        .drop-zone.hover {
+            background: rgba(218, 41, 28, 0.15);
+            border-bottom-color: var(--ataturk-red);
+        }
+
+        .draggable {
+            cursor: grab;
+            transition: all 0.2s ease;
+            user-select: none;
+            touch-action: none;
+            background: #fff;
+            border: 1px solid #d1d5db;
+            color: #1e293b;
+        }
+
+        .draggable:hover {
+            transform: translateY(-2px);
+            border-color: #8b4513;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .correct {
+            border-bottom: 2px solid #065f46 !important;
+            color: #065f46 !important;
+            font-weight: 700;
+            background: transparent;
+        }
+
+        .confetti {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            z-index: 1000;
+            pointer-events: none;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        .verse-block {
+            line-height: 2.8;
+            margin-bottom: 3rem;
+        }
+
+        .chorus-style {
+            padding: 0.5rem;
+            margin-bottom: 3rem;
+            font-style: italic;
+            color: #4a3728;
+        }
+
+        /* Kaydırma alanı */
+        .activity-scroll-area {
+            max-height: 600px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #8b4513 transparent;
+        }
+
+        /* Video Bölümü */
+        #video-section {
+            transition: all 0.8s ease;
+            max-height: 1000px;
+            opacity: 1;
+            overflow: hidden;
+        }
+        #video-section.hidden {
+            max-height: 0;
+            opacity: 0;
+            margin: 0;
+            padding: 0;
+            pointer-events: none;
+        }
+
+        /* Yapışkan kelime bankası */
+        .sticky-bank {
+            position: sticky;
+            top: 20px;
+            z-index: 50;
+            transition: all 0.5s ease;
+        }
+        .sticky-bank.hidden {
+            opacity: 0;
+            transform: translateY(-20px);
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="py-10 px-4">
+
+    <div class="max-w-4xl mx-auto space-y-8">
+        <!-- Header -->
+        <header class="text-center space-y-3">
+            <div class="inline-flex items-center px-4 py-1.5 rounded-full bg-white border border-red-100 text-red-600 text-xs font-bold tracking-widest uppercase shadow-sm">
+                <span class="mr-2">🇹🇷</span> 19 Mayıs Atatürk'ü Anma ve Gençlik ve Spor Bayramı
+            </div>
+            <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight">
+                Gençlik Marşı <span class="text-red-600">Etkinliği</span>
+            </h1>
+            <!-- Sabit kalan yönerge -->
+            <div class="pt-4">
+                <h2 class="text-xl font-bold text-slate-800">"Ey Türk Gençliği! Birinci vazifen..."</h2>
+                <p id="instruction-sub" class="text-slate-500 italic">Marş bittiğinde etkinlik başlayacaktır.</p>
+            </div>
+        </header>
+
+        <main class="space-y-8">
+            
+            <!-- Bölüm 1: Video (Bittiğinde Kaybolacak) -->
+            <section id="video-section" class="space-y-6">
+                <div class="relative max-w-2xl mx-auto rounded-3xl overflow-hidden bg-black shadow-2xl ring-8 ring-white">
+                    <video id="main-video" class="w-full aspect-video object-cover" controls>
+                        <source src="1.mp4" type="video/mp4">
+                    </video>
+                </div>
+
+                <audio id="bg-audio" loop>
+                    <source src="1.mp3" type="audio/mpeg">
+                </audio>
+            </section>
+
+            <!-- Bölüm 2: Kelime Bankası ve Marş Metni -->
+            <div class="space-y-6">
+                <!-- Yapışkan Kelime Bankası -->
+                <div id="sticky-bank-container" class="sticky-bank">
+                    <div id="word-bank" class="flex flex-wrap justify-center gap-3 p-6 glass-panel rounded-2xl border-2 border-white shadow-lg">
+                        <div class="draggable px-5 py-2 rounded-lg font-bold text-sm shadow-sm" draggable="true" data-word="gök">gök</div>
+                        <div class="draggable px-5 py-2 rounded-lg font-bold text-sm shadow-sm" draggable="true" data-word="dinlesin">dinlesin</div>
+                        <div class="draggable px-5 py-2 rounded-lg font-bold text-sm shadow-sm" draggable="true" data-word="su">su</div>
+                        <div class="draggable px-5 py-2 rounded-lg font-bold text-sm shadow-sm" draggable="true" data-word="duman">duman</div>
+                        <div class="draggable px-5 py-2 rounded-lg font-bold text-sm shadow-sm" draggable="true" data-word="yer">yer</div>
+                        <div class="draggable px-5 py-2 rounded-lg font-bold text-sm shadow-sm" draggable="true" data-word="inlesin">inlesin</div>
+                        <div class="draggable px-5 py-2 rounded-lg font-bold text-sm shadow-sm" draggable="true" data-word="kuşlar">kuşlar</div>
+                        <div class="draggable px-5 py-2 rounded-lg font-bold text-sm shadow-sm" draggable="true" data-word="doğar">doğar</div>
+                    </div>
+                </div>
+
+                <!-- Marş Metni (Parşömen) -->
+                <section class="parchment-paper p-8 md:p-16 rounded-sm shadow-2xl activity-scroll-area">
+                    <div id="lyrics-container" class="text-center text-slate-900">
+                        
+                        <!-- 1. Dörtlük -->
+                        <div class="verse-block text-xl font-medium">
+                            <p>Dağ başını <span class="drop-zone" data-answer="duman"></span> almış</p>
+                            <p>Gümüş dere durmaz akar.</p>
+                            <p>Güneş ufuktan şimdi <span class="drop-zone" data-answer="doğar"></span>,</p>
+                            <p>Yürüyelim arkadaşlar.</p>
+                        </div>
+
+                        <!-- 1. Nakarat -->
+                        <div class="chorus-style text-2xl font-medium border-y border-sepia-200 py-4 my-8 border-dashed border-opacity-30">
+                            <p>Sesimizi yer,gök,su <span class="drop-zone" data-answer="dinlesin"></span>.</p>
+                            <p>Sert adımlarla her yer inlesin.</p>
+                            <p>Sesimizi yer,gök,su dinlesin.</p>
+                            <p>Sert adımlarla her yer <span class="drop-zone" data-answer="inlesin"></span>, inlesin.</p>
+                        </div>
+
+                        <!-- 2. Dörtlük -->
+                        <div class="verse-block text-xl font-medium">
+                            <p>Bu <span class="drop-zone" data-answer="gök"></span>, deniz nerede var?</p>
+                            <p>Nerede bu dağlar taşlar?</p>
+                            <p>Bu ağaçlar, güzel <span class="drop-zone" data-answer="kuşlar"></span>,</p>
+                            <p>Yürüyelim arkadaşlar.</p>
+                        </div>
+
+                        <!-- 2. Nakarat -->
+                        <div class="chorus-style text-2xl font-medium border-y border-sepia-200 py-4 my-8 border-dashed border-opacity-30">
+                            <p>Sesimizi <span class="drop-zone" data-answer="yer"></span>, gök, <span class="drop-zone" data-answer="su"></span> dinlesin.</p>
+                            <p>Sert adımlarla her yer inlesin.</p>
+                            <p>Sesimizi yer,gök,su dinlesin.</p>
+                            <p>Sert adımlarla her yer inlesin, inlesin.</p>
+                        </div>
+                    </div>
+
+                    <!-- Tebrik Mesajı Alanı -->
+                    <div id="status-message" class="mt-8 text-center min-h-[64px] font-extrabold text-2xl flex items-center justify-center"></div>
+
+                    <div class="mt-12 flex justify-center border-t border-amber-900 border-opacity-10 pt-6">
+                        <button id="reset-btn" class="text-xs font-bold uppercase tracking-widest text-amber-900 opacity-60 hover:opacity-100 transition-opacity">
+                            Etkinliği Baştan Al
+                        </button>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <footer class="text-center pb-10">
+            <p class="text-slate-500 font-medium italic">"Cumhuriyeti biz kurduk, onu yaşatacak ve yükseltecek olan sizlersiniz."</p>
+        </footer>
+    </div>
+
+    <script>
+        const video = document.getElementById('main-video');
+        const videoSection = document.getElementById('video-section');
+        const instructionSub = document.getElementById('instruction-sub');
+        const audio = document.getElementById('bg-audio');
+        const draggables = document.querySelectorAll('.draggable');
+        const dropZones = document.querySelectorAll('.drop-zone');
+        const statusMsg = document.getElementById('status-message');
+        const resetBtn = document.getElementById('reset-btn');
+        const stickyBank = document.getElementById('sticky-bank-container');
+        let correctCount = 0;
+
+        // Video bitince kaybolma ve ses başlatma
+        video.onended = () => {
+            videoSection.classList.add('hidden');
+            instructionSub.textContent = "Kelimeleri sürükleyerek marşı tamamla!";
+            audio.play().catch(e => console.log("Ses otomatik başlatılamadı."));
+        };
+
+        // Sürükle ve Bırak
+        draggables.forEach(draggable => {
+            draggable.addEventListener('dragstart', () => {
+                draggable.classList.add('opacity-40', 'dragging');
+            });
+            draggable.addEventListener('dragend', () => {
+                draggable.classList.remove('opacity-40', 'dragging');
+            });
+        });
+
+        dropZones.forEach(zone => {
+            zone.addEventListener('dragover', e => {
+                e.preventDefault();
+                if (!zone.classList.contains('correct')) zone.classList.add('hover');
+            });
+
+            zone.addEventListener('dragleave', () => zone.classList.remove('hover'));
+
+            zone.addEventListener('drop', e => {
+                e.preventDefault();
+                zone.classList.remove('hover');
+                
+                const dragging = document.querySelector('.dragging');
+                if (!dragging || zone.classList.contains('correct')) return;
+
+                const val = dragging.getAttribute('data-word');
+                const ans = zone.getAttribute('data-answer');
+
+                if (val === ans) {
+                    zone.textContent = val;
+                    zone.classList.add('correct');
+                    dragging.style.visibility = 'hidden';
+                    correctCount++;
+                    if (correctCount === dropZones.length) win();
+                } else {
+                    showFeedback('Yanlış yer!', 'text-red-700');
+                }
+            });
+        });
+
+        function showFeedback(msg, cls) {
+            statusMsg.textContent = msg;
+            statusMsg.className = `mt-8 text-center min-h-[64px] font-extrabold text-2xl flex items-center justify-center ${cls}`;
+            setTimeout(() => { if(statusMsg.textContent === msg) statusMsg.textContent = ''; }, 1500);
+        }
+
+        function win() {
+            // Kelime bankasını sakla
+            stickyBank.classList.add('hidden');
+            // Tebrik mesajını metnin altına yaz
+            statusMsg.textContent = "🇹🇷 TEBRİKLER! 19 MAYIS KUTLU OLSUN 🇹🇷";
+            statusMsg.className = "mt-8 text-center min-h-[64px] font-extrabold text-3xl text-red-700 animate-bounce flex items-center justify-center";
+            for(let i=0; i<100; i++) spawnConfetti();
+        }
+
+        function spawnConfetti() {
+            const c = document.createElement('div');
+            c.className = 'confetti';
+            c.style.left = Math.random() * 100 + 'vw';
+            c.style.backgroundColor = Math.random() > 0.5 ? '#da291c' : '#ffffff';
+            c.style.animationDuration = (Math.random() * 2 + 3) + 's';
+            document.body.appendChild(c);
+            setTimeout(() => c.remove(), 5000);
+        }
+
+        resetBtn.addEventListener('click', () => {
+            dropZones.forEach(z => { z.textContent = ''; z.classList.remove('correct'); });
+            draggables.forEach(d => d.style.visibility = 'visible');
+            correctCount = 0;
+            statusMsg.textContent = '';
+            videoSection.classList.remove('hidden');
+            stickyBank.classList.remove('hidden');
+            instructionSub.textContent = "Marş bittiğinde etkinlik başlayacaktır.";
+            audio.pause();
+            audio.currentTime = 0;
+        });
+    </script>
+</body>
+</html>
