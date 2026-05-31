@@ -1,0 +1,1255 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Milli Bilim Merkezi Açılış Görevi</title>
+    <!-- Tailwind CSS for Modern Styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for Clean Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        /* Custom Keyframe Animations */
+        @keyframes pulse-slow {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(1.1); }
+        }
+        .animate-pulse-slow {
+            animation: pulse-slow 8s infinite ease-in-out;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+        .animate-shake {
+            animation: shake 0.3s ease-in-out;
+        }
+        @keyframes bounce-slow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .animate-bounce-slow {
+            animation: bounce-slow 3s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col relative overflow-x-hidden selection:bg-indigo-500 selection:text-white">
+
+    <!-- Active Game Ambient Background with 2.jpg Overlay & Fallback -->
+    <div id="ambient-bg" class="absolute inset-0 pointer-events-none overflow-hidden z-0 transition-opacity duration-700">
+        <!-- 2.jpg Background image (Used on all active gameplay stages) with deep blue fallback -->
+        <div class="absolute inset-0 bg-cover bg-center opacity-20" style="background-image: url('2.jpg'), url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1600');"></div>
+        <div class="absolute -top-40 -left-40 w-96 h-96 rounded-full bg-indigo-500/10 blur-[120px] animate-pulse-slow"></div>
+        <div class="absolute top-1/3 -right-40 w-96 h-96 rounded-full bg-cyan-500/10 blur-[120px] animate-pulse-slow" style="animation-delay: 2s;"></div>
+        <div class="absolute -bottom-40 left-1/3 w-96 h-96 rounded-full bg-purple-500/10 blur-[120px] animate-pulse-slow" style="animation-delay: 4s;"></div>
+    </div>
+
+    <!-- Header Section -->
+    <header class="border-b border-slate-700 bg-slate-800/90 backdrop-blur-md px-6 py-4 flex items-center justify-between relative z-10 shadow-md">
+        <div class="flex items-center gap-3 cursor-pointer" onclick="changeState('welcome')">
+            <div class="p-2 bg-indigo-600/20 text-indigo-400 rounded-xl border border-indigo-500/30">
+                <svg class="w-7 h-7 animate-spin" style="animation-duration: 10s;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+            </div>
+            <div>
+                <h1 class="font-bold text-lg tracking-wide bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">
+                    MİLLİ BİLİM MERKEZİ
+                </h1>
+                <p class="text-xs text-slate-300 font-medium">Açılış Simülasyon Görevi</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <button onclick="toggleMute()" id="mute-btn" class="p-2.5 rounded-xl bg-slate-700/80 hover:bg-slate-750 border border-slate-600 text-slate-300 hover:text-white transition-all duration-200" title="Sesi Aç/Kapat">
+                <svg id="sound-on-icon" class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+                <svg id="sound-off-icon" class="w-5 h-5 text-rose-400 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15zm11.333-5.333l-4 4m0-4l4 4"/></svg>
+            </button>
+            <button id="back-to-hq" onclick="changeState('dashboard')" class="px-4 py-2 text-sm bg-slate-700 hover:bg-slate-650 border border-slate-600 rounded-xl font-medium transition duration-200 hidden">
+                Üsse Dön
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-1 flex flex-col items-center justify-center p-4 md:p-8 relative z-10 w-full max-w-6xl mx-auto">
+        
+        <!-- WELCOME SCREEN -->
+        <section id="welcome-screen" class="max-w-2xl text-center py-4 px-4 flex flex-col items-center relative z-10">
+            <!-- Glassmorphism Container with higher opacity and bright layout -->
+            <div class="bg-slate-800/95 border-2 border-slate-600 backdrop-blur-xl p-6 md:p-10 rounded-3xl shadow-2xl flex flex-col items-center gap-6">
+                
+
+                <div class="space-y-3">
+                    <h2 class="text-2xl md:text-4xl font-black tracking-tight leading-tight text-white">
+                        BİLİM MERKEZİ'Nİ <br>
+                        <span class="bg-gradient-to-r from-cyan-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent">
+                            AÇMAYA HAZIR MISIN?
+                        </span>
+                    </h2>
+                    <p class="text-slate-300 text-xs md:text-sm max-w-md mx-auto leading-relaxed">
+                        Milli Bilim Merkezimiz bugün kapılarını açıyor! Ancak sistemleri çalıştırmak için 4 eğlenceli bilim görevini tamamlamalısın. Görevleri bitir ve büyük açılışı başlat!
+                    </p>
+                </div>
+
+                <!-- Sleek, Smaller Guidelines Panel -->
+                <div class="p-3 bg-slate-900/90 border border-slate-700 rounded-xl max-w-sm w-full text-left space-y-1 shadow-inner">
+                    <h4 class="text-[10px] font-extrabold text-cyan-400 tracking-wider uppercase text-center">GÖREV REHBERİ</h4>
+                    <ul class="text-[11px] text-slate-300 space-y-1 list-none pl-1">
+                        <li class="flex items-center gap-1.5"><span>🧩</span> <strong>Yapboz:</strong> 1.jpg görselini birleştir.</li>
+                        <li class="flex items-center gap-1.5"><span>🔗</span> <strong>Eşleştirme:</strong> Kavramları açıklamalarla eşle.</li>
+                        <li class="flex items-center gap-1.5"><span>✍️</span> <strong>Harfleri Sırala:</strong> Atatürk'ün güzel sözünü çöz.</li>
+                        <li class="flex items-center gap-1.5"><span>💡</span> <strong>Öncü Bilgeler:</strong> Bilim insanlarımızın sorularını bil.</li>
+                    </ul>
+                </div>
+
+                <button onclick="changeState('dashboard')" class="group relative px-6 py-3 bg-gradient-to-r from-indigo-600 to-cyan-600 text-white font-bold rounded-xl overflow-hidden shadow-lg shadow-indigo-600/30 hover:scale-105 active:scale-95 transition-all duration-200 text-sm">
+                    <span class="relative z-10 flex items-center justify-center gap-2">
+                        Macerayı Başlat! 
+                        <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/></svg>
+                    </span>
+                </button>
+            </div>
+        </section>
+
+        <!-- DASHBOARD (GÖREV SEÇİM EKRANI) -->
+        <section id="dashboard-screen" class="w-full space-y-8 py-4 hidden">
+            <!-- Jeneratör Gücü / Sistem İlerleme Seviyesi -->
+            <div class="bg-white border-2 border-slate-200 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl text-slate-900">
+                <div class="space-y-2 text-center md:text-left">
+                    <h3 class="text-xl md:text-2xl font-black text-slate-900">Sistem İlerleme Seviyesi</h3>
+                    <p class="text-sm text-slate-600">Tüm üniteleri aktif etmek için 4 görevi de tamamlayarak %100 güce ulaşın.</p>
+                </div>
+                <div class="w-full md:w-72 space-y-2">
+                    <div class="flex justify-between text-xs font-semibold text-slate-600">
+                        <span>Aktivasyon Enerjisi: <strong id="progress-percent" class="text-cyan-600">0%</strong></span>
+                        <span id="progress-count" class="text-indigo-600">0 / 4 Görev</span>
+                    </div>
+                    <div class="w-full h-3.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200 p-0.5">
+                        <div id="progress-bar" class="h-full bg-gradient-to-r from-indigo-500 via-cyan-400 to-emerald-400 rounded-full transition-all duration-1000 ease-out" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kart Görevleri - Opaque White Background -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Görev 1: Yapboz -->
+                <div id="card-puzzle" onclick="startQuest('puzzle')" class="group relative rounded-2xl bg-white border-2 border-slate-200 hover:border-blue-500 hover:scale-102 cursor-pointer transition-all duration-300 overflow-hidden shadow-xl">
+                    <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-500 to-cyan-500"></div>
+                    <div class="p-6 flex items-start gap-4">
+                        <div class="p-3 rounded-xl bg-blue-50 border border-blue-100 text-blue-500 group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/></svg>
+                        </div>
+                        <div class="flex-1 space-y-1">
+                            <div class="flex items-center justify-between">
+                                <h4 class="font-extrabold text-lg text-slate-900">Yapboz Tamamlama</h4>
+                                <span class="text-[10px] px-2.5 py-1 bg-slate-100 border border-slate-200 rounded-full text-slate-600 font-bold">Zorluk: Kolay</span>
+                            </div>
+                            <p class="text-sm text-slate-600 leading-relaxed pr-4">Büyük bilim laboratuvarı görselini (1.jpg) birleştirmek için parçaları doğru yerleştirin.</p>
+                        </div>
+                    </div>
+                    <div class="px-6 py-3 bg-slate-50 border-t border-slate-150 flex items-center justify-between text-xs text-slate-500">
+                        <span class="font-medium text-[11px]">Mini Görev 1</span>
+                        <span class="status-indicator text-blue-600 font-extrabold group-hover:underline">Başlat <span class="ml-1">→</span></span>
+                    </div>
+                </div>
+
+                <!-- Görev 2: Eşleştirme -->
+                <div id="card-match" onclick="startQuest('match')" class="group relative rounded-2xl bg-white border-2 border-slate-200 hover:border-purple-500 hover:scale-102 cursor-pointer transition-all duration-300 overflow-hidden shadow-xl">
+                    <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-purple-500 to-pink-500"></div>
+                    <div class="p-6 flex items-start gap-4">
+                        <div class="p-3 rounded-xl bg-purple-50 border border-purple-100 text-purple-500 group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+                        </div>
+                        <div class="flex-1 space-y-1">
+                            <div class="flex items-center justify-between">
+                                <h4 class="font-extrabold text-lg text-slate-900">Resim & Terim Eşleştir</h4>
+                                <span class="text-[10px] px-2.5 py-1 bg-slate-100 border border-slate-200 rounded-full text-slate-600 font-bold">Zorluk: Orta</span>
+                            </div>
+                            <p class="text-sm text-slate-600 leading-relaxed pr-4">DNA Onarımı ve Giyilebilir Kalp Pili gibi heyecan verici terimleri tanımlarıyla eşleştir.</p>
+                        </div>
+                    </div>
+                    <div class="px-6 py-3 bg-slate-50 border-t border-slate-150 flex items-center justify-between text-xs text-slate-500">
+                        <span class="font-medium text-[11px]">Mini Görev 2</span>
+                        <span class="status-indicator text-purple-600 font-extrabold group-hover:underline">Başlat <span class="ml-1">→</span></span>
+                    </div>
+                </div>
+
+                <!-- Görev 3: Harfleri Sırala -->
+                <div id="card-unscramble" onclick="startQuest('unscramble')" class="group relative rounded-2xl bg-white border-2 border-slate-200 hover:border-amber-500 hover:scale-102 cursor-pointer transition-all duration-300 overflow-hidden shadow-xl">
+                    <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-amber-500 to-orange-500"></div>
+                    <div class="p-6 flex items-start gap-4">
+                        <div class="p-3 rounded-xl bg-amber-50 border border-amber-100 text-amber-600 group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                        </div>
+                        <div class="flex-1 space-y-1">
+                            <div class="flex items-center justify-between">
+                                <h4 class="font-extrabold text-lg text-slate-900">Harfleri Sırala</h4>
+                                <span class="text-[10px] px-2.5 py-1 bg-slate-100 border border-slate-200 rounded-full text-slate-600 font-bold">Zorluk: Orta</span>
+                            </div>
+                            <p class="text-sm text-slate-600 leading-relaxed pr-4">Mustafa Kemal Atatürk'ün meşhur sözünü harfleri tıkla yöntemiyle çözün.</p>
+                        </div>
+                    </div>
+                    <div class="px-6 py-3 bg-slate-50 border-t border-slate-150 flex items-center justify-between text-xs text-slate-500">
+                        <span class="font-medium text-[11px]">Mini Görev 3</span>
+                        <span class="status-indicator text-amber-600 font-extrabold group-hover:underline">Başlat <span class="ml-1">→</span></span>
+                    </div>
+                </div>
+
+                <!-- Görev 4: Bilim İnsanları Soru-Cevap -->
+                <div id="card-riddle" onclick="startQuest('riddle')" class="group relative rounded-2xl bg-white border-2 border-slate-200 hover:border-emerald-500 hover:scale-102 cursor-pointer transition-all duration-300 overflow-hidden shadow-xl">
+                    <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-emerald-500 to-teal-500"></div>
+                    <div class="p-6 flex items-start gap-4">
+                        <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-600 group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+                        </div>
+                        <div class="flex-1 space-y-1">
+                            <div class="flex items-center justify-between">
+                                <h4 class="font-extrabold text-lg text-slate-900">Öncü Bilgelerimiz</h4>
+                                <span class="text-[10px] px-2.5 py-1 bg-slate-100 border border-slate-200 rounded-full text-slate-600 font-bold">Zorluk: Eğitici</span>
+                            </div>
+                            <p class="text-sm text-slate-600 leading-relaxed pr-4">Tarihimizden ve günümüzden öncü bilim insanlarımızı ne kadar tanıyorsun? Soruları yanıtla.</p>
+                        </div>
+                    </div>
+                    <div class="px-6 py-3 bg-slate-50 border-t border-slate-150 flex items-center justify-between text-xs text-slate-500">
+                        <span class="font-medium text-[11px]">Mini Görev 4</span>
+                        <span class="status-indicator text-emerald-600 font-extrabold group-hover:underline">Başlat <span class="ml-1">→</span></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- QUEST 1: PUZZLE (ENLARGED & REMOVED HELPER NUMBERS) -->
+        <section id="quest-puzzle" class="w-full max-w-4xl flex flex-col items-center gap-6 py-2 hidden">
+            <div class="text-center space-y-2">
+                <h3 class="text-2xl md:text-3xl font-extrabold text-blue-400 flex items-center justify-center gap-2">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a1 1 0 01-1-1v-3a1 1 0 011-1h1a2 2 0 100-4H4a1 1 0 01-1-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"/></svg>
+                    Görev 1: Bilim Yapbozu
+                </h3>
+                <p class="text-slate-300 text-sm max-w-md">Değiştirmek istediğin iki parçaya sırayla tıklayarak resmi (1.jpg) birleştir.</p>
+            </div>
+
+            <div class="flex items-center justify-between w-full max-w-lg px-4 py-2 bg-slate-800 border border-slate-700 rounded-xl text-sm text-slate-300">
+                <span>Yapılan Hamle: <strong id="puzzle-moves" class="text-white">0</strong></span>
+                <button onclick="resetPuzzle()" class="flex items-center gap-1.5 px-3 py-1 bg-slate-750 hover:bg-slate-700 border border-slate-600 text-white rounded-lg transition text-xs font-semibold shadow-md">
+                    Yeniden Karıştır
+                </button>
+            </div>
+
+            <!-- Puzzle Board (Büyütülmüş Alan - Max-W: 520px) -->
+            <div class="relative w-full max-w-[520px] aspect-square bg-slate-950 border-4 border-slate-700 rounded-3xl p-2 shadow-2xl overflow-hidden">
+                <div id="puzzle-grid" class="grid grid-cols-3 grid-rows-3 gap-1 h-full w-full">
+                    <!-- Yapboz parçaları JavaScript ile yüklenecektir -->
+                </div>
+                
+                <!-- Success Banner Overlay -->
+                <div id="puzzle-success-overlay" class="absolute inset-0 bg-slate-950/90 backdrop-blur-sm flex flex-col items-center justify-center text-center gap-4 opacity-0 pointer-events-none transition-opacity duration-300 z-20">
+                    <div class="p-3 bg-emerald-500/20 rounded-full border border-emerald-500/30 text-emerald-400 animate-bounce">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    </div>
+                    <h4 class="text-2xl font-black text-emerald-400">Harika, Yapboz Tamamlandı!</h4>
+                    <p class="text-sm text-slate-300 max-w-xs">İlk anahtarı aldın! Diğer görevlere geçmeye hazır mısın?</p>
+                    <button onclick="proceedFromQuest('puzzle')" class="mt-2 px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black text-sm rounded-xl hover:scale-105 active:scale-95 transition-all shadow-lg shadow-emerald-500/20">
+                        Görevi Tamamla ve Üsse Dön
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- QUEST 2: MATCHING (FIXED GRID & TRANSITION FLOW) -->
+        <section id="quest-match" class="w-full max-w-4xl flex flex-col items-center gap-6 py-2 hidden">
+            <div class="text-center space-y-2">
+                <h3 class="text-2xl md:text-3xl font-extrabold text-purple-400 flex items-center justify-center gap-2">
+                    <svg class="w-8 h-8 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                    Görev 2: Bilimsel Terim Eşleştirme
+                </h3>
+                <p class="text-slate-300 text-sm max-w-lg">Kavram kartları ile tanımları eşleştirin. Soldan kavramı seçip sağdan doğru açıklamayla birleştirin!</p>
+            </div>
+
+            <!-- Match Score Tracker -->
+            <div class="px-4 py-1.5 bg-slate-800 border border-slate-700 rounded-lg text-xs font-semibold text-slate-300">
+                Eşleşen Bağlantı: <span id="match-score" class="text-emerald-400 font-bold">0 / 4</span>
+            </div>
+
+            <!-- Matching Layout - Concepts (Left), Descriptions (Right) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full mt-2">
+                <!-- Left: Concepts (Kavramlar) -->
+                <div class="space-y-3">
+                    <h4 class="text-xs font-extrabold text-indigo-400 uppercase tracking-wider pl-2">Kavramlar (Sol)</h4>
+                    <div id="match-names-container" class="space-y-2"></div>
+                </div>
+                <!-- Right: Descriptions (Açıklamalar) -->
+                <div class="space-y-3">
+                    <h4 class="text-xs font-extrabold text-cyan-400 uppercase tracking-wider pl-2">Tanım ve Açıklamalar (Sağ)</h4>
+                    <div id="match-descs-container" class="space-y-2"></div>
+                </div>
+            </div>
+
+            <!-- Success Bar with Explicit Proceed Button -->
+            <div id="match-success-bar" class="w-full p-6 bg-slate-900/90 border-2 border-emerald-500 rounded-2xl text-center flex flex-col items-center justify-center gap-3 hidden shadow-2xl">
+                <span class="text-emerald-400 font-extrabold text-lg">🌟 Mükemmel Eşleşme! Tüm veriler doğrulandı.</span>
+                <p class="text-slate-300 text-xs">Enerji bağlantısı tamamen kuruldu. Dashboard ekranına dönebilirsin.</p>
+                <button onclick="proceedFromQuest('match')" class="px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black text-sm rounded-xl hover:scale-105 active:scale-95 transition-all shadow-md">
+                    Görevi Tamamla ve Üsse Dön
+                </button>
+            </div>
+        </section>
+
+        <!-- QUEST 3: UNSCRAMBLE WORD -->
+        <section id="quest-unscramble" class="w-full max-w-2xl flex flex-col items-center gap-6 py-2 hidden">
+            <div class="text-center space-y-2">
+                <h3 class="text-2xl md:text-3xl font-extrabold text-amber-500 flex items-center justify-center gap-2">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l9-5-9-5-9 5 9 5zm0 0v6m0-6L3 9m12 5l-3 3m0 0l-3-3m3 3V10"/></svg>
+                    Görev 3: Harfleri Doğru Sırala
+                </h3>
+                <p class="text-slate-300 text-sm max-w-lg">Mustafa Kemal Atatürk'ün ünlü özdeyişini kelime kelime çözün. Harflere tıklayarak yukarıdaki boşlukları doldurun!</p>
+            </div>
+
+            <!-- Full Sentence Tracker -->
+            <div class="w-full bg-slate-800 border border-slate-700 rounded-2xl p-4 text-center shadow-xl">
+                <div class="text-[10px] uppercase font-bold text-slate-400 mb-2 tracking-widest">Ata'mızın Şifreli Sözü</div>
+                <div id="sentence-preview" class="flex flex-wrap justify-center gap-2 md:gap-3 text-sm md:text-base font-bold">
+                    <!-- Rendered dynamically -->
+                </div>
+            </div>
+
+            <!-- Play Area -->
+            <div class="w-full bg-slate-800 border border-slate-700 rounded-2xl p-6 flex flex-col items-center gap-6 shadow-xl">
+                <span id="unscramble-word-counter" class="text-xs text-amber-400 font-bold tracking-widest uppercase">KELİME 1 / 6</span>
+
+                <!-- Target slots filled -->
+                <div id="unscramble-slots" class="flex items-center gap-2 justify-center min-h-[60px] border-b border-slate-700 pb-4 w-full">
+                    <!-- Dynamic empty squares -->
+                </div>
+
+                <!-- Letter bank to select -->
+                <div id="unscramble-bank" class="flex flex-wrap justify-center gap-2.5">
+                    <!-- Mixed letters buttons -->
+                </div>
+
+                <button onclick="clearCurrentWord()" class="text-xs text-slate-400 hover:text-slate-200 transition underline font-semibold">
+                    Seçimleri Temizle
+                </button>
+            </div>
+            
+            <!-- Success Overlay for Unscramble -->
+            <div id="unscramble-success-bar" class="w-full p-6 bg-slate-900/95 border-2 border-emerald-500 rounded-2xl text-center flex flex-col items-center justify-center gap-3 hidden shadow-2xl">
+                <span class="text-emerald-400 font-extrabold text-lg">✍️ Ata'mızın Sözünü Tamamladın!</span>
+                <p class="text-slate-300 text-xs">Mükemmel bir analitik başarı!</p>
+                <button onclick="proceedFromQuest('unscramble')" class="px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black text-sm rounded-xl hover:scale-105 active:scale-95 transition-all shadow-md">
+                    Görevi Tamamla ve Üsse Dön
+                </button>
+            </div>
+        </section>
+
+        <!-- QUEST 4: RIDDLE (SCIENTISTS QUESTIONS & ANSWERS) -->
+        <section id="quest-riddle" class="w-full max-w-2xl flex flex-col items-center gap-6 py-2 hidden">
+            <div class="text-center space-y-2">
+                <h3 class="text-2xl md:text-3xl font-extrabold text-emerald-400 flex items-center justify-center gap-2">
+                    <svg class="w-8 h-8 animate-bounce-slow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+                    Görev 4: Öncü Bilim İnsanlarımız
+                </h3>
+                <p class="text-slate-300 text-sm max-w-lg">Tarihimize ve geleceğimize ışık tutan değerli bilim insanlarımızın sorularını bil ve gücü serbest bırak!</p>
+            </div>
+
+            <!-- Riddle step visual dots -->
+            <div id="riddle-dots" class="flex gap-2 justify-center">
+                <!-- Javascript dynamic dots -->
+            </div>
+
+            <!-- Riddle Box with clear spelling of scientists' names -->
+            <div class="w-full bg-slate-800 border-2 border-slate-700 rounded-2xl p-6 md:p-8 flex flex-col items-center gap-6 relative overflow-hidden shadow-2xl">
+                <span id="riddle-step-badge" class="text-[10px] font-bold tracking-widest text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-full uppercase">SORU 1 / 6</span>
+
+                <p id="riddle-question" class="text-base md:text-lg font-semibold text-slate-100 text-center leading-relaxed">
+                    Soru yükleniyor...
+                </p>
+
+                <!-- Options grid -->
+                <div id="riddle-options-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full mt-2">
+                    <!-- Buttons will load here -->
+                </div>
+
+                <div id="riddle-feedback" class="text-sm font-bold px-4 py-2 rounded-xl hidden"></div>
+
+                <!-- Hint Area -->
+                <div class="w-full border-t border-slate-700 pt-4 flex flex-col items-center">
+                    <button id="hint-toggle-btn" onclick="showRiddleHint()" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-slate-200 transition">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        İpucu göster
+                    </button>
+                    <div id="hint-text" class="bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-slate-300 text-center w-full mt-2 hidden"></div>
+                </div>
+            </div>
+
+            <!-- Success Bar for Riddle -->
+            <div id="riddle-success-bar" class="w-full p-6 bg-slate-900/95 border-2 border-emerald-500 rounded-2xl text-center flex flex-col items-center justify-center gap-3 hidden shadow-2xl">
+                <span class="text-emerald-400 font-extrabold text-lg">💡 Öncü Bilgeler Testini Tamamladın!</span>
+                <p class="text-slate-300 text-xs">Milli Bilim Tarihi bilgilerini başarıyla tescilledin.</p>
+                <button onclick="proceedFromQuest('riddle')" class="px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black text-sm rounded-xl hover:scale-105 active:scale-95 transition-all shadow-md">
+                    Görevi Tamamla ve Üsse Dön
+                </button>
+            </div>
+        </section>
+
+        <!-- FINALE SCREEN (KUTLAMA / AÇILIŞ) -->
+        <section id="finale-screen" class="relative text-center max-w-3xl space-y-8 py-10 px-4 flex flex-col items-center overflow-hidden w-full hidden">
+            <div id="confetti-container" class="absolute inset-0 pointer-events-none z-0"></div>
+
+            <div class="relative z-10 space-y-6">
+                <div class="relative inline-block">
+                    <div class="absolute inset-0 bg-emerald-500/20 rounded-full blur-2xl scale-125 animate-pulse"></div>
+                    <div class="relative w-28 h-28 md:w-36 md:h-36 bg-gradient-to-tr from-emerald-600 to-teal-500 rounded-full flex items-center justify-center shadow-2xl border-4 border-emerald-400/40 transform hover:scale-105 transition-transform duration-300">
+                        <svg class="w-14 h-14 md:w-20 md:h-20 text-white animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <span class="text-xs uppercase font-extrabold tracking-widest text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-4 py-1.5 rounded-full">KAPILAR AÇILDI</span>
+                    <h2 class="text-4xl md:text-6xl font-black tracking-tight leading-tight">
+                        MİLLİ BİLİM MERKEZİ <br>
+                        <span class="bg-gradient-to-r from-emerald-400 via-cyan-400 to-indigo-400 bg-clip-text text-transparent">KAPILARINI AÇTI!</span>
+                    </h2>
+
+                    <div class="p-6 bg-slate-800 border-2 border-slate-700 rounded-2xl max-w-xl mx-auto space-y-4 text-left leading-relaxed shadow-2xl">
+                        <h3 class="font-bold text-center text-base md:text-lg text-amber-400 tracking-wider">🏆 BİLİM ELÇİSİ UNVANI KAZANDINIZ 🏆</h3>
+                        <p class="text-slate-200 text-sm">
+                            Tüm zorlu aşamalarda analitik zekanı, sabrını ve merakını sergileyerek laboratuvarların enerjisini açmayı başardın. Bilgi ve teknoloji meşalesi seninle parlamaya devam edecek!
+                        </p>
+                        <blockquote class="border-l-4 border-amber-500 pl-4 py-1 text-xs text-slate-300 font-medium italic">
+                            "Türk milleti çalışkandır. Türk milleti zekidir." <br> — Mustafa Kemal Atatürk
+                        </blockquote>
+                    </div>
+                </div>
+
+                <button onclick="resetWholeGame()" class="group px-8 py-4 bg-gradient-to-r from-indigo-600 to-cyan-600 text-white font-bold rounded-2xl overflow-hidden shadow-lg shadow-indigo-600/30 hover:scale-105 active:scale-95 transition-all duration-200 inline-flex items-center gap-2 relative z-20">
+                    <svg class="w-5 h-5 group-hover:rotate-45 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H18.5"/></svg>
+                    Macerayı Yenile
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-4 border-t border-slate-800 bg-slate-950 text-center text-xs text-slate-500 relative z-10">
+        <p>© 2026 Milli Bilim Merkezi Gençlik Projesi. Bilim meşalesi sönmeyecek!</p>
+    </footer>
+
+    <!-- GAME ENGINE CODE -->
+    <script>
+        let gameState = 'welcome'; // welcome, dashboard, puzzle, match, unscramble, riddle, finale
+        let muted = false;
+        let completedQuests = {
+            puzzle: false,
+            match: false,
+            unscramble: false,
+            riddle: false
+        };
+
+        // Quest 2 (Matching) Content List - Restructured: Left (Names/Concepts), Right (Descriptions)
+        const matchItems = [
+            { id: 't1', name: 'DNA Onarımı', desc: 'Hasar gören hücrelerin kendini düzeltmesi ve tedavi etmesi süreci.', icon: '🧬' },
+            { id: 't2', name: 'Giyilebilir Kalp Pili', desc: 'Kalbin ritmini düzenleyen ve vücuda kolayca takılabilen akıllı cihaz.', icon: '❤️' },
+            { id: 't3', name: 'Sıfır', desc: 'Matematikte yokluğu temsil eden ama sayıların değerini artıran sihirli rakam.', icon: '0️⃣' },
+            { id: 't4', name: 'Dünya Haritası', desc: 'Üzerinde kıtaların, denizlerin ve ülkelerin çizili olduğu rehber kılavuz.', icon: '🗺️' }
+        ];
+
+        // Quest 3 (Unscramble) Word Arrays
+        const unscrambleWords = ["TÜRK", "MİLLETİ", "ÇALIŞKANDIR", "TÜRK", "MİLLETİ", "ZEKİDİR"];
+        const originalWordsDisplay = ["Türk", "milleti", "çalışkandır.", "Türk", "milleti", "zekidir."];
+
+        let activeWordIdx = 0;
+        let originalLetters = []; 
+        let lettersScrambled = [];
+        let chosenLetters = [];
+
+        // Simplified Soru-Cevap (Riddle) Data
+        const riddleData = [
+            {
+                question: "DNA onarımı üzerine yaptığı çalışmalarla  Nobel Ödülü kazanan ilk bilim insanımız kimdir?",
+                options: ["Cahit Arf", "Aziz Sancar", "Oktay Sinanoğlu", "Gazi Yaşargil"],
+                answer: "Aziz Sancar",
+                hint: "Türk bayraklı rozetiyle Nobel ödül törenine katılmıştır."
+            },
+            {
+                question: "Matematikte 'Sıfır' (0) rakamını bulan ünlü bilim insanımız kimdir?",
+                options: ["Farabi", "Biruni", "Harezmi", "Ömer Hayyam"],
+                answer: "Harezmi",
+                hint: "Cebir kelimesinin ve algoritma kavramının kaynağı olan bilgindir."
+            },
+            {
+                question: "Gökyüzünü inceleyip Ay\'ın haritasını çizen ünlü bilim insanımız kimdir?",
+                options: ["Ali Kuşçu", "İbn-i Sina", "Canan Dağdeviren", "Harezmi"],
+                answer: "Ali Kuşçu",
+                hint: "Fatih Sultan Mehmet'in daveti üzerine İstanbul'a gelmiştir."
+            },
+            {
+                question: "Tıbbın babası olarak bilinen ve 'Tıbbın Kanunu' adlı kitabı olan bilim insanımız kimdir?",
+                options: ["Aziz Sancar", "Harezmi", "İbn-i Sina", "Ali Kuşçu"],
+                answer: "İbn-i Sina",
+                hint: "Batı dünyasında 'Avicenna' olarak anılır."
+            },
+            {
+                question: "İlk dünya haritasını çizen ünlü bilim insanımız kimdir?",
+                options: ["Seydi Ali Reis", "Pir-i Reis", "Barbaros Hayrettin", "Oruç Reis"],
+                answer: "Pir-i Reis",
+                hint: "Ünlü 'Kitab-ı Bahriye' isimli denizcilik kitabının da yazarıdır."
+            },
+            {
+                question: "Vücut hareketleriyle kendi kendini şarj edebilen, 'Giyilebilir Kalp Pili' projesini geliştiren ünlü bilim insanımız kimdir?",
+                options: ["Feryal Özel", "Mete Atatüre", "Aziz Sancar", "Canan Dağdeviren"],
+                answer: "Canan Dağdeviren",
+                hint: "Harvard Üniversitesi Genç Akademisyenler topluluğuna seçilen ilk Türk'tür."
+            }
+        ];
+
+        let currentRiddleIdx = 0;
+        let riddleSolved = false;
+
+        // Web Audio API Sound System
+        function playSound(type) {
+            if (muted) return;
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                if (type === 'click') {
+                    osc.frequency.setValueAtTime(600, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(150, ctx.currentTime + 0.1);
+                    gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.12);
+                } else if (type === 'success') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(400, ctx.currentTime);
+                    osc.frequency.setValueAtTime(600, ctx.currentTime + 0.1);
+                    osc.frequency.setValueAtTime(900, ctx.currentTime + 0.2);
+                    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.35);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.35);
+                } else if (type === 'error') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(180, ctx.currentTime);
+                    osc.frequency.linearRampToValueAtTime(100, ctx.currentTime + 0.2);
+                    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.25);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.25);
+                } else if (type === 'victory') {
+                    const notes = [261.63, 329.63, 392.00, 523.25, 659.25, 783.99, 1046.50];
+                    notes.forEach((freq, idx) => {
+                        const o = ctx.createOscillator();
+                        const g = ctx.createGain();
+                        o.connect(g);
+                        g.connect(ctx.destination);
+                        o.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.1);
+                        g.gain.setValueAtTime(0.12, ctx.currentTime + idx * 0.1);
+                        g.gain.linearRampToValueAtTime(0.01, ctx.currentTime + idx * 0.1 + 0.3);
+                        o.start(ctx.currentTime + idx * 0.1);
+                        o.stop(ctx.currentTime + idx * 0.1 + 0.35);
+                    });
+                }
+            } catch (err) {
+                console.warn('AudioContext failed to initialize.');
+            }
+        }
+
+        function toggleMute() {
+            muted = !muted;
+            const soundOn = document.getElementById('sound-on-icon');
+            const soundOff = document.getElementById('sound-off-icon');
+            if (muted) {
+                soundOn.classList.add('hidden');
+                soundOff.classList.remove('hidden');
+            } else {
+                soundOn.classList.remove('hidden');
+                soundOff.classList.add('hidden');
+            }
+        }
+
+        // Scene Manager Router
+        function changeState(targetState) {
+            playSound('click');
+            
+            // Hide all scenes safely
+            const screens = ['welcome-screen', 'dashboard-screen', 'quest-puzzle', 'quest-match', 'quest-unscramble', 'quest-riddle', 'finale-screen'];
+            screens.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add('hidden');
+            });
+            
+            // Show HUD back button appropriately
+            const backBtn = document.getElementById('back-to-hq');
+            if (targetState === 'welcome' || targetState === 'finale' || targetState === 'dashboard') {
+                backBtn.classList.add('hidden');
+            } else {
+                backBtn.classList.remove('hidden');
+            }
+
+            // Map quest and screens correctly to prevent loading errors
+            let targetId = targetState + '-screen';
+            if (targetState === 'puzzle' || targetState === 'match' || targetState === 'unscramble' || targetState === 'riddle') {
+                targetId = 'quest-' + targetState;
+            }
+
+            const targetEl = document.getElementById(targetId);
+            if (targetEl) {
+                targetEl.classList.remove('hidden');
+            }
+
+            // Handle Welcome Video
+            const welcomeVideo = document.getElementById('welcome-video');
+            if (targetState === 'welcome') {
+                if (welcomeVideo) {
+                    welcomeVideo.play().catch(() => {});
+                }
+            } else {
+                if (welcomeVideo) {
+                    welcomeVideo.pause();
+                }
+            }
+
+            gameState = targetState;
+
+            // Update Dash HUD
+            if (targetState === 'dashboard') {
+                updateDashboardHUD();
+            }
+
+            if (targetState === 'finale') {
+                triggerFinaleConfetti();
+            }
+        }
+
+        // Check if all quests are finished
+        function checkGlobalVictory() {
+            const allComplete = Object.values(completedQuests).every(v => v === true);
+            if (allComplete) {
+                setTimeout(() => {
+                    changeState('finale');
+                }, 1000);
+            }
+        }
+
+        function proceedFromQuest(questName) {
+            playSound('click');
+            completedQuests[questName] = true;
+            updateDashboardHUD();
+            
+            // Check if this action triggers game completion, else return to dashboard
+            const allComplete = Object.values(completedQuests).every(v => v === true);
+            if (allComplete) {
+                changeState('finale');
+            } else {
+                changeState('dashboard');
+            }
+        }
+
+        function updateDashboardHUD() {
+            const countCompleted = Object.values(completedQuests).filter(Boolean).length;
+            const percentage = countCompleted * 25;
+            
+            document.getElementById('progress-percent').innerText = `${percentage}%`;
+            document.getElementById('progress-count').innerText = `${countCompleted} / 4 Görev`;
+            document.getElementById('progress-bar').style.width = `${percentage}%`;
+
+            // Update individual dashboard cards visual state
+            Object.keys(completedQuests).forEach(key => {
+                const card = document.getElementById(`card-${key}`);
+                if (completedQuests[key]) {
+                    card.removeAttribute('onclick');
+                    card.classList.remove('hover:border-blue-500/50', 'hover:border-purple-500/50', 'hover:border-amber-500/50', 'hover:border-emerald-500/50', 'hover:scale-102', 'cursor-pointer');
+                    
+                    // Transition to Completed theme nicely
+                    card.className = "group relative rounded-2xl bg-emerald-50/95 border-2 border-emerald-300 cursor-default transition-all duration-300 overflow-hidden shadow-xl";
+                    
+                    // Change card inner text dynamically to match slate readability on light bg
+                    const titleText = card.querySelector('h4');
+                    if (titleText) titleText.className = "font-extrabold text-lg text-emerald-900";
+                    const descText = card.querySelector('p');
+                    if (descText) descText.className = "text-sm text-emerald-800 leading-relaxed pr-4";
+
+                    const indicator = card.querySelector('.status-indicator');
+                    if (indicator) {
+                        indicator.innerHTML = `
+                            <span class="flex items-center gap-1 text-emerald-700 font-bold bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
+                                ✓ TAMAMLANDI
+                            </span>
+                        `;
+                    }
+                }
+            });
+        }
+
+        // Router to launch a mini-game quest
+        function startQuest(questName) {
+            if (completedQuests[questName]) return; // prevent playing completed
+            changeState(questName);
+            if (questName === 'puzzle') initPuzzle();
+            if (questName === 'match') initMatching();
+            if (questName === 'unscramble') initUnscramble();
+            if (questName === 'riddle') initRiddles();
+        }
+
+        /* ==========================================================================
+           1. PUZZLE GÖREVİ KODLARI (USING 1.JPG - REMOVED NUMBERS & ENLARGED)
+           ========================================================================== */
+        let puzzleBoard = [];
+        let selectedPuzzleIdx = null;
+        let puzzleMoves = 0;
+        let puzzleFinished = false;
+
+        function initPuzzle() {
+            puzzleMoves = 0;
+            selectedPuzzleIdx = null;
+            puzzleFinished = false;
+            document.getElementById('puzzle-moves').innerText = '0';
+            document.getElementById('puzzle-success-overlay').classList.add('opacity-0', 'pointer-events-none');
+            
+            // Generate board array [0,1,2,3,4,5,6,7,8]
+            const ordered = Array.from({ length: 9 }, (_, i) => i);
+            do {
+                // Shuffle Array
+                puzzleBoard = [...ordered].sort(() => Math.random() - 0.5);
+            } while (checkPuzzleSolved() === true); // satisfy it is scrambled
+
+            renderPuzzleGrid();
+        }
+
+        function resetPuzzle() {
+            playSound('click');
+            initPuzzle();
+        }
+
+        function checkPuzzleSolved() {
+            return puzzleBoard.every((val, idx) => val === idx);
+        }
+
+        function renderPuzzleGrid() {
+            const grid = document.getElementById('puzzle-grid');
+            grid.innerHTML = '';
+
+            puzzleBoard.forEach((originalIdx, currentIdx) => {
+                const origX = originalIdx % 3;
+                const origY = Math.floor(originalIdx / 3);
+
+                const tile = document.createElement('div');
+                tile.className = `relative w-full h-full cursor-pointer overflow-hidden rounded-xl transition-all duration-200 border border-slate-600 select-none ${selectedPuzzleIdx === currentIdx ? 'ring-4 ring-cyan-400 scale-95 z-10' : 'hover:brightness-110 active:scale-95'}`;
+                tile.style.aspectRatio = '1/1';
+                tile.onclick = () => onPuzzleTileClick(currentIdx);
+
+                // Split 1.jpg using background positioning (With abstract space science fallback image)
+                tile.style.backgroundImage = "url('1.jpg'), url('https://images.unsplash.com/photo-1507413245164-6160d8298b31?auto=format&fit=crop&w=600&q=80')";
+                tile.style.backgroundSize = "300% 300%";
+                
+                // 3x3 Grid mappings: column 0=0%, 1=50%, 2=100%
+                const posX = (origX * 50) + "%";
+                const posY = (origY * 50) + "%";
+                tile.style.backgroundPosition = `${posX} ${posY}`;
+
+                // Parça numaralarını tamamen sildik (İstek Üzerine kaldırılmıştır)
+                tile.innerHTML = ``;
+                grid.appendChild(tile);
+            });
+        }
+
+        function onPuzzleTileClick(idx) {
+            if (puzzleFinished) return;
+            playSound('click');
+
+            if (selectedPuzzleIdx === null) {
+                // Select First Tile
+                selectedPuzzleIdx = idx;
+                renderPuzzleGrid();
+            } else {
+                // Swap Action
+                const temp = puzzleBoard[selectedPuzzleIdx];
+                puzzleBoard[selectedPuzzleIdx] = puzzleBoard[idx];
+                puzzleBoard[idx] = temp;
+
+                selectedPuzzleIdx = null;
+                puzzleMoves++;
+                document.getElementById('puzzle-moves').innerText = puzzleMoves;
+                renderPuzzleGrid();
+
+                // Check solution
+                if (checkPuzzleSolved()) {
+                    puzzleFinished = true;
+                    playSound('success');
+                    
+                    // Show Win Overlay
+                    const winBanner = document.getElementById('puzzle-success-overlay');
+                    winBanner.classList.remove('opacity-0', 'pointer-events-none');
+                    winBanner.classList.add('opacity-100');
+                }
+            }
+        }
+
+        /* ==========================================================================
+           2. RESİM-TERİM EŞLEŞTİRME KODLARI
+           ========================================================================== */
+        let selectedMatchName = null;
+        let selectedMatchDesc = null;
+        let solvedMatches = []; // List of successfully paired ID values
+        let scrambledNames = [];
+        let scrambledDescs = [];
+        let isEvaluating = false; // Hatalı tıklamayı ve spam yapılmasını önleyen kilit
+
+        function initMatching() {
+            selectedMatchName = null;
+            selectedMatchDesc = null;
+            solvedMatches = [];
+            isEvaluating = false;
+            document.getElementById('match-score').innerText = '0 / 4';
+            document.getElementById('match-success-bar').classList.add('hidden');
+
+            // Scramble lists once per startup
+            scrambledNames = [...matchItems].sort(() => Math.random() - 0.5);
+            scrambledDescs = [...matchItems].sort(() => Math.random() - 0.5);
+
+            renderMatchingPanels();
+        }
+
+        function renderMatchingPanels() {
+            const namesContainer = document.getElementById('match-names-container');
+            const descsContainer = document.getElementById('match-descs-container');
+            
+            namesContainer.innerHTML = '';
+            descsContainer.innerHTML = '';
+
+            // Left Side: Concepts (Kavramlar)
+            scrambledNames.forEach(item => {
+                const isMatched = solvedMatches.includes(item.id);
+                const isSelected = selectedMatchName === item.id;
+
+                const btn = document.createElement('button');
+                btn.className = `w-full flex items-center gap-4 p-4 rounded-xl border-2 text-left transition-all duration-200 ${
+                    isMatched 
+                    ? 'bg-emerald-500/10 border-emerald-500/20 text-slate-400 cursor-default' 
+                    : isSelected 
+                        ? 'border-purple-400 bg-purple-500/20 scale-102 ring-4 ring-purple-500/40 text-white font-bold' 
+                        : 'bg-slate-800 border-slate-700 hover:border-purple-500/50 hover:bg-slate-750 text-white font-semibold'
+                }`;
+                btn.disabled = isMatched || isEvaluating;
+                btn.onclick = () => {
+                    if (isMatched || isEvaluating) return;
+                    playSound('click');
+                    selectedMatchName = item.id;
+                    renderMatchingPanels();
+                    evaluateMatchPair();
+                };
+
+                btn.innerHTML = `
+                    <div class="p-2.5 rounded-lg border text-lg ${isMatched ? 'border-emerald-500/20 bg-emerald-500/5 text-emerald-400' : 'border-slate-600 bg-slate-900 text-purple-400'}">${item.icon}</div>
+                    <div class="flex-1">
+                        <span class="font-bold text-sm md:text-base block">${item.name}</span>
+                        <span class="text-[10px] text-slate-300">${isMatched ? 'Bağlantı Kuruldu' : 'Eşleşme Bekleniyor'}</span>
+                    </div>
+                    ${isMatched ? '<span class="text-emerald-400 font-bold text-lg">✓</span>' : ''}
+                `;
+                namesContainer.appendChild(btn);
+            });
+
+            // Right Side: Descriptions (Tanımlar)
+            scrambledDescs.forEach(item => {
+                const isMatched = solvedMatches.includes(item.id);
+                const isSelected = selectedMatchDesc === item.id;
+
+                const btn = document.createElement('button');
+                btn.className = `w-full text-left p-4 rounded-xl border-2 transition-all duration-200 min-h-[90px] flex items-center justify-between gap-4 ${
+                    isMatched 
+                    ? 'bg-emerald-500/10 border-emerald-500/20 text-slate-400 cursor-default' 
+                    : isSelected 
+                        ? 'border-purple-400 bg-purple-500/20 scale-102 ring-4 ring-purple-500/40 text-white font-bold' 
+                        : 'bg-slate-800 border-slate-700 hover:border-purple-500/50 hover:bg-slate-750 text-white font-semibold'
+                }`;
+                btn.disabled = isMatched || isEvaluating;
+                btn.onclick = () => {
+                    if (isMatched || isEvaluating) return;
+                    playSound('click');
+                    selectedMatchDesc = item.id;
+                    renderMatchingPanels();
+                    evaluateMatchPair();
+                };
+
+                btn.innerHTML = `
+                    <p class="text-xs md:text-sm leading-relaxed">${item.desc}</p>
+                    ${isMatched ? '<div class="p-1.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold text-xs shrink-0">✓</div>' : ''}
+                `;
+                descsContainer.appendChild(btn);
+            });
+        }
+
+        function evaluateMatchPair() {
+            if (selectedMatchName && selectedMatchDesc) {
+                if (selectedMatchName === selectedMatchDesc) {
+                    // Success Match
+                    solvedMatches.push(selectedMatchName);
+                    playSound('success');
+                    selectedMatchName = null;
+                    selectedMatchDesc = null;
+                    
+                    document.getElementById('match-score').innerText = `${solvedMatches.length} / 4`;
+                    renderMatchingPanels();
+
+                    if (solvedMatches.length === matchItems.length) {
+                        document.getElementById('match-success-bar').classList.remove('hidden');
+                    }
+                } else {
+                    // Mismatch
+                    playSound('error');
+                    isEvaluating = true;
+                    
+                    // Geçici olarak kırmızı kenarlık yapıp kilidi açalım
+                    const wrongLeftId = `left-${selectedMatchName}`;
+                    const wrongRightId = `right-${selectedMatchDesc}`;
+                    
+                    setTimeout(() => {
+                        selectedMatchName = null;
+                        selectedMatchDesc = null;
+                        isEvaluating = false;
+                        renderMatchingPanels();
+                    }, 500);
+                }
+            }
+        }
+
+        /* ==========================================================================
+           3. ATATÜRK'ÜN SÖZÜ HARF SIRALAMA
+           ========================================================================== */
+        function initUnscramble() {
+            activeWordIdx = 0;
+            document.getElementById('unscramble-success-bar').classList.add('hidden');
+            loadUnscrambleStage();
+        }
+
+        function loadUnscrambleStage() {
+            chosenLetters = [];
+            
+            if (activeWordIdx >= unscrambleWords.length) {
+                renderSentencePreview();
+                playSound('success');
+                document.getElementById('unscramble-success-bar').classList.remove('hidden');
+                return;
+            }
+
+            document.getElementById('unscramble-word-counter').innerText = `KELİME ${activeWordIdx + 1} / ${unscrambleWords.length}`;
+            renderSentencePreview();
+
+            const currentTargetWord = unscrambleWords[activeWordIdx];
+            originalLetters = currentTargetWord.split('').map((char, index) => ({
+                id: `${char}-${index}-${Date.now()}`,
+                char
+            }));
+
+            // Scramble letters
+            do {
+                lettersScrambled = [...originalLetters].sort(() => Math.random() - 0.5);
+            } while (lettersScrambled.map(l => l.char).join('') === currentTargetWord && currentTargetWord.length > 2);
+
+            renderUnscrambleControls();
+        }
+
+        function renderSentencePreview() {
+            const preview = document.getElementById('sentence-preview');
+            preview.innerHTML = '';
+
+            originalWordsDisplay.forEach((word, idx) => {
+                const isActive = idx === activeWordIdx;
+                const isPassed = idx < activeWordIdx;
+
+                const badge = document.createElement('span');
+                badge.className = `px-3 py-1.5 rounded-lg border-2 transition-all duration-300 ${
+                    isActive 
+                    ? 'border-amber-400 bg-amber-500/25 text-amber-300 animate-pulse scale-105 shadow-md' 
+                    : isPassed 
+                        ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300 font-bold' 
+                        : 'border-slate-700 bg-slate-800 text-slate-400'
+                }`;
+                badge.innerText = isPassed ? word : isActive ? '✍️ ???' : '???';
+                preview.appendChild(badge);
+            });
+        }
+
+        function renderUnscrambleControls() {
+            const slotsContainer = document.getElementById('unscramble-slots');
+            const bankContainer = document.getElementById('unscramble-bank');
+            
+            slotsContainer.innerHTML = '';
+            bankContainer.innerHTML = '';
+
+            const currentTargetWord = unscrambleWords[activeWordIdx];
+
+            // Render Answer slots
+            for (let i = 0; i < currentTargetWord.length; i++) {
+                const chosen = chosenLetters[i];
+                const slot = document.createElement('div');
+                slot.className = `w-10 h-12 md:w-12 md:h-14 rounded-xl border-2 font-black text-lg md:text-xl flex items-center justify-center transition-all duration-200 cursor-pointer ${
+                    chosen 
+                    ? 'border-amber-400 bg-amber-500/20 text-amber-300 shadow-md' 
+                    : 'border-dashed border-slate-600 bg-slate-900/40 text-transparent'
+                }`;
+                if (chosen) {
+                    slot.innerText = chosen.char;
+                    slot.onclick = () => removeLetterFromChoice(chosen);
+                }
+                slotsContainer.appendChild(slot);
+            }
+
+            // Render Letters Bank
+            lettersScrambled.forEach(item => {
+                const isUsed = chosenLetters.some(c => c.id === item.id);
+                if (!isUsed) {
+                    const btn = document.createElement('button');
+                    btn.className = "w-10 h-12 md:w-12 md:h-14 rounded-xl border-2 border-slate-600 bg-slate-700 hover:bg-slate-600 hover:border-slate-500 text-white font-extrabold text-lg flex items-center justify-center shadow-md active:scale-90 transition transform";
+                    btn.innerText = item.char;
+                    btn.onclick = () => addLetterToChoice(item);
+                    bankContainer.appendChild(btn);
+                }
+            });
+        }
+
+        function addLetterToChoice(letterObj) {
+            playSound('click');
+            chosenLetters.push(letterObj);
+            renderUnscrambleControls();
+
+            const currentTargetWord = unscrambleWords[activeWordIdx];
+            if (chosenLetters.length === currentTargetWord.length) {
+                // Check if word matched
+                const spelled = chosenLetters.map(l => l.char).join('');
+                if (spelled === currentTargetWord) {
+                    playSound('success');
+                    activeWordIdx++;
+                    setTimeout(() => {
+                        loadUnscrambleStage();
+                    }, 800);
+                } else {
+                    // Wrong guess feedback
+                    playSound('error');
+                    const slots = document.getElementById('unscramble-slots');
+                    slots.classList.add('animate-shake');
+                    setTimeout(() => {
+                        slots.classList.remove('animate-shake');
+                        chosenLetters = [];
+                        renderUnscrambleControls();
+                    }, 600);
+                }
+            }
+        }
+
+        function removeLetterFromChoice(letterObj) {
+            playSound('click');
+            chosenLetters = chosenLetters.filter(l => l.id !== letterObj.id);
+            renderUnscrambleControls();
+        }
+
+        function clearCurrentWord() {
+            playSound('click');
+            chosenLetters = [];
+            renderUnscrambleControls();
+        }
+
+
+        /* ==========================================================================
+           4. BİLİM BİLMECELERİ KODLARI (SCIENTISTS Q&A)
+           ========================================================================== */
+        function initRiddles() {
+            currentRiddleIdx = 0;
+            document.getElementById('riddle-success-bar').classList.add('hidden');
+            loadRiddleStage();
+        }
+
+        function loadRiddleStage() {
+            riddleSolved = false;
+
+            if (currentRiddleIdx >= riddleData.length) {
+                renderRiddleDots();
+                playSound('success');
+                document.getElementById('riddle-success-bar').classList.remove('hidden');
+                return;
+            }
+
+            document.getElementById('riddle-step-badge').innerText = `SORU ${currentRiddleIdx + 1} / ${riddleData.length}`;
+            document.getElementById('riddle-question').innerText = `"${riddleData[currentRiddleIdx].question}"`;
+            
+            // Hide hint elements
+            document.getElementById('hint-text').classList.add('hidden');
+            document.getElementById('hint-toggle-btn').classList.remove('hidden');
+
+            const feedbackEl = document.getElementById('riddle-feedback');
+            feedbackEl.classList.add('hidden');
+            feedbackEl.innerText = '';
+
+            renderRiddleDots();
+            renderRiddleOptions();
+        }
+
+        function renderRiddleDots() {
+            const container = document.getElementById('riddle-dots');
+            container.innerHTML = '';
+            riddleData.forEach((_, i) => {
+                const dot = document.createElement('div');
+                dot.className = `h-2.5 rounded-full transition-all duration-300 ${
+                    i === currentRiddleIdx 
+                    ? 'bg-emerald-400 w-10' 
+                    : i < currentRiddleIdx 
+                        ? 'bg-emerald-600 w-2.5' 
+                        : 'bg-slate-750 w-2.5'
+                }`;
+                container.appendChild(dot);
+            });
+        }
+
+        function renderRiddleOptions() {
+            const grid = document.getElementById('riddle-options-grid');
+            grid.innerHTML = '';
+
+            const riddle = riddleData[currentRiddleIdx];
+            riddle.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "p-4 rounded-xl border-2 border-slate-650 bg-slate-700 hover:border-slate-500 hover:bg-slate-600 text-white font-bold text-sm md:text-base text-left transition-all duration-200 flex items-center justify-between gap-3 shadow-md";
+                btn.innerText = opt;
+                btn.onclick = () => evaluateRiddleChoice(opt, btn);
+                grid.appendChild(btn);
+            });
+        }
+
+        function evaluateRiddleChoice(opt, btnElement) {
+            if (riddleSolved) return;
+            const riddle = riddleData[currentRiddleIdx];
+            const feedbackEl = document.getElementById('riddle-feedback');
+
+            if (opt === riddle.answer) {
+                // Correct Choice
+                riddleSolved = true;
+                playSound('success');
+                btnElement.className = "p-4 rounded-xl border-2 border-emerald-400 bg-emerald-500/20 text-emerald-300 font-extrabold text-sm md:text-base text-left transition-all duration-200 flex items-center justify-between gap-3 shadow-lg";
+                
+                feedbackEl.className = "text-xs md:text-sm text-emerald-300 font-bold bg-emerald-500/10 px-4 py-2 rounded-xl text-center w-full";
+                feedbackEl.innerText = "🎉 Harika! Doğru cevap! Jeneratör sargısı aktif ediliyor...";
+                feedbackEl.classList.remove('hidden');
+
+                setTimeout(() => {
+                    currentRiddleIdx++;
+                    loadRiddleStage();
+                }, 1500);
+            } else {
+                // Wrong Choice
+                playSound('error');
+                btnElement.className = "p-4 rounded-xl border-2 border-rose-500 bg-rose-500/20 text-rose-300 font-extrabold text-sm md:text-base text-left transition-all duration-200 flex items-center justify-between gap-3 animate-shake shadow-lg";
+                
+                feedbackEl.className = "text-xs md:text-sm text-rose-300 font-bold bg-rose-500/10 px-4 py-2 rounded-xl text-center w-full";
+                feedbackEl.innerText = "❌ Yanlış cevap, tekrar dene veya ipucundan yardım al!";
+                feedbackEl.classList.remove('hidden');
+
+                setTimeout(() => {
+                    feedbackEl.classList.add('hidden');
+                    btnElement.className = "p-4 rounded-xl border-2 border-slate-650 bg-slate-700 hover:border-slate-500 hover:bg-slate-600 text-white font-bold text-sm md:text-base text-left transition-all duration-200 flex items-center justify-between gap-3 shadow-md";
+                }, 1400);
+            }
+        }
+
+        function showRiddleHint() {
+            playSound('click');
+            const riddle = riddleData[currentRiddleIdx];
+            document.getElementById('hint-text').innerText = `İpucu: ${riddle.hint}`;
+            document.getElementById('hint-text').classList.remove('hidden');
+            document.getElementById('hint-toggle-btn').classList.add('hidden');
+        }
+
+
+        /* ==========================================================================
+           5. FİNAL VE SIFIRLAMA KODLARI
+           ========================================================================== */
+        function triggerFinaleConfetti() {
+            playSound('victory');
+            const container = document.getElementById('confetti-container');
+            container.innerHTML = '';
+
+            const colors = ['#38bdf8', '#818cf8', '#a78bfa', '#fb7185', '#fbbf24', '#34d399'];
+            for (let i = 0; i < 70; i++) {
+                const conf = document.createElement('div');
+                const size = Math.random() * 8 + 5;
+                const left = Math.random() * 100;
+                const duration = Math.random() * 3 + 2;
+                const delay = Math.random() * 2;
+
+                conf.className = "absolute rounded-full opacity-80 pointer-events-none";
+                conf.style.left = `${left}%`;
+                conf.style.top = `-20px`;
+                conf.style.width = `${size}px`;
+                conf.style.height = `${size}px`;
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                
+                conf.animate([
+                    { transform: 'translateY(0px) rotate(0deg)', opacity: 1 },
+                    { transform: `translateY(${window.innerHeight + 100}px) rotate(${Math.random() * 360}deg)`, opacity: 0 }
+                ], {
+                    duration: duration * 1000,
+                    delay: delay * 1000,
+                    iterations: Infinity
+                });
+
+                container.appendChild(conf);
+            }
+        }
+
+        function resetWholeGame() {
+            completedQuests = {
+                puzzle: false,
+                match: false,
+                unscramble: false,
+                riddle: false
+            };
+            
+            // Re-bind onclick listeners on dashboard cards
+            document.getElementById('card-puzzle').setAttribute('onclick', "startQuest('puzzle')");
+            document.getElementById('card-match').setAttribute('onclick', "startQuest('match')");
+            document.getElementById('card-unscramble').setAttribute('onclick', "startQuest('unscramble')");
+            document.getElementById('card-riddle').setAttribute('onclick', "startQuest('riddle')");
+
+            // Clean up visual cards CSS to be bright white, and highly readable
+            ['puzzle', 'match', 'unscramble', 'riddle'].forEach(key => {
+                const card = document.getElementById(`card-${key}`);
+                
+                // Reset card base styles back to clean, elegant opaque white
+                card.className = "group relative rounded-2xl bg-white border-2 border-slate-200 hover:border-blue-500 hover:scale-102 cursor-pointer transition-all duration-300 overflow-hidden shadow-xl";
+                
+                // Restore standard colors for inner text readability
+                const titleText = card.querySelector('h4');
+                if (titleText) titleText.className = "font-extrabold text-lg text-slate-900";
+                const descText = card.querySelector('p');
+                if (descText) descText.className = "text-sm text-slate-600 leading-relaxed pr-4";
+
+                const indicator = card.querySelector('.status-indicator');
+                if (indicator) {
+                    // Match visual theme indicators per quest type
+                    let themeColor = 'blue-600';
+                    if (key === 'match') themeColor = 'purple-600';
+                    if (key === 'unscramble') themeColor = 'amber-600';
+                    if (key === 'riddle') themeColor = 'emerald-600';
+
+                    indicator.innerHTML = `Başlat <span class="ml-1 text-${themeColor}">→</span>`;
+                }
+            });
+
+            changeState('welcome');
+        }
+
+        // Initialize App on Window Load
+        window.onload = function() {
+            changeState('welcome');
+        };
+    </script>
+</body>
+</html>

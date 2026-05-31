@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meraklı Güney ile Millî Teknoloji Keşfi</title>
+    <!-- Tailwind CSS ve FontAwesome ikon kütüphanesi -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts: Orbitron (Teknolojik) ve Inter (Okunabilir gövde metni) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;600;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at center, #0B1528 0%, #030712 100%);
+            overflow-x: hidden;
+        }
+        .tech-font {
+            font-family: 'Orbitron', sans-serif;
+        }
+        /* Hologram ve Parıltı Efektleri */
+        .holo-border {
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.4), inset 0 0 15px rgba(6, 182, 212, 0.2);
+            border: 1px solid rgba(6, 182, 212, 0.5);
+        }
+        .scanline {
+            background: linear-gradient(
+                to bottom,
+                rgba(255,255,255,0),
+                rgba(255,255,255,0) 50%,
+                rgba(0, 242, 254, 0.08) 50%,
+                rgba(0, 242, 254, 0.08)
+            );
+            background-size: 100% 4px;
+        }
+        /* Yüzen animasyon */
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(1deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+        .animate-float {
+            animation: float 4s ease-in-out infinite;
+        }
+        /* Grid ve HUD Çizgileri */
+        .hud-grid {
+            background-image: 
+                linear-gradient(rgba(6, 182, 212, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(6, 182, 212, 0.04) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+    </style>
+</head>
+<body class="text-slate-100 min-h-screen flex flex-col justify-between hud-grid relative">
+
+    <!-- Arka Plandaki Hologram Çizgisi -->
+    <div class="absolute inset-0 scanline pointer-events-none z-0 opacity-40"></div>
+
+    <!-- Üst Başlık / HUD Header -->
+    <header class="w-full z-10 px-6 py-4 border-b border-cyan-900/40 bg-slate-950/80 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-cyan-500/10 flex items-center justify-center border border-cyan-500/30">
+                    <i class="fa-solid fa-satellite-dish text-cyan-400 text-xl animate-pulse"></i>
+                </div>
+                <div>
+                    <h1 class="tech-font text-lg md:text-xl font-black tracking-wider text-cyan-400 uppercase">MİLLÎ TEKNOLOJİ AKADEMİSİ</h1>
+                    <p class="text-xs text-slate-400">Meraklı Güney ile İnteraktif Keşif Görevi</p>
+                </div>
+            </div>
+            <!-- Canlı Görev Durumu HUD -->
+            <div class="flex items-center gap-4 text-xs">
+                <span class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-cyan-950/50 border border-cyan-500/30 text-cyan-300">
+                    <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+                    SİSTEM: ÇEVRİMİÇİ
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow z-10 flex items-center justify-center p-4 md:p-8">
+        <div class="w-full max-w-5xl">
+
+            <!-- EKRAN 1: GİRİŞ VE YÖNERGE EKRANI (TAM TALEP EDİLEN DÜZEN) -->
+            <div id="screen-intro" class="bg-slate-900/85 backdrop-blur-lg holo-border rounded-2xl p-6 md:p-10 transition-all duration-500 transform scale-100">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+                    
+                    <!-- Sol Kolon: Meraklı Güney Avatar -->
+                    <div class="md:col-span-1 flex flex-col items-center justify-center text-center">
+                        <div class="relative w-48 h-48 mb-4">
+                            <!-- Arka plan halkaları -->
+                            <div class="absolute inset-0 rounded-full border-2 border-cyan-500/20 animate-ping" style="animation-duration: 3s;"></div>
+                            <div class="absolute inset-2 rounded-full border border-cyan-400/30 animate-spin" style="animation-duration: 10s;"></div>
+                            
+                            <!-- Güney Karakteri SVG Tasarımı -->
+                            <div class="absolute inset-4 rounded-full bg-slate-950 overflow-hidden border-2 border-cyan-400 flex items-center justify-center animate-float">
+                                <svg class="w-32 h-32 text-cyan-400" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <!-- Kask / Uzay Başlığı -->
+                                    <circle cx="50" cy="45" r="30" fill="#020617" stroke="currentColor" stroke-width="2.5" />
+                                    <path d="M25 45C25 31.1929 36.1929 20 50 20C63.8071 20 75 31.1929 75 45C75 48 70 55 50 55C30 55 25 48 25 45Z" fill="#082f49" opacity="0.6"/>
+                                    <!-- Vizör -->
+                                    <rect x="32" y="33" width="36" height="15" rx="7.5" fill="#06b6d4" stroke="#e0f2fe" stroke-width="1.5" />
+                                    <circle cx="41" cy="40" r="2.5" fill="#ffffff" />
+                                    <circle cx="59" cy="40" r="2.5" fill="#ffffff" />
+                                    <!-- Sevimli Detaylar -->
+                                    <path d="M46 45Q50 48 54 45" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+                                    <path d="M15 45C10 43 12 30 18 35" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                    <path d="M85 45C90 43 88 30 82 35" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                    <!-- Gövde -->
+                                    <path d="M30 75C30 65 38 60 50 60C62 60 70 65 70 75V85H30V75Z" fill="#1e293b" stroke="currentColor" stroke-width="2" />
+                                    <path d="M50 60V85" stroke="#06b6d4" stroke-width="1.5" />
+                                    <circle cx="50" cy="70" r="3" fill="#ef4444" />
+                                </svg>
+                            </div>
+                        </div>
+                        <span class="px-3 py-1 rounded bg-cyan-900/60 text-cyan-300 font-bold tech-font tracking-wide text-xs border border-cyan-400/30 uppercase">
+                            GÖREV REHBERİ: GÜNEY
+                        </span>
+                    </div>
+
+                    <!-- Sağ Kolon: Tam Yönerge Metni -->
+                    <div class="md:col-span-2 space-y-6">
+                        <div class="inline-block px-3 py-1 rounded-full bg-cyan-950/50 border border-cyan-500/40 text-cyan-300 text-xs font-semibold uppercase tracking-wider tech-font">
+                            <i class="fa-solid fa-satellite mr-1.5"></i> YENİ BAĞLANTI KURULUYOR
+                        </div>
+                        
+                        <h2 class="tech-font text-xl md:text-2xl font-extrabold leading-snug tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-amber-300">
+                            YURDUMUZUN GURURU YERLİ VE MİLLÎ PROJELER!
+                        </h2>
+
+                        <!-- Birebir İstenen Yönerge (Hatalı Yabancı İfadeler Tamamen Temizlendi) -->
+                        <div class="text-slate-300 space-y-4 text-base md:text-lg leading-relaxed border-l-4 border-cyan-500 pl-4 bg-cyan-950/20 py-4 rounded-r-lg">
+                            <p class="font-medium">
+                                Şimdi <strong class="text-cyan-400">Meraklı Güney</strong> sizlere yerli ve millî teknolojik gelişmelerimizden bazılarını tanıtacak.
+                            </p>
+                            <p class="text-amber-300 font-semibold">
+                                Lütfen onu çok dikkatli dinleyin.
+                            </p>
+                            <p class="text-slate-300">
+                                Dinledikten sonra size bir soru soracak.
+                            </p>
+                            <p class="text-sm text-slate-400 italic">
+                                Hazır olduğunuzda aşağıdaki butona basın.
+                            </p>
+                        </div>
+
+                        <!-- Başlatma Butonu -->
+                        <button onclick="startMission()" class="w-full md:w-auto px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold rounded-xl tech-font tracking-widest shadow-lg shadow-cyan-500/25 transition duration-300 hover:scale-105 active:scale-95 flex items-center justify-center gap-3 border border-cyan-300/30">
+                            <i class="fa-solid fa-bolt text-lg"></i>
+                            GÖREVİ BAŞLAT VE BAĞLAN
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- EKRAN 2: SADECE VİDEO VE TELEMETRİ HUD EKRANI -->
+            <div id="screen-interactive-mission" class="hidden bg-slate-900/85 backdrop-blur-lg holo-border rounded-2xl p-4 md:p-6 transition-all duration-500 transform scale-95 opacity-0">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    
+                    <!-- Sol Taraf (8 Kolon): Video Alanı -->
+                    <div class="lg:col-span-8 flex flex-col gap-4">
+                        
+                        <!-- Video Başlık Çubuğu -->
+                        <div class="flex items-center justify-between bg-slate-950/80 px-4 py-2 rounded-lg border border-cyan-900/30">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping"></span>
+                                <span class="tech-font text-xs text-cyan-400 font-bold tracking-wider uppercase">MİLLÎ TEKNOLOJİ YAYINI</span>
+                            </div>
+                            <div class="text-[11px] text-slate-400 tech-font">
+                                AKTİF DOSYA: <span id="current-video-source-name" class="text-cyan-300 font-bold">1.mp4</span>
+                            </div>
+                        </div>
+
+                        <!-- Video Kutusu -->
+                        <div class="relative aspect-video w-full rounded-xl overflow-hidden bg-black border-2 border-cyan-500/30 shadow-2xl">
+                            
+                            <!-- Gerçek Video Elementi (Sırayla 1.mp4 ve video 1.mp4 arar) -->
+                            <video id="mission-video" class="w-full h-full object-contain" controls>
+                                <source src="1.mp4" type="video/mp4">
+                                <source src="video 1.mp4" type="video/mp4">
+                                <source src="video%201.mp4" type="video/mp4">
+                            </video>
+
+                            <!-- VİDEO DOSYASI BULUNAMADI/YÜKLENEMEDİ OVERLAY -->
+                            <div id="video-error-overlay" class="hidden absolute inset-0 z-30 bg-slate-950/95 flex flex-col items-center justify-center p-6 text-center">
+                                <i class="fa-solid fa-triangle-exclamation text-amber-500 text-5xl mb-4 animate-pulse"></i>
+                                <h4 class="tech-font text-base font-bold text-slate-200 mb-2">VİDEO BAĞLANTISI SAĞLANAMADI</h4>
+                                <p class="text-xs text-slate-400 max-w-md mb-6 leading-relaxed">
+                                    Klasörünüzde <code class="text-cyan-400 font-mono">1.mp4</code> veya <code class="text-cyan-400 font-mono">video 1.mp4</code> dosyası bulunamadı ya da tarayıcınız bu formatı oynatamıyor. Oyunu sürdürmek için estetik <strong class="text-amber-400">Simülatör Modunu</strong> devreye alabilirsiniz!
+                                </p>
+                                <div class="flex flex-col sm:flex-row gap-3">
+                                    <button onclick="activateVideoSimulation()" class="px-6 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold rounded-lg text-xs tech-font transition shadow-lg shadow-cyan-500/20">
+                                        SİMÜLATÖRÜ BAŞLAT
+                                    </button>
+                                    <button onclick="retryVideoLoad()" class="px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs tech-font transition border border-slate-700">
+                                        YENİDEN DENE <i class="fa-solid fa-arrows-rotate ml-1"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- SİMÜLASYON İLERLEME ÇUBUĞU (Eğer gerçek video yoksa devreye giren mekanizma) -->
+                            <div id="simulated-player-ui" class="hidden absolute inset-0 flex flex-col justify-between p-4 bg-slate-950/90 z-10">
+                                <div class="flex justify-between items-center text-xs text-cyan-400 tech-font border-b border-cyan-950 pb-2">
+                                    <span>VİDEO SİMÜLASYONU AKTİF</span>
+                                    <span id="sim-time-text">0. Saniye</span>
+                                </div>
+                                <div class="flex flex-col items-center justify-center flex-grow text-center space-y-2">
+                                    <i class="fa-solid fa-circle-nodes text-4xl text-cyan-400 animate-spin" style="animation-duration: 8s;"></i>
+                                    <p class="text-sm font-semibold text-slate-300">Video Sanal Olarak Oynatılıyor...</p>
+                                    <p class="text-[11px] text-slate-500">Video akışı engelsiz ve kesintisiz devam ediyor.</p>
+                                </div>
+                                <div class="space-y-2">
+                                    <div class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                                        <div id="sim-progress-bar" class="bg-cyan-500 h-1.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <button id="sim-play-btn" onclick="toggleSimPlay()" class="px-3 py-1 bg-cyan-500 text-slate-950 text-xs font-bold rounded hover:bg-cyan-400 transition tech-font">
+                                            DURAKLAT
+                                        </button>
+                                        <span class="text-[10px] text-slate-400">Kalan Süre: <span id="sim-remaining-time">90s</span></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Kılavuz Açıklaması -->
+                        <div class="bg-cyan-950/20 border border-cyan-500/20 rounded-xl p-4 flex gap-3 items-start">
+                            <div class="w-8 h-8 rounded-full bg-cyan-950 flex-shrink-0 flex items-center justify-center border border-cyan-400/30">
+                                <i class="fa-solid fa-circle-info text-cyan-400 text-sm"></i>
+                            </div>
+                            <div class="space-y-0.5">
+                                <h5 class="text-xs font-bold text-cyan-400 tech-font">İZLEME PANELİ</h5>
+                                <p class="text-[11px] text-slate-300 leading-relaxed">
+                                    Videoyu başlatıp Meraklı Güney'in yerli ve millî teknoloji sunumunu kesintisiz izleyebilirsiniz. Video bittiğinde görev başarıyla tamamlanmış olacaktır.
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Sağ Taraf (4 Kolon): Görev Durumu ve İlerleme Paneli -->
+                    <div class="lg:col-span-4 flex flex-col gap-4">
+                        
+                        <!-- Radar / Görev Durum Ekranı -->
+                        <div class="bg-slate-950/80 border border-cyan-500/20 rounded-xl p-4 space-y-4">
+                            <div class="flex items-center gap-2 border-b border-cyan-950 pb-2.5">
+                                <i class="fa-solid fa-satellite-dish text-cyan-400 animate-spin" style="animation-duration: 5s;"></i>
+                                <span class="tech-font text-xs font-bold text-slate-300">MİLLÎ SAVUNMA RADARI</span>
+                            </div>
+
+                            <!-- Radar Görsel Simülasyonu -->
+                            <div class="relative w-36 h-36 mx-auto rounded-full border border-cyan-500/20 flex items-center justify-center overflow-hidden bg-slate-950">
+                                <div class="absolute inset-0 rounded-full border-2 border-cyan-500/10 animate-ping"></div>
+                                <div class="absolute w-full h-0.5 bg-gradient-to-r from-transparent to-cyan-500/60 top-1/2 left-0 origin-center animate-spin" style="animation-duration: 4s;"></div>
+                                <i class="fa-solid fa-circle-nodes text-cyan-500 text-3xl opacity-60"></i>
+                            </div>
+
+                            <!-- Görev İlerleme Bilgileri -->
+                            <div class="space-y-3 text-xs">
+                                <div class="bg-slate-900/60 p-3 rounded border border-cyan-950/40 text-center">
+                                    <p class="text-[10px] text-slate-400 mb-1 font-semibold">GÖREV SÜRESİ</p>
+                                    <p id="hud-timer" class="text-xl font-bold text-cyan-300 tech-font">00:00</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bağımsız Manuel Simülatör Düğmesi -->
+                        <div class="bg-slate-950/80 border border-cyan-500/20 rounded-xl p-4">
+                            <button onclick="activateVideoSimulation()" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-cyan-400 rounded-lg text-xs tech-font transition flex items-center justify-center gap-2 border border-slate-800 hover:border-cyan-500/30">
+                                <i class="fa-solid fa-laptop-code"></i> Video Bulunamazsa Simüle Et
+                            </button>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- EKRAN 3: GÖREV TAMAMLANDI EKRANI -->
+            <div id="screen-result" class="hidden bg-slate-900/85 backdrop-blur-lg border border-cyan-500/30 rounded-2xl p-6 md:p-10 text-center transition-all duration-500 transform scale-95 opacity-0">
+                <div class="space-y-8 max-w-2xl mx-auto">
+                    
+                    <!-- Kutlama İkonu ve Efekti -->
+                    <div class="relative w-24 h-24 mx-auto animate-float">
+                        <div class="absolute inset-0 rounded-full bg-cyan-500/20 animate-ping"></div>
+                        <div class="w-24 h-24 rounded-full bg-cyan-500/10 border-2 border-cyan-400 flex items-center justify-center shadow-lg shadow-cyan-500/20">
+                            <i class="fa-solid fa-check text-cyan-400 text-5xl"></i>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h2 class="tech-font text-2xl md:text-3xl font-black text-cyan-400 uppercase tracking-widest">MİLLÎ KEŞİF TAMAMLANDI!</h2>
+                        <p class="text-slate-300 text-sm md:text-base max-w-lg mx-auto leading-relaxed">
+                            Harika bir iş çıkardın! Meraklı Güney ile birlikte millî teknoloji gelişmelerimizi kesintisiz ve dikkatli bir şekilde inceledin.
+                        </p>
+                    </div>
+
+                    <!-- Yeniden İzle Butonu -->
+                    <div class="flex justify-center mt-6">
+                        <button onclick="restartGame()" class="px-8 py-3.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white rounded-xl text-sm tech-font font-bold transition flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/20">
+                            <i class="fa-solid fa-rotate-left"></i> Yeniden Başlat / Tekrar İzle
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ÖZEL MESAJ KUTUSU (CUSTOM DIALOG BOX) -->
+            <div id="custom-alert" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm transition-opacity duration-300">
+                <div class="bg-slate-900 border-2 border-red-500/50 rounded-2xl max-w-sm w-full p-6 text-center shadow-2xl space-y-4">
+                    <div class="w-16 h-16 bg-red-500/10 border-2 border-red-500 rounded-full flex items-center justify-center mx-auto text-red-500 text-2xl">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <h3 id="alert-title" class="tech-font text-base font-bold text-red-400 uppercase">SİSTEM UYARISI</h3>
+                    <p id="alert-message" class="text-xs text-slate-300 leading-relaxed">Hata mesajı.</p>
+                    <button onclick="closeAlert()" class="px-6 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg text-xs tech-font font-bold transition">KAPAT</button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Alt Bilgi / Footer -->
+    <footer class="w-full z-10 px-6 py-4 border-t border-cyan-900/40 bg-slate-950/80 backdrop-blur-md text-center">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
+            <p>© 2026 Millî Teknoloji Keşif Atölyesi. Tüm hakları saklıdır.</p>
+            <p>Tasarımcı ve Mühendislik Yaklaşımıyla Geliştirilmiştir.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Web Audio API ile özel ses sentezleme
+        let audioCtx;
+        function getAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            return audioCtx;
+        }
+
+        // Ses Efektleri Üreteçleri
+        function playSynthSound(type) {
+            try {
+                const ctx = getAudioContext();
+                if (ctx.state === 'suspended') {
+                    ctx.resume();
+                }
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                if (type === 'success') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(440, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.3);
+                    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.3);
+                } else if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(600, ctx.currentTime);
+                    gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.1);
+                } else if (type === 'complete') {
+                    const now = ctx.currentTime;
+                    const frequencies = [261.63, 329.63, 392.00, 523.25]; // C major
+                    frequencies.forEach(f => {
+                        const o = ctx.createOscillator();
+                        const g = ctx.createGain();
+                        o.type = 'sine';
+                        o.frequency.setValueAtTime(f, now);
+                        o.connect(g);
+                        g.connect(ctx.destination);
+                        g.gain.setValueAtTime(0.08, now);
+                        g.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+                        o.start(now);
+                        o.stop(now + 1.2);
+                    });
+                }
+            } catch (e) {
+                console.warn('Ses çalınamadı:', e);
+            }
+        }
+
+        // Custom alert penceresini açma fonksiyonu
+        function openCustomAlert(title, message) {
+            document.getElementById('alert-title').innerText = title;
+            document.getElementById('alert-message').innerText = message;
+            const modal = document.getElementById('custom-alert');
+            modal.classList.remove('hidden');
+        }
+
+        function closeAlert() {
+            document.getElementById('custom-alert').classList.add('hidden');
+            playSynthSound('click');
+        }
+
+        // Oyunu Durumu Değişkenleri
+        let timerInterval;
+        let secondsElapsed = 0;
+
+        // Video Simülasyon Değişkenleri (Gerçek video olmadığında çalışacak motor)
+        let simInterval;
+        let simActive = false;
+        let simSeconds = 0;
+        const simTotalDuration = 90; // Toplam simüle video uzunluğu
+
+        // Ekranlar Arası Geçiş
+        function showScreen(screenId) {
+            const screens = ['screen-intro', 'screen-interactive-mission', 'screen-result'];
+            screens.forEach(s => {
+                const element = document.getElementById(s);
+                if (s === screenId) {
+                    element.classList.remove('hidden');
+                    setTimeout(() => {
+                        element.classList.add('scale-100', 'opacity-100');
+                        element.classList.remove('scale-95', 'opacity-0');
+                    }, 50);
+                } else {
+                    element.classList.add('hidden', 'scale-95', 'opacity-0');
+                    element.classList.remove('scale-100', 'opacity-100');
+                }
+            });
+        }
+
+        // Görevi Başlat
+        function startMission() {
+            playSynthSound('click');
+            showScreen('screen-interactive-mission');
+            
+            // Sıfırlamalar
+            secondsElapsed = 0;
+            simActive = false;
+            
+            document.getElementById('video-error-overlay').classList.add('hidden');
+            document.getElementById('simulated-player-ui').classList.add('hidden');
+            
+            startTimer();
+
+            const video = document.getElementById('mission-video');
+            if (video) {
+                video.classList.remove('hidden');
+                video.currentTime = 0;
+                
+                // Kaynak seçildiğinde başlığı güncelle
+                video.addEventListener('loadedmetadata', function() {
+                    const activeSrc = video.currentSrc;
+                    const filename = activeSrc.substring(activeSrc.lastIndexOf('/') + 1);
+                    document.getElementById('current-video-source-name').innerText = decodeURIComponent(filename);
+                });
+
+                video.play().catch(e => {
+                    console.log("Video otomatik oynatma engellendi veya video yüklenemedi. Kullanıcı etkileşimi bekleniyor.");
+                });
+                
+                // Video bittiğinde direkt sonuç ekranına git
+                video.addEventListener('ended', onVideoEnded);
+            }
+        }
+
+        // Süre Sayacı
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                secondsElapsed++;
+                const mins = Math.floor(secondsElapsed / 60).toString().padStart(2, '0');
+                const secs = (secondsElapsed % 60).toString().padStart(2, '0');
+                document.getElementById('hud-timer').innerText = `${mins}:${secs}`;
+            }, 1000);
+        }
+
+        // Video bittiğinde veya tüm simülasyon bittiğinde
+        function onVideoEnded() {
+            clearInterval(timerInterval);
+            clearInterval(simInterval);
+            playSynthSound('complete');
+            showScreen('screen-result');
+        }
+
+        // --- VİDEO BULUNAMADIĞINDA ÇALIŞACAK ENTEGRE SİMÜLATÖR MOTORU ---
+        function activateVideoSimulation() {
+            playSynthSound('click');
+            simActive = true;
+            document.getElementById('video-error-overlay').classList.add('hidden');
+            
+            // Gerçek videoyu durdur ve gizle
+            const video = document.getElementById('mission-video');
+            if (video) {
+                video.pause();
+                video.classList.add('hidden');
+            }
+
+            // Simülasyon arayüzünü aç
+            document.getElementById('simulated-player-ui').classList.remove('hidden');
+            document.getElementById('current-video-source-name').innerText = "SİMÜLASYON YAYINI";
+
+            // Değerleri sıfırla
+            simSeconds = 0;
+            updateSimProgress();
+            startSimTimer();
+        }
+
+        function startSimTimer() {
+            clearInterval(simInterval);
+            simInterval = setInterval(() => {
+                simSeconds++;
+                updateSimProgress();
+
+                if (simSeconds >= simTotalDuration) {
+                    clearInterval(simInterval);
+                    onVideoEnded();
+                }
+            }, 1000);
+        }
+
+        function updateSimProgress() {
+            const percentage = (simSeconds / simTotalDuration) * 100;
+            document.getElementById('sim-progress-bar').style.width = `${percentage}%`;
+            document.getElementById('sim-time-text').innerText = `${simSeconds}. Saniye`;
+            
+            const remaining = simTotalDuration - simSeconds;
+            document.getElementById('sim-remaining-time').innerText = `${remaining}s`;
+        }
+
+        function toggleSimPlay() {
+            playSynthSound('click');
+            const btn = document.getElementById('sim-play-btn');
+            if (btn.innerText === "DURAKLAT") {
+                clearInterval(simInterval);
+                btn.innerText = "DEVAM ET";
+            } else {
+                startSimTimer();
+                btn.innerText = "DURAKLAT";
+            }
+        }
+
+        // Video Yeniden Yükleme Tetikleyici
+        function retryVideoLoad() {
+            playSynthSound('click');
+            document.getElementById('video-error-overlay').classList.add('hidden');
+            const video = document.getElementById('mission-video');
+            if (video) {
+                video.load();
+                video.play().then(() => {
+                    console.log("Video başarıyla yeniden başlatıldı.");
+                }).catch(e => {
+                    console.warn("Yeniden deneme başarısız oldu.");
+                    showVideoError();
+                });
+            }
+        }
+
+        // Hata Arayüzünü Tetikle
+        function showVideoError() {
+            if (!simActive) {
+                document.getElementById('video-error-overlay').classList.remove('hidden');
+            }
+        }
+
+        // Oyunu Yeniden Başlatma
+        function restartGame() {
+            playSynthSound('click');
+            
+            // Simülatör ve videoları sıfırla
+            simActive = false;
+            clearInterval(simInterval);
+            clearInterval(timerInterval);
+            
+            const video = document.getElementById('mission-video');
+            if (video) {
+                video.classList.remove('hidden');
+                video.pause();
+                video.currentTime = 0;
+            }
+            document.getElementById('simulated-player-ui').classList.add('hidden');
+            document.getElementById('hud-timer').innerText = '00:00';
+
+            showScreen('screen-intro');
+        }
+
+        // İlk sayfa yüklenmesi ve Video Hata Dinleyicileri
+        window.onload = function() {
+            console.log("Millî Teknoloji Keşif Atölyesi Yayını Aktif!");
+            
+            const video = document.getElementById('mission-video');
+            if (video) {
+                const sources = video.querySelectorAll('source');
+                if (sources.length > 0) {
+                    const lastSource = sources[sources.length - 1];
+                    lastSource.addEventListener('error', function() {
+                        showVideoError();
+                    });
+                }
+                
+                video.addEventListener('error', function() {
+                    showVideoError();
+                }, true);
+            }
+        };
+    </script>
+</body>
+</html>

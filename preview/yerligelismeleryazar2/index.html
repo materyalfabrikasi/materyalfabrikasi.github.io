@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Millî Teknoloji Üssü: Görev Başına!</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Noto Sans ve Fredoka -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans', sans-serif;
+            background: radial-gradient(circle, #1e1b4b 0%, #0f172a 100%);
+            touch-action: manipulation;
+        }
+        .fun-font {
+            font-family: 'Fredoka', sans-serif;
+        }
+        /* Özel Kaydırma Çubuğu */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e1b4b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3b82f6;
+            border-radius: 4px;
+        }
+        /* Yazıcı Ayarları */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #printable-certificate, #printable-certificate * {
+                visibility: visible;
+            }
+            #printable-certificate {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                border: none;
+                background: white !important;
+                color: black !important;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-100 flex flex-col justify-between overflow-x-hidden">
+
+    <header class="w-full bg-slate-900/80 backdrop-blur border-b border-indigo-500/30 p-4 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <span class="text-3xl">🚀</span>
+                <div>
+                    <h1 class="text-lg md:text-xl font-bold fun-font text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-300">
+                        MİLLÎ TEKNOLOJİ ÜSSÜ
+                    </h1>
+                    <p class="text-xs text-cyan-400/80 tracking-widest uppercase font-semibold">Görev Kontrol Merkezi</p>
+                </div>
+            </div>
+            <!-- Yeniden Başlatma Butonu -->
+            <div class="flex items-center space-x-2">
+                <button id="restart-btn" onclick="resetGame()" class="p-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg transition duration-200 text-sm">
+                    🔄 Baştan Başla
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 py-6 flex flex-col justify-center">
+
+        <!-- 1. GİRİŞ EKRANI -->
+        <section id="screen-intro" class="bg-slate-900/60 border border-indigo-500/20 rounded-3xl p-6 md:p-10 text-center max-w-2xl mx-auto shadow-2xl backdrop-blur">
+            <div class="text-6xl mb-6 animate-bounce">🇹🇷</div>
+            <h2 class="text-3xl md:text-4xl font-extrabold fun-font text-white mb-4">
+                Gökyüzünün ve Karaların <br>
+                <span class="text-cyan-400">Yeni Kahramanları!</span>
+            </h2>
+            <p class="text-slate-300 text-base md:text-lg mb-8 leading-relaxed">
+                Merhaba! Ülkemizin yerli ve millî imkanlarla geliştirdiği muhteşem araçları tanımaya hazır mısın? 
+                Zorlu görevleri tamamlayarak yerli teknolojilerimizi doğru yerlerde kullan ve gerçek bir <strong>Teknoloji Koruyucusu</strong> ol!
+            </p>
+            <button onclick="goToMissions()" class="fun-font text-xl px-8 py-4 bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-bold rounded-2xl shadow-lg shadow-indigo-500/30 transform hover:scale-105 active:scale-95 transition-all duration-200 w-full md:w-auto">
+                Göreve Başla! 🚀
+            </button>
+        </section>
+
+        <!-- 2. GÖREV KONTROL EKRANI -->
+        <section id="screen-missions" class="hidden max-w-4xl mx-auto space-y-6">
+            <!-- İlerleme Barı -->
+            <div class="bg-slate-900/80 border border-slate-700 p-4 rounded-2xl flex flex-col md:flex-row justify-between items-center space-y-2 md:space-y-0">
+                <div class="flex items-center space-x-2">
+                    <span class="text-yellow-400 text-xl">⭐</span>
+                    <span class="text-sm font-semibold text-slate-300">Kazanılan Yıldızlar:</span>
+                    <span id="star-count" class="fun-font text-xl text-yellow-400 font-bold">0 / 5</span>
+                </div>
+                <div class="w-full md:w-64 bg-slate-800 rounded-full h-3 overflow-hidden">
+                    <div id="progress-bar" class="bg-gradient-to-r from-cyan-400 to-indigo-500 h-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+                <div class="text-sm font-bold text-cyan-300 uppercase tracking-wider">
+                    GÖREV <span id="mission-num">1</span> / 5
+                </div>
+            </div>
+
+            <!-- Görev Kartı -->
+            <div class="bg-slate-900/60 border border-indigo-500/20 rounded-3xl p-6 md:p-8 shadow-xl relative overflow-hidden">
+                <div class="absolute -right-10 -top-10 text-9xl opacity-5 pointer-events-none">🛡️</div>
+                <span class="px-3 py-1 bg-rose-500/20 text-rose-300 rounded-full text-xs font-bold uppercase tracking-wider">GÖREV SENARYOSU</span>
+                <p id="mission-text" class="text-lg md:text-xl font-medium mt-4 leading-relaxed text-slate-100">
+                    Yükleniyor...
+                </p>
+            </div>
+
+            <div class="space-y-3">
+                <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Bu görev için hangi kahramanımızı seçmelisin?</p>
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
+                    <button onclick="checkAnswer('togg')" class="vehicle-option-btn bg-slate-900 hover:bg-indigo-950/60 border border-slate-800 hover:border-cyan-500/60 rounded-2xl p-4 transition-all text-left flex items-center md:flex-col justify-between md:justify-center">
+                        <span class="font-bold text-base md:text-lg fun-font">🚗 TOGG</span>
+                        <span class="text-xs text-slate-500 md:mt-2">Seç</span>
+                    </button>
+                    <button onclick="checkAnswer('kaan')" class="vehicle-option-btn bg-slate-900 hover:bg-indigo-950/60 border border-slate-800 hover:border-rose-500/60 rounded-2xl p-4 transition-all text-left flex items-center md:flex-col justify-between md:justify-center">
+                        <span class="font-bold text-base md:text-lg fun-font">⚡ KAAN</span>
+                        <span class="text-xs text-slate-500 md:mt-2">Seç</span>
+                    </button>
+                    <button onclick="checkAnswer('gokbey')" class="vehicle-option-btn bg-slate-900 hover:bg-indigo-950/60 border border-slate-800 hover:border-emerald-500/60 rounded-2xl p-4 transition-all text-left flex items-center md:flex-col justify-between md:justify-center">
+                        <span class="font-bold text-base md:text-lg fun-font">🚁 GÖKBEY</span>
+                        <span class="text-xs text-slate-500 md:mt-2">Seç</span>
+                    </button>
+                    <button onclick="checkAnswer('hurkus')" class="vehicle-option-btn bg-slate-900 hover:bg-indigo-950/60 border border-slate-800 hover:border-yellow-500/60 rounded-2xl p-4 transition-all text-left flex items-center md:flex-col justify-between md:justify-center">
+                        <span class="font-bold text-base md:text-lg fun-font">🛩️ HÜRKUŞ</span>
+                        <span class="text-xs text-slate-500 md:mt-2">Seç</span>
+                    </button>
+                    <button onclick="checkAnswer('anka')" class="vehicle-option-btn bg-slate-900 hover:bg-indigo-950/60 border border-slate-800 hover:border-indigo-500/60 rounded-2xl p-4 transition-all text-left flex items-center md:flex-col justify-between md:justify-center">
+                        <span class="font-bold text-base md:text-lg fun-font">🦇 ANKA III</span>
+                        <span class="text-xs text-slate-500 md:mt-2">Seç</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Geri Bildirim Penceresi -->
+            <div id="feedback-panel" class="hidden border rounded-3xl p-6 flex items-start space-x-4 transition-all duration-300">
+                <div id="feedback-emoji" class="text-4xl"></div>
+                <div>
+                    <h4 id="feedback-title" class="font-bold text-lg fun-font">Geri Bildirim Başlığı</h4>
+                    <p id="feedback-desc" class="text-sm mt-1 text-slate-300 leading-relaxed">Açıklama alanı.</p>
+                    <button id="next-mission-btn" onclick="nextMission()" class="hidden mt-4 px-6 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-bold rounded-xl text-sm transition-all duration-200">
+                        Sıradaki Göreve Geç ➡️
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. BAŞARI RAPORU / SERTİFİKA EKRANI -->
+        <section id="screen-success" class="hidden text-center max-w-2xl mx-auto space-y-6">
+            <div class="bg-gradient-to-b from-indigo-950/80 to-slate-900/90 border border-yellow-500/40 rounded-3xl p-6 md:p-8 shadow-2xl space-y-6 relative overflow-hidden">
+                <div class="absolute inset-0 bg-radial-gradient from-yellow-500/10 to-transparent pointer-events-none"></div>
+                <div class="text-7xl">🏆</div>
+                <h2 class="text-3xl font-extrabold fun-font text-yellow-400">Teknoloji Koruyucusu İlan Edildin!</h2>
+                <p class="text-slate-300 leading-relaxed text-sm md:text-base">
+                    Tebrikler kahraman! Millî teknolojilerimizin tüm özelliklerini başarıyla öğrenip görevleri eksiksiz tamamladın. Şimdi kendi adına özel sertifikanı hazırlayabilirsin!
+                </p>
+
+                <!-- Yıldız Derecesi -->
+                <div class="flex justify-center space-x-2 text-4xl" id="final-stars">
+                    ⭐⭐⭐⭐•
+                </div>
+
+                <!-- İsim Giriş Alanı -->
+                <div class="max-w-md mx-auto bg-slate-900/90 border border-slate-700 p-4 rounded-2xl shadow-inner">
+                    <label for="student-name" class="block text-sm font-semibold text-slate-300 mb-2">Sertifikada Yazacak İsminiz:</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="student-name" placeholder="Adınızı ve Soyadınızı Yazın" oninput="updateCertificateName()" class="flex-grow p-3 bg-slate-800 border border-indigo-500/50 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-cyan-400 text-center font-bold">
+                    </div>
+                </div>
+
+                <!-- Görsel Sertifika Şablonu -->
+                <div id="printable-certificate" class="bg-stone-50 text-stone-900 p-6 md:p-10 rounded-2xl border-8 border-double border-amber-600 shadow-2xl relative text-center max-w-xl mx-auto my-6">
+                    <!-- Arkaplan Süslemeleri -->
+                    <div class="absolute inset-2 border border-amber-800/20 pointer-events-none"></div>
+                    <div class="absolute top-4 left-4 text-3xl opacity-20">🚀</div>
+                    <div class="absolute top-4 right-4 text-3xl opacity-20">⚡</div>
+                    <div class="absolute bottom-4 left-4 text-3xl opacity-20">🚁</div>
+                    <div class="absolute bottom-4 right-4 text-3xl opacity-20">🛩️</div>
+
+                    <h3 class="text-2xl md:text-3xl font-bold tracking-wider text-amber-800 fun-font uppercase">BAŞARI SERTİFİKASI</h3>
+                    <p class="text-xs uppercase tracking-widest text-stone-500 mt-2 font-semibold font-mono">MİLLÎ TEKNOLOJİ ÜSSÜ</p>
+                    
+                    <div class="my-6">
+                        <p class="text-stone-500 text-sm">Bu belge, üstün gayret ve başarı gösteren</p>
+                        <h4 id="cert-display-name" class="text-2xl md:text-3xl font-extrabold text-indigo-950 underline decoration-amber-500 decoration-2 underline-offset-8 my-4 fun-font min-h-[40px]">................................</h4>
+                        <p class="text-stone-600 text-sm max-w-md mx-auto leading-relaxed">
+                            isimli kahramana, millî ve yerli teknolojik araçlarımızın (TOGG, HÜRKUŞ, KAAN, GÖKBEY, ANKA III) tüm görevlerini başarıyla tamamlayıp, göklerimizin ve karalarımızın gelecekteki koruyucusu ünvanını kazandığı için verilmiştir.
+                        </p>
+                    </div>
+
+                    <!-- Sertifika Alt Alanı / Damga -->
+                    <div class="flex justify-between items-center mt-8 px-4">
+                        <div class="text-left text-xs text-stone-500">
+                            <p class="font-bold text-stone-700">Tarih:</p>
+                            <p id="cert-date">31.05.2026</p>
+                        </div>
+                        <div class="w-16 h-16 bg-amber-500/10 border-2 border-dashed border-amber-600 rounded-full flex items-center justify-center text-3xl text-amber-600 rotate-12 font-bold select-none">
+                            ✓
+                        </div>
+                        <div class="text-right text-xs text-stone-500">
+                            <p class="font-bold text-stone-700">Sertifika Türü:</p>
+                            <p class="text-indigo-900 font-semibold">Teknoloji Muhafızı</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-4 flex flex-col sm:flex-row gap-3">
+                    <button onclick="printCertificate()" class="flex-1 fun-font text-md px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-bold rounded-xl shadow-lg transition duration-200">
+                        Sertifikayı Yazdır / PDF Kaydet 🖨️
+                    </button>
+                    <button onclick="resetGame()" class="flex-1 fun-font text-md px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-100 font-bold rounded-xl border border-slate-700 transition duration-200">
+                        Yeniden Oyna 🔄
+                    </button>
+                </div>
+            </div>
+            <p id="share-copy-status" class="text-xs text-cyan-400/90 font-semibold"></p>
+        </section>
+
+    </main>
+
+    <!-- ALT BİLGİ ALANI -->
+    <footer class="bg-slate-950/90 border-t border-slate-800/80 py-4 px-6 text-center text-xs text-slate-500">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
+            <p>Eğitsel Tasarım: Ülkem Yanımda</p>
+            <p class="text-slate-400">"Geleceğin teknolojisini tasarlayanlar, bugün öğrenenlerdir."</p>
+        </div>
+    </footer>
+
+    <!-- OYUN KODLARI (JAVASCRIPT) -->
+    <script>
+        // --- 1. VERİ YAPILARI (İÇERİK KATMANI) ---
+        const vehicles = {
+            togg: {
+                title: "TOGG",
+                desc: "Yerli ve millî gururumuz olan otomobilimiz sadece elektrikle çalışır. Doğayı kirletmeyen çevre dostu motoru, akıllı teknolojileri ve yüksek sürüş güvenliği ile yollarımızın yıldızıdır.",
+                emoji: "🚗"
+            },
+            hurkus: {
+                title: "HÜRKUŞ",
+                desc: "Yerli ve millî uçaklarımızdan olan eğitim uçağımız Hürkuş, adını tarihimizin ilk Türk uçak üreticisi olan Vecihi Hürkuş'tan almıştır. Pilot adaylarımızı güvenle eğitir.",
+                emoji: "🛩️"
+            },
+            kaan: {
+                title: "KAAN",
+                desc: "Türkiye’nin ilk yerli ve millî savaş uçağının adıdır. Kaan; hükümdar, lider veya başkan anlamlarına gelmektedir. Gökyüzündeki egemenliğimizi koruyan son derece hızlı ve akıllı bir çelik kuştur.",
+                emoji: "⚡"
+            },
+            gokbey: {
+                title: "GÖKBEY",
+                desc: "Yerli ve millî imkânlar ile geliştirilmiş olan GÖKBEY helikopteri görevlerini gece ve gündüz, kar ve fırtına gibi her türlü zorlu hava koşulunda başarıyla yerine getirebilmektedir.",
+                emoji: "🚁"
+            },
+            anka: {
+                title: "ANKA III",
+                desc: "“Hayalet Uçak” olarak adlandırılan ANKA III, radara yakalanmaması için kuyruksuz ve düz bir delta kanat şeklinde tasarlanmıştır. Sessizce ve gizlice uçarak görev yapar.",
+                emoji: "🦇"
+            }
+        };
+
+        const missions = [
+            {
+                id: 1,
+                scenario: "Şehirde hava kirliliğinin çok arttığı bir dönemde, doğaya hiç zarar vermeyen, egzoz gazı çıkartmayan ve sadece elektrikle çalışan çevre dostu bir araçla yolculuk yapmamız gerekiyor. Hangi aracı seçmeliyiz?",
+                correct: "togg",
+                hint: "Sadece pillerle yani elektrikle çalışan, çevre dostu tekerlekli aracımızı düşün!",
+                fact: "Togg tamamen elektrikli olup sıfır egzoz salınımı gerçekleştirir."
+            },
+            {
+                id: 2,
+                scenario: "Yeni yetişen pilotlarımıza güvenli ve kontrollü uçuş eğitimleri vermemiz gerek. Bu uçağın adı, Türkiye'nin ilk uçak üreticisi ve havacılık kahramanı olan Vecihi Bey'den esinlenmiştir. Hangi uçağı hazırlamalıyız?",
+                correct: "hurkus",
+                hint: "Adını Vecihi Hürkuş'tan alan eğitim uçağımızı hatırla!",
+                fact: "Hürkuş, adını ilk Türk uçak üreticisi olan Vecihi Hürkuş'tan almıştır."
+            },
+            {
+                id: 3,
+                scenario: "Karadeniz'in yüksek dağlarında gece vakti yoğun fırtınada bir arama-kurtarma görevi çıktı. Gece-gündüz ve her türlü zorlu hava koşulunda görevini aksatmadan uçabilen helikopterimiz hangisidir?",
+                correct: "gokbey",
+                hint: "Zorlu hava koşullarında gece-gündüz uçabilen milli genel maksat helikopterimizi seçmelisin.",
+                fact: "GÖKBEY, gece ve gündüz her türlü zorlu hava koşulunda görev yapabilir."
+            },
+            {
+                id: 4,
+                scenario: "Ülkemizin hava sahasını korumak için göklerin en hızlı, en güçlü ve 'hükümdar' veya 'lider' anlamına gelen milli uçağını nöbete yollamamız gerekiyor. Hangisini seçmeliyiz?",
+                correct: "kaan",
+                hint: "Kaan kelimesinin anlamı lider, hükümdar veya başkandır.",
+                fact: "Türkiye'nin ilk yerli ve milli savaş uçağı KAAN'dır."
+            },
+            {
+                id: 5,
+                scenario: "Düşman radarlarına yakalanmadan, kuyruksuz özel tasarımı sayesinde sessizce süzülen bir 'hayalet uçak' teknolojisine ihtiyacımız var. Hangi gizemli aracımızı uçurmalıyız?",
+                correct: "anka",
+                hint: "Radar dalgalarını yansıtmak için kuyruksuz tasarlanan insansız aracımızı hatırla.",
+                fact: "ANKA III, radar izini azaltmak için kuyruksuz bir tasarıma sahiptir."
+            }
+        ];
+
+        // --- 2. OYUN DURUMU (STATE) ---
+        let currentScreen = "intro";
+        let currentMissionIndex = 0;
+        let score = 0;
+
+        // Ses Efektleri İçin Web Audio API Sentezleyici
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playSound(type) {
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                if (type === 'success') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.3);
+                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.3);
+                } else if (type === 'fail') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                    osc.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.4);
+                    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.4);
+                } else if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.1);
+                } else if (type === 'complete') {
+                    const notes = [261.63, 329.63, 392.00, 523.25];
+                    notes.forEach((freq, idx) => {
+                        const o = audioCtx.createOscillator();
+                        const g = audioCtx.createGain();
+                        o.connect(g);
+                        g.connect(audioCtx.destination);
+                        o.frequency.setValueAtTime(freq, audioCtx.currentTime + idx * 0.15);
+                        g.gain.setValueAtTime(0.1, audioCtx.currentTime + idx * 0.15);
+                        g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + idx * 0.15 + 0.2);
+                        o.start(audioCtx.currentTime + idx * 0.15);
+                        o.stop(audioCtx.currentTime + idx * 0.15 + 0.2);
+                    });
+                }
+            } catch (e) {
+                console.log("Ses çalınamadı.");
+            }
+        }
+
+        // --- 3. EKRAN YÖNETİMİ ---
+        function showScreen(screenId) {
+            document.getElementById("screen-intro").classList.add("hidden");
+            document.getElementById("screen-missions").classList.add("hidden");
+            document.getElementById("screen-success").classList.add("hidden");
+
+            document.getElementById(screenId).classList.remove("hidden");
+            playSound('click');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function goToMissions() {
+            showScreen("screen-missions");
+            currentMissionIndex = 0;
+            score = 0;
+            updateMission();
+        }
+
+        // --- 4. GÖREV KONTROL MANTIĞI ---
+        function updateMission() {
+            const mission = missions[currentMissionIndex];
+            document.getElementById("mission-num").innerText = currentMissionIndex + 1;
+            document.getElementById("mission-text").innerText = mission.scenario;
+            
+            document.getElementById("star-count").innerText = `${score} / 5`;
+            const progressPercent = (currentMissionIndex / 5) * 100;
+            document.getElementById("progress-bar").style.width = `${progressPercent}%`;
+
+            document.getElementById("feedback-panel").classList.add("hidden");
+            document.getElementById("next-mission-btn").classList.add("hidden");
+
+            const optionBtns = document.querySelectorAll(".vehicle-option-btn");
+            optionBtns.forEach(btn => {
+                btn.disabled = false;
+                btn.classList.remove("opacity-40", "border-emerald-500", "border-rose-500", "bg-emerald-950/20", "bg-rose-950/20");
+                btn.classList.add("bg-slate-900");
+            });
+        }
+
+        function checkAnswer(selectedKey) {
+            const mission = missions[currentMissionIndex];
+            const feedbackPanel = document.getElementById("feedback-panel");
+            const feedbackEmoji = document.getElementById("feedback-emoji");
+            const feedbackTitle = document.getElementById("feedback-title");
+            const feedbackDesc = document.getElementById("feedback-desc");
+            const optionBtns = document.querySelectorAll(".vehicle-option-btn");
+
+            optionBtns.forEach(btn => btn.disabled = true);
+
+            if (selectedKey === mission.correct) {
+                playSound('success');
+                score++;
+                document.getElementById("star-count").innerText = `${score} / 5`;
+
+                feedbackPanel.className = "border border-emerald-500/30 bg-emerald-950/20 rounded-3xl p-6 flex items-start space-x-4 transition-all duration-300";
+                feedbackEmoji.innerText = "🎉";
+                feedbackTitle.innerText = "Harika! Doğru Seçim!";
+                feedbackTitle.className = "font-bold text-lg fun-font text-emerald-400";
+                feedbackDesc.innerText = `Harikasın! Aradığımız araç ${vehicles[selectedKey].title} idi. Çünkü: ${mission.fact}`;
+
+                document.getElementById("next-mission-btn").classList.remove("hidden");
+            } else {
+                playSound('fail');
+                
+                feedbackPanel.className = "border border-rose-500/30 bg-rose-950/20 rounded-3xl p-6 flex items-start space-x-4 transition-all duration-300";
+                feedbackEmoji.innerText = "💡";
+                feedbackTitle.innerText = "Tekrar Deneyelim!";
+                feedbackTitle.className = "font-bold text-lg fun-font text-rose-300";
+                feedbackDesc.innerText = `Hatalı bir araç gönderdik ama sorun değil! İpucu: ${mission.hint}`;
+
+                optionBtns.forEach(btn => {
+                    const text = btn.innerText.toLowerCase();
+                    if (text.includes(selectedKey) || (selectedKey === 'anka' && text.includes('anka'))) {
+                        btn.classList.add("border-rose-500", "bg-rose-950/20");
+                    } else {
+                        btn.disabled = false;
+                    }
+                });
+            }
+
+            feedbackPanel.classList.remove("hidden");
+            feedbackPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function nextMission() {
+            currentMissionIndex++;
+            if (currentMissionIndex < 5) {
+                updateMission();
+            } else {
+                showSuccessScreen();
+            }
+        }
+
+        // --- 5. BAŞARI EKRANI VE SERTİFİKA ---
+        function showSuccessScreen() {
+            showScreen("screen-success");
+            playSound('complete');
+
+            const finalStars = document.getElementById("final-stars");
+            finalStars.innerHTML = "";
+            for (let i = 0; i < 5; i++) {
+                const star = document.createElement("span");
+                star.innerText = i < score ? "⭐" : "⚫";
+                star.className = "transition-all duration-500 transform scale-110";
+                finalStars.appendChild(star);
+            }
+
+            // Bugünün tarihini sertifikaya yazdır
+            const today = new Date();
+            const dateString = String(today.getDate()).padStart(2, '0') + '.' + String(today.getMonth() + 1).padStart(2, '0') + '.' + today.getFullYear();
+            document.getElementById("cert-date").innerText = dateString;
+        }
+
+        function updateCertificateName() {
+            const inputVal = document.getElementById("student-name").value.trim();
+            const certDisplay = document.getElementById("cert-display-name");
+            if (inputVal === "") {
+                certDisplay.innerText = "................................";
+            } else {
+                certDisplay.innerText = inputVal;
+            }
+        }
+
+        function printCertificate() {
+            window.print();
+        }
+
+        function resetGame() {
+            currentMissionIndex = 0;
+            score = 0;
+            document.getElementById("student-name").value = "";
+            document.getElementById("cert-display-name").innerText = "................................";
+            showScreen("screen-intro");
+        }
+    </script>
+</body>
+</html>
