@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İklim Kahramanları: Çevre ve İklim Haftası Oyunu</title>
+    <!-- Tailwind CSS for modern fluid layout -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for high-quality eco-friendly icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0fdf4;
+            /* Light emerald eco background */
+        }
+
+        /* Custom scrollbar for eco cards */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #86efac;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4ade80;
+        }
+
+        /* Puzzle grid ghost slot effect */
+        .puzzle-slot {
+            box-shadow: inset 0 0 12px rgba(22, 101, 52, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        /* Piece hover & dragging animations */
+        .puzzle-piece {
+            touch-action: none;
+            /* Crucial for custom pointer drag-and-drop on mobile devices */
+            transition: transform 0.1s ease, box-shadow 0.2s ease;
+            cursor: grab;
+        }
+
+        .puzzle-piece:active {
+            cursor: grabbing;
+        }
+
+        /* Smooth scale in for completed screen */
+        @keyframes popIn {
+            0% {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .animate-pop-in {
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        /* Shake animation for wrong drops */
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translate(0, 0);
+            }
+
+            20%,
+            60% {
+                transform: translate(-8px, 0);
+            }
+
+            40%,
+            80% {
+                transform: translate(8px, 0);
+            }
+        }
+
+        .animate-shake {
+            animation: shake 0.4s ease-in-out;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col justify-between overflow-x-hidden text-slate-800 selection:bg-emerald-200">
+
+    <script>
+        // Custom Audio Synthesizer (Web Audio API) to avoid external assets blockages
+        const AudioSynth = {
+            ctx: null,
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            },
+            playTone(freq, type, duration, delay = 0) {
+                this.init();
+                setTimeout(() => {
+                    try {
+                        const osc = this.ctx.createOscillator();
+                        const gain = this.ctx.createGain();
+                        osc.type = type;
+                        osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+
+                        gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + duration);
+
+                        osc.connect(gain);
+                        gain.connect(this.ctx.destination);
+                        osc.start();
+                        osc.stop(this.ctx.currentTime + duration);
+                    } catch (e) {
+                        console.log("Ses çalınamadı (Kullanıcı etkileşimi bekleniyor):", e);
+                    }
+                }, delay);
+            },
+            playSnap() {
+                // Happy high chime
+                this.playTone(523.25, 'sine', 0.15); // C5
+                this.playTone(659.25, 'sine', 0.15, 60); // E5
+                this.playTone(783.99, 'sine', 0.25, 120); // G5
+            },
+            playError() {
+                // Low generic non-punitive warning tone
+                this.playTone(180, 'triangle', 0.2);
+                this.playTone(150, 'triangle', 0.2, 100);
+            },
+            playSuccess() {
+                // Glorious climate-saving fanfare!
+                const notes = [523.25, 587.33, 659.25, 698.46, 783.99, 880.00, 987.77, 1046.50];
+                notes.forEach((freq, idx) => {
+                    this.playTone(freq, 'triangle', 0.3, idx * 80);
+                });
+            }
+        };
+    </script>
+
+    <!-- Top Eco Navigation Header -->
+    <header
+        class="bg-gradient-to-r from-emerald-600 via-teal-600 to-green-600 text-white shadow-md py-4 px-6 relative z-10">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-white/20 p-2.5 rounded-full backdrop-blur-md">
+                    <i class="fa-solid fa-earth-americas text-2xl text-emerald-100 animate-pulse"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl md:text-2xl font-black tracking-tight flex items-center gap-2">
+                        İKLİM KAHRAMANLARI <span
+                            class="text-xs bg-yellow-400 text-teal-900 font-bold px-2 py-0.5 rounded-full">GÖREV
+                            BAŞINDA</span>
+                    </h1>
+                    <p class="text-xs text-emerald-100 font-medium">Kaynak: Ülkem Yanımda</p>
+                </div>
+            </div>
+
+            <!-- Accessibility Control Bar -->
+            <div class="flex flex-wrap items-center gap-3 bg-white/10 px-4 py-2 rounded-xl backdrop-blur-sm text-sm">
+                <button onclick="toggleHighContrast()"
+                    class="hover:bg-white/20 px-2.5 py-1 rounded transition flex items-center gap-1.5"
+                    title="Yüksek Kontrast">
+                    <i class="fa-solid fa-circle-half-stroke"></i> <span class="hidden sm:inline">Kontrast</span>
+                </button>
+                <button onclick="adjustFontSize(1)"
+                    class="hover:bg-white/20 px-2.5 py-1 rounded transition flex items-center gap-1"
+                    title="Yazıyı Büyüt">
+                    <i class="fa-solid fa-font"></i>+
+                </button>
+                <button onclick="adjustFontSize(-1)"
+                    class="hover:bg-white/20 px-2.5 py-1 rounded transition flex items-center gap-1"
+                    title="Yazıyı Küçült">
+                    <i class="fa-solid fa-font"></i>-
+                </button>
+                <button id="soundToggleBtn" onclick="toggleSound()"
+                    class="hover:bg-white/20 px-2.5 py-1 rounded transition flex items-center gap-1.5"
+                    title="Sesi Aç/Kapat">
+                    <i class="fa-solid fa-volume-high"></i> <span class="hidden sm:inline">Ses</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Video Instruction Overlay (Only video and start button) -->
+    <div id="videoOverlay"
+        class="fixed inset-0 bg-slate-900/95 z-50 flex items-center justify-center p-4 transition-all duration-500">
+        <div
+            class="bg-white rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl flex flex-col p-6 md:p-8 animate-pop-in border-4 border-emerald-500 gap-4">
+            <div class="flex justify-between items-center pb-2 border-b border-slate-100">
+                <h2 class="text-xl md:text-2xl font-extrabold text-emerald-900 flex items-center gap-2">
+                    <i class="fa-solid fa-circle-info text-emerald-600 animate-pulse"></i> Görev Yönergesi
+                </h2>
+                <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full">Kaynak: Ülkem
+                    Yanımda</span>
+            </div>
+
+            <!-- Video Container -->
+            <div class="bg-black rounded-2xl overflow-hidden relative aspect-video shadow-inner">
+                <video id="instructionalVideo" class="w-full h-full object-cover" controls preload="auto"
+                    poster="https://placehold.co/800x450/166534/ffffff?text=%C3%87evre+ve+%C4%B0klim+De%C4%9Fi%C5%9Fikli%C4%9Fi+Haftas%C4%B1+Y%C3%B6nergesi">
+                    <source src="1.mp4" type="video/mp4">
+                    Tarayıcınız video oynatmayı desteklemiyor.
+                </video>
+            </div>
+
+            <!-- Playback Fallback Notification -->
+            <div class="bg-emerald-50 text-emerald-800 text-xs p-3 rounded-xl border border-emerald-200">
+                <i class="fa-solid fa-circle-info text-emerald-600 mr-1.5"></i>
+                Eğer yerel yönerge videonuz otomatik yüklenmezse, doğrudan aşağıdaki butona tıklayarak göreve
+                başlayabilirsiniz.
+            </div>
+
+            <!-- Start Game CTA Button -->
+            <button onclick="acceptMission()"
+                class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-4 px-6 rounded-2xl shadow-lg shadow-emerald-700/20 hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-3 text-lg">
+                <i class="fa-solid fa-circle-check text-yellow-300 text-xl"></i> Görevi Kabul Ediyorum! Oyunu Başlat
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Game Workspace Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+
+        <!-- Left Side: Interactive Progress, Score & Instructions Display (Pedagojik Veri Odası) -->
+        <section
+            class="lg:col-span-4 bg-white rounded-3xl p-6 shadow-xl border-2 border-emerald-100 flex flex-col justify-between gap-6">
+
+            <!-- User Status Panel -->
+            <div>
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Durum Paneli</span>
+                    <span
+                        class="bg-yellow-100 text-yellow-800 text-xs font-extrabold px-2.5 py-1 rounded-full flex items-center gap-1">
+                        <i class="fa-solid fa-medal"></i> İklim Çırağı
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 mb-4">
+                    <div class="bg-emerald-50 p-3 rounded-2xl text-center border border-emerald-100">
+                        <span class="text-xs text-emerald-700 font-semibold block">Karbon Tasarrufu</span>
+                        <span id="scoreCounter" class="text-2xl font-black text-emerald-800">0 kg</span>
+                    </div>
+                    <div class="bg-teal-50 p-3 rounded-2xl text-center border border-teal-100">
+                        <span class="text-xs text-teal-700 font-semibold block">Deneme Sayısı</span>
+                        <span id="movesCounter" class="text-2xl font-black text-teal-800">0</span>
+                    </div>
+                </div>
+
+                <!-- Live Level Progress Bar (Pedagojik Ölçülebilirlik) -->
+                <div>
+                    <div class="flex justify-between text-xs font-semibold mb-1 text-slate-500">
+                        <span>Doğa Resmi Tamamlanıyor</span>
+                        <span id="percentText">0%</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden p-0.5 border">
+                        <div id="progressBar"
+                            class="bg-gradient-to-r from-emerald-400 to-green-600 h-2 rounded-full transition-all duration-300"
+                            style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Learning Card: Changing tips based on active interactions (Eğitici Geri Bildirim Katmanı) -->
+            <div
+                class="bg-gradient-to-br from-emerald-800 to-teal-900 text-white rounded-2xl p-5 shadow-inner relative overflow-hidden flex-grow flex flex-col justify-center min-h-[160px]">
+                <div class="absolute -right-6 -bottom-6 opacity-10 text-9xl">
+                    <i class="fa-solid fa-leaf"></i>
+                </div>
+                <div class="relative z-10">
+                    <span
+                        class="text-xs font-bold text-emerald-300 uppercase tracking-wider flex items-center gap-1.5 mb-2">
+                        <i class="fa-solid fa-lightbulb text-yellow-300"></i> İklim İpucu & Bilgi Kartı
+                    </span>
+                    <p id="factTextBox"
+                        class="text-sm font-medium leading-relaxed text-emerald-50 transition-all duration-300">
+                        Çevre ve iklim değişikliği haftasında doğamızı korumak bizim elimizde! Yapboz parçalarını doğru
+                        yerlere yerleştirerek resmi tamamla ve iklim kahramanı ol.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Helper scaffolding controls -->
+            <div class="border-t border-slate-100 pt-4 flex justify-between items-center text-xs text-slate-500">
+                <button onclick="toggleDraftOverlay()"
+                    class="hover:text-emerald-700 transition flex items-center gap-1 font-semibold">
+                    <i class="fa-regular fa-eye"></i> Resmi Kılavuz Olarak Göster
+                </button>
+                <button onclick="restartGame()"
+                    class="hover:text-red-600 transition flex items-center gap-1 font-semibold">
+                    <i class="fa-solid fa-rotate-right"></i> Oyunu Sıfırla
+                </button>
+            </div>
+        </section>
+
+        <!-- Right Side: The Puzzle Gameplay Area (Uygulama Alanı) -->
+        <section
+            class="lg:col-span-8 bg-white rounded-3xl p-6 shadow-xl border-2 border-emerald-100 flex flex-col items-center justify-center relative">
+
+            <div class="w-full max-w-lg mb-4 flex justify-between items-center px-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-400"><i
+                        class="fa-solid fa-puzzle-piece"></i> Yapboz Sahnesi</span>
+                <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full"><i
+                        class="fa-solid fa-circle-exclamation mr-1"></i> Parçaları Sürükleyip Doğru Gri Hücreye
+                    Bırak!</span>
+            </div>
+
+            <!-- Puzzle Assembly Container -->
+            <div class="relative flex flex-col items-center gap-6 w-full">
+
+                <!-- Target Assembly Grid (The Target slots) -->
+                <div id="puzzleBoard"
+                    class="relative bg-slate-100 rounded-2xl shadow-inner border-2 border-slate-200 overflow-hidden"
+                    style="width: 360px; height: 360px;">
+                    <!-- Underlay original visual guide (scaffolding toggleable) -->
+                    <div id="draftImageOverlay"
+                        class="absolute inset-0 bg-cover bg-center opacity-10 pointer-events-none transition-all"
+                        style="background-image: url('1.png'); display: none;"></div>
+
+                    <!-- 3x3 Grid of targets -->
+                    <div class="grid grid-cols-3 grid-rows-3 h-full w-full absolute inset-0">
+                        <!-- We will generate 9 targets dynamically -->
+                    </div>
+                </div>
+
+                <!-- Unassembled Pieces Inventory Box -->
+                <div class="w-full bg-emerald-50/50 rounded-2xl p-4 border border-emerald-100">
+                    <div
+                        class="text-center text-xs font-bold text-emerald-800 mb-3 uppercase tracking-widest flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-box-open"></i> Karışık Parçalar Havuzu
+                    </div>
+
+                    <!-- Scattered pieces area -->
+                    <div id="piecesContainer"
+                        class="flex flex-wrap justify-center gap-3 min-h-[140px] items-center bg-white rounded-xl p-3 border border-emerald-100/50 shadow-inner">
+                        <!-- Dynamically filled with shuffled pieces -->
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Confetti & Celebration Layer (Visual feedback) -->
+            <div id="victoryScreen"
+                class="absolute inset-0 bg-emerald-950/95 rounded-3xl z-20 flex flex-col justify-center items-center p-8 text-center text-white transition-all duration-500 scale-95 opacity-0 pointer-events-none">
+                <div
+                    class="w-24 h-24 bg-yellow-400 text-emerald-950 text-5xl rounded-full flex items-center justify-center animate-bounce mb-6 shadow-xl shadow-yellow-400/20">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+                <h3 class="text-3xl md:text-4xl font-extrabold text-yellow-300 leading-tight">Mükemmel! Gerçek Bir İklim
+                    Kahramanısın!</h3>
+                <p class="text-emerald-100 text-sm md:text-base mt-2 max-w-lg leading-relaxed">
+                    Tüm parçaları kusursuzca birleştirdin ve çevre koruma mesajının bütünlüğünü sağladın. Karbon ayak
+                    izini sembolik olarak sıfırladın!
+                </p>
+
+                <div class="mt-8 bg-white/10 p-4 rounded-2xl max-w-md text-left text-xs border border-white/10">
+                    <h4 class="font-bold text-yellow-300 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                        <i class="fa-solid fa-circle-check"></i> İklim Koruyucusu Ödülü:
+                    </h4>
+                    <p class="text-emerald-200">
+                        Bu anlamlı görevi başarıyla tamamlayarak doğayı ve çevreyi koruma konusundaki duyarlılığını
+                        gösterdin. Kaynakları verimli kullanıp çevre bilincini yaymaya devam et!
+                    </p>
+                </div>
+
+                <div class="mt-8 flex gap-4">
+                    <button onclick="restartGame()"
+                        class="bg-yellow-400 hover:bg-yellow-500 text-emerald-950 font-black px-6 py-3 rounded-xl transition shadow-lg text-sm">
+                        Yeniden Oyna
+                    </button>
+                    <button onclick="showVideoAgain()"
+                        class="bg-white/10 hover:bg-white/20 text-white font-black px-6 py-3 rounded-xl transition text-sm">
+                        Videoyu Tekrar İzle
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Eco Educational Footer with updated sources -->
+    <footer class="bg-slate-900 text-slate-400 text-xs py-5 px-6 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div
+                    class="bg-white/5 px-2 py-1.5 rounded text-[10px] text-white tracking-widest font-bold border border-white/10">
+                    ÜLKEM YANIMDA</div>
+                <p>Bu eğitsel oyun, "Ülkem Yanımda" kaynakları referans alınarak çevre ve iklim bilincini artırmak
+                    amacıyla geliştirilmiştir.</p>
+            </div>
+            <div class="flex gap-4">
+                <a href="#" class="hover:text-emerald-400 transition">Gizlilik Politikası</a>
+                <span>|</span>
+                <a href="#" class="hover:text-emerald-400 transition">Erişilebilirlik Bildirgesi</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Game variables
+        let score = 0;
+        let moves = 0;
+        let isSoundEnabled = true;
+        let fontSizeMultiplier = 1;
+        const totalPieces = 9;
+        let placedCount = 0;
+        let draftOverlayActive = false;
+
+        // Dynamic climate tips corresponding to actions
+        const climateFacts = [
+            "Plastik şişelerin doğada çözünmesi tam 450 yıl alır! Geri dönüşüm en güçlü silahımızdır.",
+            "Evlerimizde musluğu açık bırakmamak yılda binlerce litre su tasarrufu sağlar.",
+            "Yenilenebilir enerji (güneş ve rüzgar), karbon salınımını azaltarak atmosferi korur.",
+            "Tek bir yetişkin çam ağacı, yılda yaklaşık 22 kg karbondioksiti havadan temizler.",
+            "Gereksiz kağıt tüketimini azaltarak binlerce ağacın kesilmesini önleyebilirsin.",
+            "Bisiklet kullanmak veya yürümek, sera gazı salınımını azaltan harika birer eylemdir.",
+            "Doğru atık ayrıştırma, toprağa zehirli maddelerin karışmasını engeller.",
+            "Gıda israfı, dünyadaki tüm sera gazı salınımlarının yaklaşık %8'ine sebep olmaktadır.",
+            "Elektronik cihazları bekleme modunda bırakmamak elektrik tasarrufunun gizli kahramanıdır!"
+        ];
+
+        // Puzzle grid layout logic
+        const puzzleGrid = {
+            cols: 3,
+            rows: 3,
+            pieceWidth: 120, // 360 / 3
+            pieceHeight: 120 // 360 / 3
+        };
+
+        // Fallback placeholder image for the puzzle in case '1.png' doesn't load locally
+        const defaultFallbackImage = "https://placehold.co/360x360/047857/ffffff?text=%C3%87EVRE+VE+%C4%B0KL%C4%B0M+HAFTASI+RESM%C4%B0";
+
+        window.onload = function () {
+            initPuzzle();
+            // Bind pointer up to reset target drag styling across the screen
+            document.addEventListener('pointerup', onPointerUpGlobal);
+        };
+
+        // Complete instructional overlay phase
+        function acceptMission() {
+            const video = document.getElementById('instructionalVideo');
+            if (video) {
+                video.pause(); // Pause video so audio stops playing
+            }
+            document.getElementById('videoOverlay').classList.add('opacity-0', 'pointer-events-none');
+            AudioSynth.playTone(392, 'sine', 0.2); // Start game soft prompt
+        }
+
+        function showVideoAgain() {
+            document.getElementById('victoryScreen').classList.remove('opacity-100');
+            document.getElementById('victoryScreen').classList.add('opacity-0', 'pointer-events-none');
+            document.getElementById('videoOverlay').classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        // Construct puzzle game elements dynamically
+        function initPuzzle() {
+            const board = document.getElementById('puzzleBoard');
+            const container = document.getElementById('piecesContainer');
+
+            // Empty existing elements
+            board.innerHTML = '<div id="draftImageOverlay" class="absolute inset-0 bg-cover bg-center opacity-10 pointer-events-none transition-all" style="background-image: url(\'1.png\'); display: ' + (draftOverlayActive ? 'block' : 'none') + ';"></div>';
+            container.innerHTML = '';
+
+            // Handle fallback on error for '1.png'
+            const testImg = new Image();
+            testImg.src = '1.png';
+            testImg.onerror = function () {
+                console.warn("1.png görseli bulunamadı. Fallback çevre görseli yükleniyor.");
+                const overlay = document.getElementById('draftImageOverlay');
+                if (overlay) {
+                    overlay.style.backgroundImage = `url('${defaultFallbackImage}')`;
+                }
+                // Repopulate pieces with fallback background
+                applyPieceBackgrounds(defaultFallbackImage);
+            };
+            testImg.onload = function () {
+                applyPieceBackgrounds('1.png');
+            };
+        }
+
+        function applyPieceBackgrounds(imageSrc) {
+            const board = document.getElementById('puzzleBoard');
+            const container = document.getElementById('piecesContainer');
+
+            // 1. Create Grid target Slots
+            const gridContainer = document.createElement('div');
+            gridContainer.className = "grid grid-cols-3 grid-rows-3 h-full w-full absolute inset-0";
+
+            const pieces = [];
+
+            for (let r = 0; r < puzzleGrid.rows; r++) {
+                for (let c = 0; c < puzzleGrid.cols; c++) {
+                    const idx = r * puzzleGrid.cols + c;
+
+                    // Generate slot cell
+                    const slot = document.createElement('div');
+                    slot.className = "puzzle-slot border border-slate-300/40 relative flex items-center justify-center";
+                    slot.setAttribute('data-slot-idx', idx);
+                    gridContainer.appendChild(slot);
+
+                    // Generate draggable piece representing this section
+                    const piece = document.createElement('div');
+                    piece.className = "puzzle-piece w-[110px] h-[110px] sm:w-[114px] sm:h-[114px] rounded-lg shadow-md border-2 border-white relative transition-all";
+                    piece.style.backgroundImage = `url('${imageSrc}')`;
+                    piece.style.backgroundSize = "360px 360px";
+
+                    // Map background coordinates to simulate slice
+                    const bgX = -c * 120;
+                    const bgY = -r * 120;
+                    piece.style.backgroundPosition = `${bgX}px ${bgY}px`;
+                    piece.setAttribute('data-target-idx', idx);
+
+                    // Attach interactive Pointer Events for seamless touch/desktop experience
+                    piece.addEventListener('pointerdown', onPointerDown);
+
+                    pieces.push(piece);
+                }
+            }
+            board.appendChild(gridContainer);
+
+            // 2. Shuffle pieces to enforce cognitive problem solving (Eğitsel İlke)
+            shuffleArray(pieces);
+
+            // 3. Render inside randomized repository
+            pieces.forEach(p => {
+                container.appendChild(p);
+            });
+        }
+
+        // Pointer state tracker variables
+        let activeDragPiece = null;
+        let startX = 0;
+        let startY = 0;
+        let pieceLeft = 0;
+        let pieceTop = 0;
+        let originalParent = null;
+
+        function onPointerDown(e) {
+            if (activeDragPiece) return;
+
+            e.preventDefault();
+            activeDragPiece = this;
+            activeDragPiece.setPointerCapture(e.pointerId);
+
+            originalParent = activeDragPiece.parentElement;
+
+            // Temporarily lift styles for smoother drag preview
+            activeDragPiece.style.transition = 'none';
+            activeDragPiece.style.zIndex = '50';
+            activeDragPiece.style.opacity = '0.85';
+            activeDragPiece.style.transform = 'scale(1.05)';
+
+            // Fetch initial positions
+            const rect = activeDragPiece.getBoundingClientRect();
+            startX = e.clientX;
+            startY = e.clientY;
+
+            // Render inside absolute bounds over body screen
+            if (originalParent.id === 'piecesContainer') {
+                // If it is in pool, we dynamically adjust to absolute so it tracks pointer easily
+                activeDragPiece.style.position = 'fixed';
+                activeDragPiece.style.left = `${rect.left}px`;
+                activeDragPiece.style.top = `${rect.top}px`;
+            } else {
+                // If placed, make it moveable
+                activeDragPiece.style.position = 'fixed';
+                activeDragPiece.style.left = `${rect.left}px`;
+                activeDragPiece.style.top = `${rect.top}px`;
+            }
+
+            pieceLeft = rect.left;
+            pieceTop = rect.top;
+
+            activeDragPiece.addEventListener('pointermove', onPointerMove);
+            activeDragPiece.addEventListener('pointerup', onPointerUp);
+        }
+
+        function onPointerMove(e) {
+            if (!activeDragPiece) return;
+            const dx = e.clientX - startX;
+            const dy = e.clientY - startY;
+
+            activeDragPiece.style.left = `${pieceLeft + dx}px`;
+            activeDragPiece.style.top = `${pieceTop + dy}px`;
+
+            // Visual feedback - Highlight targets on intersection
+            highlightNearestSlot(e.clientX, e.clientY);
+        }
+
+        function onPointerUp(e) {
+            if (!activeDragPiece) return;
+
+            activeDragPiece.removeEventListener('pointermove', onPointerMove);
+            activeDragPiece.removeEventListener('pointerup', onPointerUp);
+            activeDragPiece.releasePointerCapture(e.pointerId);
+
+            // Re-evaluate drop zone coordinates
+            const clientX = e.clientX;
+            const clientY = e.clientY;
+
+            const droppedDetails = checkDropSlot(clientX, clientY);
+
+            activeDragPiece.style.opacity = '1';
+            activeDragPiece.style.transform = 'scale(1)';
+            activeDragPiece.style.transition = 'all 0.3s ease';
+
+            if (droppedDetails.success) {
+                // LOCK PIECE (Pedagojik Geri Bildirim)
+                snapPieceToSlot(activeDragPiece, droppedDetails.slotElement);
+            } else {
+                // Return to previous pool (Hata Yönetimi)
+                returnPieceToPool(activeDragPiece);
+            }
+
+            activeDragPiece = null;
+            clearHighlights();
+        }
+
+        function onPointerUpGlobal() {
+            if (activeDragPiece) {
+                returnPieceToPool(activeDragPiece);
+                activeDragPiece = null;
+                clearHighlights();
+            }
+        }
+
+        function checkDropSlot(x, y) {
+            const targetIdx = parseInt(activeDragPiece.getAttribute('data-target-idx'));
+            const slots = document.querySelectorAll('.puzzle-slot');
+
+            let closestSlot = null;
+            let minDistance = 60; // Max snap boundary pixel threshold
+
+            slots.forEach(slot => {
+                // Check if slot has already been occupied
+                if (slot.children.length > 0 && slot.children[0] !== activeDragPiece) return;
+
+                const rect = slot.getBoundingClientRect();
+                const slotCenterX = rect.left + rect.width / 2;
+                const slotCenterY = rect.top + rect.height / 2;
+                const distance = Math.hypot(x - slotCenterX, y - slotCenterY);
+
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestSlot = slot;
+                }
+            });
+
+            if (closestSlot) {
+                const slotIdx = parseInt(closestSlot.getAttribute('data-slot-idx'));
+                // Pedagogical Decision: Piece snaps only to its correct target index
+                if (slotIdx === targetIdx) {
+                    return { success: true, slotElement: closestSlot };
+                } else {
+                    return { success: false, isWrongCell: true };
+                }
+            }
+
+            return { success: false };
+        }
+
+        function highlightNearestSlot(x, y) {
+            clearHighlights();
+            const slots = document.querySelectorAll('.puzzle-slot');
+            let minDistance = 50;
+            let nearest = null;
+
+            slots.forEach(slot => {
+                if (slot.children.length > 0) return;
+                const rect = slot.getBoundingClientRect();
+                const d = Math.hypot(x - (rect.left + rect.width / 2), y - (rect.top + rect.height / 2));
+                if (d < minDistance) {
+                    minDistance = d;
+                    nearest = slot;
+                }
+            });
+
+            if (nearest) {
+                nearest.classList.add('bg-emerald-100', 'scale-[1.02]', 'border-emerald-500');
+            }
+        }
+
+        function clearHighlights() {
+            document.querySelectorAll('.puzzle-slot').forEach(s => {
+                s.classList.remove('bg-emerald-100', 'scale-[1.02]', 'border-emerald-500');
+            });
+        }
+
+        function snapPieceToSlot(piece, slot) {
+            // Unset fixed positioning logic
+            piece.style.position = 'absolute';
+            piece.style.left = '3px';
+            piece.style.top = '3px';
+            piece.style.width = '114px';
+            piece.style.height = '114px';
+            piece.style.zIndex = '10';
+            piece.classList.remove('shadow-md');
+            piece.classList.add('border-emerald-500', 'cursor-default');
+
+            // Disable dragging for locked elements
+            piece.removeEventListener('pointerdown', onPointerDown);
+
+            slot.appendChild(piece);
+
+            // Trigger happy dynamic tone
+            if (isSoundEnabled) {
+                AudioSynth.playSnap();
+            }
+
+            // Trigger incremental scores
+            score += 15; // kg carbon saved
+            placedCount++;
+            moves++;
+
+            updateHUD();
+            checkVictoryState();
+        }
+
+        function returnPieceToPool(piece) {
+            piece.classList.add('animate-shake');
+            if (isSoundEnabled) {
+                AudioSynth.playError();
+            }
+
+            moves++;
+            updateHUD();
+
+            // Re-render item smoothly inside pool
+            setTimeout(() => {
+                piece.classList.remove('animate-shake');
+                piece.style.position = 'relative';
+                piece.style.left = '0';
+                piece.style.top = '0';
+                piece.style.width = '';
+                piece.style.height = '';
+                piece.style.zIndex = '';
+                document.getElementById('piecesContainer').appendChild(piece);
+            }, 300);
+        }
+
+        function showFact(idx) {
+            const factBox = document.getElementById('factTextBox');
+            factBox.style.opacity = '0';
+            setTimeout(() => {
+                factBox.innerHTML = `<strong>Tebrikler!</strong> <br>${climateFacts[idx % climateFacts.length]}`;
+                factBox.style.opacity = '1';
+            }, 200);
+        }
+
+        function updateHUD() {
+            document.getElementById('scoreCounter').innerText = `${score} kg`;
+            document.getElementById('movesCounter').innerText = moves;
+
+            const percentage = Math.round((placedCount / totalPieces) * 100);
+            document.getElementById('percentText').innerText = `${percentage}%`;
+            document.getElementById('progressBar').style.width = `${percentage}%`;
+        }
+
+        function checkVictoryState() {
+            if (placedCount === totalPieces) {
+                setTimeout(() => {
+                    const victory = document.getElementById('victoryScreen');
+                    victory.classList.remove('opacity-0', 'pointer-events-none', 'scale-95');
+                    victory.classList.add('opacity-100', 'scale-100');
+                    if (isSoundEnabled) {
+                        AudioSynth.playSuccess();
+                    }
+                }, 800);
+            }
+        }
+
+        function toggleDraftOverlay() {
+            draftOverlayActive = !draftOverlayActive;
+            const overlay = document.getElementById('draftImageOverlay');
+            if (overlay) {
+                overlay.style.display = draftOverlayActive ? 'block' : 'none';
+            }
+        }
+
+        function restartGame() {
+            score = 0;
+            moves = 0;
+            placedCount = 0;
+            updateHUD();
+
+            // Hide victory if open
+            const victory = document.getElementById('victoryScreen');
+            victory.classList.remove('opacity-100', 'scale-100');
+            victory.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
+
+            document.getElementById('factTextBox').innerHTML = `Çevre ve iklim değişikliği haftasında doğamızı korumak bizim elimizde! Yapboz parçalarını doğru yerlere yerleştirerek resmi tamamla ve iklim kahramanı ol.`;
+
+            initPuzzle();
+        }
+
+        // Shuffle utility
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        // Accessibility controls
+        let highContrastMode = false;
+        function toggleHighContrast() {
+            highContrastMode = !highContrastMode;
+            if (highContrastMode) {
+                document.body.classList.add('contrast-125', 'grayscale');
+                document.body.style.backgroundColor = '#ffffff';
+            } else {
+                document.body.classList.remove('contrast-125', 'grayscale');
+                document.body.style.backgroundColor = '#f0fdf4';
+            }
+        }
+
+        function adjustFontSize(val) {
+            fontSizeMultiplier += val * 0.1;
+            fontSizeMultiplier = Math.max(0.8, Math.min(fontSizeMultiplier, 1.4));
+            document.body.style.fontSize = `${fontSizeMultiplier}rem`;
+        }
+
+        function toggleSound() {
+            isSoundEnabled = !isSoundEnabled;
+            const btn = document.getElementById('soundToggleBtn');
+            if (isSoundEnabled) {
+                btn.innerHTML = `<i class="fa-solid fa-volume-high"></i> <span class="hidden sm:inline">Ses</span>`;
+                btn.classList.remove('opacity-50');
+            } else {
+                btn.innerHTML = `<i class="fa-solid fa-volume-xmark"></i> <span class="hidden sm:inline">Ses</span>`;
+                btn.classList.add('opacity-50');
+            }
+        }
+    </script>
+</body>
+
+</html>

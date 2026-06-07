@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İklim Koruyucusu: Yeşil Kasaba</title>
+    <!-- Tailwind CSS ve Font Kütüphaneleri -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-gradient-to-br from-emerald-950 via-slate-900 to-teal-950 min-h-screen text-slate-100 flex items-center justify-center p-4">
+
+    <main
+        class="w-full max-w-5xl bg-slate-900/90 border border-emerald-500/30 rounded-3xl shadow-2xl overflow-hidden backdrop-blur-md flex flex-col md:flex-row min-h-[650px]">
+
+        <!-- Sol Panel: İstatistikler ve Görsel Alan -->
+        <section
+            class="w-full md:w-5/12 bg-slate-950/60 p-6 flex flex-col justify-between border-b md:border-b-0 md:border-r border-emerald-500/20">
+            <!-- Üst Başlık ve Bilgi -->
+            <div>
+                <div class="flex justify-between items-center mb-4">
+                    <span id="level-badge"
+                        class="px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 rounded-full text-xs font-bold tracking-wider uppercase">Seviye
+                        1: Evim</span>
+                    <div class="flex space-x-2">
+                        <!-- Ses Efektleri Aç/Kapat -->
+                        <button onclick="toggleAudio()" id="audio-toggle"
+                            class="p-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-emerald-400 transition"
+                            title="Ses Efektlerini Değiştir">
+                            <i data-lucide="volume-2"></i>
+                        </button>
+                        <!-- Renk Körlüğü/Yüksek Kontrast Modu -->
+                        <button onclick="toggleContrast()" id="contrast-toggle"
+                            class="p-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-400 transition"
+                            title="Kontrast Modu">
+                            <i data-lucide="eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <h1 class="text-xl font-extrabold text-emerald-400 flex items-center gap-2">
+                    <i data-lucide="shield-check" class="text-emerald-500"></i> İklim Koruyucusu
+                </h1>
+                <p class="text-xs text-slate-400 mt-1">Sürdürülebilir bir gelecek senin kararlarınla şekillenecek.</p>
+            </div>
+
+            <!-- Ortadaki Görsel Alanı (Sizin ekleyeceğiniz 1.png görseli) -->
+            <div
+                class="my-6 bg-slate-900/80 border border-slate-800 rounded-2xl h-60 overflow-hidden flex items-center justify-center relative">
+                <img id="visual-environment" src="1.png" alt="İklim Koruyucusu Görseli"
+                    class="w-full h-full object-cover rounded-2xl"
+                    onerror="this.src='https://placehold.co/400x240/10b981/0f172a?text=1.png+G%C3%B6rseli'">
+            </div>
+
+            <!-- Alt Göstergeler / Metrikler -->
+            <div class="space-y-4">
+                <!-- 1. Atmosfer Sıcaklığı (Karbon Ayak İzi) -->
+                <div>
+                    <div class="flex justify-between text-xs font-semibold mb-1">
+                        <span class="flex items-center gap-1"><i data-lucide="thermometer"
+                                class="w-4 h-4 text-orange-400"></i> Küresel Sıcaklık Artışı</span>
+                        <span id="temp-value" class="text-orange-400 font-bold">+1.5°C</span>
+                    </div>
+                    <div class="w-full bg-slate-800 h-3 rounded-full overflow-hidden p-[2px]">
+                        <div id="temp-bar"
+                            class="bg-gradient-to-r from-emerald-500 via-yellow-500 to-red-500 h-full rounded-full transition-all duration-500"
+                            style="width: 60%;"></div>
+                    </div>
+                    <div class="flex justify-between text-[10px] text-slate-500 mt-1">
+                        <span>Hedef: &lt; 1.0°C</span>
+                        <span class="text-red-400 font-medium">Tehlike Sınırı: 2.0°C</span>
+                    </div>
+                </div>
+
+                <!-- 2. Eko-Puan (Doğa Bütçesi) -->
+                <div class="flex justify-between items-center bg-slate-900 p-3 rounded-xl border border-slate-800">
+                    <div class="flex items-center gap-2">
+                        <div class="p-2 bg-emerald-500/10 text-emerald-400 rounded-lg">
+                            <i data-lucide="leaf" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-slate-500 font-medium">Doğa Bütçesi</p>
+                            <h3 class="text-base font-extrabold text-slate-200">Eko-Puan</h3>
+                        </div>
+                    </div>
+                    <span id="eco-points" class="text-xl font-black text-emerald-400">+250</span>
+                </div>
+
+                <!-- 3. Kasaba Mutluluğu -->
+                <div>
+                    <div class="flex justify-between text-xs font-semibold mb-1">
+                        <span class="flex items-center gap-1"><i id="happiness-icon" data-lucide="smile"
+                                class="w-4 h-4 text-sky-400"></i> Kasaba Mutluluğu</span>
+                        <span id="happiness-value" class="text-sky-400 font-bold">%60</span>
+                    </div>
+                    <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                        <div id="happiness-bar" class="bg-sky-500 h-full rounded-full transition-all duration-500"
+                            style="width: 60%;"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sağ Panel: Oyun Akışı, Sorular ve Kararlar -->
+        <section class="w-full md:w-7/12 p-8 flex flex-col justify-between relative">
+
+            <!-- Giriş / Başlangıç Ekranı -->
+            <div id="start-screen" class="flex-1 flex flex-col justify-center items-center text-center">
+                <div
+                    class="w-20 h-20 bg-emerald-500/10 border border-emerald-500/30 rounded-3xl flex items-center justify-center text-emerald-400 mb-6 animate-bounce">
+                    <i data-lucide="globe" class="w-10 h-10"></i>
+                </div>
+                <h2 class="text-3xl font-black text-slate-100 tracking-tight">Yeşil Kasaba Projesi</h2>
+                <p class="text-slate-400 mt-2 max-w-md text-sm leading-relaxed">
+                    Merhaba Genç Çevre Gönüllüsü! Kasabamız iklim değişikliğinin etkileriyle karşı karşıya. Alacağın
+                    kararlarla doğayı koru, karbon ayak izini azalt ve yeşil bir gelecek inşa et!
+                </p>
+
+                <div
+                    class="mt-8 bg-slate-950/40 p-4 rounded-xl border border-slate-800 text-left w-full max-w-md text-xs space-y-2">
+                    <div class="flex items-center gap-2 text-emerald-400 font-semibold"><i data-lucide="shield"
+                            class="w-4 h-4"></i> Görev Kuralları:</div>
+                    <p>🌱 Kararlarınla <strong>Küresel Sıcaklık Artışını</strong> tehlike sınırı olan 2.0°C'nin altında
+                        tutmalısın.</p>
+                    <p>⚡ Doğru ekolojik adımlar atarak <strong>Eko-Puanını</strong> artır ve kasabayı güzelleştir.</p>
+                    <p>👥 Doğa koruma önlemleri alırken <strong>Kasaba Mutluluğunu</strong> da dengede tutmaya çalış.
+                    </p>
+                </div>
+
+                <button onclick="startGame()"
+                    class="mt-8 w-full max-w-xs py-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl shadow-lg shadow-emerald-500/20 transform active:scale-95 transition-all text-base">
+                    Görevi Başlat!
+                </button>
+            </div>
+
+            <!-- Kartlı Soru ve Karar Ekranı (Oyun sırasında aktif) -->
+            <div id="game-screen" class="hidden flex-1 flex flex-col justify-between">
+
+                <!-- Soru İlerleme Durumu ve Sayaç -->
+                <div class="mb-4">
+                    <div class="flex justify-between items-center mb-1.5">
+                        <span id="level-step-indicator"
+                            class="text-xs text-emerald-400 font-bold uppercase tracking-wider">Durum 1 / 2</span>
+                        <span id="global-step-indicator" class="text-xs text-slate-400 font-medium">Toplam İlerleme: 1 /
+                            6 Soru</span>
+                    </div>
+                    <!-- İlerleme Çubuğu -->
+                    <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                        <div id="progress-bar-fill"
+                            class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full transition-all duration-500"
+                            style="width: 16.6%;"></div>
+                    </div>
+                </div>
+
+                <!-- Soru Kartı -->
+                <div class="bg-slate-950/40 border border-slate-800 rounded-2xl p-6 relative">
+                    <h3 id="question-title" class="text-lg font-bold text-slate-100">Oda Aydınlatması ve Enerji</h3>
+                    <p id="question-desc" class="text-slate-300 text-sm mt-2 leading-relaxed">
+                        Odandan ayrılırken bilgisayarının ve lambanın açık kaldığını fark ettin. Enerjiyi verimli
+                        kullanmak için ne yaparsın?
+                    </p>
+                </div>
+
+                <!-- Seçenekler Listesi -->
+                <div class="my-6 space-y-3" id="options-container">
+                    <!-- JavaScript ile dinamik seçenek butonları üretilecektir -->
+                </div>
+
+                <!-- İpucu Alanı -->
+                <div
+                    class="bg-slate-950/20 border border-dashed border-emerald-500/20 p-4 rounded-xl flex gap-3 items-center">
+                    <div class="text-emerald-400"><i data-lucide="lightbulb" class="w-5 h-5"></i></div>
+                    <div>
+                        <p class="text-xs font-bold text-slate-300">İpucu / Bilgi Notu</p>
+                        <p id="tip-text" class="text-[11px] text-slate-400 mt-0.5">Fosil yakıtlardan elde edilen
+                            enerjiyi kısmak doğrudan karbon salınımını engeller.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sonuç / Geri Bildirim Penceresi -->
+            <div id="feedback-panel"
+                class="hidden absolute inset-0 bg-slate-900/95 p-8 flex flex-col justify-between z-10 rounded-r-3xl">
+                <div>
+                    <div id="feedback-icon-container"
+                        class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mb-6">
+                        👍
+                    </div>
+                    <h3 id="feedback-title" class="text-2xl font-black text-slate-100">Harika Bir Karar!</h3>
+
+                    <!-- Değişim Raporu -->
+                    <div class="flex gap-4 my-6 bg-slate-950/40 p-4 rounded-xl border border-slate-800 text-xs">
+                        <div class="flex items-center gap-1.5" id="change-temp">
+                            <i data-lucide="thermometer" class="w-4 h-4 text-emerald-400"></i> Sıcaklık: -0.1°C
+                        </div>
+                        <div class="flex items-center gap-1.5" id="change-eco">
+                            <i data-lucide="leaf" class="w-4 h-4 text-emerald-400"></i> Eko-Puan: +100
+                        </div>
+                        <div class="flex items-center gap-1.5" id="change-happiness">
+                            <i data-lucide="smile" class="w-4 h-4 text-emerald-400"></i> Mutluluk: +5
+                        </div>
+                    </div>
+
+                    <p id="feedback-desc" class="text-slate-300 text-sm leading-relaxed">
+                        Işıkları ve cihazları kapatmak gereksiz enerji sarfiyatını engeller, elektrik üretilirken
+                        atmosfere salınan CO2 miktarını düşürür.
+                    </p>
+                </div>
+
+                <button onclick="nextStep()"
+                    class="mt-8 w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl transition">
+                    İlerlemeye Devam Et
+                </button>
+            </div>
+
+            <!-- Oyun Sonu Ekranı -->
+            <div id="end-screen" class="hidden flex-1 flex flex-col justify-between overflow-y-auto max-h-[600px] pr-2">
+                <div class="text-center">
+                    <div
+                        class="w-16 h-16 bg-yellow-500/10 border border-yellow-500/30 rounded-2xl flex items-center justify-center text-yellow-400 mx-auto mb-4 animate-pulse">
+                        <i data-lucide="award" class="w-10 h-10"></i>
+                    </div>
+                    <h2 class="text-2xl font-black text-slate-100">Tebrikler İklim Koruyucusu!</h2>
+                    <p class="text-xs text-slate-400 mt-1">Geleceği güvence altına aldın. Kasaban artık daha yeşil ve
+                        mutlu!</p>
+                </div>
+
+                <!-- Lisans Kartı -->
+                <div id="certificate"
+                    class="my-6 bg-gradient-to-r from-emerald-950 to-teal-950 p-6 rounded-2xl border-2 border-emerald-500/40 text-center relative overflow-hidden">
+                    <div class="absolute -right-8 -bottom-8 opacity-10 text-emerald-400">
+                        <i data-lucide="shield-check" class="w-32 h-32"></i>
+                    </div>
+                    <h4 class="text-[10px] text-emerald-400 font-extrabold uppercase tracking-widest">T.C. Millî Eğitim
+                        Bakanlığı</h4>
+                    <h3 class="text-lg font-extrabold text-slate-100 mt-1">İKLİM KORUYUCUSU LİSANSI</h3>
+                    <p class="text-[11px] text-slate-300 mt-2 max-w-sm mx-auto">
+                        Bu lisans, iklim kriziyle mücadelede üstün çevre bilinci ve doğru kaynak yönetimi kararları
+                        gösteren kahramanımıza verilmiştir.
+                    </p>
+                    <div
+                        class="mt-4 flex justify-between items-center text-[10px] text-emerald-500 font-bold pt-4 border-t border-emerald-500/20">
+                        <span>LİSANS NO: #2026-IK-095</span>
+                        <span id="final-temp">Sıcaklık: +0.9°C</span>
+                    </div>
+                </div>
+
+                <!-- Haftalık Görev Listesi (Kılavuz Bölüm 7 Transfer Çıktısı) -->
+                <div class="bg-slate-950/40 border border-slate-800 p-5 rounded-2xl">
+                    <h3
+                        class="text-xs font-black text-emerald-400 tracking-wider uppercase mb-3 flex items-center gap-1">
+                        <i data-lucide="clipboard-list" class="w-4 h-4"></i> Haftalık Yeşil Görev Kartı
+                    </h3>
+                    <p class="text-[11px] text-slate-400 mb-4">Bu görevleri gerçek hayatta tamamlayarak kendi dünyanı
+                        kurtar!</p>
+
+                    <div class="space-y-3">
+                        <label
+                            class="flex items-start gap-3 bg-slate-900/50 p-2.5 rounded-lg border border-slate-800 cursor-pointer text-xs hover:bg-slate-900">
+                            <input type="checkbox"
+                                class="mt-0.5 rounded border-slate-800 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-slate-900">
+                            <div>
+                                <span class="font-bold text-slate-200">Gereksiz Işıkları Kapat:</span>
+                                <span class="text-slate-400 block text-[10px] mt-0.5">Evinde kullanılmayan tüm ampulleri
+                                    söndürerek enerji tasarrufu yap.</span>
+                            </div>
+                        </label>
+                        <label
+                            class="flex items-start gap-3 bg-slate-900/50 p-2.5 rounded-lg border border-slate-800 cursor-pointer text-xs hover:bg-slate-900">
+                            <input type="checkbox"
+                                class="mt-0.5 rounded border-slate-800 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-slate-900">
+                            <div>
+                                <span class="font-bold text-slate-200">Musluğu Boşa Akıtma:</span>
+                                <span class="text-slate-400 block text-[10px] mt-0.5">Diş fırçalarken musluğu kapatarak
+                                    günde 15 litre su kurtar.</span>
+                            </div>
+                        </label>
+                        <label
+                            class="flex items-start gap-3 bg-slate-900/50 p-2.5 rounded-lg border border-slate-800 cursor-pointer text-xs hover:bg-slate-900">
+                            <input type="checkbox"
+                                class="mt-0.5 rounded border-slate-800 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-slate-900">
+                            <div>
+                                <span class="font-bold text-slate-200">Doğru Atık Ayrıştırma:</span>
+                                <span class="text-slate-400 block text-[10px] mt-0.5">Bu hafta en az 3 kağıt veya
+                                    plastik ambalajı geri dönüşüme gönder.</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Yeniden Oyna / Yazdır Butonları -->
+                <div class="mt-6 flex gap-3">
+                    <button onclick="window.print()"
+                        class="flex-1 py-3 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold rounded-xl transition text-xs flex items-center justify-center gap-1">
+                        <i data-lucide="printer" class="w-4 h-4"></i> Lisansı Yazdır
+                    </button>
+                    <button onclick="resetGame()"
+                        class="flex-1 py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl transition text-xs flex items-center justify-center gap-1">
+                        <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Yeniden Başla
+                    </button>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- JavaScript Oyun Motoru (Kılavuz Bölüm 7 Uyumlu) -->
+    <script>
+        // Oyun Durumu (Global State)
+        let gameState = {
+            level: 1, // 1: Ev, 2: Okul, 3: Kasaba
+            temperature: 1.5, // Başlangıç Küresel Isınma Artışı (°C)
+            ecoPoints: 150, // Başlangıç Doğa Bütçesi
+            happiness: 55, // Başlangıç Mutluluğu (%)
+            currentQuestionIndex: 0,
+            audioEnabled: true,
+            highContrast: false,
+            totalQuestionsCount: 6 // 3 seviye x 2'şer soru = toplam 6 soru
+        };
+
+        // Sorular ve Karar Senaryoları Veri Havuzu (Güncellenmiş - Çikolata Sorusu Çıkarıldı)
+        const levelsData = {
+            1: {
+                name: "Seviye 1: Evim",
+                questions: [
+                    {
+                        title: "Oda Aydınlatması ve Enerji",
+                        desc: "Odandan ayrılırken bilgisayarının ve lambanın açık kaldığını fark ettin. Enerjiyi verimli kullanmak için ne yaparsın?",
+                        options: [
+                            {
+                                text: "Boşver, birazdan dönerim zaten.",
+                                temp: 0.2, eco: -30, happiness: 0,
+                                title: "Fosil Yakıt Tüketimi!",
+                                desc: "Kullanılmayan cihazları açık bırakmak, fosil yakıtlardan elektrik üretilmesini artırır ve atmosfere karbon gazı salınımına sebep olur.",
+                                success: false
+                            },
+                            {
+                                text: "Işıkları ve bilgisayarı tamamen kapatırım.",
+                                temp: -0.1, eco: 100, happiness: 5,
+                                title: "Harika Tasarruf!",
+                                desc: "Sadece bu davranışla bile gereksiz sera gazı salınımını engellemiş oldun. Doğa bütçen arttı!",
+                                success: true
+                            },
+                            {
+                                text: "Sadece bilgisayarı uyku moduna alırım.",
+                                temp: 0.0, eco: 30, happiness: 0,
+                                title: "Yarım Önlem",
+                                desc: "Bilgisayar uyku modunda da enerji tüketmeye devam eder. Cihazları kapatmak her zaman en yeşil çözümdür.",
+                                success: false
+                            }
+                        ],
+                        tip: "Evsel enerji tasarrufu, küresel sıcaklık artışını önlemede en hızlı bireysel çözümdür."
+                    },
+                    {
+                        title: "Bilinçli Su Tüketimi",
+                        desc: "Dişlerini fırçalayacaksın. Suyu en verimli nasıl kullanırsın?",
+                        options: [
+                            {
+                                text: "Fırçalama boyunca musluğu açık bırakırım.",
+                                temp: 0.1, eco: -20, happiness: 0,
+                                title: "Boşa Giden Değerli Su",
+                                desc: "Açık bırakılan musluklardan dakikada ortalama 6 litre su boşa akar. Bu suyun arıtılması ve taşınması da yüksek enerji tüketimi gerektirir.",
+                                success: false
+                            },
+                            {
+                                text: "Yalnızca çalkalarken musluğu açarım.",
+                                temp: -0.1, eco: 80, happiness: 0,
+                                title: "Bilinçli Yaklaşım",
+                                desc: "Su tüketimini %70 oranında azalttın! Temiz su kaynaklarını korumak iklim direncini artırır.",
+                                success: true
+                            },
+                            {
+                                text: "Bir bardak su doldurur, musluğu hiç açmam.",
+                                temp: -0.2, eco: 120, happiness: 5,
+                                title: "Su Koruyucu Kahraman!",
+                                desc: "Mükemmel! Bir bardak suyla temizlik ihtiyacını karşılayarak kaynak tüketimini sıfıra yaklaştırdın.",
+                                success: true
+                            }
+                        ],
+                        tip: "Temiz su kaynaklarının korunması, kuraklık tehlikesine karşı en güçlü kalkanımızdır."
+                    }
+                ]
+            },
+            2: {
+                name: "Seviye 2: Okul ve Mahalle",
+                questions: [
+                    {
+                        title: "Okul Bahçesinin Yeşillendirilmesi",
+                        desc: "Okul bahçesinde büyük bir alan boş duruyor. Burayı nasıl değerlendirelim?",
+                        options: [
+                            {
+                                text: "Beton döküp basketbol sahasını genişletelim.",
+                                temp: 0.1, eco: -40, happiness: 15,
+                                title: "Isı Adası Etkisi!",
+                                desc: "Beton zeminler ısıyı hapsederek şehirlerde sıcaklığı artırır. Basketbol eğlenceli olsa da doğa için yeşil alan daha değerlidir.",
+                                success: false
+                            },
+                            {
+                                text: "Ağaçlandırma yapıp 'Mini İklim Ormanı' kuralım.",
+                                temp: -0.3, eco: 150, happiness: 10,
+                                title: "Karbon Yutağı Kuruldu!",
+                                desc: "Ağaçlar atmosferdeki karbondioksiti absorbe eden doğal filtrelerdir. Harika bir uzun vadeli iklim yatırımı!",
+                                success: true
+                            },
+                            {
+                                text: "Kendi haline bırakalım, yabani otlar büyüsün.",
+                                temp: 0.0, eco: 20, happiness: 0,
+                                title: "Pasif Tercih",
+                                desc: "Yabani otlar biraz oksijen üretse de planlı bir ağaçlandırma kadar karbon tutma kapasitesi sağlamaz.",
+                                success: false
+                            }
+                        ],
+                        tip: "Ağaçlar karbon yutağı görevi görerek havadaki CO2 miktarını dengeler."
+                    },
+                    {
+                        title: "Temiz ve Sağlıklı Ulaşım",
+                        desc: "Okula gitmek için hangi ulaşım yöntemini seçersin?",
+                        options: [
+                            {
+                                text: "Beni özel arabayla tam kapıya bıraksınlar.",
+                                temp: 0.3, eco: -50, happiness: 5,
+                                title: "Yüksek Egzoz Salınımı",
+                                desc: "Özel araçlar yolcu başına en yüksek sera gazı üreten ulaşım şeklidir. İklim krizini doğrudan tetikler.",
+                                success: false
+                            },
+                            {
+                                text: "Okul servisini veya toplu taşımayı kullanırım.",
+                                temp: 0.0, eco: 80, happiness: 5,
+                                title: "Ortak Paylaşım",
+                                desc: "Toplu taşıma kullanmak bireysel karbon ayak izini ciddi ölçüde azaltır. Doğru bir toplumsal adım!",
+                                success: true
+                            },
+                            {
+                                text: "Bir taksi tutarım.",
+                                temp: 0.3, eco: -50, happiness: 5,
+                                title: "Sıfır Karbon Ulaşımı!",
+                                desc: "Özel araçlar yolcu başına en yüksek sera gazı üreten ulaşım şeklidir. İklim krizini doğrudan tetikler.",
+                                success: false
+                            }
+                        ],
+                        tip: "Yürümek, bisiklete binmek veya toplu taşıma kullanmak kentsel karbon emisyonlarını sıfıra indirir."
+                    }
+                ]
+            },
+            3: {
+                name: "Seviye 3: Yeşil Kasaba Yönetimi",
+                questions: [
+                    {
+                        title: "Kasaba Enerji Altyapısı",
+                        desc: "Kasabanın elektrik ihtiyacı artıyor. Hangi santral türünü kurarak geleceği kurtaracaksın?",
+                        options: [
+                            {
+                                text: "Ucuz ve hızlı inşa edilen kömür santrali.",
+                                temp: 0.4, eco: -100, happiness: 5,
+                                title: "Fosil Yakıt Felaketi!",
+                                desc: "Kömür santralleri atmosferi karbondioksit ile doldurur. Kasabanın havası kirlendi ve sıcaklık artışı hızlandı.",
+                                success: false
+                            },
+                            {
+                                text: "Rüzgar ve güneş enerjisi tarlası.",
+                                temp: -0.3, eco: 180, happiness: 15,
+                                title: "Sonsuz Temiz Enerji",
+                                desc: "Yenilenebilir kaynaklar hiçbir sera gazı salınımı yapmaz. Kasaban doğa dostu bir enerji lideri oldu!",
+                                success: true
+                            },
+                            {
+                                text: "Doğal gaz çevrim santrali.",
+                                temp: 0.1, eco: 50, happiness: 10,
+                                title: "Geçici ve Kusurlu Çözüm",
+                                desc: "Doğal gaz kömürden daha temiz olsa da yine de bir fosil yakıttır ve sera gazı yayar. Hedefimiz tamamen sıfır karbon olmalı.",
+                                success: false
+                            }
+                        ],
+                        tip: "Rüzgar ve güneş, doğaya zarar vermeden sonsuz enerji üreten yenilenebilir kaynaklardır."
+                    },
+                    {
+                        title: "Endüstriyel Hava Kirliliği",
+                        desc: "Kasabanın yakınındaki sanayi fabrikasının bacalarından gri dumanlar çıkıyor. Yönetici olarak ne yaparsın?",
+                        options: [
+                            {
+                                text: "Fabrikaları hemen kapatalım.",
+                                temp: -0.2, eco: -80, happiness: -25,
+                                title: "Halk İşsiz Kaldı!",
+                                desc: "Sıcaklığı düşürdün ama fabrikaların aniden kapanması büyük bir ekonomik krize ve işsizliğe yol açtı. Mutluluk düştü. Sürdürülebilir bir denge kurmalısın.",
+                                success: false
+                            },
+                            {
+                                text: "Filtre takmalarını zorunlu kılalım, uymayanlara ceza verelim.",
+                                temp: -0.2, eco: 150, happiness: 10,
+                                title: "Sürdürülebilir Sanayi!",
+                                desc: "Harika yönetim! Fabrikaların üretime devam etmesini sağlarken çevre filtreleriyle doğayı korudun.",
+                                success: true
+                            },
+                            {
+                                text: "Görmezden gelelim, ekonomi daha önemli.",
+                                temp: 0.3, eco: -60, happiness: -10,
+                                title: "İklim Krizini Tetiklemek",
+                                desc: "Hava kalitesi aşırı düştü, kasaba halkı hastalanmaya başladı. Doğa korumasız kaldığında insanlık da zarar görür.",
+                                success: false
+                            }
+                        ],
+                        tip: "Ekolojik kararlar alırken ekonomik sürdürülebilirlik ile doğa dengesini birlikte gözetmeliyiz."
+                    }
+                ]
+            }
+        };
+
+        // Web Audio API ile Tarayıcı Tabanlı Ses Sentezi
+        let audioCtx;
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playSynthSound(type) {
+            if (!gameState.audioEnabled) return;
+            initAudio();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            if (type === 'success') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
+                osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2); // G5
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.4);
+            } else if (type === 'warning') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(220.00, audioCtx.currentTime); // A3
+                osc.frequency.setValueAtTime(196.00, audioCtx.currentTime + 0.15); // G3
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.35);
+            } else if (type === 'click') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.1);
+            }
+        }
+
+        // Ses Efektlerini Aç / Kapat
+        function toggleAudio() {
+            gameState.audioEnabled = !gameState.audioEnabled;
+            const btn = document.getElementById('audio-toggle');
+            if (gameState.audioEnabled) {
+                btn.innerHTML = `<i data-lucide="volume-2"></i>`;
+                btn.className = "p-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-emerald-400 transition";
+                playSynthSound('click');
+            } else {
+                btn.innerHTML = `<i data-lucide="volume-x"></i>`;
+                btn.className = "p-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-500 transition";
+            }
+            lucide.createIcons();
+        }
+
+        // Yüksek Kontrast / Renk Körlüğü Modu
+        function toggleContrast() {
+            gameState.highContrast = !gameState.highContrast;
+            const btn = document.getElementById('contrast-toggle');
+            if (gameState.highContrast) {
+                btn.className = "p-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-lg transition";
+                document.body.classList.add('contrast-125');
+                document.getElementById('temp-bar').classList.remove('bg-gradient-to-r', 'from-emerald-500', 'via-yellow-500', 'to-red-500');
+                document.getElementById('temp-bar').classList.add('bg-white');
+            } else {
+                btn.className = "p-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-400 transition";
+                document.body.classList.remove('contrast-125');
+                document.getElementById('temp-bar').classList.add('bg-gradient-to-r', 'from-emerald-500', 'via-yellow-500', 'to-red-500');
+                document.getElementById('temp-bar').classList.remove('bg-white');
+            }
+            playSynthSound('click');
+        }
+
+        // Oyunu Başlat
+        function startGame() {
+            playSynthSound('click');
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.remove('hidden');
+            gameState.level = 1;
+            gameState.currentQuestionIndex = 0;
+            updateStatsUI();
+            loadQuestion();
+        }
+
+        // Soru Yükleme ve İlerleme Sistemi
+        function loadQuestion() {
+            const currentLevelData = levelsData[gameState.level];
+            const currentQuestion = currentLevelData.questions[gameState.currentQuestionIndex];
+
+            // Seviye içi soru sırasını belirle
+            const currentStepInLevel = gameState.currentQuestionIndex + 1;
+            const totalInLevel = currentLevelData.questions.length;
+
+            // Global soru sırası hesapla (Önceki seviyelerdeki sorular + aktif seviyedeki soru)
+            let previousQuestionsCount = 0;
+            for (let l = 1; l < gameState.level; l++) {
+                previousQuestionsCount += levelsData[l].questions.length;
+            }
+            const globalCurrentStep = previousQuestionsCount + currentStepInLevel;
+
+            // Metinleri ve İlerlemeyi Güncelle
+            document.getElementById('level-badge').innerText = currentLevelData.name;
+            document.getElementById('level-step-indicator').innerText = `Seviye Sorusu: ${currentStepInLevel} / ${totalInLevel}`;
+            document.getElementById('global-step-indicator').innerText = `Toplam İlerleme: ${globalCurrentStep} / ${gameState.totalQuestionsCount} Soru`;
+
+            // İlerleme çubuğu yüzdesini güncelle
+            const progressPercentage = (globalCurrentStep / gameState.totalQuestionsCount) * 100;
+            document.getElementById('progress-bar-fill').style.width = `${progressPercentage}%`;
+
+            document.getElementById('question-title').innerText = currentQuestion.title;
+            document.getElementById('question-desc').innerText = currentQuestion.desc;
+            document.getElementById('tip-text').innerText = currentQuestion.tip;
+
+            // Seçenekleri Dinamik Oluştur
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            currentQuestion.options.forEach((opt, index) => {
+                const button = document.createElement('button');
+                button.className = "w-full text-left p-4 bg-slate-950/40 hover:bg-emerald-950/20 border border-slate-800 hover:border-emerald-500/40 rounded-xl transition-all duration-200 transform active:scale-98 flex justify-between items-center group text-xs md:text-sm";
+                button.onclick = () => selectOption(opt);
+
+                button.innerHTML = `
+                    <span class="font-medium text-slate-200 group-hover:text-emerald-400 transition pr-4">${opt.text}</span>
+                    <span class="p-1.5 bg-slate-900 rounded-lg border border-slate-800 group-hover:bg-emerald-500/10 group-hover:border-emerald-500/30 text-slate-400 group-hover:text-emerald-400 transition">
+                        <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </span>
+                `;
+                optionsContainer.appendChild(button);
+            });
+
+            lucide.createIcons();
+        }
+
+        // Seçenek Tıklama ve Sonuç Dönütü
+        function selectOption(option) {
+            // İstatistik Değişimlerini Uygula ve Sınırla
+            gameState.temperature = Math.max(0.1, Math.min(2.5, +(gameState.temperature + option.temp).toFixed(2)));
+            gameState.ecoPoints = Math.max(0, gameState.ecoPoints + option.eco);
+            gameState.happiness = Math.max(0, Math.min(100, gameState.happiness + option.happiness));
+
+            // Geri Bildirim Penceresini Doldur (Pedagojik Dönüt Katmanı - Kılavuz Bölüm 5.7)
+            const feedbackPanel = document.getElementById('feedback-panel');
+            const iconContainer = document.getElementById('feedback-icon-container');
+
+            if (option.success) {
+                playSynthSound('success');
+                iconContainer.className = "w-16 h-16 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-2xl flex items-center justify-center text-3xl mb-6";
+                iconContainer.innerHTML = "🌱";
+                document.getElementById('feedback-title').innerText = option.title || "Harika Bir Karar!";
+                document.getElementById('feedback-title').className = "text-2xl font-black text-emerald-400";
+            } else {
+                playSynthSound('warning');
+                iconContainer.className = "w-16 h-16 bg-red-500/10 border border-red-500/30 text-red-400 rounded-2xl flex items-center justify-center text-3xl mb-6";
+                iconContainer.innerHTML = "⚠️";
+                document.getElementById('feedback-title').innerText = option.title || "Dikkat Etmelisin!";
+                document.getElementById('feedback-title').className = "text-2xl font-black text-red-400";
+            }
+
+            // İstatistik Değişim Metinlerini Yaz
+            document.getElementById('change-temp').innerHTML = `
+                <i data-lucide="thermometer" class="w-4 h-4 ${option.temp <= 0 ? 'text-emerald-400' : 'text-red-400'}"></i>
+                Sıcaklık: ${option.temp >= 0 ? '+' : ''}${option.temp}°C
+            `;
+            document.getElementById('change-eco').innerHTML = `
+                <i data-lucide="leaf" class="w-4 h-4 ${option.eco >= 0 ? 'text-emerald-400' : 'text-red-400'}"></i>
+                Eko-Puan: ${option.eco >= 0 ? '+' : ''}${option.eco}
+            `;
+            document.getElementById('change-happiness').innerHTML = `
+                <i data-lucide="smile" class="w-4 h-4 ${option.happiness >= 0 ? 'text-emerald-400' : 'text-red-400'}"></i>
+                Mutluluk: ${option.happiness >= 0 ? '+' : ''}${option.happiness}
+            `;
+
+            document.getElementById('feedback-desc').innerText = option.desc;
+            feedbackPanel.classList.remove('hidden');
+
+            updateStatsUI();
+            lucide.createIcons();
+        }
+
+        // Bir Sonraki Adıma Geçiş (Seviye veya Soru İlerlemesi)
+        function nextStep() {
+            playSynthSound('click');
+            document.getElementById('feedback-panel').classList.add('hidden');
+
+            const currentLevelData = levelsData[gameState.level];
+
+            if (gameState.currentQuestionIndex < currentLevelData.questions.length - 1) {
+                // Aynı seviyede sonraki soruya geç
+                gameState.currentQuestionIndex++;
+                loadQuestion();
+            } else {
+                // Seviye bitti, sonraki seviyeye geç
+                if (gameState.level < 3) {
+                    gameState.level++;
+                    gameState.currentQuestionIndex = 0;
+                    loadQuestion();
+                } else {
+                    // Tüm seviyeler tamamlandı, oyun sonu!
+                    endGame();
+                }
+            }
+        }
+
+        // İstatistik Arayüzünü Güncelleme
+        function updateStatsUI() {
+            // Sıcaklık barı ve göstergesi
+            document.getElementById('temp-value').innerText = `+${gameState.temperature}°C`;
+            const tempPercentage = (gameState.temperature / 2.5) * 100;
+            const tempBar = document.getElementById('temp-bar');
+            tempBar.style.width = `${tempPercentage}%`;
+
+            // Renk uyarıları
+            if (gameState.temperature >= 1.8) {
+                document.getElementById('temp-value').className = "text-red-500 font-extrabold animate-pulse";
+            } else if (gameState.temperature >= 1.3) {
+                document.getElementById('temp-value').className = "text-yellow-500 font-bold";
+            } else {
+                document.getElementById('temp-value').className = "text-emerald-400 font-bold";
+            }
+
+            // Eko puan güncelleyici
+            document.getElementById('eco-points').innerText = `${gameState.ecoPoints} EP`;
+
+            // Mutluluk göstergesi
+            document.getElementById('happiness-value').innerText = `%${gameState.happiness}`;
+            document.getElementById('happiness-bar').style.width = `${gameState.happiness}%`;
+
+            // Mutluluk ikon değişimi
+            const happyIcon = document.getElementById('happiness-icon');
+            if (gameState.happiness >= 70) {
+                happyIcon.setAttribute('data-lucide', 'smile');
+                happyIcon.className = "w-4 h-4 text-emerald-400";
+            } else if (gameState.happiness >= 40) {
+                happyIcon.setAttribute('data-lucide', 'meh');
+                happyIcon.className = "w-4 h-4 text-yellow-400";
+            } else {
+                happyIcon.setAttribute('data-lucide', 'frown');
+                happyIcon.className = "w-4 h-4 text-red-500 animate-bounce";
+            }
+            lucide.createIcons();
+        }
+
+        // Oyun Bitiş / Kazanma Durumu
+        function endGame() {
+            playSynthSound('success');
+            document.getElementById('game-screen').classList.add('hidden');
+            document.getElementById('end-screen').classList.remove('hidden');
+
+            // Sertifika verilerini güncelle
+            document.getElementById('final-temp').innerText = `Küresel Sıcaklık Artışı: +${gameState.temperature}°C`;
+        }
+
+        // Oyunu Sıfırlama ve Başa Dönme
+        function resetGame() {
+            playSynthSound('click');
+            gameState = {
+                level: 1,
+                temperature: 1.5,
+                ecoPoints: 150,
+                happiness: 55,
+                currentQuestionIndex: 0,
+                audioEnabled: gameState.audioEnabled,
+                highContrast: gameState.highContrast,
+                totalQuestionsCount: 6
+            };
+
+            document.getElementById('end-screen').classList.add('hidden');
+            document.getElementById('start-screen').classList.remove('hidden');
+            updateStatsUI();
+        }
+
+        // İlk Başlangıçta Arayüzü Hazırla
+        window.onload = function () {
+            updateStatsUI();
+            lucide.createIcons();
+        };
+    </script>
+</body>
+
+</html>
