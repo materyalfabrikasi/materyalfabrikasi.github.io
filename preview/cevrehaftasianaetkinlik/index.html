@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Çevre ve İklim Değişikliği İnteraktif Eğitimi</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind Config for Custom Colors -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        nature: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        },
+                        earth: {
+                            100: '#ffedd5',
+                            800: '#9a3412',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons for beautiful modern icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Arka plan yaprak süzülme efekti */
+        .leaf-bg {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath d='M10 20 C 15 10, 25 10, 30 20 C 25 30, 15 30, 10 20 Z' fill='%2315803d' fill-opacity='0.03'/%3E%3Cpath d='M50 60 C 55 50, 65 50, 70 60 C 65 70, 55 70, 50 60 Z' fill='%2316a34a' fill-opacity='0.04'/%3E%3C/svg%3E");
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 min-h-screen text-slate-800 font-sans leaf-bg flex flex-col justify-between">
+
+    <!-- ÜST HEADER PANELİ -->
+    <header class="bg-white/80 backdrop-blur-md border-b border-green-100 sticky top-0 z-40 px-4 py-3 shadow-sm transition-all">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+            <!-- Sol Logo / Başlık -->
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-green-100 text-green-700 rounded-xl shadow-inner">
+                    <i data-lucide="leaf" class="w-6 h-6 animate-pulse"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-green-900 tracking-tight flex items-center gap-2">
+                        Çevre ve İklim Değişikliği Eğitimi
+                        <span class="text-xs font-semibold px-2 py-0.5 bg-green-600 text-white rounded-full">İnteraktif</span>
+                    </h1>
+                    <p class="text-xs text-green-700">Gelecek nesiller için doğayı koruyoruz</p>
+                </div>
+            </div>
+
+            <!-- Sağ İlerleme ve Skor Kartı -->
+            <div class="flex items-center gap-4">
+                <!-- Canlı Doğa Puanı -->
+                <div class="flex items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-2 rounded-2xl shadow-md border border-green-400">
+                    <i data-lucide="award" class="w-5 h-5"></i>
+                    <div>
+                        <div class="text-[9px] uppercase tracking-wider opacity-90 leading-none">Doğa Dostu Skoru</div>
+                        <div class="text-sm font-black leading-none" id="scoreDisplay">0 PUAN</div>
+                    </div>
+                </div>
+
+                <!-- Soru Durumları -->
+                <div class="flex items-center gap-1.5 bg-slate-100 p-1.5 rounded-xl border border-slate-200">
+                    <span id="badge-1" class="w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold text-slate-400 bg-slate-200 border border-slate-300 transition-all duration-300" title="1. Soru (00:19)">1</span>
+                    <span id="badge-2" class="w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold text-slate-400 bg-slate-200 border border-slate-300 transition-all duration-300" title="2. Soru (03:26)">2</span>
+                    <span id="badge-3" class="w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold text-slate-400 bg-slate-200 border border-slate-300 transition-all duration-300" title="3. Soru (04:38)">3</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ANA İÇERİK ALANI -->
+    <main class="flex-1 max-w-6xl w-full mx-auto p-4 flex flex-col items-center justify-center relative">
+        
+        <!-- VİDEO KONTEYNERİ (Ekranı Büyük Oranda Kaplayacak) -->
+        <div class="w-full bg-slate-950 rounded-2xl md:rounded-3xl shadow-2xl border-4 border-white/80 overflow-hidden relative group aspect-video max-h-[72vh]">
+            
+            <!-- Video Elementi -->
+            <video id="eduVideo" class="w-full h-full object-contain" playsinline>
+                <source src="1.mp4" type="video/mp4">
+                Tarayıcınız HTML5 video oynatmayı desteklemiyor. Lütfen güncel bir tarayıcı kullanınız.
+            </video>
+
+            <!-- Video Kontrolleri Alt Çubuğu (Özelleştirilmiş Sade Görünüm) -->
+            <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4 flex items-center justify-between gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <button id="videoPlayBtn" class="text-white hover:text-green-400 transition-colors p-1">
+                    <i data-lucide="play" class="w-6 h-6"></i>
+                </button>
+                <!-- İlerleme Çubuğu -->
+                <div class="flex-1 bg-white/20 h-2 rounded-full overflow-hidden relative cursor-pointer" id="progressBarContainer">
+                    <div id="progressBar" class="bg-green-500 h-full w-0 transition-all duration-100"></div>
+                    <!-- Soru İşaretleri (Duraklama Noktaları) -->
+                    <div id="marker-19" class="absolute left-[3.8%] top-0 w-2.5 h-2.5 bg-yellow-400 rounded-full border border-black transform -translate-x-1/2" title="Soru 1 (00:19)"></div>
+                    <div id="marker-206" class="absolute left-[68.6%] top-0 w-2.5 h-2.5 bg-yellow-400 rounded-full border border-black transform -translate-x-1/2" title="Soru 2 (03:26)"></div>
+                    <div id="marker-278" class="absolute left-[92.6%] top-0 w-2.5 h-2.5 bg-yellow-400 rounded-full border border-black transform -translate-x-1/2" title="Soru 3 (04:38)"></div>
+                </div>
+                <!-- Zaman Bilgisi -->
+                <span id="timeText" class="text-xs text-white/90 font-mono">00:00 / 00:00</span>
+            </div>
+
+            <!-- 1. GİRİŞ YÖNERGESİ EKRANI (Açılışta Karşılar) -->
+            <div id="introModal" class="absolute inset-0 bg-gradient-to-tr from-green-950/95 via-emerald-900/95 to-slate-950/98 flex items-center justify-center p-6 z-30 transition-all duration-500">
+                <div class="max-w-xl w-full bg-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-green-100 text-center relative overflow-hidden transform scale-100 transition-transform duration-300">
+                    <!-- Üst Doğa Temalı Süs -->
+                    <div class="absolute -top-10 -right-10 w-24 h-24 bg-green-100 rounded-full opacity-50 blur-xl"></div>
+                    <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-emerald-100 rounded-full opacity-50 blur-xl"></div>
+
+                    <!-- İkon -->
+                    <div class="mx-auto w-16 h-16 bg-green-50 rounded-2xl flex items-center justify-center text-green-600 mb-4 border border-green-200">
+                        <i data-lucide="book-open" class="w-8 h-8"></i>
+                    </div>
+
+                    <!-- Başlık -->
+                    <h2 class="text-xl sm:text-2xl font-black text-slate-800 tracking-tight mb-2">
+                        Doğa Dostu Eğitim Kılavuzu
+                    </h2>
+                    
+                    <!-- Çizgi Süsleme -->
+                    <div class="w-20 h-1 bg-green-500 mx-auto rounded-full mb-6"></div>
+
+                    <!-- Yönerge Metni -->
+                    <div class="bg-green-50/80 border border-green-100 rounded-2xl p-4 sm:p-5 text-left mb-6">
+                        <h3 class="text-green-800 font-bold text-sm flex items-center gap-1.5 mb-2">
+                            <i data-lucide="info" class="w-4 h-4"></i> Önemli Yönerge:
+                        </h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">
+                            Sevgili Doğa Dostu, videoyu dikkatle dinleyiniz. Belirlenen duraklama noktalarında size sorulacak soruları <strong class="text-green-700">sözlü olarak</strong> cevaplandırınız.
+                        </p>
+                    </div>
+
+                    <div class="flex flex-col gap-2 items-center text-xs text-slate-500 mb-6">
+                        <div class="flex items-center gap-1"><i data-lucide="check-circle" class="w-4 h-4 text-green-600"></i> Video 3 farklı noktada otomatik duracaktır.</div>
+                        <div class="flex items-center gap-1"><i data-lucide="mic" class="w-4 h-4 text-green-600"></i> Sorular ekrana geldiğinde cevabınızı yüksek sesle söyleyerek tamamlayınız.</div>
+                    </div>
+
+                    <!-- Başla Butonu -->
+                    <button id="startLessonBtn" class="w-full py-4 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-bold rounded-2xl shadow-lg hover:shadow-green-500/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2 text-base">
+                        Anladım, Eğitimi Başlat <i data-lucide="play-circle" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 2. ETKİLEŞİMLİ SORU VE SÖZLÜ CEVAP PANELİ (Video Durunca Üzerine Gelir) -->
+            <div id="questionModal" class="absolute inset-0 bg-slate-950/90 backdrop-blur-sm flex items-center justify-center p-6 z-20 hidden transition-all duration-300">
+                <div class="max-w-2xl w-full bg-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-emerald-100 transform scale-95 transition-all duration-300 flex flex-col justify-between max-h-[90%] overflow-y-auto">
+                    
+                    <!-- Soru Başlığı -->
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="px-3 py-1 bg-orange-100 text-orange-800 text-xs font-bold rounded-full flex items-center gap-1">
+                                <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> Video Duraklatıldı
+                            </span>
+                            <span id="questionStep" class="text-xs text-slate-500 font-semibold">SORU 1/3</span>
+                        </div>
+
+                        <!-- Büyük Soru Alanı -->
+                        <div class="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-100 rounded-2xl p-5 mb-5 shadow-sm">
+                            <h3 class="text-xs font-bold text-green-800 uppercase tracking-wider mb-1">Eğitmen Sorusu:</h3>
+                            <p id="questionText" class="text-base sm:text-lg font-extrabold text-slate-800 leading-snug">
+                                İklim değişikliği hakkında ne düşünüyorsunuz?
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Sözlü Cevaplama Alanı (Teknik mikrofon erişimi olmadan, kullanıcıyı konuşmaya yönlendiren alan) -->
+                    <div class="bg-slate-50 rounded-2xl p-6 border border-slate-200 flex flex-col items-center justify-center text-center my-4 relative overflow-hidden">
+                        
+                        <!-- Mikrofon Görseli ve Hafif Dalgalanma Efekti -->
+                        <div class="relative flex items-center justify-center mb-4">
+                            <div class="absolute inset-0 bg-green-500/10 rounded-full animate-ping w-16 h-16"></div>
+                            <div class="w-16 h-16 bg-green-100 border border-green-200 text-green-600 rounded-full flex items-center justify-center relative z-10">
+                                <i data-lucide="mic" class="w-8 h-8"></i>
+                            </div>
+                        </div>
+
+                        <div class="text-sm font-bold text-slate-700 mb-2">
+                            Sesli Cevap Modu: Lütfen Cevabınızı Yüksek Sesle İfade Edin
+                        </div>
+                        <p class="text-xs text-slate-500 max-w-sm mb-1">
+                            Düşüncelerinizi sesli olarak paylaştıktan sonra aşağıdaki butona tıklayarak eğitime devam edebilirsiniz.
+                        </p>
+                    </div>
+
+                    <!-- Onaylama / Devam Et Butonu -->
+                    <button id="submitAnswerBtn" class="w-full py-4 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-bold rounded-2xl shadow-md hover:shadow-green-500/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                        Cevabımı Tamamladım, Devam Et <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 3. TEBRİKLER & ÖDÜL EKRANI (Video Bittiğinde Çıkar) -->
+            <div id="finishModal" class="absolute inset-0 bg-gradient-to-tr from-green-900/95 via-emerald-800/95 to-slate-950/98 flex items-center justify-center p-6 z-30 hidden transition-all duration-500">
+                <div class="max-w-xl w-full bg-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-green-100 text-center relative overflow-hidden">
+                    <!-- Süsler -->
+                    <div class="absolute -top-10 -right-10 w-24 h-24 bg-yellow-200 rounded-full opacity-35 blur-xl"></div>
+                    <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-green-200 rounded-full opacity-35 blur-xl"></div>
+
+                    <!-- Tebrikler İkonu -->
+                    <div class="mx-auto w-20 h-20 bg-gradient-to-tr from-yellow-400 to-orange-400 text-white rounded-full flex items-center justify-center shadow-lg mb-4 animate-bounce">
+                        <i data-lucide="trophy" class="w-10 h-10"></i>
+                    </div>
+
+                    <h2 class="text-2xl sm:text-3xl font-black text-slate-800 mb-1">Tebrikler, Çevre Elçisi!</h2>
+                    <p class="text-slate-500 text-sm mb-6">İnteraktif İklim Değişikliği Eğitimi başarıyla tamamlandı.</p>
+
+                    <!-- Skor Özeti -->
+                    <div class="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-100 rounded-2xl p-5 mb-6">
+                        <div class="text-xs uppercase tracking-wider text-green-800 font-bold mb-2">Kazanılan Başarı Unvanı</div>
+                        <div class="text-xl font-black text-green-700 flex items-center justify-center gap-1.5 mb-4">
+                            🌳 Aktif Doğa Koruyucusu 🌳
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 border-t border-green-200/50 pt-4">
+                            <div>
+                                <div class="text-xs text-slate-500">Toplam Çevre Puanı</div>
+                                <div id="finalScore" class="text-lg font-extrabold text-slate-800">0 Puan</div>
+                            </div>
+                            <div>
+                                <div class="text-xs text-slate-500">Sözlü Katılım</div>
+                                <div class="text-lg font-extrabold text-slate-800">3/3 Soru</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sertifika Mesajı -->
+                    <p class="text-xs text-slate-500 leading-relaxed mb-6">
+                        Gelecek nesillere daha yeşil, temiz ve sürdürülebilir bir dünya bırakma yolunda aktif katkılarınız için teşekkür ederiz.
+                    </p>
+
+                    <!-- Yeniden Başlat Butonu -->
+                    <button id="restartBtn" class="w-full py-4 bg-gradient-to-r from-slate-800 to-slate-900 hover:from-slate-700 hover:to-slate-800 text-white font-bold rounded-2xl shadow-lg transition-all flex items-center justify-center gap-2">
+                        Eğitimi Yeniden Başlat <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- BİLGİLENDİRME ALTI / AKTİF KILAVUZ NOTU -->
+        <div class="w-full mt-6 bg-white/70 backdrop-blur-sm rounded-2xl p-4 border border-green-100 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-emerald-100 rounded-xl text-emerald-700">
+                    <i data-lucide="compass" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h4 class="text-xs font-bold text-slate-800">Eğitsel Oyun Yapısı: Sözlü Değerlendirme Modülü</h4>
+                    <p class="text-[11px] text-slate-500">Aktif katılım odaklı pedagojik model. Sorulara sesli yanıt vermek, öğrenme kalıcılığını %80 oranında artırır.</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="text-xs text-slate-500 font-semibold">Tasarım Konsepti:</span>
+                <span class="px-2.5 py-1 bg-green-100 text-green-800 text-[10px] font-bold rounded-full">Çevre ve İklim Değişikliği Haftası</span>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ALT BİLGİ ALANI -->
+    <footer class="w-full py-4 border-t border-green-100 text-center bg-white/50 backdrop-blur-sm mt-8">
+        <p class="text-xs text-slate-500 flex items-center justify-center gap-1.5">
+            Milli Eğitim Bakanlığı Müfredatına ve Eğitsel Oyun Kılavuzlarına Uygundur. 
+            <i data-lucide="globe" class="w-3.5 h-3.5 text-green-600"></i> 
+        </p>
+    </footer>
+
+    <!-- JS Mantığı ve Etkileşim Yönetimi -->
+    <script>
+        // DOM Elementlerini Yakalama
+        const video = document.getElementById('eduVideo');
+        const introModal = document.getElementById('introModal');
+        const questionModal = document.getElementById('questionModal');
+        const finishModal = document.getElementById('finishModal');
+        
+        const startLessonBtn = document.getElementById('startLessonBtn');
+        const submitAnswerBtn = document.getElementById('submitAnswerBtn');
+        const restartBtn = document.getElementById('restartBtn');
+        const videoPlayBtn = document.getElementById('videoPlayBtn');
+        
+        const progressBar = document.getElementById('progressBar');
+        const progressBarContainer = document.getElementById('progressBarContainer');
+        const timeText = document.getElementById('timeText');
+        
+        const questionText = document.getElementById('questionText');
+        const questionStep = document.getElementById('questionStep');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const finalScore = document.getElementById('finalScore');
+
+        // Oyun Durumu ve Verileri
+        let score = 0;
+        let answeredQuestions = {
+            19: false,
+            206: false, // 03:26 -> 206 sn
+            278: false  // 04:38 -> 278 sn
+        };
+
+        const questions = [
+            {
+                time: 19,
+                step: "SORU 1/3",
+                text: "İklim değişikliği hakkında ne düşünüyorsunuz?"
+            },
+            {
+                time: 206,
+                step: "SORU 2/3",
+                text: "İklim değişikliği karşısında umutlu olmak mümkün mü? Sizce neler yapabiliriz?"
+            },
+            {
+                time: 278,
+                step: "SORU 3/3",
+                text: "Gelecek nesillere yaşanabilir bir doğa bırakmak için neler yapabiliriz?"
+            }
+        ];
+
+        let activeQuestionIndex = null;
+
+        // Skor Güncelleme
+        function updateScore(points) {
+            score += points;
+            scoreDisplay.textContent = `${score} PUAN`;
+            finalScore.textContent = `${score} Puan`;
+        }
+
+        // İlerlemeyi Görselleştirme (Badge'ler)
+        function updateBadge(questionTime, status) {
+            let index = 1;
+            if (questionTime === 206) index = 2;
+            if (questionTime === 278) index = 3;
+
+            const badge = document.getElementById(`badge-${index}`);
+            if (badge) {
+                if (status === 'active') {
+                    badge.className = "w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold text-white bg-orange-500 border border-orange-600 scale-110 animate-pulse";
+                } else if (status === 'completed') {
+                    badge.className = "w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold text-white bg-green-600 border border-green-700";
+                    badge.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i>`;
+                    lucide.createIcons();
+                }
+            }
+        }
+
+        // Giriş Yönergesini Tamamlama ve Başlama
+        startLessonBtn.addEventListener('click', () => {
+            introModal.classList.add('opacity-0');
+            setTimeout(() => {
+                introModal.classList.add('hidden');
+                video.play();
+                updatePlayButtonState();
+            }, 500);
+        });
+
+        // Video Oynat/Duraklat Buton Yönetimi
+        videoPlayBtn.addEventListener('click', () => {
+            if (video.paused) {
+                video.play();
+            } else {
+                video.pause();
+            }
+            updatePlayButtonState();
+        });
+
+        function updatePlayButtonState() {
+            if (video.paused) {
+                videoPlayBtn.innerHTML = `<i data-lucide="play" class="w-6 h-6"></i>`;
+            } else {
+                videoPlayBtn.innerHTML = `<i data-lucide="pause" class="w-6 h-6"></i>`;
+            }
+            lucide.createIcons();
+        }
+
+        // Zaman Takibi ve Sorunun Tetiklenmesi
+        video.addEventListener('timeupdate', () => {
+            const currentTime = Math.floor(video.currentTime);
+            
+            // Zaman göstergesini güncelleme
+            const currentMin = Math.floor(currentTime / 60).toString().padStart(2, '0');
+            const currentSec = (currentTime % 60).toString().padStart(2, '0');
+            const durationMin = Math.floor(video.duration ? video.duration / 60 : 0).toString().padStart(2, '0');
+            const durationSec = Math.floor(video.duration ? video.duration % 60 : 0).toString().padStart(2, '0');
+            timeText.textContent = `${currentMin}:${currentSec} / ${durationMin}:${durationSec}`;
+
+            // İlerleme çubuğunu güncelleme
+            if (video.duration) {
+                const percentage = (video.currentTime / video.duration) * 100;
+                progressBar.style.width = `${percentage}%`;
+            }
+
+            // Sorulardan birinin zamanına gelip gelmediğimizi kontrol etme
+            const questionToTrigger = questions.find(q => q.time === currentTime && !answeredQuestions[q.time]);
+            
+            if (questionToTrigger) {
+                // Videoyu duraklat
+                video.pause();
+                updatePlayButtonState();
+                
+                // Soruyu göster
+                triggerQuestion(questionToTrigger);
+            }
+        });
+
+        // Soru Ekranını Açma
+        function triggerQuestion(q) {
+            activeQuestionIndex = q.time;
+            questionText.textContent = q.text;
+            questionStep.textContent = q.step;
+            
+            updateBadge(q.time, 'active');
+
+            // Paneli göster
+            questionModal.classList.remove('hidden');
+            setTimeout(() => {
+                questionModal.classList.remove('scale-95', 'opacity-0');
+            }, 50);
+        }
+
+        // Cevabı Onaylama ve Devam Etme
+        submitAnswerBtn.addEventListener('click', () => {
+            if (activeQuestionIndex !== null) {
+                // Cevaplandı olarak işaretle
+                answeredQuestions[activeQuestionIndex] = true;
+                
+                // Doğa Dostu Skorunu güncelle (+150 puan katılım ödülü)
+                updateScore(150);
+                
+                // İlerlemeyi tamamlandı yap
+                updateBadge(activeQuestionIndex, 'completed');
+
+                // Modalı Kapat
+                questionModal.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => {
+                    questionModal.classList.add('hidden');
+                    // Videoyu 1 saniye ileri al ki zaman tetikleyicisi tekrar çalışmasın
+                    video.currentTime = video.currentTime + 1.2;
+                    video.play();
+                    updatePlayButtonState();
+                    activeQuestionIndex = null;
+                }, 300);
+            }
+        });
+
+        // Video Bitince Ödül Ekranını Açma
+        video.addEventListener('ended', () => {
+            finishModal.classList.remove('hidden');
+            setTimeout(() => {
+                finishModal.classList.remove('opacity-0');
+            }, 50);
+        });
+
+        // Sıfırlama / Yeniden Başlatma
+        restartBtn.addEventListener('click', () => {
+            // State sıfırlama
+            score = 0;
+            scoreDisplay.textContent = '0 PUAN';
+            answeredQuestions = { 19: false, 206: false, 278: false };
+            
+            // Badge sıfırlama
+            [1, 2, 3].forEach(idx => {
+                const badge = document.getElementById(`badge-${idx}`);
+                if (badge) {
+                    badge.className = "w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold text-slate-400 bg-slate-200 border border-slate-300";
+                    badge.textContent = idx;
+                }
+            });
+
+            // Ekranları gizleme
+            finishModal.classList.add('hidden');
+            
+            // Videoyu başa alma
+            video.currentTime = 0;
+            video.play();
+            updatePlayButtonState();
+        });
+
+        // İlerleme çubuğundan tıklandığında süreye gitme
+        progressBarContainer.addEventListener('click', (e) => {
+            const rect = progressBarContainer.getBoundingClientRect();
+            const clickPosition = (e.clientX - rect.left) / rect.width;
+            if (video.duration) {
+                video.currentTime = clickPosition * video.duration;
+            }
+        });
+
+        // Lucide ikonlarını başlatma
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+        });
+    </script>
+</body>
+</html>

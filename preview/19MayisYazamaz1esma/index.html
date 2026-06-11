@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Futbol Oyunu</title>
+  <style>
+    /* ==========================================
+     GENEL AYARLAR
+     ========================================== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Arial Black', Arial, sans-serif;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      user-select: none;
+    }
+
+    /* ==========================================
+     OYUN SAHNESİ - ARKA PLAN
+     arka.jpg dosyanız buraya yüklenir
+     ========================================== */
+    #game-scene {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      background-image: url('arka.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    #overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.25);
+      pointer-events: none;
+    }
+
+    /* ==========================================
+     KALECİ
+     kaleci.png dosyanız buraya yüklenir
+     ========================================== */
+    #goalkeeper {
+      position: absolute;
+      width: 120px;
+      height: 160px;
+      left: 50%;
+      bottom: 28%;
+      transform: translateX(-50%);
+      background-image: url('kaleci.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center bottom;
+      z-index: 10;
+      filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.5));
+    }
+
+    /* Kalecinin Sağa Sola Yumuşak Salınım Animasyonu */
+    @keyframes gk-oscillation {
+      0% {
+        left: 20%;
+      }
+
+      50% {
+        left: 80%;
+      }
+
+      100% {
+        left: 20%;
+      }
+    }
+
+    .oscillate {
+      /* Animasyon süresi: 3.5 saniyede bir tam tur atar. Hızlandırmak isterseniz süreyi düşürün. */
+      animation: gk-oscillation 3.5s ease-in-out infinite;
+    }
+
+    /* ==========================================
+     TOP
+     top.png dosyanız buraya yüklenir
+     ========================================== */
+    #ball {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      bottom: 8%;
+      left: 50%;
+      transform: translateX(-50%);
+      background-image: url('top.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      cursor: crosshair;
+      z-index: 20;
+      filter: drop-shadow(3px 3px 5px rgba(0, 0, 0, 0.6));
+      transition: none;
+    }
+
+    #ball.shooting {
+      transition: all 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    /* ==========================================
+     NİŞAN ALMA CANVAS
+     ========================================== */
+    #aim-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 15;
+      cursor: none;
+      display: none;
+    }
+
+    #aim-canvas.active {
+      display: block;
+    }
+
+    /* ==========================================
+     SORU PANELI
+     ========================================== */
+    #question-panel {
+      position: absolute;
+      top: 5%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80%;
+      max-width: 700px;
+      background: linear-gradient(135deg, rgba(180, 0, 0, 0.92), rgba(120, 0, 0, 0.95));
+      border: 3px solid rgba(255, 255, 255, 0.9);
+      border-radius: 16px;
+      padding: 20px 24px;
+      color: white;
+      z-index: 100;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 0 20px rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(4px);
+      display: none;
+    }
+
+    #question-panel.active {
+      display: block;
+    }
+
+    #question-number {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.8);
+      font-weight: bold;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    #question-text {
+      font-size: 16px;
+      font-weight: bold;
+      line-height: 1.5;
+      margin-bottom: 16px;
+      color: #fff;
+    }
+
+    .answer-btn {
+      display: block;
+      width: 100%;
+      margin: 6px 0;
+      padding: 10px 16px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s;
+      font-family: 'Arial Black', Arial, sans-serif;
+    }
+
+    .answer-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+      border-color: white;
+      transform: translateX(4px);
+    }
+
+    .answer-btn.correct {
+      background: rgba(0, 200, 80, 0.5) !important;
+      border-color: #00e050 !important;
+    }
+
+    .answer-btn.wrong {
+      background: rgba(220, 0, 0, 0.5) !important;
+      border-color: #ff3333 !important;
+    }
+
+    /* ==========================================
+     PUAN TABLOSU
+     ========================================== */
+    #scoreboard {
+      position: absolute;
+      top: 5%;
+      right: 3%;
+      background: linear-gradient(135deg, rgba(180, 0, 0, 0.9), rgba(120, 0, 0, 0.92));
+      border: 2px solid rgba(255, 255, 255, 0.8);
+      border-radius: 12px;
+      padding: 12px 18px;
+      color: white;
+      z-index: 100;
+      text-align: center;
+      backdrop-filter: blur(4px);
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.15);
+    }
+
+    #scoreboard .label {
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.8);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    #scoreboard .score {
+      font-size: 32px;
+      font-weight: 900;
+      color: white;
+      line-height: 1;
+      margin: 4px 0;
+    }
+
+    #scoreboard .sub {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    /* ==========================================
+     MESAJ OVERLAY
+     ========================================== */
+    #message-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    #message-overlay.show {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    #message-box {
+      text-align: center;
+      animation: msgPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes msgPop {
+      from {
+        transform: scale(0.3) rotate(-10deg);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+      }
+    }
+
+    #message-text {
+      font-size: 72px;
+      font-weight: 900;
+      text-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5), 0 0 40px currentColor;
+      line-height: 1;
+    }
+
+    #message-sub {
+      font-size: 22px;
+      color: white;
+      text-shadow: 2px 2px 4px black;
+      margin-top: 8px;
+    }
+
+    /* ==========================================
+     BAŞLANGIÇ / BİTİŞ EKRANI
+     ========================================== */
+    #start-screen,
+    #end-screen {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(160deg, rgba(160, 0, 0, 0.92), rgba(80, 0, 0, 0.95));
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 300;
+      color: white;
+      text-align: center;
+    }
+
+    #end-screen {
+      display: none;
+    }
+
+    .screen-title {
+      font-size: 52px;
+      font-weight: 900;
+      color: white;
+      text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.5);
+      margin-bottom: 10px;
+    }
+
+    .screen-sub {
+      font-size: 18px;
+      color: rgba(255, 255, 255, 0.8);
+      margin-bottom: 30px;
+      max-width: 500px;
+      line-height: 1.5;
+    }
+
+    .big-btn {
+      padding: 16px 40px;
+      font-size: 22px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #cc0000, #990000);
+      border: none;
+      border-radius: 50px;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
+      font-family: 'Arial Black', Arial, sans-serif;
+    }
+
+    .big-btn:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    /* ==========================================
+     SHOOT HINT
+     ========================================== */
+    #shoot-hint {
+      position: absolute;
+      bottom: 3%;
+      left: 50%;
+      transform: translateX(-50%);
+      color: white;
+      font-size: 15px;
+      font-weight: bold;
+      text-shadow: 1px 1px 3px black;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 8px 20px;
+      border-radius: 20px;
+      z-index: 50;
+      display: none;
+      white-space: nowrap;
+      animation: blink 1.8s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.5;
+      }
+    }
+
+    #power-bar-wrap {
+      position: absolute;
+      left: 3%;
+      bottom: 8%;
+      width: 16px;
+      height: 180px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      border-radius: 10px;
+      overflow: hidden;
+      z-index: 50;
+      display: none;
+      flex-direction: column-reverse;
+    }
+
+    #power-bar-wrap.active {
+      display: flex;
+    }
+
+    #power-bar {
+      width: 100%;
+      background: linear-gradient(0deg, #00e050, #ffe000, #ff3300);
+      transition: height 0.05s linear;
+      border-radius: 8px;
+    }
+
+    #power-label {
+      position: absolute;
+      left: 3%;
+      bottom: calc(8% + 188px);
+      color: white;
+      font-size: 11px;
+      font-weight: bold;
+      text-shadow: 1px 1px 2px black;
+      z-index: 50;
+      display: none;
+      white-space: nowrap;
+    }
+
+    #power-label.active {
+      display: block;
+    }
+
+    /* ==========================================
+     MİKROFON / SES BUTONU
+     ========================================== */
+    #sound-btn {
+      position: absolute;
+      bottom: 3%;
+      right: 3%;
+      background: rgba(0, 30, 80, 0.7);
+      border: 2px solid rgba(255, 255, 255, 0.6);
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ==========================================
+     PROGRESS BAR
+     ========================================== */
+    #progress-bar-wrap {
+      position: absolute;
+      bottom: 3%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60%;
+      height: 10px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      z-index: 100;
+      overflow: hidden;
+    }
+
+    #progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #cc0000, #ff4444);
+      border-radius: 10px;
+      transition: width 0.5s ease;
+      width: 0%;
+    }
+    /* ==========================================
+     SES BUTONLARI
+     ========================================== */
+    .audio-play-btn {
+      background: linear-gradient(135deg, #cc0000, #990000);
+      border: 2px solid rgba(255, 255, 255, 0.7);
+      border-radius: 50px;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      padding: 10px 28px;
+      cursor: pointer;
+      font-family: 'Arial Black', Arial, sans-serif;
+      transition: all 0.2s;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+
+    .audio-play-btn:hover {
+      transform: scale(1.05);
+      background: linear-gradient(135deg, #dd0000, #aa0000);
+    }
+
+    .audio-play-btn.playing {
+      background: linear-gradient(135deg, #880000, #550000);
+      border-color: white;
+      animation: pulse-btn 0.8s ease-in-out infinite;
+    }
+
+    @keyframes pulse-btn {
+      0%, 100% { box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
+      50% { box-shadow: 0 4px 20px rgba(255,255,255,0.4); }
+    }
+
+    .answer-audio-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      margin: 8px 0;
+      padding: 12px 18px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 10px;
+      color: white;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Arial Black', Arial, sans-serif;
+    }
+
+    .answer-audio-btn .btn-label {
+      background: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .answer-audio-btn .btn-listen {
+      font-size: 13px;
+      opacity: 0.85;
+    }
+
+    .answer-audio-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: white;
+      transform: translateX(4px);
+    }
+
+    .answer-audio-btn.correct {
+      background: rgba(0, 200, 80, 0.5) !important;
+      border-color: #00e050 !important;
+    }
+
+    .answer-audio-btn.wrong {
+      background: rgba(180, 0, 0, 0.6) !important;
+      border-color: #ff5555 !important;
+    }
+
+    .answer-audio-btn.playing-opt {
+      border-color: white;
+      background: rgba(255,255,255,0.18);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ==================== OYUN SAHNESİ ==================== -->
+  <div id="game-scene">
+    <div id="overlay"></div>
+
+    <!-- Kaleci -->
+    <div id="goalkeeper"></div>
+
+    <!-- Top -->
+    <div id="ball"></div>
+
+    <!-- Mouse nişan alma canvas'ı -->
+    <canvas id="aim-canvas"></canvas>
+
+    <!-- Şut ipucu -->
+    <div id="shoot-hint">🖱️ Mouse ile nişan al, <strong>tıkla</strong> veya <strong>boşluk</strong> tuşuna bas!</div>
+
+    <!-- Güç göstergesi -->
+    <div id="power-label">💪 GÜÇ</div>
+    <div id="power-bar-wrap">
+      <div id="power-bar" style="height:50%"></div>
+    </div>
+
+    <!-- Soru Paneli -->
+    <div id="question-panel">
+      <div id="question-number">Soru 1 / 3</div>
+      <div id="question-audio-area" style="text-align:center; margin-bottom:14px;">
+        <button id="play-question-btn" class="audio-play-btn" onclick="playQuestionAudio()">
+          🔊 Soruyu Dinle
+        </button>
+      </div>
+      <div id="answers-container"></div>
+    </div>
+
+    <!-- Puan Tablosu -->
+    <div id="scoreboard">
+      <div class="label">Goller</div>
+      <div class="score" id="score-display">0</div>
+      <div class="sub" id="attempt-display">0 / 0 deneme</div>
+    </div>
+
+    <!-- Mesaj overlay -->
+    <div id="message-overlay">
+      <div id="message-box">
+        <div id="message-text"></div>
+        <div id="message-sub"></div>
+      </div>
+    </div>
+
+    <!-- Ses butonu -->
+    <button id="sound-btn" onclick="toggleSound()" title="Sesi aç/kapat">🔊</button>
+
+    <!-- Progress bar -->
+    <div id="progress-bar-wrap">
+      <div id="progress-bar"></div>
+    </div>
+  </div>
+
+  <!-- ==================== BAŞLANGIÇ EKRANI ==================== -->
+  <div id="start-screen">
+    <div class="screen-title">⚽ 19 MAYIS ATATÜRK'Ü ANMA GENÇLİK VE SPOR BAYRAMI</div>
+    <div class="screen-sub">
+      Soruları doğru yanıtla, kaleye şut çek!<br>
+      <small style="color:rgba(255,255,255,0.8)">3 soru • Her doğru cevap bir şut hakkı</small>
+    </div>
+    <button class="big-btn" onclick="startGame()">🚀 OYUNU BAŞLAT</button>
+  </div>
+
+  <!-- ==================== BİTİŞ EKRANI ==================== -->
+  <div id="end-screen">
+    <div class="screen-title" id="end-title">🏆 OYUN BİTTİ!</div>
+    <div class="screen-sub" id="end-text"></div>
+    <button class="big-btn" onclick="restartGame()">🔄 Tekrar Oyna</button>
+  </div>
+
+
+  <script>
+    // ============================================================
+    //  SORULAR
+    // ============================================================
+    const QUESTIONS = [
+      {
+        soruSes: "soru1.mp3",
+        secenekler: [
+          { ses: "a1.mp3", etiket: "A" },
+          { ses: "b1.mp3", etiket: "B" }
+        ],
+        dogru: 0
+      },
+      {
+        soruSes: "soru2.mp3",
+        secenekler: [
+          { ses: "a2.mp3", etiket: "A" },
+          { ses: "b2.mp3", etiket: "B" }
+        ],
+        dogru: 1
+      },
+      {
+        soruSes: "soru3.mp3",
+        secenekler: [
+          { ses: "a3.mp3", etiket: "A" },
+          { ses: "b3.mp3", etiket: "B" }
+        ],
+        dogru: 0
+      }
+    ];
+
+    // ============================================================
+    //  OYUN AYARLARI
+    // ============================================================
+    const CONFIG = {
+      RESULT_DISPLAY_TIME: 1900,
+      BALL_START_LEFT: 50,
+
+      SOUND_ENABLED: true,
+
+      AIM_ZONE: {
+        left: 20,
+        right: 80,
+        top: 20,
+        bottom: 55
+      },
+
+      SAVE_RADIUS_PCT: 14,              // ← Kalecinin kurtarma genişliğini buradan artırıp/azaltabilirsiniz
+      AIM_CROSSHAIR_SIZE: 28,
+      AIM_LINE_COLOR: 'rgba(255,255,255,0.55)',
+      AIM_DOT_COLOR: 'rgba(255,60,60,0.9)',
+
+      SHOOT_ANIM_DURATION: 650
+    };
+
+    // ============================================================
+    //  STATE
+    // ============================================================
+    let state = {
+      currentQuestion: 0,
+      score: 0,
+      attempts: 0,
+      canShoot: false,
+      soundEnabled: CONFIG.SOUND_ENABLED,
+      phase: 'question',
+      mouse: { x: 0, y: 0 },
+      aimAnimId: null
+    };
+
+    // ============================================================
+    //  SES
+    // ============================================================
+    const sfxDuduk = new Audio('duduk.mp3');
+    const sfxAlkis = new Audio('alkis.mp3');
+    sfxDuduk.preload = 'auto';
+    sfxAlkis.preload = 'auto';
+
+    function playSound(audio) {
+      if (!state.soundEnabled) return;
+      audio.currentTime = 0;
+      audio.play().catch(() => { });
+    }
+
+    function toggleSound() {
+      state.soundEnabled = !state.soundEnabled;
+      document.getElementById('sound-btn').textContent = state.soundEnabled ? '🔊' : '🔇';
+    }
+
+    // ============================================================
+    //  KALECİ KONTROLÜ
+    // ============================================================
+    function startGoalkeeperMovement() {
+      const gk = document.getElementById('goalkeeper');
+      gk.classList.add('oscillate');
+      gk.style.animationPlayState = 'running';
+    }
+
+    function stopGoalkeeperMovement() {
+      const gk = document.getElementById('goalkeeper');
+      gk.style.animationPlayState = 'paused';
+    }
+
+    // ============================================================
+    //  NİŞAN ALMA - CANVAS ÇİZİMİ
+    // ============================================================
+    const canvas = document.getElementById('aim-canvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function getBallCenter() {
+      const ball = document.getElementById('ball');
+      const rect = ball.getBoundingClientRect();
+      return {
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2
+      };
+    }
+
+    function getAimZonePx() {
+      const W = window.innerWidth, H = window.innerHeight;
+      return {
+        left: CONFIG.AIM_ZONE.left / 100 * W,
+        right: CONFIG.AIM_ZONE.right / 100 * W,
+        top: CONFIG.AIM_ZONE.top / 100 * H,
+        bottom: CONFIG.AIM_ZONE.bottom / 100 * H
+      };
+    }
+
+    function clampToAimZone(mx, my) {
+      const z = getAimZonePx();
+      return {
+        x: Math.max(z.left, Math.min(z.right, mx)),
+        y: Math.max(z.top, Math.min(z.bottom, my))
+      };
+    }
+
+    function drawAim(mx, my) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const z = getAimZonePx();
+      const ball = getBallCenter();
+      const aim = clampToAimZone(mx, my);
+
+      ctx.save();
+      ctx.strokeStyle = 'rgba(255,255,255,0.18)';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([8, 6]);
+      ctx.strokeRect(z.left, z.top, z.right - z.left, z.bottom - z.top);
+      ctx.restore();
+
+      ctx.save();
+      ctx.strokeStyle = CONFIG.AIM_LINE_COLOR;
+      ctx.lineWidth = 2;
+      ctx.setLineDash([6, 5]);
+      ctx.beginPath();
+      ctx.moveTo(ball.x, ball.y);
+      ctx.lineTo(aim.x, aim.y);
+      ctx.stroke();
+      ctx.restore();
+
+      const R = CONFIG.AIM_CROSSHAIR_SIZE;
+      ctx.save();
+      ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+      ctx.lineWidth = 2.5;
+      ctx.setLineDash([]);
+      ctx.beginPath();
+      ctx.arc(aim.x, aim.y, R, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.fillStyle = CONFIG.AIM_DOT_COLOR;
+      ctx.beginPath();
+      ctx.arc(aim.x, aim.y, 5, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = 'rgba(255,255,255,0.7)';
+      ctx.lineWidth = 1.5;
+      const gap = 6;
+      ctx.beginPath(); ctx.moveTo(aim.x - R - 6, aim.y); ctx.lineTo(aim.x - gap, aim.y); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(aim.x + gap, aim.y); ctx.lineTo(aim.x + R + 6, aim.y); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(aim.x, aim.y - R - 6); ctx.lineTo(aim.x, aim.y - gap); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(aim.x, aim.y + gap); ctx.lineTo(aim.x, aim.y + R + 6); ctx.stroke();
+
+      const W = window.innerWidth;
+      const midX = W / 2;
+      const dist = Math.abs(aim.x - midX) / (W / 2);
+      const angleLabel = dist < 0.15 ? 'ORTA' : aim.x < midX ? '← SOL' : 'SAĞ →';
+      ctx.fillStyle = 'rgba(255,255,255,0.9)';
+      ctx.font = 'bold 12px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText(angleLabel, aim.x, aim.y - R - 10);
+
+      ctx.restore();
+    }
+
+    function startAimLoop() {
+      function loop() {
+        if (state.phase !== 'shoot') return;
+        drawAim(state.mouse.x, state.mouse.y);
+        state.aimAnimId = requestAnimationFrame(loop);
+      }
+      loop();
+    }
+
+    function stopAimLoop() {
+      cancelAnimationFrame(state.aimAnimId);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    canvas.addEventListener('mousemove', (e) => {
+      state.mouse.x = e.clientX;
+      state.mouse.y = e.clientY;
+    });
+
+    canvas.addEventListener('click', (e) => {
+      if (!state.canShoot || state.phase !== 'shoot') return;
+      const aim = clampToAimZone(e.clientX, e.clientY);
+      shootToPoint(aim.x, aim.y);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.code === 'Space' && state.canShoot && state.phase === 'shoot') {
+        e.preventDefault();
+        const aim = clampToAimZone(state.mouse.x, state.mouse.y);
+        shootToPoint(aim.x, aim.y);
+      }
+    });
+
+    // ============================================================
+    //  ŞUT ÇEK (Gerçek Zamanlı Kaleci Tespiti İle)
+    // ============================================================
+    function shootToPoint(px, py) {
+      if (!state.canShoot || state.phase !== 'shoot') return;
+      state.canShoot = false;
+      state.phase = 'result';
+      state.attempts++;
+
+      stopAimLoop();
+      canvas.classList.remove('active');
+      document.getElementById('shoot-hint').style.display = 'none';
+      document.getElementById('power-bar-wrap').classList.remove('active');
+      document.getElementById('power-label').classList.remove('active');
+
+      const leftPct = (px / window.innerWidth) * 100;
+      const bottomPct = 100 - (py / window.innerHeight) * 100;
+
+      const ball = document.getElementById('ball');
+      ball.style.transition = `all ${CONFIG.SHOOT_ANIM_DURATION}ms cubic-bezier(0.2, 0.6, 0.4, 1)`;
+      ball.style.left = leftPct + '%';
+      ball.style.bottom = bottomPct + '%';
+      ball.style.transform = 'translateX(-50%) scale(0.55)';
+
+      // Top hedefine ulaştığında kalecinin GERÇEK anlık konumunu hesaplıyoruz
+      setTimeout(() => {
+        const gk = document.getElementById('goalkeeper');
+        const gkRect = gk.getBoundingClientRect();
+        const gkCenterPx = gkRect.left + (gkRect.width / 2);
+
+        // Kalecinin merkezini ekran yüzdesi olarak buluyoruz
+        const goalkeeperMidPct = (gkCenterPx / window.innerWidth) * 100;
+
+        // Topun yatay hedefi ile kalecinin anlık merkezi arasındaki mesafe
+        const distPct = Math.abs(goalkeeperMidPct - leftPct);
+        const saved = 0; //distPct < CONFIG.SAVE_RADIUS_PCT;
+
+        if (saved) {
+          showMessage('KURTARILDI! 🧤', 'Kaleci tuttu!', '#ff5555', false);
+          playSound(sfxDuduk);
+        } else {
+          state.score++;
+          updateScore();
+          showMessage('GOL! ⚽🎉', 'Harika şut!', 'white', true);
+          playSound(sfxAlkis);
+        }
+
+        setTimeout(() => {
+          hideMessage();
+          resetBall();
+          nextQuestion();
+        }, CONFIG.RESULT_DISPLAY_TIME);
+
+      }, CONFIG.SHOOT_ANIM_DURATION + 50);
+    }
+
+    // ============================================================
+    //  SORU SESLERİ
+    // ============================================================
+    let currentQuestionAudio = null;
+    let currentOptionAudio = null;
+
+    function stopAllAudio() {
+      if (currentQuestionAudio) { currentQuestionAudio.pause(); currentQuestionAudio.currentTime = 0; }
+      if (currentOptionAudio) { currentOptionAudio.pause(); currentOptionAudio.currentTime = 0; }
+      currentQuestionAudio = null;
+      currentOptionAudio = null;
+      document.querySelectorAll('.audio-play-btn').forEach(b => b.classList.remove('playing'));
+      document.querySelectorAll('.answer-audio-btn').forEach(b => b.classList.remove('playing-opt'));
+    }
+
+    function playQuestionAudio() {
+      stopAllAudio();
+      const q = QUESTIONS[state.currentQuestion];
+      const btn = document.getElementById('play-question-btn');
+      const audio = new Audio(q.soruSes);
+      currentQuestionAudio = audio;
+      btn.classList.add('playing');
+      btn.textContent = '⏸ Çalıyor...';
+      audio.play().catch(() => {});
+      audio.onended = () => {
+        btn.classList.remove('playing');
+        btn.textContent = '🔊 Soruyu Dinle';
+        currentQuestionAudio = null;
+      };
+    }
+
+    function playOptionAudio(btn, sesDosyasi, index) {
+      stopAllAudio();
+      const audio = new Audio(sesDosyasi);
+      currentOptionAudio = audio;
+      btn.classList.add('playing-opt');
+      const listenSpan = btn.querySelector('.btn-listen');
+      if (listenSpan) listenSpan.textContent = '⏸ Çalıyor...';
+      audio.play().catch(() => {});
+      audio.onended = () => {
+        btn.classList.remove('playing-opt');
+        if (listenSpan) listenSpan.textContent = '🔊 Şıkkı Dinle';
+        currentOptionAudio = null;
+      };
+    }
+
+    // ============================================================
+    //  SORU GÖSTER
+    // ============================================================
+    function showQuestion() {
+      state.phase = 'question';
+      state.canShoot = false;
+      stopAimLoop();
+      stopAllAudio();
+      canvas.classList.remove('active');
+      document.getElementById('shoot-hint').style.display = 'none';
+      document.getElementById('power-bar-wrap').classList.remove('active');
+      document.getElementById('power-label').classList.remove('active');
+      resetBall();
+
+      const q = QUESTIONS[state.currentQuestion];
+      const panel = document.getElementById('question-panel');
+      panel.classList.add('active');
+
+      document.getElementById('question-number').textContent =
+        `Soru ${state.currentQuestion + 1} / ${QUESTIONS.length}`;
+
+      const playBtn = document.getElementById('play-question-btn');
+      playBtn.classList.remove('playing');
+      playBtn.textContent = '🔊 Soruyu Dinle';
+
+      const container = document.getElementById('answers-container');
+      container.innerHTML = '';
+      q.secenekler.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'answer-audio-btn';
+        btn.innerHTML = `
+          <span class="btn-label">${opt.etiket}</span>
+          <span class="btn-listen">🔊 Şıkkı Dinle</span>
+        `;
+        btn.onclick = (e) => {
+          if (btn.dataset.answered) return;
+          if (!btn.dataset.played) {
+            // İlk tıklama: sesi çal
+            btn.dataset.played = 'true';
+            playOptionAudio(btn, opt.ses, i);
+            const listenSpan = btn.querySelector('.btn-listen');
+            setTimeout(() => {
+              if (listenSpan && !btn.dataset.answered) listenSpan.textContent = '✔ Seçmek için tekrar tıkla';
+            }, 300);
+          } else {
+            // İkinci tıklama: cevap ver
+            btn.dataset.answered = 'true';
+            answerQuestion(i, btn);
+          }
+        };
+        container.appendChild(btn);
+      });
+
+      updateProgress();
+    }
+
+    // ============================================================
+    //  CEVAP
+    // ============================================================
+    function answerQuestion(index, btn) {
+      const q = QUESTIONS[state.currentQuestion];
+      const allBtns = document.querySelectorAll('.answer-audio-btn');
+      allBtns.forEach(b => b.onclick = null);
+      stopAllAudio();
+
+      if (index === q.dogru) {
+        btn.classList.add('correct');
+        setTimeout(() => {
+          document.getElementById('question-panel').classList.remove('active');
+          enableShooting();
+        }, 900);
+      } else {
+        btn.classList.add('wrong');
+        allBtns[q.dogru].classList.add('correct');
+        setTimeout(() => {
+          document.getElementById('question-panel').classList.remove('active');
+          nextQuestion();
+        }, 1500);
+      }
+    }
+
+    // ============================================================
+    //  ŞUT HAKKI AKTİFLEŞTİR
+    // ============================================================
+    function enableShooting() {
+      stopAllAudio();
+      state.phase = 'shoot';
+      state.canShoot = true;
+      canvas.classList.add('active');
+      document.getElementById('shoot-hint').style.display = 'block';
+      document.getElementById('power-bar-wrap').classList.add('active');
+      document.getElementById('power-label').classList.add('active');
+      state.mouse.x = window.innerWidth / 2;
+      state.mouse.y = window.innerHeight / 3;
+      startAimLoop();
+      playSound(sfxDuduk);
+    }
+
+    // ============================================================
+    //  MESAJ / KONFETİ
+    // ============================================================
+    function showMessage(text, sub, color, isGoal) {
+      const overlay = document.getElementById('message-overlay');
+      document.getElementById('message-text').textContent = text;
+      document.getElementById('message-text').style.color = color;
+      document.getElementById('message-sub').textContent = sub;
+      overlay.classList.add('show');
+      if (isGoal) triggerCelebration();
+    }
+
+    function hideMessage() {
+      document.getElementById('message-overlay').classList.remove('show');
+    }
+
+    function triggerCelebration() {
+      const colors = ['white', '#ff4444', '#00cc44', '#4488ff', '#ff44aa', '#ffffff'];
+      for (let i = 0; i < 40; i++) {
+        const p = document.createElement('div');
+        p.style.cssText = `
+      position:fixed; width:${6 + Math.random() * 8}px; height:${6 + Math.random() * 8}px;
+      border-radius:${Math.random() > 0.5 ? '50%' : '2px'};
+      background:${colors[Math.floor(Math.random() * colors.length)]};
+      left:${Math.random() * 100}vw; top:-10px;
+      z-index:500; pointer-events:none;
+      animation: fall ${1 + Math.random() * 2}s ease-in forwards;
+      animation-delay: ${Math.random() * 0.5}s;
+    `;
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), 3000);
+      }
+    }
+
+    const styleEl = document.createElement('style');
+    styleEl.textContent = `@keyframes fall { to { transform: translateY(110vh) rotate(720deg); opacity:0; } }`;
+    document.head.appendChild(styleEl);
+
+    // ============================================================
+    //  YARDIMCI
+    // ============================================================
+    function nextQuestion() {
+      state.currentQuestion++;
+      if (state.currentQuestion >= QUESTIONS.length) endGame();
+      else showQuestion();
+    }
+
+    function updateScore() {
+      document.getElementById('score-display').textContent = state.score;
+      document.getElementById('attempt-display').textContent = `${state.score} / ${state.attempts} gol`;
+    }
+
+    function updateProgress() {
+      const pct = (state.currentQuestion / QUESTIONS.length) * 100;
+      document.getElementById('progress-bar').style.width = pct + '%';
+    }
+
+    function resetBall() {
+      const ball = document.getElementById('ball');
+      ball.style.transition = 'none';
+      ball.style.left = CONFIG.BALL_START_LEFT + '%';
+      ball.style.bottom = '8%';
+      ball.style.transform = 'translateX(-50%)';
+    }
+
+    // ============================================================
+    //  OYUN BAŞLAT / BİTİR / YENİDEN BAŞLAT
+    // ============================================================
+    function startGame() {
+      document.getElementById('start-screen').style.display = 'none';
+      state = {
+        currentQuestion: 0, score: 0, attempts: 0,
+        canShoot: false,
+        soundEnabled: state.soundEnabled,
+        phase: 'question',
+        mouse: { x: window.innerWidth / 2, y: window.innerHeight / 3 },
+        aimAnimId: null
+      };
+      updateScore();
+      startGoalkeeperMovement();
+      showQuestion();
+    }
+
+    function endGame() {
+      stopGoalkeeperMovement();
+      stopAimLoop();
+      document.getElementById('question-panel').classList.remove('active');
+      document.getElementById('progress-bar').style.width = '100%';
+
+      const pct = state.attempts > 0 ? Math.round((state.score / state.attempts) * 100) : 0;
+      let emoji = pct >= 80 ? '🏆' : pct >= 50 ? '🥈' : '⭐';
+
+      document.getElementById('end-title').textContent = `${emoji} OYUN BİTTİ!`;
+      document.getElementById('end-text').innerHTML =
+        `<strong style="font-size:28px;color:white">${state.score} GOL / ${state.attempts} Şut</strong><br>
+     İsabetlilik: <strong>%${pct}</strong><br><br>
+     ${pct === 100 ? 'Mükemmel! Tüm şutlar gol oldu! 🎉' :
+          pct >= 60 ? 'Harika bir performans!' :
+            'Tekrar dene, daha iyisini yapabilirsin!'}`;
+
+      document.getElementById('end-screen').style.display = 'flex';
+    }
+
+    function restartGame() {
+      document.getElementById('end-screen').style.display = 'none';
+      startGame();
+    }
+  </script>
+</body>
+
+</html>

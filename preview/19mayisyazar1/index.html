@@ -1,0 +1,292 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>19 Mayıs Gençlik ve Spor Bayramı Kutlaması</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .bg-red-gradient {
+            background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%);
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .ship-animation {
+            animation: wave 3s ease-in-out infinite;
+        }
+
+        @keyframes wave {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(2deg); }
+        }
+
+        /* Çıktı alırken butonları gizle */
+        @media print {
+            nav, footer, .no-print, button {
+                display: none !important;
+            }
+            .section-content {
+                display: block !important;
+            }
+            #card-preview {
+                box-shadow: none !important;
+                border: 1px solid #eee;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <nav class="bg-red-gradient text-white p-4 shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-star-and-crescent text-2xl"></i>
+                <span class="font-bold text-lg tracking-widest">19 MAYIS</span>
+            </div>
+            <div class="hidden md:flex space-x-6 font-medium">
+                <button onclick="showSection('hero')" class="hover:text-red-200">Ana Sayfa</button>
+                <button onclick="showSection('journey')" class="hover:text-red-200">Milli Mücadele</button>
+                <button onclick="showSection('quiz')" class="hover:text-red-200">Bilgi Yarışması</button>
+                <button onclick="showSection('card')" class="hover:text-red-200">Kutlama Kartı</button>
+            </div>
+        </div>
+    </nav>
+
+    <section id="hero" class="container mx-auto px-4 py-12 text-center section-content">
+        <div class="max-w-4xl mx-auto">
+            <div class="mb-8 relative inline-block">
+                <img src="1.jpg" alt="Atatürk" class="rounded-full w-48 h-48 object-cover border-8 border-white shadow-2xl mx-auto">
+                <div class="absolute -bottom-4 -right-4 bg-red-600 text-white p-3 rounded-full shadow-lg">
+                    <i class="fas fa-flag text-xl"></i>
+                </div>
+            </div>
+            <h1 class="text-5xl font-black text-gray-900 mb-4">19 Mayıs Atatürk'ü Anma, Gençlik ve Spor Bayramı</h1>
+            <p class="text-xl text-gray-600 mb-8 italic">"Yükselen yeni nesil, istikbal sizindir. Cumhuriyeti biz kurduk, onu yükseltecek ve yaşatacak sizsiniz."</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div onclick="showSection('journey')" class="bg-white p-6 rounded-2xl shadow-md card-hover cursor-pointer border-t-4 border-blue-500">
+                    <i class="fas fa-ship text-4xl text-blue-500 mb-4"></i>
+                    <h3 class="font-bold text-xl mb-2">Bandırma Vapuru</h3>
+                    <p class="text-sm text-gray-500">İstanbul'dan Samsun'a uzanan bağımsızlık yolculuğuna katıl.</p>
+                </div>
+                <div onclick="showSection('quiz')" class="bg-white p-6 rounded-2xl shadow-md card-hover cursor-pointer border-t-4 border-red-500">
+                    <i class="fas fa-trophy text-4xl text-red-500 mb-4"></i>
+                    <h3 class="font-bold text-xl mb-2">Bilgi Maratonu</h3>
+                    <p class="text-sm text-gray-500">Milli mücadele ve spor kültürü üzerine bilgilerini test et.</p>
+                </div>
+                <div onclick="showSection('card')" class="bg-white p-6 rounded-2xl shadow-md card-hover cursor-pointer border-t-4 border-green-500">
+                    <i class="fas fa-paint-brush text-4xl text-green-500 mb-4"></i>
+                    <h3 class="font-bold text-xl mb-2">Dijital Tebrik</h3>
+                    <p class="text-sm text-gray-500">Kendi bayram mesajını oluştur ve sevdiklerinle paylaş.</p>
+                </div>
+            </div>
+            <button onclick="launchConfetti()" class="mt-12 bg-red-600 text-white px-8 py-3 rounded-full font-bold shadow-xl hover:bg-red-700 transition-all uppercase tracking-widest no-print">
+                Bayramı Kutla! 🎉
+            </button>
+        </div>
+    </section>
+
+    <section id="journey" class="hidden container mx-auto px-4 py-12 section-content">
+        <h2 class="text-3xl font-bold text-center mb-12">Kurtuluş Yolu: İstanbul - Samsun</h2>
+        <div class="max-w-2xl mx-auto relative border-l-4 border-gray-200 pl-8 ml-4">
+            <div class="mb-12 relative">
+                <div class="absolute -left-[44px] bg-red-600 w-6 h-6 rounded-full border-4 border-white shadow-md"></div>
+                <h3 class="text-xl font-bold text-red-600">16 Mayıs 1919</h3>
+                <p class="font-medium">İstanbul'dan Ayrılış</p>
+                <p class="text-gray-600 mt-2">Bandırma Vapuru, Mustafa Kemal Paşa ve arkadaşlarını Galata Rıhtımı'ndan uğurladı.</p>
+            </div>
+            <div class="mb-12 relative">
+                <div class="absolute -left-[44px] bg-gray-400 w-6 h-6 rounded-full border-4 border-white shadow-md"></div>
+                <h3 class="text-xl font-bold text-gray-800">17 Mayıs 1919</h3>
+                <p class="font-medium">Karadeniz'in Hırçın Dalgaları</p>
+                <p class="text-gray-600 mt-2">Fırtınaya ve takibe rağmen vapur rota değiştirmeden ilerledi.</p>
+            </div>
+            <div class="relative">
+                <div class="absolute -left-[44px] bg-green-600 w-6 h-6 rounded-full border-4 border-white shadow-md"></div>
+                <h3 class="text-xl font-bold text-green-600">19 Mayıs 1919</h3>
+                <p class="font-medium">Samsun'a Varış</p>
+                <p class="text-gray-600 mt-2">Güneşin doğuşuyla beraber bağımsızlık ateşi Samsun Tütün İskelesi'nde yakıldı.</p>
+                <div class="mt-6 text-5xl ship-animation">🚢</div>
+            </div>
+        </div>
+    </section>
+
+    <section id="quiz" class="hidden container mx-auto px-4 py-12 section-content">
+        <div class="max-w-xl mx-auto bg-white p-8 rounded-3xl shadow-xl">
+            <div id="quiz-start">
+                <h2 class="text-2xl font-black text-center mb-6">Gençlik Bilgi Maratonu</h2>
+                <p class="text-center text-gray-600 mb-8">5 Soruda 19 Mayıs ruhunu ne kadar tanıyorsun?</p>
+                <button onclick="startQuiz()" class="w-full bg-blue-600 text-white py-4 rounded-xl font-bold hover:bg-blue-700 transition-colors">
+                    Başlat
+                </button>
+            </div>
+            <div id="quiz-container" class="hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <span id="quiz-progress" class="text-sm font-bold text-blue-600">Soru 1/5</span>
+                    <span id="quiz-timer" class="font-mono bg-gray-100 px-3 py-1 rounded">15s</span>
+                </div>
+                <h3 id="quiz-question" class="text-xl font-bold mb-6">Soru metni buraya gelecek?</h3>
+                <div id="quiz-options" class="space-y-3">
+                    </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="card" class="hidden container mx-auto px-4 py-12 section-content">
+        <h2 class="text-3xl font-bold text-center mb-8 no-print">Dijital Bayram Kartını Hazırla</h2>
+        <div class="flex flex-col md:flex-row gap-8 max-w-5xl mx-auto">
+            <div class="flex-1 bg-white p-6 rounded-2xl shadow-lg no-print">
+                <div class="mb-4">
+                    <label class="block font-bold mb-2">Adın Soyadın</label>
+                    <input type="text" id="card-name" oninput="updateCard()" placeholder="İsim Yazınız" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
+                </div>
+                <div class="mb-4">
+                    <label class="block font-bold mb-2">Mesajın</label>
+                    <textarea id="card-msg" oninput="updateCard()" placeholder="Bayram mesajınızı buraya ekleyin..." class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500 h-24"></textarea>
+                </div>
+                <div>
+                    <label class="block font-bold mb-2">Tema Seç</label>
+                    <div class="flex gap-4">
+                        <button onclick="changeTheme('red')" class="w-10 h-10 rounded-full bg-red-600 border-4 border-white shadow-md"></button>
+                        <button onclick="changeTheme('blue')" class="w-10 h-10 rounded-full bg-blue-600 border-4 border-white shadow-md"></button>
+                        <button onclick="changeTheme('dark')" class="w-10 h-10 rounded-full bg-gray-800 border-4 border-white shadow-md"></button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="card-preview" class="flex-1 bg-red-600 rounded-2xl p-8 text-white text-center shadow-2xl flex flex-col items-center justify-center min-h-[480px] relative overflow-hidden transition-colors duration-500">
+                <div class="absolute top-4 right-4 opacity-20 text-6xl rotate-12"><i class="fas fa-flag"></i></div>
+                <div class="absolute bottom-4 left-4 opacity-20 text-6xl -rotate-12"><i class="fas fa-running"></i></div>
+                
+                <div class="relative mb-6">
+                    <img src="1.jpg" alt="Atatürk" class="w-32 h-32 rounded-full border-4 border-white shadow-xl object-cover">
+                </div>
+
+                <h2 class="text-2xl font-black mb-2 uppercase">19 Mayıs Kutlu Olsun!</h2>
+                <div class="w-20 h-1 bg-white mb-6"></div>
+                <p id="preview-msg" class="text-lg italic mb-8">"Atatürk'ün izinde, aydınlık bir geleceğe..."</p>
+                <p id="preview-name" class="font-bold tracking-widest border-t border-white/30 pt-4 px-8 inline-block">GENÇ TÜRKİYE</p>
+                
+                <p class="mt-8 text-xs opacity-75">#19Mayıs #GençlikBayramı</p>
+            </div>
+        </div>
+        <div class="text-center mt-8 no-print">
+            <button onclick="window.print()" class="bg-gray-800 text-white px-6 py-2 rounded-lg hover:bg-black transition-all">
+                <i class="fas fa-download mr-2"></i> Görsel Olarak Kaydet (PDF)
+            </button>
+        </div>
+    </section>
+
+    <footer class="bg-gray-100 py-12 mt-12 border-t no-print">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-gray-500 text-sm">© 2026 Gençlik ve Spor Bayramı Dijital Platformu</p>
+            <p class="font-bold text-red-600 mt-2">Cumhuriyetimizin Gençlerine Armağandır.</p>
+        </div>
+    </footer>
+
+    <script>
+        function showSection(id) {
+            document.querySelectorAll('.section-content').forEach(s => s.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function launchConfetti() {
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#ef4444', '#ffffff', '#991b1b']
+            });
+        }
+
+        // --- QUIZ LOGIC ---
+        const quizData = [
+            { q: "Mustafa Kemal Atatürk, Samsun'a hangi vapurla gitmiştir?", a: ["Bandırma", "Savarona", "Gülcemal"], c: 0 },
+            { q: "Atatürk'ün doğum günüm dediği tarih hangisidir?", a: ["23 Nisan", "19 Mayıs", "29 Ekim"], c: 1 },
+            { q: "19 Mayıs günü hangi şehirde bayram meşalesi yakılır?", a: ["Ankara", "İstanbul", "Samsun"], c: 2 },
+            { q: "Atatürk'ün gençliğe bıraktığı en büyük eser hangisidir?", a: ["Nutuk", "Cumhuriyet", "Geometri Kitabı"], c: 1 },
+            { q: "Samsun'da Atatürk'ü simgeleyen anıtın adı nedir?", a: ["Etnografya", "Onur Anıtı", "Cumhuriyet Anıtı"], c: 1 }
+        ];
+
+        let currentQ = 0;
+        function startQuiz() {
+            document.getElementById('quiz-start').classList.add('hidden');
+            document.getElementById('quiz-container').classList.remove('hidden');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const data = quizData[currentQ];
+            document.getElementById('quiz-progress').textContent = `Soru ${currentQ + 1}/5`;
+            document.getElementById('quiz-question').textContent = data.q;
+            const options = document.getElementById('quiz-options');
+            options.innerHTML = '';
+            
+            data.a.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 rounded-xl border-2 border-gray-100 hover:border-blue-500 hover:bg-blue-50 transition-all font-medium";
+                btn.textContent = opt;
+                btn.onclick = () => checkAnswer(idx);
+                options.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(idx) {
+            if (idx === quizData[currentQ].c) {
+                launchConfetti();
+            }
+            
+            currentQ++;
+            if (currentQ < quizData.length) {
+                loadQuestion();
+            } else {
+                document.getElementById('quiz-container').innerHTML = `
+                    <div class="text-center py-8">
+                        <i class="fas fa-check-circle text-6xl text-green-500 mb-4"></i>
+                        <h3 class="text-2xl font-bold mb-2">Harika!</h3>
+                        <p class="text-gray-600 mb-6">Bilgi maratonunu başarıyla tamamladın.</p>
+                        <button onclick="location.reload()" class="bg-gray-800 text-white px-6 py-2 rounded-lg">Baştan Dene</button>
+                    </div>
+                `;
+            }
+        }
+
+        // --- CARD LOGIC ---
+        function updateCard() {
+            const name = document.getElementById('card-name').value || "GENÇ TÜRKİYE";
+            const msg = document.getElementById('card-msg').value || "Atatürk'ün izinde, aydınlık bir geleceğe...";
+            document.getElementById('preview-name').textContent = name.toUpperCase();
+            document.getElementById('preview-msg').textContent = `"${msg}"`;
+        }
+
+        function changeTheme(theme) {
+            const card = document.getElementById('card-preview');
+            card.className = "flex-1 rounded-2xl p-8 text-white text-center shadow-2xl flex flex-col items-center justify-center min-h-[480px] relative overflow-hidden transition-all duration-500";
+            
+            if (theme === 'red') card.classList.add('bg-red-600');
+            if (theme === 'blue') card.classList.add('bg-blue-600');
+            if (theme === 'dark') card.classList.add('bg-gray-800');
+        }
+
+        // Başlangıçta confetti at
+        window.onload = () => {
+            setTimeout(launchConfetti, 1000);
+        };
+    </script>
+</body>
+</html>

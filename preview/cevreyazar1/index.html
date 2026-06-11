@@ -1,0 +1,1064 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doğa Elçisi - Yeşil Rozet Macerası</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Çocuklar İçin En Okunaklı ve Sevimli Yazı Tipleri (Nunito & Quicksand) -->
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Quicksand:wght@600;700;900&family=Nunito:wght@600;800;900&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Nunito', 'Quicksand', sans-serif;
+            background: linear-gradient(to bottom, #f0fdf4, #e0f2fe);
+            user-select: none;
+            overflow-x: hidden;
+            font-size: 14px; /* 14 Punto Standart Boyut */
+        }
+        .title-font {
+            font-family: 'Baloo 2', sans-serif;
+        }
+        /* Akıcı Damlama Animasyonu */
+        @keyframes flow-drop {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            80% { transform: translateY(80px) scale(1); opacity: 1; }
+            100% { transform: translateY(100px) scale(0.6); opacity: 0; }
+        }
+        .dripping-drop {
+            animation: flow-drop 1.2s infinite linear;
+        }
+        /* Güneş Paneli Toz Temizleme */
+        .solar-dust {
+            transition: all 0.4s ease;
+        }
+        .solar-dust.cleaned {
+            opacity: 0 !important;
+            pointer-events: none;
+            transform: scale(0.8) translateY(-5px);
+        }
+        /* Yanlış Cevap Titreme Animasyonu */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-4px); }
+            75% { transform: translateX(4px); }
+        }
+        .animate-shake {
+            animation: shake 0.15s ease-in-out 2;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between relative overflow-y-auto text-[14px]">
+
+    <!-- Müzik ve Ses Kontrol Butonu -->
+    <div class="absolute top-4 left-4 z-50">
+        <button id="sound-btn" class="w-10 h-10 rounded-full bg-white/90 border-2 border-sky-300 text-sky-600 flex items-center justify-center hover:bg-sky-50 active:scale-95 transition shadow-md">
+            <i class="fas fa-volume-up text-base" id="sound-icon"></i>
+        </button>
+    </div>
+
+    <!-- 1. Ekran: Giriş Ekranı (İsim Girişi) - Arka planda sadece 2.jpg kullanılır -->
+    <div id="intro-screen" class="flex-grow flex flex-col items-center justify-center p-6 z-10 transition-all duration-500 bg-cover bg-center min-h-screen" style="background-image: url('2.jpg');">
+        <div class="bg-white/95 backdrop-blur-md rounded-3xl p-8 max-w-md w-full text-center shadow-2xl border-4 border-sky-300">
+            <span class="text-5xl mb-3 inline-block animate-bounce">🌍</span>
+            <h1 class="title-font text-3xl text-emerald-850 font-extrabold tracking-wide leading-tight">Doğa Elçisi</h1>
+            <h2 class="title-font text-xl text-sky-800 font-bold tracking-normal leading-none mt-1">Yeşil Rozet Macerası</h2>
+            <p class="text-[14px] text-gray-700 font-bold mt-3 mb-5">Gezegenimizi korumak için 5 farklı görevi tamamla, yeşil rozetleri çantana koy!</p>
+            
+            <div class="mb-5">
+                <label for="player-name" class="block text-emerald-800 font-black text-sm mb-2">Adın Nedir, Genç Yolcu?</label>
+                <input type="text" id="player-name" maxlength="15" placeholder="Örn: Kuzey, Melis..." class="w-full px-4 py-2.5 border-3 border-emerald-300 rounded-xl focus:outline-none focus:border-emerald-500 font-black text-center text-base text-emerald-950 shadow-inner">
+            </div>
+
+            <button onclick="playIntroVideo()" class="title-font w-full bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-black text-base py-3.5 rounded-xl shadow-md transition transform active:scale-95">
+                MACERAYA BAŞLA ➡️
+            </button>
+        </div>
+    </div>
+
+    <!-- YENİ/GÜNCELLENMİŞ: Tam Ekran ve Çerçevesiz Video İzleme Ekranı (a.mp4) -->
+    <div id="video-screen" class="fixed inset-0 z-50 hidden bg-black flex items-center justify-center">
+        <!-- Video Oynatıcı -->
+        <video id="intro-video" class="w-full h-full object-contain" src="a.mp4" playsinline></video>
+        
+        <!-- Sağ Üst Köşede Şeffaf/Şık Geçiş Butonu -->
+        <button onclick="skipVideo()" class="absolute top-6 right-6 bg-white/20 hover:bg-white/40 text-white font-bold py-2 px-4 rounded-full backdrop-blur-sm transition z-50 text-xs active:scale-95">
+            Videoyu Geç ➡️
+        </button>
+    </div>
+
+    <!-- 2. Ekran: Yönerge (Talimatlar) Ekranı - Arka planda sadece 2.jpg kullanılır -->
+    <div id="instructions-screen" class="flex-grow flex flex-col items-center justify-center p-6 z-10 hidden transition-all duration-500 bg-cover bg-center min-h-screen" style="background-image: url('2.jpg');">
+        <div class="bg-white/95 backdrop-blur-md rounded-3xl p-6 md:p-8 max-w-xl w-full text-center shadow-2xl border-4 border-emerald-300">
+            <span class="text-5xl mb-2 inline-block">📜</span>
+            <h2 class="title-font text-2xl text-[#022c22] font-black tracking-wide leading-tight mb-2">Doğa Elçisi Rehberi</h2>
+            <p class="text-[14px] text-gray-600 font-bold mb-5">Sevgili <span id="welcome-name" class="text-emerald-600 font-black">Gezegen Dostu</span>, rozetleri kazanmak için görev yönergelerini dikkatlice oku!</p>
+            
+            <div class="space-y-3.5 text-left mb-6 px-1 max-h-[260px] overflow-y-auto text-[14px]">
+                <div class="flex items-start gap-3">
+                    <span class="text-2xl select-none leading-none">🌱</span>
+                    <div>
+                        <h4 class="font-black text-[14px] text-emerald-700 title-font">Ağaç Dostu Görevi</h4>
+                        <p class="text-[13px] text-gray-600 font-semibold leading-relaxed">Toprağı kaz, tohumunu ek ve can suyunu dökerek dev ağacını sevgiyle büyüt!</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="text-2xl select-none leading-none">💧</span>
+                    <div>
+                        <h4 class="font-black text-[14px] text-sky-700 title-font">Su Koruyucusu Görevi</h4>
+                        <p class="text-[13px] text-gray-600 font-semibold leading-relaxed">Damlayan sızdıran muslukları tıklayarak kapat, temiz suları kurtar!</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="text-2xl select-none leading-none">♻️</span>
+                    <div>
+                        <h4 class="font-black text-[14px] text-amber-700 title-font">Geri Dönüşüm Ustası Görevi</h4>
+                        <p class="text-[13px] text-gray-600 font-semibold leading-relaxed">Atıkları tutup sürükleyerek doğru renkteki kutulara bırak ve geri dönüştür!</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="text-2xl select-none leading-none">☀️</span>
+                    <div>
+                        <h4 class="font-black text-[14px] text-orange-700 title-font">Güneş Enerjisi Görevi</h4>
+                        <p class="text-[13px] text-gray-600 font-semibold leading-relaxed">Güneş panelinin üstündeki tozları parmağınla veya farenle  silip parlat!</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="text-2xl select-none leading-none">🌍</span>
+                    <div>
+                        <h4 class="font-black text-[14px] text-purple-700 title-font">Gezegen Koruyucusu Görevi</h4>
+                        <p class="text-[13px] text-gray-600 font-semibold leading-relaxed">Doğa dostu seçimler yapmak için beş adet sevimli soruyu doğru yanıtla!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bu buton tıklandığında doğrudan harita ekranına ve oyun sırasına geçilir -->
+            <button onclick="startMission()" class="title-font w-full bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-black text-base py-3.5 rounded-xl shadow-md transition transform active:scale-95">
+                GÖREVLERE BAŞLA! 🚀
+            </button>
+        </div>
+    </div>
+
+    <!-- 3. Ekran: Harita Ekranı -->
+    <div id="map-screen" class="flex-grow flex flex-col items-center justify-start p-4 z-10 hidden transition-all duration-500 min-h-screen">
+        <div class="w-full max-w-4xl text-center mb-3">
+            <h2 class="title-font text-2xl md:text-3xl text-sky-900 font-black leading-tight">Yeşil Macera Karargahı 🏕️</h2>
+            <p class="text-[14px] text-sky-850 font-bold mt-1">Sırasıyla görevleri yap, rozetleri kap ve Doğa Elçisi sertifikanı kazan!</p>
+        </div>
+
+        <!-- Görsel Tabanlı Şeffaf İnteraktif Harita (Gereksiz tüm çizgiler tamamen kaldırıldı, butonlar gizlendi) -->
+        <div class="w-full max-w-4xl px-2 mb-5 relative mx-auto">
+            <div class="relative w-full aspect-[3/2] rounded-3xl overflow-hidden shadow-2xl border-4 border-white bg-sky-200" style="background-image: url('1.jpg'), url('https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=1200&q=80'); background-size: cover; background-position: center;">
+                
+                <!-- Tıklama Bölgesi 1: Ağaç Dostu -->
+                <div class="absolute flex flex-col items-center justify-center cursor-pointer" style="left: 15.6%; top: 45%; transform: translate(-50%, -30%); width: 13.5%; aspect-ratio: 1/1;">
+                    <button id="btn-badge-1" class="w-full h-full rounded-full transition-all duration-300 relative group flex items-center justify-center focus:outline-none bg-transparent border-0 shadow-none"></button>
+                    <div id="label-badge-1" class="absolute -bottom-10 text-[1.8vw] sm:text-[11px] md:text-xs px-[1.5vw] py-[0.5vw] sm:px-2.5 sm:py-1 rounded-full font-black shadow-md whitespace-nowrap transition-all duration-300 z-20">
+                        🔒 KİLİTLİ
+                    </div>
+                </div>
+
+                <!-- Tıklama Bölgesi 2: Su Koruyucusu -->
+                <div class="absolute flex flex-col items-center justify-center cursor-pointer" style="left: 33.4%; top: 45%; transform: translate(-50%, -30%); width: 13.5%; aspect-ratio: 1/1;">
+                    <button id="btn-badge-2" class="w-full h-full rounded-full transition-all duration-300 relative group flex items-center justify-center focus:outline-none bg-transparent border-0 shadow-none"></button>
+                    <div id="label-badge-2" class="absolute -bottom-10 text-[1.8vw] sm:text-[11px] md:text-xs px-[1.5vw] py-[0.5vw] sm:px-2.5 sm:py-1 rounded-full font-black shadow-md whitespace-nowrap transition-all duration-300 z-20">
+                        🔒 KİLİTLİ
+                    </div>
+                </div>
+
+                <!-- Tıklama Bölgesi 3: Geri Dönüşüm Ustası -->
+                <div class="absolute flex flex-col items-center justify-center cursor-pointer" style="left: 50.0%; top: 45%; transform: translate(-50%, -30%); width: 13.5%; aspect-ratio: 1/1;">
+                    <button id="btn-badge-3" class="w-full h-full rounded-full transition-all duration-300 relative group flex items-center justify-center focus:outline-none bg-transparent border-0 shadow-none"></button>
+                    <div id="label-badge-3" class="absolute -bottom-10 text-[1.8vw] sm:text-[11px] md:text-xs px-[1.5vw] py-[0.5vw] sm:px-2.5 sm:py-1 rounded-full font-black shadow-md whitespace-nowrap transition-all duration-300 z-20">
+                        🔒 KİLİTLİ
+                    </div>
+                </div>
+
+                <!-- Tıklama Bölgesi 4: Güneş Enerjisi Uzmanı -->
+                <div class="absolute flex flex-col items-center justify-center cursor-pointer" style="left: 66.8%; top: 45%; transform: translate(-50%, -30%); width: 13.5%; aspect-ratio: 1/1;">
+                    <button id="btn-badge-4" class="w-full h-full rounded-full transition-all duration-300 relative group flex items-center justify-center focus:outline-none bg-transparent border-0 shadow-none"></button>
+                    <div id="label-badge-4" class="absolute -bottom-10 text-[1.8vw] sm:text-[11px] md:text-xs px-[1.5vw] py-[0.5vw] sm:px-2.5 sm:py-1 rounded-full font-black shadow-md whitespace-nowrap transition-all duration-300 z-20">
+                        🔒 KİLİTLİ
+                    </div>
+                </div>
+
+                <!-- Tıklama Bölgesi 5: Gezegen Koruyucusu -->
+                <div class="absolute flex flex-col items-center justify-center cursor-pointer" style="left: 84.4%; top: 45%; transform: translate(-50%, -30%); width: 13.5%; aspect-ratio: 1/1;">
+                    <button id="btn-badge-5" class="w-full h-full rounded-full transition-all duration-300 relative group flex items-center justify-center focus:outline-none bg-transparent border-0 shadow-none"></button>
+                    <div id="label-badge-5" class="absolute -bottom-10 text-[1.8vw] sm:text-[11px] md:text-xs px-[1.5vw] py-[0.5vw] sm:px-2.5 sm:py-1 rounded-full font-black shadow-md whitespace-nowrap transition-all duration-300 z-20">
+                        🔒 KİLİTLİ
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Alt Bilgi / Küçük İlerleme Göstergesi -->
+        <div class="w-full max-w-md bg-white/75 backdrop-blur-sm rounded-2xl p-2.5 text-center border border-sky-100 shadow-sm mt-3">
+            <p class="text-[12px] text-sky-900 font-bold">Kazanılan Rozet İlerlemesi</p>
+            <div class="w-full bg-sky-200/50 h-2 rounded-full overflow-hidden mt-1 shadow-inner">
+                <div id="award-progress" class="bg-emerald-500 h-full w-0 transition-all duration-500"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Ekran: Aktif Oyun / Görev Ekranı -->
+    <div id="game-container" class="fixed inset-0 flex items-center justify-center p-4 z-40 hidden bg-black/10 backdrop-blur-[2px] transition-all duration-500">
+        <!-- 1cm Büyütülmüş Yeni Görev Kartı (max-w-xl boyutu ve geniş p-8 dolgusuyla) -->
+        <div id="game-card" class="rounded-3xl p-8 max-w-xl w-full text-center shadow-2xl border-4 relative flex flex-col justify-between min-h-[440px] max-h-[92vh] overflow-y-auto transition-all duration-500">
+            
+            <!-- Kapat butonu (Haritaya Dön) -->
+            <button onclick="backToMap()" class="absolute top-4 right-4 text-gray-500 hover:text-rose-500 active:scale-95 transition text-2xl font-black">
+                ✕
+            </button>
+
+            <div class="w-full">
+                <span id="game-badge-tag" class="text-[12px] border rounded-full px-3 py-1 font-black tracking-wider">GÖREV</span>
+                <h3 id="game-title" class="title-font text-2xl md:text-3xl font-black mt-2">Görev Adı</h3>
+                <p id="game-desc" class="text-[14px] font-bold mt-1 mb-2">Görev açıklaması</p>
+            </div>
+
+            <!-- Doğrudan Kartın İçine Entegre Büyük Oyun Sahnesi -->
+            <div id="game-canvas" class="w-full flex flex-col items-center justify-center py-3 relative transition-all duration-300">
+                <!-- Oyun ögeleri buraya engelsiz yüklenir -->
+            </div>
+
+            <!-- Alt Durum Alanı -->
+            <div id="game-footer" class="w-full mt-2">
+                <div class="text-[14px] font-black mb-1" id="game-status-text">Görevi tamamlamak için yönergeleri izle.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. Ekran: Büyük Final Tebrik & Sertifikamı Al Penceresi (Ekranın Tam Ortasında) -->
+    <div id="victory-overlay" class="fixed inset-0 flex items-center justify-center p-4 z-50 hidden bg-slate-950/70 backdrop-blur-md transition-all duration-500">
+        <div class="bg-white rounded-3xl p-8 max-w-lg w-full text-center shadow-2xl border-4 border-dashed border-amber-400 relative">
+            <div class="text-6xl mb-4 select-none animate-bounce">🎓</div>
+            <h3 class="title-font text-2xl text-amber-800 font-black mb-1.5">Tebrikler Gezegen Dostu!</h3>
+            <p class="text-[14px] text-amber-950 font-bold mb-5 leading-relaxed">
+                5 görevin hepsini tamamlayarak dünyamızı korudun! Şimdi ismine özel şık başarı sertifikasını almaya hak kazandın!
+            </p>
+            <button id="claim-certificate-btn" onclick="showCertificate()" class="title-font w-full bg-gradient-to-r from-amber-400 to-amber-600 text-white font-black py-3 rounded-2xl shadow-xl hover:from-amber-500 hover:to-amber-700 active:scale-95 transition transform duration-150 text-base">
+                SERTİFİKAMI AL! 🎖️
+            </button>
+        </div>
+    </div>
+
+    <!-- 6. Ekran: Sertifika Ekranı (Büyütülmüş) -->
+    <div id="certificate-screen" class="fixed inset-0 bg-sky-950/40 backdrop-blur-md flex justify-center items-center z-50 hidden p-4">
+        <div class="bg-white rounded-3xl p-6 md:p-10 max-w-3xl w-full text-center shadow-2xl border-8 border-amber-300 relative max-h-[95vh] overflow-y-auto flex flex-col items-center">
+            
+            <!-- Yazdırılabilir Sertifika Şablonu -->
+            <div id="printable-certificate" class="bg-amber-50/40 border-4 border-amber-200 rounded-2xl p-6 md:p-8 w-full text-center relative mb-5">
+                <div class="absolute top-4 right-4 text-4xl opacity-15 select-none">🌍</div>
+                <div class="absolute bottom-4 left-4 text-4xl opacity-15 select-none">🌱</div>
+
+                <span class="text-4xl mb-2 inline-block">🎖️</span>
+                <h2 class="title-font text-2xl md:text-3xl text-amber-800 font-extrabold tracking-wide uppercase">DÜNYA KORUYUCUSU</h2>
+                <h3 class="title-font text-lg md:text-xl text-amber-700 font-bold">BAŞARI SERTİFİKASI</h3>
+                
+                <p class="text-[13px] text-amber-950 font-semibold mt-4">Bu sertifika gururla şahsına takdim edilmiştir:</p>
+                
+                <div class="my-4">
+                    <span id="cert-player-name" class="title-font text-2xl md:text-3xl text-sky-850 font-black tracking-wide border-b-4 border-sky-400 px-6 pb-0.5 inline-block">DOĞA ELÇİSİ</span>
+                </div>
+
+                <p class="text-[13px] text-amber-900 font-medium max-w-md mx-auto leading-relaxed">
+                    Doğa Elçisi yeşil rozet görevlerini başarıyla tamamlayarak; ağaç diktiğini, su tasarrufu yaptığını, atıkları dönüştürdüğünü, güneş enerjisini koruduğunu ve doğayla dost seçimler yaptığını kanıtlamıştır.
+                </p>
+
+                <div class="flex justify-around items-center mt-6">
+                    <div class="text-center">
+                        <p class="text-[11px] text-amber-700 font-black">Görev Tarihi</p>
+                        <p class="text-[13px] text-sky-800 font-black" id="cert-date">--.--.----</p>
+                    </div>
+                    <div class="w-14 h-14 flex items-center justify-center bg-amber-400 rounded-full shadow-md text-white font-extrabold text-xs rotate-12">
+                        ONAYLI
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3 w-full max-w-md">
+                <button onclick="window.print()" class="title-font flex-1 bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 text-white font-black py-3 rounded-2xl shadow-md transition transform active:scale-95 text-sm">
+                    YAZDIR / PDF KAYDET 🖨️
+                </button>
+                <button onclick="restartGame()" class="title-font flex-1 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-black py-3 rounded-2xl shadow-md transition transform active:scale-95 text-sm">
+                    YENİDEN BAŞLA 🔄
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Eğitici Alt Bilgilendirme -->
+    <footer id="game-footer-bar" class="w-full text-center p-3 z-10 transition-all duration-1000">
+        <p class="text-[12px] text-sky-900 font-black bg-white/70 backdrop-blur-sm rounded-full py-1.5 px-4 inline-block border border-sky-200">
+            🌳 Çocuklar! Unutmayın, her küçük adım dünyamızı korur! 💧
+        </p>
+    </footer>
+
+    <!-- JAVASCRIPT KODLARI -->
+    <script>
+        // Sentezleyici Ses Efektleri Motoru (Web Audio API)
+        const SoundFX = {
+            enabled: true,
+            ctx: null,
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            },
+            playClick() {
+                if (!this.enabled) return;
+                this.init();
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                
+                osc.frequency.setValueAtTime(350, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(700, this.ctx.currentTime + 0.1);
+                
+                gain.gain.setValueAtTime(0.08, this.ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 0.1);
+                
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.1);
+            },
+            playSuccess() {
+                if (!this.enabled) return;
+                this.init();
+                const now = this.ctx.currentTime;
+                this.playTone(523.25, 0.1, now); 
+                this.playTone(659.25, 0.1, now + 0.08); 
+                this.playTone(783.99, 0.15, now + 0.16); 
+                this.playTone(1046.50, 0.25, now + 0.24); 
+            },
+            playClean() {
+                if (!this.enabled) return;
+                this.init();
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(800, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1200, this.ctx.currentTime + 0.08);
+                
+                gain.gain.setValueAtTime(0.04, this.ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 0.08);
+                
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.08);
+            },
+            playSplash() {
+                if (!this.enabled) return;
+                this.init();
+                const now = this.ctx.currentTime;
+                this.playTone(220, 0.25, now, 'sawtooth');
+            },
+            playFanfare() {
+                if (!this.enabled) return;
+                this.init();
+                const now = this.ctx.currentTime;
+                const notes = [392.00, 523.25, 659.25, 783.99, 783.99, 1046.50];
+                const durations = [0.1, 0.1, 0.1, 0.15, 0.1, 0.4];
+                let currentDelay = 0;
+                notes.forEach((freq, idx) => {
+                    this.playTone(freq, durations[idx], now + currentDelay);
+                    currentDelay += durations[idx] * 0.85;
+                });
+            },
+            playTone(freq, duration, time, type = 'sine') {
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, time);
+                gain.gain.setValueAtTime(0.08, time);
+                gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(time);
+                osc.stop(time + duration);
+            }
+        };
+
+        // Ses butonunun işlevsel hale getirilmesi
+        document.getElementById('sound-btn').addEventListener('click', () => {
+            SoundFX.enabled = !SoundFX.enabled;
+            const icon = document.getElementById('sound-icon');
+            if (SoundFX.enabled) {
+                icon.className = "fas fa-volume-up text-base";
+            } else {
+                icon.className = "fas fa-volume-mute text-base";
+            }
+        });
+
+        // Görevin cıvıl cıvıl ve rengarenk temaları
+        const BADGES_CONFIG = [
+            { 
+                id: 1, 
+                name: 'Ağaç Dostu', 
+                icon: '🌱', 
+                colorClass: 'bg-emerald-50 border-emerald-400 text-emerald-950', 
+                tagClass: 'bg-emerald-100 text-emerald-800 border-emerald-300', 
+                text: 'Tohum ek, fidanını sula ve doğayı yeşillendir!' 
+            },
+            { 
+                id: 2, 
+                name: 'Su Koruyucusu', 
+                icon: '💧', 
+                colorClass: 'bg-sky-50 border-sky-400 text-sky-950', 
+                tagClass: 'bg-sky-100 text-sky-800 border-sky-300', 
+                text: 'Sızdıran muslukları kapatıp suları kurtar!' 
+            },
+            { 
+                id: 3, 
+                name: 'Geri Dönüşüm Ustası', 
+                icon: '♻️', 
+                colorClass: 'bg-amber-50 border-amber-400 text-amber-950', 
+                tagClass: 'bg-amber-100 text-amber-800 border-amber-300', 
+                text: 'Atıkları uygun renkteki kutularına ayrıştırarak dönüştür!' 
+            },
+            { 
+                id: 4, 
+                name: 'Güneş Enerjisi Uzmanı', 
+                icon: '☀️', 
+                colorClass: 'bg-orange-50 border-orange-400 text-orange-950', 
+                tagClass: 'bg-orange-100 text-orange-800 border-orange-300', 
+                text: 'Güneş panelinin üzerindeki tozları silerek temizle!' 
+            },
+            { 
+                id: 5, 
+                name: 'Gezegen Koruyucusu', 
+                icon: '🌍', 
+                colorClass: 'bg-purple-50 border-purple-400 text-purple-950', 
+                tagClass: 'bg-purple-100 text-purple-800 border-purple-300', 
+                text: 'Doğa için en yeşil ve sağlıklı seçimleri yap!' 
+            }
+        ];
+
+        let state = {
+            playerName: '',
+            unlockedBadges: [false, false, false, false, false], // Hangi rozetler kazanıldı?
+            activeGameId: null
+        };
+
+        // Adım 1: İsim Girişi Kontrolü ve Tam Ekran Tanıtım Videosunun Başlatılması
+        function playIntroVideo() {
+            const nameInput = document.getElementById('player-name').value.trim();
+            if (!nameInput) {
+                document.getElementById('player-name').className = "w-full px-4 py-2.5 border-3 border-red-300 rounded-xl focus:outline-none focus:border-red-500 font-bold text-center text-base text-red-800 shadow-inner animate-pulse";
+                return;
+            }
+            SoundFX.playClick();
+            state.playerName = nameInput;
+            document.getElementById('welcome-name').textContent = nameInput;
+            
+            // Giriş ekranını gizle, video ekranını tam sayfa yap
+            document.getElementById('intro-screen').classList.add('hidden');
+            document.getElementById('video-screen').classList.remove('hidden');
+            
+            const video = document.getElementById('intro-video');
+            if (video) {
+                video.currentTime = 0;
+                video.play().catch(error => {
+                    console.log("Video otomatik oynatılamadı:", error);
+                });
+                
+                // Video bittiğinde otomatik olarak rehber (yönerge) ekranına geç
+                video.onended = function() {
+                    showInstructions();
+                };
+            }
+        }
+
+        // Videoyu Manuel Olarak Geçme
+        function skipVideo() {
+            const video = document.getElementById('intro-video');
+            if (video) {
+                video.pause();
+            }
+            showInstructions();
+        }
+
+        // Adım 2: Yönerge (Talimatlar) Ekranına Geçiş
+        function showInstructions() {
+            document.getElementById('video-screen').classList.add('hidden');
+            document.getElementById('instructions-screen').classList.remove('hidden');
+        }
+
+        // Adım 3: Harita Ekranını Aç ve Oyunu Başlat
+        function startMission() {
+            SoundFX.playClick();
+            document.getElementById('video-screen').classList.add('hidden');
+            document.getElementById('instructions-screen').classList.add('hidden');
+            document.getElementById('map-screen').classList.remove('hidden');
+            renderMap();
+        }
+
+        // Harita/Rozet Göstergelerini Oluşturma ve Güncelleme
+        function renderMap() {
+            let completedCount = 0;
+
+            BADGES_CONFIG.forEach((badge, idx) => {
+                const isCompleted = state.unlockedBadges[idx];
+                if (isCompleted) completedCount++;
+
+                let badgeState = 'locked';
+                if (isCompleted) {
+                    badgeState = 'completed';
+                } else if (idx === 0 || state.unlockedBadges[idx - 1]) {
+                    badgeState = 'playable';
+                }
+
+                const btn = document.getElementById(`btn-badge-${badge.id}`);
+                const label = document.getElementById(`label-badge-${badge.id}`);
+
+                if (btn && label) {
+                    btn.className = "w-full h-full rounded-full transition-all duration-300 relative group flex items-center justify-center focus:outline-none bg-transparent border-0 shadow-none";
+                    btn.innerHTML = ""; 
+
+                    label.classList.remove('hidden');
+
+                    if (badgeState === 'completed') {
+                        btn.disabled = false;
+                        btn.setAttribute('onclick', `launchGame(${badge.id})`);
+                        btn.classList.add('cursor-pointer');
+                        
+                        label.className = "absolute -bottom-10 text-[1.8vw] sm:text-[11px] md:text-xs px-3 py-1 rounded-full font-black shadow-md whitespace-nowrap transition-all duration-300 z-20 bg-emerald-500 text-white border-2 border-white";
+                        label.innerHTML = "🏆 KAZANILDI";
+                    } else if (badgeState === 'playable') {
+                        btn.disabled = false;
+                        btn.setAttribute('onclick', `launchGame(${badge.id})`);
+                        btn.classList.add('cursor-pointer');
+                        
+                        label.className = "absolute -bottom-10 text-[1.8vw] sm:text-[11px] md:text-xs px-3 py-1 rounded-full font-black shadow-md whitespace-nowrap transition-all duration-300 z-20 bg-amber-500 text-white border-2 border-white animate-bounce";
+                        label.innerHTML = "🎮 BAŞLA";
+                    } else {
+                        btn.disabled = true;
+                        btn.removeAttribute('onclick');
+                        btn.classList.add('cursor-not-allowed');
+                        
+                        label.className = "absolute -bottom-10 text-[1.8vw] sm:text-[11px] md:text-xs px-3 py-1 rounded-full font-black shadow-md whitespace-nowrap transition-all duration-300 z-20 bg-slate-500/80 text-slate-100 border border-slate-400/50 opacity-70";
+                        label.innerHTML = "🔒 KİLİTLİ";
+                    }
+                }
+            });
+
+            // İlerleme Göstergesini Güncelleme
+            const awardProgress = document.getElementById('award-progress');
+            const percent = (completedCount / 5) * 100;
+            if (awardProgress) {
+                awardProgress.style.width = `${percent}%`;
+            }
+
+            // Eğer tüm rozetler toplandıysa nihai tebrik modalını ekranın tam ortasında aç
+            if (completedCount === 5) {
+                setTimeout(() => {
+                    document.getElementById('victory-overlay').classList.remove('hidden');
+                    SoundFX.playFanfare();
+                }, 800);
+            }
+        }
+
+        // Haritaya Geri Dönüş
+        function backToMap() {
+            SoundFX.playClick();
+            document.getElementById('game-container').classList.add('hidden');
+            renderMap();
+        }
+
+        // Oyun Başlatıcı
+        function launchGame(id) {
+            SoundFX.playClick();
+            state.activeGameId = id;
+            document.getElementById('game-container').classList.remove('hidden');
+
+            const config = BADGES_CONFIG.find(b => b.id === id);
+            
+            // Kartın arka plan rengini ve boyutlarını ayarlıyoruz
+            const gameCard = document.getElementById('game-card');
+            gameCard.className = `rounded-3xl p-8 max-w-xl w-full text-center shadow-2xl border-4 relative flex flex-col justify-between min-h-[440px] max-h-[92vh] overflow-y-auto transition-all duration-500 ${config.colorClass}`;
+
+            const badgeTag = document.getElementById('game-badge-tag');
+            badgeTag.className = `text-[12px] border rounded-full px-3 py-1 font-black tracking-wider ${config.tagClass}`;
+            badgeTag.textContent = `ROZET GÖREVİ ${id}: ${config.name.toUpperCase()}`;
+
+            document.getElementById('game-title').textContent = config.name;
+            document.getElementById('game-desc').textContent = config.text;
+
+            document.getElementById('game-footer').innerHTML = `
+                <div class="text-[14px] font-black mb-1" id="game-status-text">Görevi tamamlamak için yönergeleri izle.</div>
+            `;
+
+            loadGameScene(id);
+        }
+
+        // Görevi Tamamlama Ortak Fonksiyonu
+        function completeActiveTask() {
+            state.unlockedBadges[state.activeGameId - 1] = true;
+
+            const gameFooter = document.getElementById('game-footer');
+            gameFooter.innerHTML = `
+                <div class="flex flex-col items-center gap-2 mt-1">
+                    <div class="text-[14px] font-black animate-bounce text-emerald-850">
+                        🎉 Muhteşem! Görevi Başarıyla Tamamladın ve Rozeti Kazandın!
+                    </div>
+                    <button onclick="backToMap()" class="title-font bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-black text-sm py-2.5 px-6 rounded-xl shadow-md transition transform hover:scale-105 active:scale-95 duration-150">
+                        HARİTAYA DÖN ➡️
+                    </button>
+                </div>
+            `;
+        }
+
+        function loadGameScene(id) {
+            const canvas = document.getElementById('game-canvas');
+            canvas.innerHTML = ''; 
+            const statusText = document.getElementById('game-status-text');
+
+            if (id === 1) {
+                // 🌱 FİDAN DİKME GÖREVİ
+                statusText.textContent = "Adımları sırayla takip ederek tohumu büyüt!";
+                canvas.innerHTML = `
+                    <div class="w-full max-w-sm flex flex-col items-center">
+                        <div id="tree-container" class="w-40 h-40 flex items-end justify-center filter drop-shadow-sm mb-4 overflow-hidden relative">
+                            <!-- Başlangıç Toprağı -->
+                            <svg class="w-full h-20" viewBox="0 0 100 50" style="margin-top: auto;">
+                                <path d="M 0 50 Q 50 30 100 50 Z" fill="#78350f" id="dirt-patch" />
+                            </svg>
+                        </div>
+                        <div class="flex gap-4 mt-1 justify-center w-full" id="tools-container">
+                            <button onclick="applyTool('hoe')" id="tool-hoe" class="bg-amber-100 hover:bg-amber-200 p-4 rounded-2xl text-3xl shadow-md active:scale-95 transition flex flex-col items-center w-24">⛏️ <p class="text-xs font-black text-amber-800 mt-1">Kaz</p></button>
+                            <button onclick="applyTool('seed')" id="tool-seed" class="bg-green-100 hover:bg-green-200 p-4 rounded-2xl text-3xl shadow-md active:scale-95 transition opacity-50 cursor-not-allowed flex flex-col items-center w-24" disabled>🌱 <p class="text-xs font-black text-green-800 mt-1">Ek</p></button>
+                            <button onclick="applyTool('water')" id="tool-water" class="bg-blue-100 hover:bg-blue-200 p-4 rounded-2xl text-3xl shadow-md active:scale-95 transition opacity-50 cursor-not-allowed flex flex-col items-center w-24" disabled>💧 <p class="text-xs font-black text-blue-800 mt-1">Sula</p></button>
+                        </div>
+                    </div>
+                `;
+                window.treeStep = 0;
+
+            } else if (id === 2) {
+                // 💧 SU TASARRUFU GÖREVİ
+                statusText.textContent = "Sızdıran musluklara tıklayarak kapat ve suları kurtar! (Hedef: 5 musluk kapatmak)";
+                window.drippedSaved = 0;
+                canvas.innerHTML = `
+                    <div class="w-full flex flex-col items-center">
+                        <div class="flex justify-around w-full gap-2 py-2 relative min-h-[140px]" id="taps-wrapper">
+                            <div class="flex flex-col items-center relative w-1/3">
+                                <span onclick="fixTap(1)" id="tap-1" class="text-4xl md:text-5xl cursor-pointer active:scale-90 transition select-none filter drop-shadow-md relative z-10 animate-bounce">🚰</span>
+                                <div id="drop-flow-1" class="absolute top-10 text-2xl text-blue-400 select-none dripping-drop">💧</div>
+                            </div>
+                            <div class="flex flex-col items-center relative w-1/3">
+                                <span onclick="fixTap(2)" id="tap-2" class="text-4xl md:text-5xl cursor-pointer active:scale-90 transition select-none filter drop-shadow-md relative z-10 animate-bounce">🚰</span>
+                                <div id="drop-flow-2" class="absolute top-10 text-2xl text-blue-400 select-none dripping-drop" style="animation-delay: 0.4s;">💧</div>
+                            </div>
+                            <div class="flex flex-col items-center relative w-1/3">
+                                <span onclick="fixTap(3)" id="tap-3" class="text-4xl md:text-5xl cursor-pointer active:scale-90 transition select-none filter drop-shadow-md relative z-10 animate-bounce">🚰</span>
+                                <div id="drop-flow-3" class="absolute top-10 text-2xl text-blue-400 select-none dripping-drop" style="animation-delay: 0.8s;">💧</div>
+                            </div>
+                        </div>
+                        <div class="font-black text-blue-800 text-xs mt-3 bg-blue-50 px-4 py-1.5 rounded-full border border-blue-200 shadow-sm">Kapatılan Musluk: <span id="water-saved-count" class="text-sm font-black text-blue-600">0</span>/5</div>
+                    </div>
+                `;
+
+            } else if (id === 3) {
+                // ♻️ GERI DÖNÜŞÜM GÖREVİ (Kare görünme sorunu için özel SVG çizimleri eklendi)
+                statusText.textContent = "Atıkları tutup doğru renklerdeki geri dönüşüm kutularına yerleştir!";
+                canvas.innerHTML = `
+                    <div class="w-full flex flex-col items-center gap-4">
+                        <!-- Sürüklenebilir Öğeler -->
+                        <div class="flex gap-4 justify-center items-center py-1 w-full" id="recyclable-items">
+                            <div id="waste-glass" class="bg-emerald-50 border border-emerald-300 rounded-xl p-2.5 flex flex-col items-center cursor-grab select-none shadow-sm hover:scale-105 active:scale-110 transition z-20" draggable="true" ondragstart="dragWaste(event)" data-waste="glass">
+                                <svg class="w-12 h-12" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="20" y="8" width="24" height="6" rx="2" fill="#10b981" />
+                                    <rect x="22" y="14" width="20" height="4" rx="1" fill="#047857" />
+                                    <path d="M16 22C16 19.7909 17.7909 18 20 18H44C46.2091 18 48 19.7909 48 22V50C48 53.3137 45.3137 56 42 56H22C18.6863 56 16 53.3137 16 50V22Z" fill="#a7f3d0" stroke="#059669" stroke-width="3" />
+                                    <path d="M22 24V50" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
+                                    <rect x="22" y="32" width="20" height="12" rx="1" fill="#ffffff" stroke="#059669" stroke-width="1" />
+                                    <line x1="25" y1="38" x2="39" y2="38" stroke="#059669" stroke-width="2" />
+                                </svg>
+                                <span class="text-[10px] font-black text-emerald-800 mt-1">Cam Kavanoz</span>
+                            </div>
+                            <div id="waste-paper" class="bg-blue-50 border border-blue-300 rounded-xl p-2.5 flex flex-col items-center cursor-grab select-none shadow-sm hover:scale-105 active:scale-110 transition z-20" draggable="true" ondragstart="dragWaste(event)" data-waste="paper">
+                                <svg class="w-12 h-12" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="14" y="14" width="36" height="36" rx="2" fill="#e2e8f0" stroke="#3b82f6" stroke-width="3" />
+                                    <rect x="18" y="10" width="36" height="36" rx="2" fill="#f1f5f9" stroke="#3b82f6" stroke-width="3" />
+                                    <line x1="24" y1="18" x2="46" y2="18" stroke="#64748b" stroke-width="3" stroke-linecap="round" />
+                                    <line x1="24" y1="24" x2="40" y2="24" stroke="#64748b" stroke-width="3" stroke-linecap="round" />
+                                    <line x1="24" y1="30" x2="46" y2="30" stroke="#64748b" stroke-width="3" stroke-linecap="round" />
+                                    <rect x="24" y="36" width="12" height="8" rx="1" fill="#93c5fd" />
+                                    <line x1="40" y1="38" x2="48" y2="38" stroke="#64748b" stroke-width="2" />
+                                    <line x1="40" y1="42" x2="46" y2="42" stroke="#64748b" stroke-width="2" />
+                                </svg>
+                                <span class="text-[10px] font-black text-blue-800 mt-1">Gazete</span>
+                            </div>
+                            <div id="waste-plastic" class="bg-amber-50 border border-amber-300 rounded-xl p-2.5 flex flex-col items-center cursor-grab select-none shadow-sm hover:scale-105 active:scale-110 transition z-20" draggable="true" ondragstart="dragWaste(event)" data-waste="plastic">
+                                <svg class="w-12 h-12" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <ellipse cx="32" cy="14" rx="20" ry="5" fill="#f59e0b" stroke="#d97706" stroke-width="3" />
+                                    <path d="M14 15.5L20 50C20.5 53 23 55 26.5 55H37.5C41 55 43.5 53 44 50L50 15.5" fill="#fef3c7" stroke="#d97706" stroke-width="3" stroke-linejoin="round" />
+                                    <path d="M18 28C25 31 39 31 46 28" stroke="#d97706" stroke-width="2.5" />
+                                    <ellipse cx="32" cy="38" rx="6" ry="4" fill="#f59e0b" />
+                                </svg>
+                                <span class="text-[10px] font-black text-amber-800 mt-1">Yoğurt Kabı</span>
+                            </div>
+                        </div>
+
+                        <!-- Geri Dönüşüm Kutuları -->
+                        <div class="grid grid-cols-3 gap-2 w-full max-w-sm mt-1">
+                            <div class="border-2 border-emerald-400 bg-emerald-50 rounded-xl py-3 flex flex-col items-center justify-center text-center shadow-sm" ondragover="allowDrop(event)" ondrop="dropWaste(event, 'glass')">
+                                <span class="text-xl">🟢</span>
+                                <span class="text-[9px] font-black text-emerald-800 leading-none mt-1">CAM KUTU</span>
+                            </div>
+                            <div class="border-2 border-blue-400 bg-blue-50 rounded-xl py-3 flex flex-col items-center justify-center text-center shadow-sm" ondragover="allowDrop(event)" ondrop="dropWaste(event, 'paper')">
+                                <span class="text-xl">🔵</span>
+                                <span class="text-[9px] font-black text-blue-800 leading-none mt-1">KAĞIT KUTU</span>
+                            </div>
+                            <div class="border-2 border-amber-400 bg-amber-50 rounded-xl py-3 flex flex-col items-center justify-center text-center shadow-sm" ondragover="allowDrop(event)" ondrop="dropWaste(event, 'plastic')">
+                                <span class="text-xl">🟡</span>
+                                <span class="text-[9px] font-black text-amber-800 leading-none mt-1">PLASTİK KUTU</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                window.wastesSorted = { glass: false, paper: false, plastic: false };
+
+            } else if (id === 4) {
+                // ☀️ GÜNEŞ ENERJİSİ GÖREVİ
+                statusText.textContent = "Güneş panelinin üzerindeki gri tozları üzerlerine tıklayarak temizle!";
+                canvas.innerHTML = `
+                    <div class="flex flex-col items-center w-full max-w-xs">
+                        <div class="flex justify-between items-center w-full px-2 mb-3">
+                            <span class="text-4xl filter drop-shadow-md">🏡</span>
+                            <div class="flex flex-col items-center">
+                                <span id="solar-lightbulb" class="text-4xl filter grayscale transition-all duration-500">💡</span>
+                                <span class="text-[10px] font-black text-amber-800 mt-0.5">Güneş Gücü</span>
+                            </div>
+                        </div>
+
+                        <!-- Güneş Paneli Matrisi -->
+                        <div class="bg-slate-800 border-2 border-slate-900 rounded-2xl p-2 w-full grid grid-cols-3 gap-2 relative overflow-hidden shadow-md">
+                            <div class="absolute inset-0 bg-yellow-300 opacity-0 transition-opacity duration-1000 pointer-events-none" id="panel-activation-glow"></div>
+                            
+                            <div class="solar-dust bg-neutral-500/95 h-10 rounded-lg flex items-center justify-center text-[10px] font-bold text-white cursor-pointer select-none border border-neutral-400 hover:bg-transparent shadow-inner" onmouseover="scratchDirt(this)" onclick="scratchDirt(this)">Toz 🌫️</div>
+                            <div class="solar-dust bg-neutral-500/95 h-10 rounded-lg flex items-center justify-center text-[10px] font-bold text-white cursor-pointer select-none border border-neutral-400 hover:bg-transparent shadow-inner" onmouseover="scratchDirt(this)" onclick="scratchDirt(this)">Toz 🌫️</div>
+                            <div class="solar-dust bg-neutral-500/95 h-10 rounded-lg flex items-center justify-center text-[10px] font-bold text-white cursor-pointer select-none border border-neutral-400 hover:bg-transparent shadow-inner" onmouseover="scratchDirt(this)" onclick="scratchDirt(this)">Toz 🌫️</div>
+                            <div class="solar-dust bg-neutral-500/95 h-10 rounded-lg flex items-center justify-center text-[10px] font-bold text-white cursor-pointer select-none border border-neutral-400 hover:bg-transparent shadow-inner" onmouseover="scratchDirt(this)" onclick="scratchDirt(this)">Toz 🌫️</div>
+                            <div class="solar-dust bg-neutral-500/95 h-10 rounded-lg flex items-center justify-center text-[10px] font-bold text-white cursor-pointer select-none border border-neutral-400 hover:bg-transparent shadow-inner" onmouseover="scratchDirt(this)" onclick="scratchDirt(this)">Toz 🌫️</div>
+                            <div class="solar-dust bg-neutral-500/95 h-10 rounded-lg flex items-center justify-center text-[10px] font-bold text-white cursor-pointer select-none border border-neutral-400 hover:bg-transparent shadow-inner" onmouseover="scratchDirt(this)" onclick="scratchDirt(this)">Toz 🌫️</div>
+                        </div>
+                    </div>
+                `;
+                window.solarCleanCount = 0;
+
+            } else if (id === 5) {
+                // 🌍 DOĞA SEÇİMLERİ TESTİ
+                statusText.textContent = "Soruları doğru yanıtlayarak İklim Kahramanı rozetini hak et!";
+                window.quizStep = 0;
+                renderQuizStep();
+            }
+        }
+
+        // 🌱 GÖREV 1: AĞAÇ DOSTU İŞLEMLERİ
+        function applyTool(tool) {
+            const treeContainer = document.getElementById('tree-container');
+            const statusText = document.getElementById('game-status-text');
+
+            if (tool === 'hoe' && window.treeStep === 0) {
+                SoundFX.playClick();
+                treeContainer.innerHTML = `
+                    <svg class="w-full h-20" viewBox="0 0 100 50" style="margin-top: auto;">
+                        <path d="M 0 50 Q 50 30 100 50 Z" fill="#78350f" />
+                        <ellipse cx="50" cy="40" rx="15" ry="6" fill="#451a03" />
+                    </svg>
+                `;
+                document.getElementById('tool-hoe').classList.add('opacity-50', 'cursor-not-allowed');
+                document.getElementById('tool-hoe').disabled = true;
+                
+                document.getElementById('tool-seed').classList.remove('opacity-50', 'cursor-not-allowed');
+                document.getElementById('tool-seed').disabled = false;
+                window.treeStep = 1;
+                statusText.textContent = "Harika! Şimdi tohumu kazılan toprağa ek!";
+
+            } else if (tool === 'seed' && window.treeStep === 1) {
+                SoundFX.playClick();
+                treeContainer.innerHTML = `
+                    <svg class="w-full h-20" viewBox="0 0 100 50" style="margin-top: auto;">
+                        <path d="M 0 50 Q 50 30 100 50 Z" fill="#78350f" />
+                        <ellipse cx="50" cy="40" rx="15" ry="6" fill="#451a03" />
+                        <circle cx="50" cy="38" r="4" fill="#bef264" />
+                    </svg>
+                `;
+                document.getElementById('tool-seed').classList.add('opacity-50', 'cursor-not-allowed');
+                document.getElementById('tool-seed').disabled = true;
+                
+                document.getElementById('tool-water').classList.remove('opacity-50', 'cursor-not-allowed');
+                document.getElementById('tool-water').disabled = false;
+                window.treeStep = 2;
+                statusText.textContent = "Çok güzel! Şimdi can suyunu dök ve muhteşem ağacını büyüt!";
+
+            } else if (tool === 'water' && window.treeStep === 2) {
+                SoundFX.playSuccess();
+                treeContainer.innerHTML = `
+                    <svg class="w-full h-40 animate-bounce" viewBox="0 0 100 100" style="margin-top: auto;">
+                        <path d="M 0 100 Q 50 88 100 100 Z" fill="#78350f" />
+                        <path d="M 46 100 L 49 45 L 51 45 L 54 100 Z" fill="#5c2d11" />
+                        <path d="M 50 65 Q 70 55, 76 48" stroke="#5c2d11" stroke-width="5" stroke-linecap="round" fill="none" />
+                        <path d="M 50 70 Q 30 60, 24 54" stroke="#5c2d11" stroke-width="5" stroke-linecap="round" fill="none" />
+                        <circle cx="50" cy="35" r="22" fill="#166534" />
+                        <circle cx="32" cy="48" r="16" fill="#15803d" />
+                        <circle cx="68" cy="45" r="18" fill="#14532d" />
+                        <circle cx="50" cy="48" r="16" fill="#22c55e" />
+                        <circle cx="48" cy="28" r="3" fill="#ef4444" />
+                        <circle cx="30" cy="46" r="3" fill="#ef4444" />
+                        <circle cx="66" cy="42" r="3" fill="#ef4444" />
+                        <circle cx="54" cy="46" r="3" fill="#ef4444" />
+                    </svg>
+                `;
+                document.getElementById('tool-water').classList.add('opacity-50', 'cursor-not-allowed');
+                document.getElementById('tool-water').disabled = true;
+
+                completeActiveTask();
+            }
+        }
+
+        // 💧 GÖREV 2: SU KORUYUCUSU İŞLEMLERİ
+        function fixTap(tapId) {
+            const tap = document.getElementById(`tap-${tapId}`);
+            const drop = document.getElementById(`drop-flow-${tapId}`);
+
+            if (tap && !tap.classList.contains('opacity-40')) {
+                SoundFX.playClick();
+                tap.classList.remove('animate-bounce');
+                tap.classList.add('opacity-40');
+                if (drop) {
+                    drop.className = "hidden"; 
+                }
+
+                window.drippedSaved++;
+                document.getElementById('water-saved-count').textContent = window.drippedSaved;
+
+                if (window.drippedSaved >= 5) {
+                    SoundFX.playSuccess();
+                    completeActiveTask();
+                } else {
+                    setTimeout(() => {
+                        tap.classList.remove('opacity-40');
+                        tap.classList.add('animate-bounce');
+                        if (drop) {
+                            drop.className = "absolute top-10 text-2xl text-blue-400 select-none dripping-drop";
+                        }
+                    }, 2500);
+                }
+            }
+        }
+
+        // ♻️ GÖREV 3: GERİ DÖNÜŞÜM İŞLEMLERİ
+        function allowDrop(e) {
+            e.preventDefault();
+        }
+
+        function dragWaste(e) {
+            e.dataTransfer.setData("text", e.target.getAttribute('data-waste'));
+            e.dataTransfer.setData("elementId", e.target.id);
+        }
+
+        function dropWaste(e, targetType) {
+            e.preventDefault();
+            const wasteType = e.dataTransfer.getData("text");
+            const elementId = e.dataTransfer.getData("elementId");
+
+            if (wasteType === targetType) {
+                SoundFX.playClick();
+                const wasteEl = document.getElementById(elementId);
+                if (wasteEl) wasteEl.remove();
+
+                window.wastesSorted[targetType] = true;
+
+                if (window.wastesSorted.glass && window.wastesSorted.paper && window.wastesSorted.plastic) {
+                    SoundFX.playSuccess();
+                    completeActiveTask();
+                }
+            } else {
+                const card = e.target.closest('div');
+                SoundFX.playSplash();
+                card.classList.add('animate-shake');
+                setTimeout(() => {
+                    card.classList.remove('animate-shake');
+                }, 400);
+            }
+        }
+
+        // ☀️ GÖREV 4: GÜNEŞ ENERJİSİ UZMANI
+        function scratchDirt(element) {
+            if (element.classList.contains('cleaned')) return;
+
+            SoundFX.playClean();
+            element.classList.add('cleaned');
+            window.solarCleanCount++;
+
+            if (window.solarCleanCount >= 6) {
+                SoundFX.playSuccess();
+                document.getElementById('solar-lightbulb').className = 'text-4xl filter-none text-yellow-400 animate-pulse';
+                document.getElementById('panel-activation-glow').className = 'absolute inset-0 bg-yellow-200 opacity-40 transition-opacity duration-1000 pointer-events-none';
+                completeActiveTask();
+            }
+        }
+
+        // 🌍 GÖREV 5: İKLİM KAHRAMANI TESTİ
+        const QUIZ_QUESTIONS = [
+            {
+                q: "Dişlerimizi fırçalarken musluğu ne yapmalıyız?",
+                options: [
+                    { text: "Boş yere akıtmaya devam etmeliyiz 🚫", correct: false },
+                    { text: "Kapatmalı ve suyu korumalıyız 💧", correct: true }
+                ]
+            },
+            {
+                q: "Odamızdan çıkarken ışıkları ne yapmalıyız?",
+                options: [
+                    { text: "Açık bırakıp gitmeliyiz 🚫", correct: false },
+                    { text: "Söndürüp enerji tasarrufu yapmalıyız 💡", correct: true }
+                ]
+            },
+            {
+                q: "Yere düşen plastik şişeyi ne yapmalıyız?",
+                options: [
+                    { text: "Toprağa ve doğaya fırlatmalıyız 🚫", correct: false },
+                    { text: "Geri dönüşüm sarı kutusuna atmalıyız ♻️", correct: true }
+                ]
+            },
+            {
+                q: "Çok yakın yerlere gitmek için hangisini tercih etmeliyiz?",
+                options: [
+                    { text: "Yürümek veya bisiklete binmek 🚲", correct: true },
+                    { text: "Hemen büyük arabaya binmek 🚗", correct: false }
+                ]
+            },
+            {
+                q: "Alışveriş yaparken poşet yerine ne kullanmalıyız?",
+                options: [
+                    { text: "Tekrar kullanılabilen bez çanta 🛍️", correct: true },
+                    { text: "Her seferinde yeni naylon poşet 🚫", correct: false }
+                ]
+            }
+        ];
+
+        function renderQuizStep() {
+            const canvas = document.getElementById('game-canvas');
+            const statusText = document.getElementById('game-status-text');
+            
+            const current = QUIZ_QUESTIONS[window.quizStep];
+            statusText.textContent = `Soru ${window.quizStep + 1}/5: Doğru seçeneği bul!`;
+
+            canvas.innerHTML = `
+                <div class="w-full flex flex-col items-center">
+                    <p class="text-xs md:text-sm font-black text-sky-950 mb-4 text-center px-4 leading-relaxed">${current.q}</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-sm px-2">
+                        <button onclick="handleQuizAnswer(${current.options[0].correct}, this)" class="bg-white hover:bg-sky-100 border-2 border-sky-100 p-3 rounded-2xl font-bold text-xs text-sky-900 shadow-sm active:scale-95 transition-all text-center leading-tight">
+                            ${current.options[0].text}
+                        </button>
+                        <button onclick="handleQuizAnswer(${current.options[1].correct}, this)" class="bg-white hover:bg-sky-100 border-2 border-sky-100 p-3 rounded-2xl font-bold text-xs text-sky-900 shadow-sm active:scale-95 transition-all text-center leading-tight">
+                            ${current.options[1].text}
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function handleQuizAnswer(isCorrect, btnElement) {
+            if (isCorrect) {
+                SoundFX.playSuccess();
+                btnElement.className = "bg-green-100 border-2 border-green-500 p-3 rounded-2xl font-black text-xs text-green-900 shadow-md animate-bounce text-center leading-tight";
+                
+                setTimeout(() => {
+                    window.quizStep++;
+                    if (window.quizStep >= 5) {
+                        completeActiveTask();
+                    } else {
+                        renderQuizStep();
+                    }
+                }, 1500);
+            } else {
+                SoundFX.playSplash();
+                btnElement.classList.add('animate-shake');
+                btnElement.className = "bg-rose-100 border-2 border-rose-500 p-3 rounded-2xl font-bold text-xs text-rose-900 shadow-sm text-center leading-tight animate-shake";
+                setTimeout(() => {
+                    btnElement.className = "bg-white hover:bg-sky-100 border-2 border-sky-100 p-3 rounded-2xl font-bold text-xs text-sky-900 shadow-md active:scale-95 transition-all text-center leading-tight";
+                }, 800);
+            }
+        }
+
+        // Sertifikayı Açma
+        function showCertificate() {
+            SoundFX.playFanfare();
+            
+            const today = new Date();
+            const dateStr = today.toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            document.getElementById('cert-date').textContent = dateStr;
+            document.getElementById('cert-player-name').textContent = state.playerName.toUpperCase();
+            
+            document.getElementById('victory-overlay').classList.add('hidden');
+            document.getElementById('certificate-screen').classList.remove('hidden');
+
+            triggerConfetti();
+        }
+
+        // Konfeti Efekti
+        function triggerConfetti() {
+            for (let i = 0; i < 45; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'fixed w-2.5 h-2.5 rounded-full pointer-events-none z-50';
+                confetti.style.left = `${Math.random() * 100}vw`;
+                confetti.style.top = `-10px`;
+                confetti.style.backgroundColor = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#ec4899', '#a855f7'][Math.floor(Math.random() * 6)];
+                document.body.appendChild(confetti);
+
+                const duration = Math.random() * 3 + 2;
+                const angle = Math.random() * 360;
+
+                confetti.animate([
+                    { transform: 'translate(0, 0) rotate(0deg)', opacity: 1 },
+                    { transform: `translate(${(Math.random() - 0.5) * 200}px, 105vh) rotate(${angle}deg)`, opacity: 0 }
+                ], {
+                    duration: duration * 1000,
+                    easing: 'cubic-bezier(0.1, 0.8, 0.3, 1)',
+                    fill: 'forwards'
+                });
+
+                setTimeout(() => confetti.remove(), duration * 1000);
+            }
+        }
+
+        // Oyunu Sıfırlama
+        function restartGame() {
+            SoundFX.playClick();
+            state.unlockedBadges = [false, false, false, false, false];
+            state.activeGameId = null;
+            document.getElementById('player-name').value = '';
+            document.getElementById('certificate-screen').classList.add('hidden');
+            document.getElementById('victory-overlay').classList.add('hidden');
+            document.getElementById('map-screen').classList.add('hidden');
+            document.getElementById('instructions-screen').classList.add('hidden');
+            document.getElementById('video-screen').classList.add('hidden');
+            document.getElementById('intro-screen').classList.remove('hidden');
+            
+            const video = document.getElementById('intro-video');
+            if (video) {
+                video.pause();
+                video.currentTime = 0;
+            }
+        }
+
+        // Pencere Yüklendiğinde Haritayı Hazırla
+        window.onload = function() {
+            renderMap();
+        };
+    </script>
+</body>
+</html>

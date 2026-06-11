@@ -1,0 +1,1070 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sıfır Atık Elçisi Akademisi</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Simgeleri -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Quicksand:wght=500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            /* Mint Yeşili ve Lila Geçişli Yeni Premium Arka Plan */
+            background: linear-gradient(135deg, #e6f9f0 0%, #f1e6fe 100%);
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .kids-title {
+            font-family: 'Bubblegum Sans', cursive;
+        }
+        .bounce-slow {
+            animation: bounce 3s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+        .pulse-soft {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.06); }
+        }
+        .shake-element {
+            animation: shake 0.5s;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+        .bin-hover {
+            transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .bin-hover:hover {
+            transform: scale(1.08) translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .sway-animation {
+            animation: sway 4s ease-in-out infinite alternate;
+            transform-origin: bottom center;
+        }
+        @keyframes sway {
+            0% { transform: rotate(-3deg); }
+            100% { transform: rotate(3deg); }
+        }
+        
+        /* Tam Ekran Arka Plan Tasarımı (a.jpg tam sığacak şekilde optimize edildi) */
+        #screen-instruction {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            background-image: url('a.jpg') !important;
+            background-size: contain !important; /* Görselin hiçbir kısmının kesilmemesini sağlar */
+            background-position: center !important;
+            background-repeat: no-repeat !important;
+            background-color: #f0fdf4; /* Görselin boşluk kalan kenarları için soft mint rengi */
+            border: none !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            z-index: 9999 !important;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between overflow-x-hidden p-3 md:p-6">
+
+    <!-- ÜST AKADEMİ BAŞLIĞI -->
+    <header class="w-full max-w-5xl mx-auto flex justify-between items-center bg-white/90 backdrop-blur-md p-3 md:p-4 rounded-3xl shadow-md border-b-4 border-green-200 z-10 mb-4">
+        <div class="flex items-center gap-2 md:gap-4">
+            <div class="bg-gradient-to-tr from-green-400 to-emerald-500 p-2 md:p-3 rounded-2xl text-white text-xl md:text-3xl shadow-md animate-pulse">
+                <i class="fa-solid fa-graduation-cap"></i>
+            </div>
+            <div>
+                <h1 class="kids-title text-2xl md:text-4xl text-emerald-600 tracking-wide leading-none">Sıfır Atık</h1>
+                <p class="text-[10px] md:text-xs text-emerald-800 font-black tracking-widest uppercase">Çocuk Çevre Akademisi</p>
+            </div>
+        </div>
+        
+        <div class="flex items-center gap-2">
+            <!-- Ses Aç/Kapat Butonu -->
+            <button id="btn-voice" onclick="toggleVoice()" class="bg-gradient-to-r from-amber-400 to-yellow-300 hover:from-amber-500 hover:to-yellow-400 text-amber-950 p-2.5 md:p-3.5 rounded-2xl transition-all duration-200 active:scale-95 shadow-md border-b-4 border-amber-600 flex items-center justify-center" title="Sesi Aç/Kapat">
+                <i id="voice-icon" class="fa-solid fa-volume-high text-lg md:text-xl"></i>
+            </button>
+            <!-- Yıldız Göstergesi -->
+            <div class="bg-gradient-to-r from-emerald-500 to-green-500 text-white px-3 md:px-5 py-2 rounded-2xl font-black shadow-md flex items-center gap-2 text-sm md:text-base border-b-4 border-emerald-700">
+                <i class="fa-solid fa-medal text-yellow-300 text-lg animate-bounce"></i>
+                <span id="score-text">Yıldız: 0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- ANA OYUN ALANI -->
+    <main class="flex-grow flex flex-col items-center justify-center w-full max-w-5xl mx-auto z-10">
+        
+        <!-- EKRAN 1: SIFIR ATIK YÖNERGE EKRANI (a.jpg Arka Planlı Tam Ekran Sade Tasarım) -->
+        <div id="screen-instruction" class="flex flex-col items-center justify-center">
+            
+            <!-- Sadece Başlık Barındıran Sade Cam Efektli Kart -->
+            <div class="p-6 md:p-8 rounded-3xl border-2 border-white/60 w-full max-w-lg text-center bg-white/80 backdrop-blur-md shadow-xl z-10 relative flex flex-col items-center gap-6">
+                <h2 class="kids-title text-3xl md:text-4xl text-emerald-600 tracking-tight leading-snug">
+                    Sıfır Atık Elçisi! 🌍
+                </h2>
+
+                <!-- Zarif ve Şık Başla ve Ses Dinle Butonları -->
+                <div class="w-full flex flex-col sm:flex-row gap-4 items-center justify-center pt-2">
+                    <!-- Zarif Yönergeyi Dinle Butonu -->
+                    <button onclick="playInstructionVoice()" class="w-full sm:w-auto bg-amber-50 hover:bg-amber-100/80 text-amber-900 font-extrabold text-sm py-3 px-6 rounded-2xl shadow-md border-2 border-amber-300 transition-all duration-200 active:scale-95 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-volume-high text-lg"></i>
+                        <span>SESLİ DİNLE 🔊</span>
+                    </button>
+                    
+                    <!-- Zarif Oyuna Başla Butonu -->
+                    <button onclick="startQuestTwo()" class="w-full sm:flex-grow bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold text-base py-3 px-8 rounded-2xl shadow-lg transition-all duration-200 active:scale-95 border-b-4 border-emerald-700 flex items-center justify-center gap-1.5">
+                        <span>OYUNA BAŞLA!</span> <i class="fa-solid fa-play text-sm animate-pulse"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- EKRAN 2: GERİ DÖNÜŞÜM AYRIŞTIRMA OYUN ALANI -->
+        <div id="screen-game" class="hidden w-full flex flex-col justify-between items-center gap-6">
+            
+            <!-- İnce ve Şık İlerleme Çubuğu -->
+            <div class="w-full bg-white/95 px-4 py-2.5 rounded-2xl shadow-md border border-green-200 flex items-center justify-between gap-4">
+                <span class="text-xs md:text-sm font-black text-emerald-800 flex items-center gap-1.5 flex-shrink-0">
+                    <i class="fa-solid fa-bars-progress text-emerald-500"></i> Görev Durumu:
+                </span>
+                <div class="flex-grow bg-slate-100 rounded-full h-3.5 relative overflow-hidden">
+                    <div id="sorting-progress-bar" class="bg-gradient-to-r from-green-400 to-emerald-500 h-full w-0 transition-all duration-300"></div>
+                </div>
+                <span id="sorting-progress-text" class="text-xs font-black text-emerald-900 flex-shrink-0">0 / 10</span>
+            </div>
+
+            <!-- Sürüklenen Atık Kartı -->
+            <div class="my-6 flex flex-col items-center justify-center min-h-[200px]">
+                <div id="waste-container" class="relative cursor-grab active:cursor-grabbing transition-transform" draggable="true">
+                    <!-- Dinamik Atık Kartı JS ile oluşturulur -->
+                </div>
+                <p id="waste-label-under" class="mt-4 text-xl md:text-2xl font-black text-slate-800 bg-white px-6 py-2 rounded-full shadow-md border-2 border-slate-100"></p>
+            </div>
+
+            <!-- Geri Dönüşüm Kutuları Gridi -->
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 w-full mt-4">
+                
+                <!-- KAĞIT (Mavi) -->
+                <div id="bin-paper" class="bin-hover bg-blue-50/80 border-4 border-blue-400 rounded-3xl p-3 flex flex-col items-center justify-between text-center min-h-[140px] md:min-h-[160px] cursor-pointer" data-type="paper">
+                    <div class="text-blue-500 text-4xl"><i class="fa-solid fa-file-lines"></i></div>
+                    <div class="font-black text-blue-950 text-base md:text-lg">KAĞIT</div>
+                    <div class="w-full bg-blue-500 text-white text-[10px] font-black py-1 px-1.5 rounded-xl mt-1.5 uppercase tracking-wider">MAVİ KUTU</div>
+                </div>
+
+                <!-- PLASTİK (Sarı) -->
+                <div id="bin-plastic" class="bin-hover bg-yellow-50/80 border-4 border-yellow-400 rounded-3xl p-3 flex flex-col items-center justify-between text-center min-h-[140px] md:min-h-[160px] cursor-pointer" data-type="plastic">
+                    <div class="text-yellow-500 text-4xl"><i class="fa-solid fa-bottle-water"></i></div>
+                    <div class="font-black text-yellow-950 text-base md:text-lg">PLASTİK</div>
+                    <div class="w-full bg-yellow-400 text-slate-800 text-[10px] font-black py-1 px-1.5 rounded-xl mt-1.5 uppercase tracking-wider">SARI KUTU</div>
+                </div>
+
+                <!-- CAM (Yeşil) -->
+                <div id="bin-glass" class="bin-hover bg-emerald-50/80 border-4 border-emerald-400 rounded-3xl p-3 flex flex-col items-center justify-between text-center min-h-[140px] md:min-h-[160px] cursor-pointer" data-type="glass">
+                    <div class="text-emerald-500 text-4xl"><i class="fa-solid fa-wine-glass"></i></div>
+                    <div class="font-black text-emerald-950 text-base md:text-lg">CAM</div>
+                    <div class="w-full bg-emerald-500 text-white text-[10px] font-black py-1 px-1.5 rounded-xl mt-1.5 uppercase tracking-wider">YEŞİL KUTU</div>
+                </div>
+
+                <!-- METAL (Gri) -->
+                <div id="bin-metal" class="bin-hover bg-gray-50/80 border-4 border-gray-400 rounded-3xl p-3 flex flex-col items-center justify-between text-center min-h-[140px] md:min-h-[160px] cursor-pointer" data-type="metal">
+                    <div class="text-gray-600 text-4xl"><i class="fa-solid fa-prescription-bottle"></i></div>
+                    <div class="font-black text-gray-950 text-base md:text-lg">METAL</div>
+                    <div class="w-full bg-gray-500 text-white text-[10px] font-black py-1 px-1.5 rounded-xl mt-1.5 uppercase tracking-wider">GRİ KUTU</div>
+                </div>
+
+                <!-- ORGANİK (Kahverengi) -->
+                <div id="bin-organic" class="bin-hover bg-amber-50/80 border-4 border-amber-600 rounded-3xl p-3 flex flex-col items-center justify-between text-center min-h-[140px] md:min-h-[160px] col-span-2 sm:col-span-1 cursor-pointer" data-type="organic">
+                    <div class="text-amber-700 text-4xl"><i class="fa-solid fa-apple-whole"></i></div>
+                    <div class="font-black text-amber-950 text-base md:text-lg">ORGANİK</div>
+                    <div class="w-full bg-amber-700 text-white text-[10px] font-black py-1 px-1.5 rounded-xl mt-1.5 uppercase tracking-wider">KAHVERENGİ</div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- EKRAN 3: SİHİRLİ DÖNÜŞÜM ATÖLYESİ -->
+        <div id="screen-compost" class="hidden w-full max-w-3xl bg-white/95 p-6 md:p-8 rounded-3xl shadow-2xl border-4 border-yellow-300 flex flex-col gap-6">
+            
+            <!-- Çift Atölye Seçim Ekranı -->
+            <div id="workshop-selection" class="flex flex-col gap-6 items-center">
+                <div class="text-center">
+                    <h3 class="kids-title text-3xl md:text-4xl text-amber-800 leading-none">3. GÖREV: Sihirli Dönüşüm Atölyesi</h3>
+                    <p class="text-gray-600 font-bold mt-2">Geri kazandığımız atıklarla ne yapmak istersin? Birini seç!</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-xl">
+                    <!-- Seçenek A: Organik Gübre ve Sarı Lale -->
+                    <button onclick="selectWorkshop('compost')" class="bg-amber-100 hover:bg-amber-200 border-4 border-amber-500 p-6 rounded-3xl shadow-md transition-all flex flex-col items-center gap-3 text-center">
+                        <span class="text-6xl animate-bounce-slow">🌷</span>
+                        <span class="font-black text-xl text-amber-900 leading-tight">Sihirli Toprak & Sarı Laleler</span>
+                        <p class="text-xs text-amber-800 font-semibold">Muz ve yumurta kabuklarından harika bitki gübresi yapıp sarı laleler yetiştirelim!</p>
+                    </button>
+                    <!-- Seçenek B: Oyuncak Geri Dönüşüm Robotu -->
+                    <button onclick="selectWorkshop('toy')" class="bg-blue-100 hover:bg-blue-200 border-4 border-blue-500 p-6 rounded-3xl shadow-md transition-all flex flex-col items-center gap-3 text-center">
+                        <span class="text-6xl animate-bounce-slow">🤖</span>
+                        <span class="font-black text-xl text-blue-950 leading-tight">Oyuncak Geri Dönüşüm Robotu</span>
+                        <p class="text-xs text-blue-900 font-semibold">Metal ve plastik şişeleri sevimli bir trene dönüştürelim!</p>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ATÖLYE BRANŞI A: SARI LALE YETİŞTİRME OYUNU -->
+            <div id="branch-compost" class="hidden flex flex-col items-center gap-4">
+                <div class="bg-amber-50 p-3 rounded-2xl border border-amber-200 w-full text-center">
+                    <p class="text-amber-900 font-black text-lg">Topladığımız atık maddeler toprak için gübre oldu! Sihirli gübreyi fidanın üzerine bırak!</p>
+                </div>
+
+                <div class="flex flex-col sm:flex-row items-center justify-around w-full gap-6 my-2">
+                    <!-- Organik Gübre Torbası -->
+                    <div id="compost-bag" class="flex flex-col items-center cursor-grab active:cursor-grabbing p-4 bg-amber-100 border-4 border-dashed border-amber-500 rounded-3xl w-40" draggable="true">
+                        <div class="text-amber-700 text-5xl mb-1"><i class="fa-solid fa-seedling"></i></div>
+                        <span class="font-black text-amber-900 text-sm">Organik Gübre</span>
+                        <span class="text-[10px] text-amber-700 font-bold bg-white px-2 py-0.5 rounded-full mt-1.5">Sürükle veya Dokun</span>
+                    </div>
+
+                    <div class="hidden sm:block text-amber-400 text-4xl animate-pulse">
+                        <i class="fa-solid fa-circle-arrow-right"></i>
+                    </div>
+
+                    <!-- Çiçek Saksısı ve Gelişim Evreleri -->
+                    <div id="flower-pot" class="flex flex-col items-center p-4 bg-green-50 rounded-3xl border-4 border-green-300 w-52 cursor-pointer">
+                        <div id="flower-stage" class="h-36 w-full flex items-end justify-center mb-2 overflow-hidden">
+                            <!-- Filiz Evresi (İlk Hali) -->
+                            <div class="text-amber-800 text-5xl"><i class="fa-solid fa-seedling"></i></div>
+                        </div>
+                        <span id="flower-status-text" class="font-black text-green-800 text-sm">Yavru Filiz</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ATÖLYE BRANŞI B: OYUNCAK GERİ DÖNÜŞÜM ROBOTU -->
+            <div id="branch-toy" class="hidden flex flex-col items-center gap-4">
+                <div class="bg-blue-50 p-3 rounded-2xl border border-blue-200 w-full text-center">
+                    <p class="text-blue-950 font-black text-lg">Metal ve plastikleri toplayıp ayrıştırdın! Şimdi oyuncak trenini yap!</p>
+                </div>
+
+                <div class="flex flex-col sm:flex-row items-center justify-around w-full gap-6 my-2">
+                    <!-- Metal ve Plastik Kovası -->
+                    <div id="toy-raw-material" class="flex flex-col items-center cursor-grab active:cursor-grabbing p-4 bg-blue-100 border-4 border-dashed border-blue-400 rounded-3xl w-40" draggable="true">
+                        <div class="text-blue-600 text-5xl mb-1"><i class="fa-solid fa-recycle"></i></div>
+                        <span class="font-black text-blue-950 text-sm">Dönüşüm Maddesi</span>
+                        <span class="text-[10px] text-blue-800 font-bold bg-white px-2 py-0.5 rounded-full mt-1.5">Sürükle veya Dokun</span>
+                    </div>
+
+                    <div class="hidden sm:block text-blue-400 text-4xl animate-pulse">
+                        <i class="fa-solid fa-circle-arrow-right"></i>
+                    </div>
+
+                    <!-- Oyuncak Yapıcı Robot Haznesi -->
+                    <div id="toy-robot" class="flex flex-col items-center p-4 bg-slate-50 rounded-3xl border-4 border-slate-300 w-48 cursor-pointer">
+                        <div id="robot-stage" class="h-28 flex items-center justify-center mb-2">
+                            <div class="text-slate-600 text-6xl animate-bounce-slow"><i class="fa-solid fa-robot"></i></div>
+                        </div>
+                        <span id="robot-status-text" class="font-black text-slate-800 text-sm">Tren Yapma Robotu</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Geri ve İleri Butonları -->
+            <div class="flex justify-between w-full mt-2">
+                <button id="btn-workshop-back" onclick="resetWorkshopBranch()" class="hidden bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-4 py-2 rounded-xl transition-all text-xs">
+                    <i class="fa-solid fa-rotate-left mr-1"></i> Başka Şey Yap
+                </button>
+                <button id="btn-next-victory" onclick="showVictory()" class="hidden bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-black text-lg py-3 px-6 rounded-2xl shadow-md transition-all">
+                    Harika! Ödülü Al <i class="fa-solid fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- EKRAN 4: SADE VE SAKİN ZAFER EKRANI -->
+        <div id="screen-victory" class="hidden w-full max-w-xl mx-auto bg-white p-8 rounded-3xl shadow-xl border-t-8 border-green-500 text-center flex flex-col items-center gap-6 relative">
+            
+            <div class="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center border-2 border-green-100">
+                <span class="text-4xl animate-bounce">🌿</span>
+            </div>
+
+            <div class="space-y-2">
+                <h2 class="kids-title text-3xl text-green-700 font-extrabold">Harika Bir Çevre Elçisisin!</h2>
+                <p class="text-slate-500 text-sm font-semibold">Gezegenimizi korumak için attığın bu adımlar dünyayı çok daha güzel bir yer yapacak.</p>
+            </div>
+
+            <!-- İnteraktif Sade Sertifika Kutusu -->
+            <div class="w-full bg-slate-50/50 p-6 rounded-2xl border border-slate-100 flex flex-col items-center">
+                <span class="text-xs font-black tracking-widest text-emerald-600 uppercase">Sıfır Atık Belgesi</span>
+                <p class="text-slate-800 text-xl font-bold mt-2">DOĞA DOSTU SÜPER KORUYUCU</p>
+                <p class="text-slate-500 text-xs mt-1">Geri dönüşüm görevlerini üstün başarıyla tamamladı.</p>
+                
+                <div class="flex gap-2 mt-4 text-2xl">
+                    <span>🏅</span>
+                    <span>✨</span>
+                    <span>🌎</span>
+                </div>
+            </div>
+
+            <button onclick="restartGame()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-sm">
+                Yeniden Oyna
+            </button>
+        </div>
+
+    </main>
+
+    <!-- TOAST BİLGİLENDİRME POPUP -->
+    <div id="toast" class="fixed top-24 left-1/2 -translate-x-1/2 bg-white px-6 py-3 rounded-2xl shadow-xl border-4 font-bold text-lg flex items-center gap-3 transition-all duration-300 scale-0 z-50">
+        <!-- Dinamik içerik -->
+    </div>
+
+    <!-- JAVASCRIPT KODLARI -->
+    <script>
+        let score = 0;
+        let activeIndex = 0;
+        let selectedWasteItem = null; 
+        let isVoiceEnabled = true;
+        let currentVoiceFile = "";
+        let currentAudioObject = null;
+
+        // Atölye seslerinin sadece 1 kez çalmasını kontrol eden kilitler
+        let hasPlayedWorkshopSelectionVoice = false;
+        let hasPlayedCompostBranchVoice = false;
+        let hasPlayedToyBranchVoice = false;
+
+        // WEB AUDIO API ile Sentezlenmiş Arka Plan Sesleri
+        let audioCtx = null;
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playSuccessSound() {
+            try {
+                initAudio();
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.type = 'sine';
+                let now = audioCtx.currentTime;
+                osc.frequency.setValueAtTime(523.25, now); // C5
+                osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
+                osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
+                osc.frequency.setValueAtTime(1046.50, now + 0.3); // C6
+                gain.gain.setValueAtTime(0.12, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                osc.start(now);
+                osc.stop(now + 0.55);
+            } catch(e) { console.log(e); }
+        }
+
+        function playFailSound() {
+            try {
+                initAudio();
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.type = 'sawtooth';
+                let now = audioCtx.currentTime;
+                osc.frequency.setValueAtTime(160, now);
+                osc.frequency.exponentialRampToValueAtTime(100, now + 0.35);
+                gain.gain.setValueAtTime(0.12, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                osc.start(now);
+                osc.stop(now + 0.45);
+            } catch(e) { console.log(e); }
+        }
+
+        function playRobotSound() {
+            try {
+                initAudio();
+                let now = audioCtx.currentTime;
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(120, now);
+                osc.frequency.linearRampToValueAtTime(350, now + 0.8);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.9);
+                osc.start(now);
+                osc.stop(now + 1.0);
+            } catch(e) { console.log(e); }
+        }
+
+        function playVictorySound() {
+            try {
+                initAudio();
+                let now = audioCtx.currentTime;
+                [0, 0.12, 0.24, 0.36, 0.48].forEach((delay, idx) => {
+                    let osc = audioCtx.createOscillator();
+                    let gain = audioCtx.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.type = 'triangle';
+                    let freqs = [523.25, 659.25, 783.99, 1046.50, 1318.51];
+                    osc.frequency.setValueAtTime(freqs[idx], now + delay);
+                    gain.gain.setValueAtTime(0.12, now + delay);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + delay + 0.4);
+                    osc.start(now + delay);
+                    osc.stop(now + delay + 0.45);
+                });
+            } catch(e) { console.log(e); }
+        }
+
+        function playVoice(audioPath) {
+            if (!isVoiceEnabled || !audioPath) return;
+
+            // Aktif çalan bir ses varsa durdur
+            if (currentAudioObject) {
+                try {
+                    currentAudioObject.pause();
+                    currentAudioObject.currentTime = 0;
+                } catch(e) {}
+            }
+
+            // Yeni ses nesnesi oluştur ve oynat
+            currentAudioObject = new Audio(audioPath);
+            currentAudioObject.play().catch(error => {
+                console.log(`Tarayıcı engeli algılandı (${audioPath}). Kullanıcı etkileşimi bekleniyor.`);
+                const playOnUserInteraction = () => {
+                    if (currentAudioObject && currentAudioObject.paused) {
+                        currentAudioObject.play().catch(e => console.log("Ses çalınamadı:", e));
+                    }
+                    document.removeEventListener('click', playOnUserInteraction);
+                    document.removeEventListener('touchstart', playOnUserInteraction);
+                };
+                document.addEventListener('click', playOnUserInteraction, { once: true });
+                document.addEventListener('touchstart', playOnUserInteraction, { once: true });
+            });
+        }
+
+        // Yönerge sayfasında 1.mp3 buton ile çalışacak
+        function playInstructionVoice() {
+            currentVoiceFile = "1.mp3";
+            playVoice("1.mp3");
+        }
+
+        function replayCurrentVoice() {
+            if (currentVoiceFile) {
+                playVoice(currentVoiceFile);
+            }
+        }
+
+        // Oyun başladığında ses çalmasını güvenceye almak için kullanılan fonksiyon
+        function playVoiceOnceOnStart(audioPath) {
+            if (!isVoiceEnabled || !audioPath) return;
+            currentAudioObject = new Audio(audioPath);
+            currentAudioObject.play().catch(() => {});
+        }
+
+        function toggleVoice() {
+            isVoiceEnabled = !isVoiceEnabled;
+            const icon = document.getElementById('voice-icon');
+            const btn = document.getElementById('btn-voice');
+            if (isVoiceEnabled) {
+                icon.className = "fa-solid fa-volume-high text-lg md:text-xl";
+                btn.className = "bg-gradient-to-r from-amber-400 to-yellow-300 hover:from-amber-500 hover:to-yellow-400 text-amber-950 p-2.5 md:p-3.5 rounded-2xl transition-all duration-200 active:scale-95 shadow-md border-b-4 border-amber-600 flex items-center justify-center";
+                playSuccessSound();
+                replayCurrentVoice();
+            } else {
+                icon.className = "fa-solid fa-volume-xmark text-lg md:text-xl";
+                btn.className = "bg-gradient-to-r from-red-500 to-orange-400 hover:from-red-600 hover:to-orange-500 text-white p-2.5 md:p-3.5 rounded-2xl transition-all duration-200 active:scale-95 shadow-md border-b-4 border-red-700 flex items-center justify-center";
+                if (currentAudioObject) {
+                    try { currentAudioObject.pause(); } catch(e){}
+                }
+            }
+        }
+
+        const wasteDatabase = [
+            {
+                id: 'eggshell',
+                name: 'Yumurta Kabuğu',
+                category: 'organic',
+                voiceFile: 'yumurtakabugu.mp3',
+                svg: `<svg viewBox="0 0 100 100" class="w-28 h-28 filter drop-shadow-md">
+                    <path d="M 20,55 C 20,40 32,25 50,25 C 68,25 80,40 80,55" fill="none" stroke="#e3d6c1" stroke-width="4"/>
+                    <path d="M 18,55 Q 32,48 40,60 Q 48,42 55,65 Q 68,52 82,55 L 75,85 C 70,92 30,92 25,85 Z" fill="#fcf8f2" stroke="#d5c8b5" stroke-width="3" stroke-linejoin="round"/>
+                    <path d="M 42,20 C 35,12 55,5 62,18 L 52,32 Z" fill="#ebdfce" stroke="#cbbdac" stroke-width="2"/>
+                    <circle cx="48" cy="68" r="8" fill="#facc15" opacity="0.85"/>
+                    <circle cx="45" cy="66" r="3" fill="#ffffff" opacity="0.9"/>
+                </svg>`
+            },
+            {
+                id: 'plastic_bottle',
+                name: 'Plastik Şişe',
+                category: 'plastic',
+                voiceFile: 'plastik.mp3',
+                svg: `<svg viewBox="0 0 100 100" class="w-28 h-28 filter drop-shadow-md">
+                    <rect x="42" y="10" width="16" height="10" rx="2" fill="#1d4ed8" stroke="#1e40af" stroke-width="1.5"/>
+                    <rect x="45" y="20" width="10" height="6" fill="#60a5fa"/>
+                    <path d="M 34,32 L 66,32 C 66,32 63,42 66,54 C 69,66 64,88 58,90 L 42,90 C 36,88 31,66 34,54 C 37,42 34,32 34,32 Z" fill="#93c5fd" fill-opacity="0.6" stroke="#2563eb" stroke-width="3.5" stroke-linejoin="round"/>
+                    <path d="M 33,48 Q 50,54 67,48" stroke="#2563eb" stroke-width="2" fill="none"/>
+                    <path d="M 33,62 Q 50,68 67,62" stroke="#2563eb" stroke-width="2" fill="none"/>
+                    <path d="M 35,76 Q 50,82 65,76" stroke="#2563eb" stroke-width="2" fill="none"/>
+                </svg>`
+            },
+            {
+                id: 'banana_peel',
+                name: 'Muz Kabuğu',
+                category: 'organic',
+                voiceFile: 'muz.mp3',
+                svg: `<svg viewBox="0 0 100 100" class="w-28 h-28 filter drop-shadow-md">
+                    <path d="M 48,15 L 52,15 L 50,25 Z" fill="#451a03" stroke="#1c0a02" stroke-width="1"/>
+                    <path d="M 50,22 C 50,22 58,45 42,85 C 47,82 65,65 50,22 Z" fill="#ca8a04" stroke="#854d0e" stroke-width="2"/>
+                    <path d="M 50,22 C 50,22 28,48 16,72 C 28,70 38,55 50,22 Z" fill="#eab308" stroke="#ca8a04" stroke-width="2"/>
+                    <path d="M 50,22 C 50,22 72,48 84,72 C 72,70 62,55 50,22 Z" fill="#facc15" stroke="#eab308" stroke-width="2"/>
+                    <circle cx="34" cy="55" r="2" fill="#451a03"/>
+                    <circle cx="64" cy="52" r="2.5" fill="#451a03"/>
+                    <circle cx="48" cy="70" r="3" fill="#451a03"/>
+                </svg>`
+            },
+            {
+                id: 'yogurt_pot',
+                name: 'Yoğurt Kabı',
+                category: 'plastic',
+                voiceFile: 'yogurt.mp3',
+                svg: `<svg viewBox="0 0 100 100" class="w-28 h-28 filter drop-shadow-md">
+                    <path d="M 22,25 L 78,25 L 68,85 L 32,85 Z" fill="#f8fafc" stroke="#94a3b8" stroke-width="4" stroke-linejoin="round"/>
+                    <ellipse cx="50" cy="25" rx="29" ry="7" fill="#ef4444" stroke="#b91c1c" stroke-width="2.5"/>
+                    <ellipse cx="50" cy="25" rx="22" ry="4" fill="#fca5a5"/>
+                    <rect x="27" y="45" width="46" height="22" fill="#3b82f6" stroke="#1d4ed8" stroke-width="1"/>
+                    <text x="50" y="60" fill="#ffffff" font-family="'Quicksand', sans-serif" font-weight="900" font-size="11" text-anchor="middle">YOĞURT</text>
+                </svg>`
+            },
+            {
+                id: 'metal_spoon',
+                name: 'Metal Kaşık',
+                category: 'metal',
+                voiceFile: 'metalkasık.mp3',
+                svg: `<svg viewBox="0 0 100 100" class="w-28 h-28 filter drop-shadow-md">
+                    <defs>
+                        <linearGradient id="metalSpoon" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#f8fafc"/>
+                            <stop offset="40%" stop-color="#cbd5e1"/>
+                            <stop offset="70%" stop-color="#64748b"/>
+                            <stop offset="100%" stop-color="#334155"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M 50,15 C 36,15 32,38 50,38 C 68,38 64,15 50,15 Z" fill="url(#metalSpoon)" stroke="#475569" stroke-width="3"/>
+                    <path d="M 44,22 C 40,28 44,34 46,34" stroke="#ffffff" stroke-width="2" fill="none" stroke-linecap="round"/>
+                    <rect x="47" y="38" width="6" height="48" rx="2" fill="url(#metalSpoon)" stroke="#475569" stroke-width="2"/>
+                </svg>`
+            },
+            {
+                id: 'cardboard_box',
+                name: 'Karton Kutu',
+                category: 'paper',
+                voiceFile: 'kartonkutu.mp3',
+                svg: `<svg viewBox="0 0 100 100" class="w-28 h-28 filter drop-shadow-md">
+                    <polygon points="15,42 50,26 85,42 50,58" fill="#eab308" stroke="#ca8a04" stroke-width="2.5"/>
+                    <polygon points="15,42 50,58 50,86 15,70" fill="#ca8a04" stroke="#a16207" stroke-width="2.5"/>
+                    <polygon points="85,42 50,58 50,86 85,70" fill="#a16207" stroke="#713f12" stroke-width="2.5"/>
+                    <polygon points="15,42 32,20 50,26 31,48" fill="#facc15" stroke="#ca8a04" stroke-width="1.5"/>
+                    <polygon points="85,42 68,20 50,26 69,48" fill="#facc15" stroke="#ca8a04" stroke-width="1.5"/>
+                </svg>`
+            },
+            {
+                id: 'glass_jar',
+                name: 'Cam Kavanoz',
+                category: 'glass',
+                voiceFile: 'kavanoz.mp3',
+                svg: `<svg viewBox="0 0 100 100" class="w-28 h-28 filter drop-shadow-md">
+                    <rect x="36" y="12" width="28" height="10" rx="2" fill="#fbbf24" stroke="#d97706" stroke-width="2.5"/>
+                    <line x1="38" y1="17" x2="62" y2="17" stroke="#ffffff" stroke-width="1.5"/>
+                    <path d="M 30,22 L 70,22 C 70,22 67,28 71,40 C 75,52 71,85 64,88 L 36,88 C 29,85 25,52 29,40 C 33,28 30,22 30,22 Z" fill="#ccfbf1" fill-opacity="0.65" stroke="#0d9488" stroke-width="4" stroke-linejoin="round"/>
+                    <path d="M 34,35 Q 50,38 66,35" stroke="#2dd4bf" stroke-width="2" fill="none" opacity="0.6"/>
+                    <ellipse cx="40" cy="55" rx="3" ry="12" fill="#ffffff" opacity="0.7"/>
+                </svg>`
+            },
+            {
+                id: 'tin_can',
+                name: 'Konserve Kutusu',
+                category: 'metal',
+                voiceFile: 'konserve.mp3',
+                svg: `<svg viewBox="0 0 100 100" class="w-28 h-28 filter drop-shadow-md">
+                    <defs>
+                        <linearGradient id="canMetal" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#94a3b8"/>
+                            <stop offset="50%" stop-color="#f1f5f9"/>
+                            <stop offset="100%" stop-color="#475569"/>
+                        </linearGradient>
+                    </defs>
+                    <ellipse cx="50" cy="22" rx="22" ry="6" fill="#cbd5e1" stroke="#475569" stroke-width="2"/>
+                    <path d="M 28,22 L 28,76 C 28,82 72,82 72,76 L 72,22 Z" fill="url(#canMetal)" stroke="#334155" stroke-width="3" stroke-linejoin="round"/>
+                    <!-- Yeni Konserve Tasarımı (Artı İşareti Olmayan Sevecen Gıda Logolu Etiket) -->
+                    <rect x="28" y="36" width="44" height="28" fill="#f97316" opacity="0.95"/>
+                    <circle cx="50" cy="50" r="8" fill="#ffedd5" opacity="0.9"/>
+                    <line x1="32" y1="42" x2="68" y2="42" stroke="#ea580c" stroke-width="1.5"/>
+                    <line x1="32" y1="58" x2="68" y2="58" stroke="#ea580c" stroke-width="1.5"/>
+                    <circle cx="50" cy="50" r="3" fill="#ea580c"/>
+                </svg>`
+            },
+            {
+                id: 'egg_carton',
+                name: 'Yumurta Kutusu',
+                category: 'paper',
+                voiceFile: 'yumurta.mp3',
+                svg: `<svg viewBox="0 0 100 100" class="w-28 h-28 filter drop-shadow-md">
+                    <rect x="18" y="28" width="64" height="44" rx="10" fill="#94a3b8" stroke="#475569" stroke-width="4"/>
+                    <circle cx="32" cy="40" r="8" fill="#334155" opacity="0.55"/>
+                    <circle cx="50" cy="40" r="8" fill="#334155" opacity="0.55"/>
+                    <circle cx="68" cy="40" r="8" fill="#334155" opacity="0.55"/>
+                    <circle cx="32" cy="60" r="8" fill="#334155" opacity="0.55"/>
+                    <circle cx="50" cy="60" r="8" fill="#334155" opacity="0.55"/>
+                    <circle cx="68" cy="60" r="8" fill="#334155" opacity="0.55"/>
+                    <rect x="42" y="24" width="16" height="6" rx="1" fill="#cbd5e1" stroke="#475569" stroke-width="2"/>
+                </svg>`
+            },
+            {
+                id: 'broken_glass_cup',
+                name: 'Kırık Cam Bardak',
+                category: 'glass',
+                voiceFile: 'cam.mp3',
+                svg: `<svg viewBox="0 0 100 100" class="w-28 h-28 filter drop-shadow-md">
+                    <!-- Parça 1 -->
+                    <path d="M 25,15 L 45,15 L 41,50 L 32,50 Z" fill="#e0f2fe" stroke="#0d9488" stroke-width="3" opacity="0.8"/>
+                    <!-- Parça 2 -->
+                    <path d="M 52,15 L 72,15 L 65,48 L 56,48 Z" fill="#e0f2fe" stroke="#0d9488" stroke-width="3" opacity="0.8"/>
+                    <!-- Taban ve Gövde Birleşimi -->
+                    <path d="M 32,52 L 50,85 L 46,88 Q 48,91 43,91 Q 38,91 40,88 L 26,52 Z" fill="#e0f2fe" stroke="#0d9488" stroke-width="3" opacity="0.8"/>
+                    <path d="M 56,52 L 67,52 L 55,85 L 51,85 Z" fill="#e0f2fe" stroke="#0d9488" stroke-width="3" opacity="0.8"/>
+                    <!-- Çatlak Çizgileri -->
+                    <path d="M 48,15 L 45,35 L 53,52 L 47,72 L 52,85" fill="none" stroke="#0d9488" stroke-width="2.5" stroke-linejoin="round"/>
+                    <!-- Cam Parlaması -->
+                    <path d="M 30,22 L 32,32" stroke="#ffffff" stroke-width="2" stroke-linecap="round" opacity="0.9"/>
+                    <path d="M 64,22 L 66,28" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" opacity="0.9"/>
+                </svg>`
+            }
+        ];
+
+        let activeSessionQueue = [];
+
+        // EKRAN GEÇİŞ MOTORU
+        function showScreen(screenId) {
+            document.getElementById('screen-instruction').classList.add('hidden');
+            document.getElementById('screen-game').classList.add('hidden');
+            document.getElementById('screen-compost').classList.add('hidden');
+            document.getElementById('screen-victory').classList.add('hidden');
+            
+            const screen = document.getElementById(screenId);
+            if (screen) {
+                screen.classList.remove('hidden');
+            }
+        }
+
+        function showInstructionScreen() {
+            showScreen('screen-instruction');
+        }
+
+        // Oyunu Başlatma
+        function startQuestTwo() {
+            initAudio();
+            score = 0;
+            updateScoreDisplay();
+            activeIndex = 0;
+            activeSessionQueue = [];
+
+            // Atölye ses kilitlerini sıfırla
+            hasPlayedWorkshopSelectionVoice = false;
+            hasPlayedCompostBranchVoice = false;
+            hasPlayedToyBranchVoice = false;
+
+            // 10 Atığı kopyala ve karıştır
+            activeSessionQueue = [...wasteDatabase].sort(() => 0.5 - Math.random());
+            
+            showScreen('screen-game');
+            loadNextWaste();
+        }
+
+        function restartGame() {
+            showInstructionScreen();
+        }
+
+        function updateScoreDisplay() {
+            document.getElementById('score-text').innerText = `Yıldız: ${score}`;
+        }
+
+        function updateProgressBar() {
+            const bar = document.getElementById('sorting-progress-bar');
+            const text = document.getElementById('sorting-progress-text');
+            const percent = (activeIndex / activeSessionQueue.length) * 100;
+            bar.style.width = `${percent}%`;
+            text.innerText = `${activeIndex} / ${activeSessionQueue.length}`;
+        }
+
+        function loadNextWaste() {
+            updateProgressBar();
+            if (activeIndex >= activeSessionQueue.length) {
+                setTimeout(() => {
+                    startWorkshopSelection();
+                }, 800);
+                return;
+            }
+
+            const item = activeSessionQueue[activeIndex];
+            const container = document.getElementById('waste-container');
+            const labelUnder = document.getElementById('waste-label-under');
+            
+            container.innerHTML = `
+                <div class="bg-white p-5 rounded-3xl shadow-lg border-4 border-slate-200 flex flex-col items-center justify-center w-40 h-40 md:w-44 md:h-44 animate-bounce-slow">
+                    ${item.svg}
+                </div>
+            `;
+            labelUnder.innerText = item.name;
+
+            // Atığa özel ses dosyasını oynat
+            currentVoiceFile = item.voiceFile;
+            playVoiceOnceOnStart(item.voiceFile);
+
+            deselectAll();
+            selectedWasteItem = item;
+            container.classList.add('pulse-soft');
+        }
+
+        function showToast(message, isSuccess) {
+            const toast = document.getElementById('toast');
+            toast.innerText = message;
+            
+            if (isSuccess) {
+                toast.className = "fixed top-24 left-1/2 -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-2xl shadow-xl border-4 border-green-300 font-bold text-lg flex items-center gap-3 transition-all duration-300 scale-100 z-50";
+            } else {
+                toast.className = "fixed top-24 left-1/2 -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded-2xl shadow-xl border-4 border-red-300 font-bold text-lg flex items-center gap-3 transition-all duration-300 scale-100 z-50";
+            }
+
+            setTimeout(() => {
+                toast.className = "fixed top-24 left-1/2 -translate-x-1/2 bg-white px-6 py-3 rounded-2xl shadow-xl border-4 font-bold text-lg flex items-center gap-3 transition-all duration-300 scale-0 z-50";
+            }, 2500);
+        }
+
+        function processSelection(selectedBinCategory) {
+            if (activeIndex >= activeSessionQueue.length) return;
+            const item = activeSessionQueue[activeIndex];
+
+            if (item.category === selectedBinCategory) {
+                score += 10;
+                updateScoreDisplay();
+                playSuccessSound();
+                showToast("Harika! Doğru Kutu! 🌟", true);
+                
+                const container = document.getElementById('waste-container');
+                container.classList.remove('animate-bounce-slow', 'pulse-soft');
+                container.style.transform = 'scale(0) rotate(180deg)';
+                container.style.transition = 'all 0.5s ease';
+
+                activeIndex++;
+                setTimeout(() => {
+                    container.style.transform = 'none';
+                    container.style.transition = 'none';
+                    loadNextWaste();
+                }, 600);
+                
+            } else {
+                playFailSound();
+                showToast("Tekrar Dene! Başarabilirsin! 💪", false);
+                
+                const container = document.getElementById('waste-container');
+                container.classList.add('shake-element');
+                setTimeout(() => {
+                    container.classList.remove('shake-element');
+                }, 500);
+            }
+            deselectAll();
+        }
+
+        function deselectAll() {
+            const bins = ['bin-paper', 'bin-plastic', 'bin-glass', 'bin-metal', 'bin-organic'];
+            bins.forEach(id => {
+                const el = document.getElementById(id);
+                if(el) {
+                    el.classList.remove('ring-4', 'ring-green-500', 'ring-offset-2');
+                }
+            });
+        }
+
+        const wasteContainer = document.getElementById('waste-container');
+        
+        wasteContainer.addEventListener('dragstart', (e) => {
+            if (activeIndex >= activeSessionQueue.length) return;
+            e.dataTransfer.setData('text/plain', activeSessionQueue[activeIndex].category);
+            wasteContainer.style.opacity = '0.6';
+        });
+
+        wasteContainer.addEventListener('dragend', () => {
+            wasteContainer.style.opacity = '1';
+        });
+
+        const bins = document.querySelectorAll('[data-type]');
+        bins.forEach(bin => {
+            bin.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                bin.classList.add('scale-105');
+            });
+
+            bin.addEventListener('dragleave', () => {
+                bin.classList.remove('scale-105');
+            });
+
+            bin.addEventListener('drop', (e) => {
+                e.preventDefault();
+                bin.classList.remove('scale-105');
+                const droppedCategory = bin.getAttribute('data-type');
+                processSelection(droppedCategory);
+            });
+
+            bin.addEventListener('click', () => {
+                if (selectedWasteItem) {
+                    processSelection(bin.getAttribute('data-type'));
+                } else {
+                    const binType = bin.getAttribute('data-type');
+                    playVoice(`sesler/kutu_${binType}.mp3`);
+                }
+            });
+        });
+
+        // ================= GÖREV 3: ATÖLYE SİHİRLİ DÖNÜŞÜM =================
+        let workshopSelectedMode = "";
+        let compostProgress = 0;
+        let toyProgress = 0;
+
+        function startWorkshopSelection() {
+            showScreen('screen-compost');
+            document.getElementById('workshop-selection').classList.remove('hidden');
+            document.getElementById('branch-compost').classList.add('hidden');
+            document.getElementById('branch-toy').classList.add('hidden');
+            document.getElementById('btn-workshop-back').classList.add('hidden');
+            document.getElementById('btn-next-victory').classList.add('hidden');
+
+            compostProgress = 0;
+            toyProgress = 0;
+
+            // Atölye seçim yönergesi (2.mp3) sadece 1 kez çalacak
+            if (!hasPlayedWorkshopSelectionVoice) {
+                currentVoiceFile = "2.mp3";
+                playVoice('2.mp3'); 
+                hasPlayedWorkshopSelectionVoice = true;
+            }
+        }
+
+        function selectWorkshop(mode) {
+            workshopSelectedMode = mode;
+            document.getElementById('workshop-selection').classList.add('hidden');
+            document.getElementById('btn-workshop-back').classList.remove('hidden');
+
+            if (mode === 'compost') {
+                document.getElementById('branch-compost').classList.remove('hidden');
+                setupCompostInteractive();
+                document.getElementById('flower-stage').innerHTML = `<div class="text-amber-800 text-5xl"><i class="fa-solid fa-seedling"></i></div>`;
+                document.getElementById('flower-status-text').innerText = "Yavru Filiz";
+                
+                // Lale atölyesi yönergesi (3.mp3) sadece 1 kez çalacak
+                if (!hasPlayedCompostBranchVoice) {
+                    currentVoiceFile = "3.mp3";
+                    playVoice('3.mp3'); 
+                    hasPlayedCompostBranchVoice = true;
+                }
+            } else if (mode === 'toy') {
+                document.getElementById('branch-toy').classList.remove('hidden');
+                setupToyInteractive();
+                
+                // Tren atölyesi yönergesi (4.mp3) sadece 1 kez çalacak
+                if (!hasPlayedToyBranchVoice) {
+                    currentVoiceFile = "4.mp3";
+                    playVoice('4.mp3'); 
+                    hasPlayedToyBranchVoice = true;
+                }
+            }
+        }
+
+        function resetWorkshopBranch() {
+            if (workshopSelectedMode === 'compost') hasPlayedCompostBranchVoice = false;
+            if (workshopSelectedMode === 'toy') hasPlayedToyBranchVoice = false;
+            
+            hasPlayedWorkshopSelectionVoice = false; 
+            startWorkshopSelection();
+        }
+
+        function setupCompostInteractive() {
+            const compostBag = document.getElementById('compost-bag');
+            const flowerPot = document.getElementById('flower-pot');
+
+            compostBag.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', 'compost');
+                compostBag.style.opacity = '0.5';
+            });
+            compostBag.addEventListener('dragend', () => {
+                compostBag.style.opacity = '1';
+            });
+            flowerPot.addEventListener('dragover', (e) => { e.preventDefault(); flowerPot.classList.add('scale-105'); });
+            flowerPot.addEventListener('dragleave', () => { flowerPot.classList.remove('scale-105'); });
+            flowerPot.addEventListener('drop', (e) => { e.preventDefault(); flowerPot.classList.remove('scale-105'); feedCompost(); });
+
+            compostBag.onclick = feedCompost;
+            flowerPot.onclick = feedCompost;
+        }
+
+        function feedCompost() {
+            if (workshopSelectedMode !== 'compost' || compostProgress >= 3) return;
+            compostProgress++;
+            playSuccessSound();
+
+            const stageDiv = document.getElementById('flower-stage');
+            const textSpan = document.getElementById('flower-status-text');
+
+            if (compostProgress === 1) {
+                stageDiv.innerHTML = `<div class="text-green-500 text-6xl animate-bounce-slow"><i class="fa-solid fa-leaf"></i></div>`;
+                textSpan.innerText = "Fidan Filizlendi!";
+            } else if (compostProgress === 2) {
+                // Hatalı Çam Ağacı Yerine Doğru Estetik Tomurcuk Lale Görseli yerleştirildi
+                stageDiv.innerHTML = `
+                    <svg viewBox="0 0 100 100" class="w-24 h-24 animate-bounce-slow">
+                        <!-- Sap ve yapraklar -->
+                        <path d="M 50,55 Q 52,75 50,95" stroke="#16a34a" stroke-width="5" fill="none" />
+                        <path d="M 50,75 Q 32,65 39,55 Q 46,65 50,73" fill="#22c55e" />
+                        <path d="M 50,80 Q 68,70 61,60 Q 54,70 50,78" fill="#22c55e" />
+                        <!-- Tomurcuk Lale Gövdesi -->
+                        <g transform="translate(0, 0)">
+                            <path d="M 50,22 C 38,22 38,55 50,60 C 62,55 62,22 50,22 Z" fill="#eab308" stroke="#ca8a04" stroke-width="2" />
+                            <path d="M 50,22 C 43,28 43,48 50,60" fill="none" stroke="#facc15" stroke-width="2" />
+                            <path d="M 50,22 C 57,28 57,48 50,60" fill="none" stroke="#fde047" stroke-width="2" />
+                        </g>
+                    </svg>
+                `;
+                textSpan.innerText = "Tomurcuk Lale!";
+            } else if (compostProgress === 3) {
+                // SARI LALELER: Rüzgarda sallanan animasyonlu SVG
+                stageDiv.innerHTML = `
+                    <svg viewBox="0 0 120 120" class="w-28 h-28 sway-animation">
+                        <!-- Toprak Tabakası -->
+                        <path d="M10 110 Q60 100 110 110 L110 120 L10 120 Z" fill="#78350f" />
+                        
+                        <!-- LALE 1 (Sol Küçük Lale) -->
+                        <path d="M35 110 Q32 80 45 60" stroke="#16a34a" stroke-width="4" fill="none" />
+                        <!-- Yaprak -->
+                        <path d="M35 95 Q20 80 28 70 Q32 85 36 90" fill="#22c55e" />
+                        <!-- Sarı Lale Çiçeği Gövde ve Yaprakları -->
+                        <g transform="translate(45, 60)">
+                            <path d="M-8 -15 C-12 -5 -5 5 0 5 C5 5 12 -5 8 -15 C4 -7 0 -12 0 -12 C0 -12 -4 -7 -8 -15 Z" fill="#eab308" />
+                            <path d="M-8 -15 C-10 -5 -2 5 0 5 C0 5 -5 -8 -8 -15 Z" fill="#facc15" />
+                            <path d="M8 -15 C10 -5 2 5 0 5 C0 5 5 -8 8 -15 Z" fill="#fef08a" />
+                            <path d="M-4 -15 Q0 -22 4 -15 L2 -5 L-2 -5 Z" fill="#fde047" />
+                        </g>
+
+                        <!-- LALE 2 (Merkez Büyük Lale) -->
+                        <path d="M60 110 Q63 70 58 40" stroke="#15803d" stroke-width="5" fill="none" />
+                        <!-- Yapraklar -->
+                        <path d="M60 90 Q80 75 72 60 Q65 75 61 82" fill="#16a34a" />
+                        <path d="M60 100 Q40 85 46 72 Q52 87 59 92" fill="#16a34a" />
+                        <!-- Sarı Lale Çiçeği -->
+                        <g transform="translate(58, 40)">
+                            <path d="M-12 -22 C-18 -8 -8 8 0 8 C8 8 18 -8 12 -22 C6 -10 0 -18 0 -18 C0 -18 -6 -10 -12 -22 Z" fill="#ca8a04" />
+                            <path d="M-12 -22 C-15 -8 -3 8 0 8 C0 8 -8 -12 -12 -22 Z" fill="#eab308" />
+                            <path d="M12 -22 C15 -8 3 8 0 8 C0 8 8 -12 12 -22 Z" fill="#fde047" />
+                            <path d="M-6 -22 Q0 -32 6 -22 L3 -8 L-3 -8 Z" fill="#facc15" />
+                        </g>
+
+                        <!-- LALE 3 (Sağ Lale) -->
+                        <path d="M85 110 Q88 85 80 65" stroke="#16a34a" stroke-width="4" fill="none" />
+                        <!-- Yaprak -->
+                        <path d="M85 95 Q98 80 90 70 Q86 85 84 90" fill="#22c55e" />
+                        <!-- Sarı Lale Çiçeği -->
+                        <g transform="translate(80, 65)">
+                            <path d="M-8 -15 C-12 -5 -5 5 0 5 C5 5 12 -5 8 -15 C4 -7 0 -12 0 -12 C0 -12 -4 -7 -8 -15 Z" fill="#eab308" />
+                            <path d="M-8 -15 C-10 -5 -2 5 0 5 C0 5 -5 -8 -8 -15 Z" fill="#facc15" />
+                            <path d="M8 -15 C10 -5 2 5 0 5 C0 5 5 -8 8 -15 Z" fill="#fef08a" />
+                            <path d="M-4 -15 Q0 -22 4 -15 L2 -5 L-2 -5 Z" fill="#fde047" />
+                        </g>
+                    </svg>
+                `;
+                textSpan.innerText = "Sarı Laleler Açtı! 🌷";
+                
+                score += 30;
+                updateScoreDisplay();
+
+                document.getElementById('btn-next-victory').classList.remove('hidden');
+                document.getElementById('compost-bag').classList.add('hidden');
+            }
+        }
+
+        // Oyuncak Robot İnteraktifi
+        function setupToyInteractive() {
+            const rawMaterial = document.getElementById('toy-raw-material');
+            const robot = document.getElementById('toy-robot');
+
+            rawMaterial.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', 'toy');
+                rawMaterial.style.opacity = '0.5';
+            });
+            rawMaterial.addEventListener('dragend', () => {
+                rawMaterial.style.opacity = '1';
+            });
+            robot.addEventListener('dragover', (e) => { e.preventDefault(); robot.classList.add('scale-105'); });
+            robot.addEventListener('dragleave', () => { robot.classList.remove('scale-105'); });
+            robot.addEventListener('drop', (e) => { e.preventDefault(); robot.classList.remove('scale-105'); feedRobot(); });
+
+            rawMaterial.onclick = feedRobot;
+            robot.onclick = feedRobot;
+        }
+
+        function feedRobot() {
+            if (workshopSelectedMode !== 'toy' || toyProgress >= 3) return;
+            toyProgress++;
+            playRobotSound();
+
+            const stageDiv = document.getElementById('robot-stage');
+            const textSpan = document.getElementById('robot-status-text');
+
+            if (toyProgress === 1) {
+                stageDiv.innerHTML = `<div class="text-yellow-500 text-6xl animate-spin-slow"><i class="fa-solid fa-gear"></i></div>`;
+                textSpan.innerText = "Hammadde Eritiliyor...";
+            } else if (toyProgress === 2) {
+                stageDiv.innerHTML = `<div class="text-blue-500 text-7xl animate-pulse"><i class="fa-solid fa-screwdriver-wrench"></i></div>`;
+                textSpan.innerText = "Parçalar Birleşiyor!";
+            } else if (toyProgress === 3) {
+                stageDiv.innerHTML = `
+                    <div class="flex flex-col items-center justify-end h-full animate-bounce text-emerald-600">
+                        <span class="text-6xl text-sky-500"><i class="fa-solid fa-train"></i></span>
+                        <div class="text-xs font-black text-emerald-800 bg-white px-3 py-1 rounded-full shadow-sm mt-1">Dönüşüm Başarılı!</div>
+                    </div>
+                `;
+                textSpan.innerText = "Yepyeni Oyuncak Tren! 🚂";
+                
+                score += 30;
+                updateScoreDisplay();
+
+                document.getElementById('btn-next-victory').classList.remove('hidden');
+                document.getElementById('toy-raw-material').classList.add('hidden');
+            }
+        }
+
+        // ================= ZAFER EKRANI =================
+        function showVictory() {
+            playVictorySound();
+            showScreen('screen-victory');
+        }
+
+        // İlk Yükleme Kurulumu (Sayfa açıldığında hazır bekler, sesi oynatmak için artık kullanıcı etkileşimi beklenir)
+        window.onload = function() {
+            showInstructionScreen();
+        }
+    </script>
+</body>
+</html>

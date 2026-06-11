@@ -1,0 +1,1026 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geri Dönüşüm Kahramanları</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Çocuklar için en estetik ve Türkçe karakterleri KUSURSUZ destekleyen Quicksand ve Baloo 2 fontları -->
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Quicksand:wght@600;700;900&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(to bottom, #38bdf8, #7dd3fc, #bae6fd, #e0f2fe);
+            user-select: none;
+            overflow-x: hidden;
+        }
+        .title-font {
+            font-family: 'Baloo 2', sans-serif;
+        }
+        /* Güneş Parlama Animasyonu */
+        @keyframes sun-glow {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 30px #fef08a, 0 0 60px #fef08a; }
+            50% { transform: scale(1.08); box-shadow: 0 0 50px #facc15, 0 0 90px #facc15; }
+        }
+        .sun-animation {
+            animation: sun-glow 4s ease-in-out infinite;
+        }
+        /* Sakinleştirici Beyaz Bulut Süzülme Animasyonları */
+        @keyframes float-cloud {
+            0% { transform: translateX(-20vw); }
+            100% { transform: translateX(110vw); }
+        }
+        .cloud-1 {
+            animation: float-cloud 50s linear infinite;
+        }
+        .cloud-2 {
+            animation: float-cloud 70s linear infinite;
+            animation-delay: -25s;
+        }
+        .cloud-3 {
+            animation: float-cloud 40s linear infinite;
+            animation-delay: -10s;
+        }
+        /* Kutuların Neşeli Zıplama Animasyonu */
+        @keyframes bounce-active {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15) translateY(-15px); }
+        }
+        .bin-bounce {
+            animation: bounce-active 0.45s ease-in-out;
+        }
+        /* Hatalı Hamle Sallanma Efekti */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+        .shake {
+            animation: shake 0.4s ease-in-out;
+        }
+        /* Sürüklenen nesnelerin tepkileri */
+        .draggable-item {
+            touch-action: none;
+            transition: transform 0.1s ease, box-shadow 0.2s ease;
+        }
+        .draggable-item:active {
+            transform: scale(1.12);
+            z-index: 50;
+        }
+        /* Sihirli parıltı animasyonu */
+        @keyframes sparkle {
+            0%, 100% { transform: scale(0) rotate(0deg); opacity: 0; }
+            50% { transform: scale(1.4) rotate(180deg); opacity: 1; }
+        }
+        .sparkle-effect {
+            animation: sparkle 1.2s ease-out forwards;
+        }
+        /* Rüzgarda sallanan gür ağaç animasyonu */
+        @keyframes breeze {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(2deg) scale(1.02); }
+        }
+        .breeze-anim {
+            animation: breeze 4s ease-in-out infinite;
+            transform-origin: bottom center;
+        }
+
+        /* Yönerge Ekranı Arka Plan Ayarları (Görselin her tarafının tam ekrana sığması için güncellendi) */
+        #intro-modal {
+            background-image: url('1.jpg');
+            background-size: 100% 100%;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        /* Ağaç Kutlama Animasyonu - Köklerin havada kalmasını tamamen önleyen ve tabana sabitleyen yeni stil */
+        #garden-widget {
+            transition: all 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        
+        /* Ağaç artık ekranın tam en alt taban sınırına sıfırlanıyor ve ekranı kaplamayacak şekilde orantılı büyüyor */
+        #garden-widget.centered {
+            position: fixed !important;
+            bottom: -15px !important; /* SVG taban boşlukları dengelenerek ekrana tam oturur */
+            top: auto !important;
+            left: 50% !important;
+            right: auto !important;
+            transform: translateX(-50%) scale(1.6) !important; /* Mobil için aşırı büyümeyi önleyen ideal ölçek */
+            transform-origin: bottom center !important; /* Büyürken kökleri sabit tutar, havada asılı kalmaz */
+            z-index: 45 !important;
+            pointer-events: none;
+        }
+        
+        #garden-widget.centered #tree-svg-wrapper {
+            width: 14rem !important;
+            height: 14rem !important;
+        }
+        
+        @media (min-width: 768px) {
+            #garden-widget.centered {
+                transform: translateX(-50%) scale(2.2) !important; /* Masaüstünde dikey taşmayı önleyen, tam görünür ideal ölçek */
+            }
+            #garden-widget.centered #tree-svg-wrapper {
+                width: 16rem !important;
+                height: 16rem !important;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between relative pb-6">
+
+    <!-- Parlayan Tatlı Güneş -->
+    <div class="absolute top-6 right-6 w-20 h-20 md:w-28 md:h-28 rounded-full bg-gradient-to-br from-yellow-300 to-amber-400 pointer-events-none z-0 sun-animation"></div>
+
+    <!-- Süzülen Hareketli Beyaz Bulutlar -->
+    <div class="absolute top-8 left-0 cloud-1 opacity-70 pointer-events-none z-0">
+        <i class="fas fa-cloud text-white text-7xl md:text-8xl drop-shadow-sm"></i>
+    </div>
+    <div class="absolute top-24 left-0 cloud-2 opacity-55 pointer-events-none z-0">
+        <i class="fas fa-cloud text-white text-9xl md:text-[10rem] drop-shadow-sm"></i>
+    </div>
+    <div class="absolute top-14 left-0 cloud-3 opacity-60 pointer-events-none z-0">
+        <i class="fas fa-cloud text-white text-6xl md:text-7xl drop-shadow-sm"></i>
+    </div>
+
+    <!-- Üst Bar: Skor ve Canlar -->
+    <header id="game-header" class="w-full max-w-4xl mx-auto px-4 pt-4 z-10 transition-all duration-1000">
+        <div class="bg-white/70 backdrop-blur-md rounded-2xl p-4 shadow-sm flex flex-wrap justify-between items-center border border-sky-100">
+            <div class="flex items-center gap-2">
+                <span class="text-3xl">🌍</span>
+                <h1 class="title-font text-sky-800 text-lg md:text-2xl font-black tracking-wide">Geri Dönüşüm Kahramanları</h1>
+            </div>
+            
+            <div class="flex items-center gap-3">
+                <!-- Skor -->
+                <div class="bg-amber-50 border border-amber-200 rounded-full px-4 py-1 flex items-center gap-1.5">
+                    <span class="text-base">⭐</span>
+                    <span class="font-bold text-amber-800 text-xs md:text-sm">Skor: <span id="score-val" class="font-black">0</span></span>
+                </div>
+                <!-- Canlar -->
+                <div class="bg-rose-50 border border-rose-200 rounded-full px-4 py-1 flex items-center gap-1">
+                    <span class="text-rose-500 text-xs"><i class="fas fa-heart"></i></span>
+                    <span class="font-bold text-rose-800 text-xs md:text-sm" id="hearts-container">❤️❤️❤️</span>
+                </div>
+                <!-- Ses Butonu -->
+                <button id="sound-btn" class="w-9 h-9 rounded-full bg-sky-50 border border-sky-200 flex items-center justify-center text-sky-600 hover:bg-sky-100 transition shadow-sm">
+                    <i class="fas fa-volume-up" id="sound-icon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main id="game-main" class="flex-grow flex flex-col justify-center items-center w-full max-w-4xl mx-auto px-4 my-4 z-10 relative transition-all duration-1000">
+        
+        <!-- Eğitici Bilgi Paneli -->
+        <div id="info-box" class="w-full max-w-lg bg-emerald-100/95 border border-emerald-400 rounded-2xl p-3.5 mb-4 text-center shadow-md hidden transform scale-95 transition-all duration-300">
+            <p id="info-text" class="text-emerald-950 font-black text-sm md:text-base leading-relaxed"></p>
+        </div>
+
+        <!-- Atıkların Doğacağı Oyun Alanı -->
+        <div class="w-full bg-white/40 border-2 border-dashed border-sky-200 rounded-3xl min-h-[220px] md:min-h-[260px] flex justify-center items-center relative overflow-hidden mb-6 p-4 shadow-inner" id="spawn-area">
+            <!-- Atıklar dinamik olarak eklenecektir -->
+        </div>
+
+        <!-- Geri Dönüşüm Kutuları -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 w-full px-2" id="bins-container">
+            <!-- Kağıt Kutusu (Mavi) -->
+            <div class="flex flex-col items-center">
+                <div id="bin-paper" class="w-full max-w-[135px] aspect-[4/5] bg-gradient-to-b from-blue-500 to-blue-700 rounded-2xl flex flex-col justify-between p-3.5 text-white shadow-xl shadow-blue-300/60 border-2 border-blue-400 transition duration-150 relative cursor-pointer" data-type="paper">
+                    <div class="text-center font-black text-sm md:text-base tracking-wider title-font">KAĞIT</div>
+                    <div class="flex justify-center items-center my-1">
+                        <i class="fas fa-file-alt text-4xl md:text-5xl opacity-100 drop-shadow-md"></i>
+                    </div>
+                    <div class="bg-blue-800 text-center rounded-lg text-[10px] md:text-xs py-1 font-black">Mavi Kutu</div>
+                </div>
+            </div>
+
+            <!-- Plastik Kutusu (Sarı) -->
+            <div class="flex flex-col items-center">
+                <div id="bin-plastic" class="w-full max-w-[135px] aspect-[4/5] bg-gradient-to-b from-yellow-400 to-amber-500 rounded-2xl flex flex-col justify-between p-3.5 text-amber-950 shadow-xl shadow-yellow-300/60 border-2 border-yellow-300 transition duration-150 relative cursor-pointer" data-type="plastic">
+                    <div class="text-center font-black text-sm md:text-base tracking-wider title-font">PLASTİK</div>
+                    <div class="flex justify-center items-center my-1">
+                        <i class="fas fa-bottle-water text-4xl md:text-5xl opacity-100 drop-shadow-md"></i>
+                    </div>
+                    <div class="bg-yellow-600 text-center rounded-lg text-[10px] md:text-xs py-1 font-black text-yellow-100">Sarı Kutu</div>
+                </div>
+            </div>
+
+            <!-- Cam Kutusu (Yeşil) -->
+            <div class="flex flex-col items-center">
+                <div id="bin-glass" class="w-full max-w-[135px] aspect-[4/5] bg-gradient-to-b from-emerald-500 to-green-600 rounded-2xl flex flex-col justify-between p-3.5 text-white shadow-xl shadow-green-300/60 border-2 border-green-400 transition duration-150 relative cursor-pointer" data-type="glass">
+                    <div class="text-center font-black text-sm md:text-base tracking-wider title-font">CAM</div>
+                    <div class="flex justify-center items-center my-1">
+                        <i class="fas fa-wine-bottle text-4xl md:text-5xl opacity-100 drop-shadow-md"></i>
+                    </div>
+                    <div class="bg-green-800 text-center rounded-lg text-[10px] md:text-xs py-1 font-black">Yeşil Kutu</div>
+                </div>
+            </div>
+
+            <!-- Metal Kutusu (Kırmızı) -->
+            <div class="flex flex-col items-center">
+                <div id="bin-metal" class="w-full max-w-[135px] aspect-[4/5] bg-gradient-to-b from-rose-500 to-red-600 rounded-2xl flex flex-col justify-between p-3.5 text-white shadow-xl shadow-red-300/60 border-2 border-red-400 transition duration-150 relative cursor-pointer" data-type="metal">
+                    <div class="text-center font-black text-sm md:text-base tracking-wider title-font">METAL</div>
+                    <div class="flex justify-center items-center my-1">
+                        <i class="fas fa-prescription-bottle text-4xl md:text-5xl opacity-100 drop-shadow-md"></i>
+                    </div>
+                    <div class="bg-red-800 text-center rounded-lg text-[10px] md:text-xs py-1 font-black">Kırmızı Kutu</div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Doğa Köşesi - Sağ Alt Köşede Şık HUD (Tıklanamaz ve Engellemez) -->
+    <div id="garden-widget" class="fixed bottom-14 right-4 z-40 flex flex-col items-center pointer-events-none select-none">
+        <div id="sparkle-container" class="absolute inset-0 pointer-events-none z-30"></div>
+        <div id="tree-svg-wrapper" class="w-32 h-32 md:w-44 md:h-44 transition-all duration-500 filter drop-shadow-[0_8px_16px_rgba(0,0,0,0.15)] breeze-anim">
+            <!-- Ağaç SVG aşamaları buraya yerleşecek -->
+        </div>
+        <div id="tree-hud-label" class="bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full border border-green-200/50 shadow-md pointer-events-auto mt-2 scale-90 md:scale-100 flex flex-col items-center transition-all duration-500">
+            <span id="tree-status-text" class="text-[10px] md:text-xs text-green-800 font-bold text-center leading-none">Tohum ekildi! 🌱</span>
+            <div class="w-20 bg-green-100 h-1.5 rounded-full overflow-hidden mt-1 shadow-inner">
+                <div id="growth-bar" class="bg-gradient-to-r from-emerald-400 to-green-500 h-full w-0 transition-all duration-500"></div>
+            </div>
+            <span class="text-[9px] text-green-700 font-black mt-0.5 animate-pulse" id="growth-percentage">%0 Büyüme</span>
+        </div>
+    </div>
+
+    <!-- Eğitici Alt Bilgilendirme -->
+    <footer id="game-footer" class="w-full max-w-4xl mx-auto px-4 text-center z-10 transition-all duration-1000">
+        <p class="text-[10px] md:text-xs text-sky-900 font-black bg-white/40 backdrop-blur-sm rounded-full py-1.5 px-4 inline-block border border-sky-200/50">
+            🌱 Unutma! Her atık çöp değildir, geri dönüşüm geleceğimizdir. 🍃
+        </p>
+    </footer>
+
+    <!-- Yönerge Modalı (Arka Planında 1.jpg Görseli Yüklenecektir) -->
+    <div id="intro-modal" class="fixed inset-0 flex flex-col justify-center items-center z-50 p-6 overflow-y-auto">
+        <div class="bg-white/95 rounded-3xl p-6 md:p-8 max-w-md w-full text-center shadow-2xl border border-sky-100 flex flex-col items-center">
+            <h2 class="title-font text-2xl md:text-3xl text-emerald-600 mb-3 font-black tracking-wide">
+                Doğa Dedektifi Görevi! 🌍
+            </h2>
+            <p class="text-xs md:text-sm text-gray-700 font-bold mb-6 max-w-xs">
+                Gezegenimizin kahramanı olmaya hazır mısın? İşte yapman gerekenler:
+            </p>
+            
+            <div class="space-y-4 mb-8 text-left w-full px-2">
+                <div class="flex items-start gap-3">
+                    <span class="text-2xl select-none leading-none">🎁</span>
+                    <div>
+                        <h4 class="font-black text-sm md:text-base text-green-700 title-font">Atığı Yakala</h4>
+                        <p class="text-[11px] md:text-xs text-gray-600 font-bold leading-relaxed">Ekranda beliren sevimli atığı parmağınla veya farenle tut.</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="text-2xl select-none leading-none">🗑️</span>
+                    <div>
+                        <h4 class="font-black text-sm md:text-base text-amber-700 title-font">Doğru Kutuya Bırak</h4>
+                        <p class="text-[11px] md:text-xs text-gray-600 font-bold leading-relaxed">Atıkları uygun renkteki kutunun üstüne taşı.</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="text-2xl select-none leading-none">🌳</span>
+                    <div>
+                        <h4 class="font-black text-sm md:text-base text-emerald-700 title-font">Ağacını Büyüt</h4>
+                        <p class="text-[11px] md:text-xs text-gray-600 font-bold leading-relaxed">Her doğru hamlenle sağ alttaki küçük tohum büyüsün ve gür bir dev ağaç olsun!</p>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="closeIntroAndStart()" class="title-font w-full max-w-xs bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-black text-sm md:text-base py-3.5 rounded-2xl shadow-lg transition transform active:scale-95 duration-150">
+                GÖREVE BAŞLA! 🚀
+            </button>
+        </div>
+    </div>
+
+    <!-- Tebrik Kartı Modalı -->
+    <div id="game-over-modal" class="fixed inset-0 bg-sky-900/40 backdrop-blur-md flex justify-center items-center z-50 hidden p-4">
+        <div class="bg-white rounded-3xl p-6 md:p-8 max-w-lg w-full text-center shadow-2xl border border-green-200 transform scale-95 transition-all max-h-[95vh] overflow-y-auto">
+            <div class="text-5xl mb-2" id="modal-emoji">🏆</div>
+            <h2 class="title-font text-2xl md:text-3xl text-green-600 mb-2 font-black" id="modal-title">Tebrikler Kahraman!</h2>
+            <p class="text-gray-600 text-xs md:text-sm mb-4 font-bold" id="modal-desc">Bütün atıkları başarıyla dönüştürdün ve doğayı korudun!</p>
+            
+            <!-- Sonuç Ağacı Gösterim Alanı -->
+            <div class="bg-green-50/70 border border-green-100 rounded-3xl p-4 mb-4 flex flex-col items-center">
+                <span class="text-xs font-black text-green-800 mb-2 title-font">Sevginle Büyüttüğün Muhteşem Devasa Ağaç:</span>
+                <div id="final-tree-display" class="w-40 h-40 flex items-center justify-center filter drop-shadow-md">
+                    <!-- Muhteşem ağaç SVG'si buraya kopyalanacak -->
+                </div>
+            </div>
+
+            <div class="bg-green-50/50 rounded-2xl p-3.5 mb-4 border border-green-100 flex justify-around items-center">
+                <div>
+                    <p class="text-[10px] text-green-800 font-bold">Toplam Skor:</p>
+                    <p class="text-2xl font-black text-green-600 title-font" id="final-score">0</p>
+                </div>
+                <div class="h-8 w-px bg-green-200"></div>
+                <div>
+                    <p class="text-[10px] text-green-800 font-bold">Ağaç Durumu:</p>
+                    <p class="text-xs font-black text-emerald-600 title-font mt-0.5">🌳 Dev Çevre Ağacı!</p>
+                </div>
+            </div>
+
+            <button onclick="startGame()" class="title-font w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white text-sm md:text-base py-3 rounded-2xl shadow-md transition transform active:scale-95 font-black">
+                YENİDEN OYNA! 🔄
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const SoundFX = {
+            enabled: true,
+            ctx: null,
+
+            init() {
+                this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+            },
+
+            playCorrect() {
+                if (!this.enabled) return;
+                if (!this.ctx) this.init();
+                const now = this.ctx.currentTime;
+                
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'triangle';
+                
+                osc.frequency.setValueAtTime(350, now);
+                osc.frequency.exponentialRampToValueAtTime(700, now + 0.15);
+                
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.linearRampToValueAtTime(0, now + 0.25);
+                
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                
+                osc.start(now);
+                osc.stop(now + 0.25);
+            },
+
+            playWrong() {
+                if (!this.enabled) return;
+                if (!this.ctx) this.init();
+                const now = this.ctx.currentTime;
+                
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                
+                osc.frequency.setValueAtTime(170, now);
+                osc.frequency.linearRampToValueAtTime(90, now + 0.3);
+                
+                gain.gain.setValueAtTime(0.12, now);
+                gain.gain.linearRampToValueAtTime(0, now + 0.3);
+                
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                
+                osc.start(now);
+                osc.stop(now + 0.3);
+            },
+
+            playGrowth() {
+                if (!this.enabled) return;
+                if (!this.ctx) this.init();
+                const now = this.ctx.currentTime;
+                
+                const notes = [261.63, 329.63, 392.00, 523.25];
+                notes.forEach((freq, idx) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, now + (idx * 0.08));
+                    gain.gain.setValueAtTime(0.08, now + (idx * 0.08));
+                    gain.gain.linearRampToValueAtTime(0, now + (idx * 0.08) + 0.15);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(now + (idx * 0.08));
+                    osc.stop(now + (idx * 0.08) + 0.15);
+                });
+            },
+
+            playGameOver() {
+                if (!this.enabled) return;
+                if (!this.ctx) this.init();
+                const now = this.ctx.currentTime;
+                
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                
+                osc.frequency.setValueAtTime(200, now);
+                osc.frequency.linearRampToValueAtTime(100, now + 0.5);
+                
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.linearRampToValueAtTime(0, now + 0.5);
+                
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                
+                osc.start(now);
+                osc.stop(now + 0.5);
+            },
+
+            playVictory() {
+                if (!this.enabled) return;
+                if (!this.ctx) this.init();
+                
+                const notes = [261.63, 329.63, 392.00, 523.25, 659.25, 783.99, 1046.50];
+                const duration = 0.12;
+                const now = this.ctx.currentTime;
+
+                notes.forEach((freq, index) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, now + (index * duration));
+                    
+                    gain.gain.setValueAtTime(0.15, now + (index * duration));
+                    gain.gain.linearRampToValueAtTime(0, now + (index * duration) + duration);
+                    
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    
+                    osc.start(now + (index * duration));
+                    osc.stop(now + (index * duration) + duration);
+                });
+            }
+        };
+    </script>
+
+    <script>
+        // Ağacın büyüme aşamaları için tasarlanmış, viewBox oranları korunarak kırpılmayı önleyen ve Y=100 tabanına tam oturan SVGs
+        const TREE_STAGES_SVG = {
+            // Aşama 0: Sadece Toprak ve Minik Tohum (Tam Oturmuş)
+            0: `
+            <svg class="w-full h-full transform scale-75 transition-transform duration-500" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <path d="M 10 100 Q 50 90 90 100 Z" fill="#78350f" />
+                <circle cx="50" cy="95" r="4" fill="#facc15" class="animate-pulse" />
+                <circle cx="50" cy="95" r="7" fill="none" stroke="#facc15" stroke-width="1.5" class="animate-ping" style="animation-duration: 2s;"/>
+            </svg>`,
+            
+            // Aşama 1: Filizlenen İlk Yaprak
+            1: `
+            <svg class="w-full h-full transform scale-90 transition-transform duration-500" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <path d="M 10 100 Q 50 90 90 100 Z" fill="#78350f" />
+                <path d="M 50 95 Q 48 70 51 64" stroke="#22c55e" stroke-width="4.5" stroke-linecap="round" fill="none" />
+                <path d="M 51 64 Q 60 56 55 50 Q 46 54 51 64" fill="#4ade80" />
+            </svg>`,
+
+            // Aşama 2: Gelişmekte Olan Küçük Fidan
+            2: `
+            <svg class="w-full h-full transform scale-100 transition-transform duration-500" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <path d="M 10 100 Q 50 90 90 100 Z" fill="#78350f" />
+                <path d="M 50 95 Q 46 60 52 44" stroke="#b45309" stroke-width="6.5" stroke-linecap="round" fill="none" />
+                <path d="M 52 44 Q 65 34 54 24 Q 40 28 52 44" fill="#22c55e" />
+                <path d="M 50 56 Q 32 46 38 34 Q 48 41 50 56" fill="#4ade80" />
+            </svg>`,
+
+            // Aşama 3: Meyve Vermeye Başlayan Genç Ağaç
+            3: `
+            <svg class="w-full h-full transform scale-105 transition-transform duration-500" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <path d="M 10 100 Q 50 90 90 100 Z" fill="#78350f" />
+                <path d="M 50 95 Q 48 55 51 34" stroke="#78350f" stroke-width="9" stroke-linecap="round" fill="none" />
+                <path d="M 50 55 Q 64 46 70 38" stroke="#78350f" stroke-width="4.5" stroke-linecap="round" fill="none" />
+                <path d="M 49 60 Q 36 51 30 45" stroke="#78350f" stroke-width="4.5" stroke-linecap="round" fill="none" />
+                <circle cx="51" cy="28" r="20" fill="#22c55e" />
+                <circle cx="31" cy="42" r="14" fill="#16a34a" />
+                <circle cx="68" cy="36" r="16" fill="#4ade80" />
+                <circle cx="50" cy="22" r="3" fill="#ef4444" />
+                <circle cx="33" cy="40" r="3" fill="#ef4444" />
+                <circle cx="66" cy="34" r="3" fill="#ef4444" />
+            </svg>`,
+
+            // Aşama 4: Büyük ve Sağlam Ağaç
+            4: `
+            <svg class="w-full h-full transform scale-110 transition-transform duration-500" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <path d="M 10 100 Q 50 90 90 100 Z" fill="#78350f" />
+                <path d="M 50 95 L 50 28" stroke="#78350f" stroke-width="11" stroke-linecap="round" />
+                <path d="M 50 54 C 66 48, 72 36, 78 30" stroke="#78350f" stroke-width="5.5" stroke-linecap="round" fill="none" />
+                <path d="M 50 60 C 34 54, 26 42, 19 36" stroke="#78350f" stroke-width="5.5" stroke-linecap="round" fill="none" />
+                <circle cx="50" cy="24" r="21" fill="#15803d" />
+                <circle cx="28" cy="38" r="16" fill="#166534" />
+                <circle cx="72" cy="34" r="19" fill="#22c55e" />
+                <circle cx="50" cy="35" r="15" fill="#4ade80" />
+                <circle cx="48" cy="16" r="3.2" fill="#ea580c" />
+                <circle cx="26" cy="36" r="3.2" fill="#ea580c" />
+                <circle cx="74" cy="32" r="3.2" fill="#ea580c" />
+            </svg>`,
+
+            // Aşama 5: KOCAMAN, DEVASE ve GÜR ÇEVRE AĞACI (Tamamen Y=100'e Oturtulmuş, Kökler Havada Asılı Kalmaz)
+            5: `
+            <svg class="w-full h-full transform scale-115 transition-transform duration-700" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <path d="M 5 100 Q 50 85 95 100 Z" fill="#78350f" />
+                <path d="M 46 100 L 50 32" stroke="#5c2d11" stroke-width="14" />
+                <path d="M 54 100 L 50 32" stroke="#5c2d11" stroke-width="14" />
+                <path d="M 50 52 Q 72 46, 82 32" stroke="#5c2d11" stroke-width="8" stroke-linecap="round" fill="none" />
+                <path d="M 50 58 Q 28 50, 16 36" stroke="#5c2d11" stroke-width="8" stroke-linecap="round" fill="none" />
+                
+                <circle cx="50" cy="18" r="23" fill="#166534" />
+                <circle cx="18" cy="34" r="18" fill="#15803d" />
+                <circle cx="82" cy="30" r="20" fill="#14532d" />
+                <circle cx="34" cy="24" r="22" fill="#22c55e" />
+                <circle cx="66" cy="22" r="22" fill="#16a34a" />
+                <circle cx="50" cy="34" r="18" fill="#4ade80" />
+                
+                <circle cx="46" cy="12" r="3" fill="#ef4444" />
+                <circle cx="18" cy="30" r="3" fill="#ef4444" />
+                <circle cx="80" cy="26" r="3" fill="#ef4444" />
+                <circle cx="63" cy="16" r="3" fill="#ef4444" />
+                <circle cx="34" cy="30" r="3" fill="#ef4444" />
+                
+                <path d="M 54 24 L 56 26 L 54 28 L 52 26 Z" fill="#ffffff" />
+                <path d="M 29 20 L 31 22 L 29 24 L 27 22 Z" fill="#fef08a" />
+                <path d="M 70 28 L 72 30 L 70 32 L 68 30 Z" fill="#fef08a" />
+                
+                <circle cx="68" cy="12" r="4" fill="#60a5fa" />
+                <polygon points="70,12 74,13 70,14" fill="#f59e0b" />
+            </svg>`
+        };
+
+        const WASTE_ITEMS = [
+            // Plastik Atıklar (Plastik Kutusu - 5 Adet)
+            { id: 'p1', name: 'Pet Şişe', type: 'plastic', icon: 'fa-wine-bottle', iconColor: 'text-amber-500', bgColor: 'bg-amber-50', info: 'Plastik şişelerin doğada yok olması tam 450 yıl sürer!' },
+            { id: 'p2', name: 'Plastik Çatal', type: 'plastic', icon: 'fa-utensils', iconColor: 'text-amber-600', bgColor: 'bg-amber-50', info: 'Plastik çatal ve kaşıklar okyanus canlılarına zarar verebilir.' },
+            { id: 'p3', name: 'Yoğurt Kabı', type: 'plastic', icon: 'fa-cube', iconColor: 'text-yellow-600', bgColor: 'bg-yellow-50', info: 'Yoğurt kapları geri dönüştürülerek yeni oyuncaklar yapılabilir.' },
+            { id: 'p4', name: 'Şampuan Kutusu', type: 'plastic', icon: 'fa-pump-soap', iconColor: 'text-orange-500', bgColor: 'bg-orange-50', info: 'Banyo ürünleri plastik kapları kolayca yeni plastik malzemelere dönüşür.' },
+            { id: 'p5', name: 'Sıvı Sabun Şişesi', type: 'plastic', icon: 'fa-prescription-bottle', iconColor: 'text-yellow-500', bgColor: 'bg-yellow-50', info: 'Plastik poşetler yerine bez torba kullanmak harika bir fikirdir!' },
+            
+            // Kağıt Atıklar (Kağıt Kutusu - 5 Adet)
+            { id: 'k1', name: 'Eski Defter', type: 'paper', icon: 'fa-book-open', iconColor: 'text-blue-500', bgColor: 'bg-blue-50', info: '1 ton kağıdı geri dönüştürerek tam 17 ağacı kurtarabiliriz!' },
+            { id: 'k2', name: 'Karton Kutu', type: 'paper', icon: 'fa-box-open', iconColor: 'text-amber-700', bgColor: 'bg-amber-50', info: 'Karton kutuları katlayıp dönüştürürsek alan tasarrufu sağlarız.' },
+            { id: 'k3', name: 'Eski Gazete', type: 'paper', icon: 'fa-newspaper', iconColor: 'text-gray-500', bgColor: 'bg-gray-100', info: 'Gazete kağıtları çok kolayca yeniden hamur haline getirilip basılabilir.' },
+            { id: 'k4', name: 'Meyve Suyu Kutusu', type: 'paper', icon: 'fa-box', iconColor: 'text-red-400', bgColor: 'bg-red-50', info: 'Kutulardaki kağıt lifleri çok değerlidir ve kolayca ayrıştırılabilir.' },
+            { id: 'k5', name: 'Kargo Paketi', type: 'paper', icon: 'fa-mail-bulk', iconColor: 'text-yellow-700', bgColor: 'bg-yellow-50', info: 'Eski kargo paketleri kağıt geri dönüşümünde sevilerek kullanılır.' },
+
+            // Cam Atıklar (Cam Kutusu - 5 Adet)
+            { id: 'c1', name: 'Cam Kavanoz', type: 'glass', icon: 'fa-jar', iconColor: 'text-emerald-500', bgColor: 'bg-emerald-50', info: 'Cam, kalitesini hiç kaybetmeden sonsuz kez eritilip geri dönüştürülebilir!' },
+            { id: 'c2', name: 'Cam Şişe', type: 'glass', icon: 'fa-glass-water', iconColor: 'text-teal-500', bgColor: 'bg-teal-50', info: 'Cam şişelerin doğada yok olması tam 4000 yıl sürebilir!' },
+            { id: 'c3', name: 'Cam Bardak', type: 'glass', icon: 'fa-wine-glass', iconColor: 'text-cyan-400', bgColor: 'bg-cyan-50', info: 'Boş cam içecek şişeleri eritilerek yepyeni şişelere dönüşür.' },
+            { id: 'c4', name: 'Cam Kase', type: 'glass', icon: 'fa-shield-halved', iconColor: 'text-emerald-400', bgColor: 'bg-emerald-50', info: 'Kırık bardakları cam kumbarasına atarak geri dönüştürmeliyiz.' },
+            { id: 'c5', name: 'Zeytinyağı Şişesi', type: 'glass', icon: 'fa-prescription-bottle-medical', iconColor: 'text-green-700', bgColor: 'bg-green-50', info: 'Zarar görmüş koyu renkli yağ şişeleri de geri dönüşüme uygundur.' },
+
+            // Metal Atıklar (Metal Kutusu - 5 Adet)
+            { id: 'm1', name: 'Gazoz Kutusu', type: 'metal', icon: 'fa-glass-water-droplet', iconColor: 'text-rose-400', bgColor: 'bg-rose-50', info: 'Metal kutular eritildiğinde sadece 60 günde tekrar raflara dönebilir!' },
+            { id: 'm2', name: 'Konserve Kutusu', type: 'metal', icon: 'fa-database', iconColor: 'text-slate-500', bgColor: 'bg-slate-100', info: 'Konserveler eritilerek bisiklet, hatta uçak yapımında bile kullanılır!' },
+            { id: 'm3', name: 'Metal Tencere', type: 'metal', icon: 'fa-egg', iconColor: 'text-gray-400', bgColor: 'bg-gray-100', info: 'Eski kullanılmayan metalleri geri dönüştürmek, maden kazmaktan kolaydır.' },
+            { id: 'm4', name: 'Metal Anahtar', type: 'metal', icon: 'fa-key', iconColor: 'text-zinc-500', bgColor: 'bg-zinc-50', info: 'Paslanmış eski anahtarlar eritilerek sanayide hammadde olur.' },
+            { id: 'm5', name: 'Alüminyum Folyo', type: 'metal', icon: 'fa-scroll', iconColor: 'text-slate-400', bgColor: 'bg-slate-50', info: 'Temiz alüminyum folyolar metal geri dönüşümünde değerlendirilir.' }
+        ];
+
+        let score = 0;
+        let lives = 3;
+        let gameActive = false;
+        let currentItem = null;
+        let wastePool = [];
+        let totalCorrectAnswers = 0;
+        const targetVictoryCount = 20; // 20 doğru cevapta kazanır
+
+        const spawnArea = document.getElementById('spawn-area');
+        const scoreVal = document.getElementById('score-val');
+        const heartsContainer = document.getElementById('hearts-container');
+        const soundBtn = document.getElementById('sound-btn');
+        const soundIcon = document.getElementById('sound-icon');
+        const infoBox = document.getElementById('info-box');
+        const infoText = document.getElementById('info-text');
+        
+        // Doğa HUD Köşesi Elementleri
+        const treeSvgWrapper = document.getElementById('tree-svg-wrapper');
+        const treeStatusText = document.getElementById('tree-status-text');
+        const growthBar = document.getElementById('growth-bar');
+        const growthPercentage = document.getElementById('growth-percentage');
+        const sparkleContainer = document.getElementById('sparkle-container');
+        const gardenWidget = document.getElementById('garden-widget');
+        const treeHudLabel = document.getElementById('tree-hud-label');
+        
+        // Modal Elementleri
+        const introModal = document.getElementById('intro-modal');
+        const gameOverModal = document.getElementById('game-over-modal');
+        const modalEmoji = document.getElementById('modal-emoji');
+        const modalTitle = document.getElementById('modal-title');
+        const modalDesc = document.getElementById('modal-desc');
+        const finalScore = document.getElementById('final-score');
+        const finalTreeDisplay = document.getElementById('final-tree-display');
+
+        // Ses Ayarı Kontrolü
+        soundBtn.addEventListener('click', () => {
+            SoundFX.enabled = !SoundFX.enabled;
+            if (SoundFX.enabled) {
+                soundIcon.className = 'fas fa-volume-up';
+                soundBtn.className = 'w-9 h-9 rounded-full bg-sky-50 border border-sky-200 flex items-center justify-center text-sky-600 hover:bg-sky-100 transition shadow-sm';
+            } else {
+                soundIcon.className = 'fas fa-volume-mute';
+                soundBtn.className = 'w-9 h-9 rounded-full bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600 hover:bg-rose-100 transition shadow-sm';
+            }
+        });
+
+        // Yönergeyi Kapat ve Oyunu Başlat
+        function closeIntroAndStart() {
+            introModal.classList.add('hidden');
+            startGame();
+        }
+
+        // Oyunu Başlat
+        function startGame() {
+            score = 0;
+            lives = 3;
+            totalCorrectAnswers = 0;
+            gameActive = true;
+            wastePool = [...WASTE_ITEMS];
+            shuffleArray(wastePool);
+
+            scoreVal.textContent = score;
+            updateHearts();
+            
+            // Elemanları eski konumlarına, opaklıklarına ve layout yapılarına geri getir
+            gardenWidget.classList.remove('centered');
+            treeHudLabel.classList.remove('opacity-0', 'pointer-events-none', 'hidden'); // Hidden sınıfını temizliyoruz
+            
+            document.getElementById('game-header').classList.remove('opacity-0', 'pointer-events-none');
+            document.getElementById('game-main').classList.remove('opacity-0', 'pointer-events-none');
+            document.getElementById('game-footer').classList.remove('opacity-0', 'pointer-events-none');
+            
+            updateTreeState(); // Ağacı tohum durumuna getir
+            
+            infoBox.classList.add('hidden');
+            gameOverModal.classList.add('hidden');
+            spawnArea.innerHTML = '';
+
+            // İlk atığı alana getir
+            spawnNextWaste();
+        }
+
+        // Rastgele Karıştırma Algoritması
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        // Can Durumunu Güncelleme
+        function updateHearts() {
+            let heartHtml = '';
+            for (let i = 0; i < 3; i++) {
+                if (i < lives) {
+                    heartHtml += '<i class="fas fa-heart text-rose-500 mx-0.5"></i>';
+                } else {
+                    heartHtml += '<i class="far fa-heart text-gray-300 mx-0.5"></i>';
+                }
+            }
+            heartsContainer.innerHTML = heartHtml;
+        }
+
+        function updateTreeState() {
+            let currentStage = 0;
+            let statusText = "Tohum ekildi! 🌱";
+
+            if (totalCorrectAnswers >= 20) {
+                currentStage = 5;
+                statusText = "Kocaman devasa bir ağaç büyüttün! 🌳✨";
+            } else if (totalCorrectAnswers >= 16) {
+                currentStage = 4;
+                statusText = "Ağacın elmalar veriyor! 🍎";
+            } else if (totalCorrectAnswers >= 11) {
+                currentStage = 3;
+                statusText = "Fidanın büyüdü, yeşillendi! 🌿";
+            } else if (totalCorrectAnswers >= 6) {
+                currentStage = 2;
+                statusText = "Fidanımız yapraklanıyor! 🌱";
+            } else if (totalCorrectAnswers >= 2) {
+                currentStage = 1;
+                statusText = "Sihirli filizimiz doğdu! 🥰";
+            }
+
+            // SVG Güncelleme (Geçiş efekti eşliğinde)
+            treeSvgWrapper.classList.add('opacity-0', 'scale-90');
+            setTimeout(() => {
+                treeSvgWrapper.innerHTML = TREE_STAGES_SVG[currentStage];
+                treeSvgWrapper.classList.remove('opacity-0', 'scale-90');
+            }, 300);
+
+            treeStatusText.textContent = statusText;
+            
+            const progressPercent = Math.min(100, Math.round((totalCorrectAnswers / targetVictoryCount) * 100));
+            growthBar.style.width = `${progressPercent}%`;
+            growthPercentage.textContent = `%${progressPercent} Büyüme`;
+        }
+
+        // Sihirli Parıltı Efekti Yaratmak
+        function triggerSparkles() {
+            SoundFX.playGrowth();
+            for (let i = 0; i < 8; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'absolute text-yellow-400 text-lg sparkle-effect pointer-events-none z-30';
+                sparkle.innerHTML = '✨';
+                
+                // Rastgele konum
+                const x = Math.random() * 100;
+                const y = Math.random() * 80;
+                
+                sparkle.style.left = `${x}%`;
+                sparkle.style.top = `${y}%`;
+                sparkle.style.animationDelay = `${Math.random() * 0.3}s`;
+                
+                sparkleContainer.appendChild(sparkle);
+                
+                setTimeout(() => {
+                    sparkle.remove();
+                }, 1200);
+            }
+        }
+
+        function spawnNextWaste() {
+            if (!gameActive) return;
+
+            if (wastePool.length === 0) {
+                wastePool = [...WASTE_ITEMS];
+                shuffleArray(wastePool);
+            }
+
+            currentItem = wastePool.pop();
+
+            const wasteEl = document.createElement('div');
+            wasteEl.id = currentItem.id;
+            
+            // Çocuk dostu, çok şık sevimli bir kart tasarımı
+            wasteEl.className = `${currentItem.bgColor} draggable-item cursor-grab border-2 border-sky-100 hover:border-sky-300 rounded-2xl p-4 flex flex-col items-center justify-center gap-2 shadow-md w-28 h-28 md:w-32 md:h-32 z-20 absolute overflow-hidden`;
+            
+            const randomAngle = Math.floor(Math.random() * 16) - 8;
+            wasteEl.style.transform = `rotate(${randomAngle}deg)`;
+
+            wasteEl.innerHTML = `
+                <div class="w-12 h-12 md:w-14 md:h-14 flex items-center justify-center rounded-full bg-white/80 shadow-sm">
+                    <i class="fas ${currentItem.icon} text-3xl md:text-4xl ${currentItem.iconColor}"></i>
+                </div>
+                <span class="font-black text-gray-700 text-[11px] md:text-xs text-center leading-tight">${currentItem.name}</span>
+            `;
+
+            spawnArea.appendChild(wasteEl);
+            makeElementDraggable(wasteEl);
+        }
+
+        function makeElementDraggable(element) {
+            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            
+            const parentRect = spawnArea.getBoundingClientRect();
+            const elemRect = element.getBoundingClientRect();
+            
+            let currentX = (parentRect.width - elemRect.width) / 2;
+            let currentY = (parentRect.height - elemRect.height) / 2;
+            
+            element.style.left = currentX + 'px';
+            element.style.top = currentY + 'px';
+
+            element.onmousedown = dragMouseDown;
+            element.addEventListener('touchstart', dragTouchStart, { passive: false });
+
+            function dragMouseDown(e) {
+                e.preventDefault();
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                document.onmouseup = closeDragElement;
+                document.onmousemove = elementDrag;
+                element.style.cursor = 'grabbing';
+            }
+
+            function dragTouchStart(e) {
+                e.preventDefault();
+                const touch = e.touches[0];
+                pos3 = touch.clientX;
+                pos4 = touch.clientY;
+                document.addEventListener('touchend', closeDragTouch, { passive: false });
+                document.addEventListener('touchmove', elementTouchMove, { passive: false });
+            }
+
+            function elementDrag(e) {
+                e.preventDefault();
+                pos1 = pos3 - e.clientX;
+                pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                
+                let newTop = element.offsetTop - pos2;
+                let newLeft = element.offsetLeft - pos1;
+
+                element.style.top = newTop + "px";
+                element.style.left = newLeft + "px";
+            }
+
+            function elementTouchMove(e) {
+                e.preventDefault();
+                const touch = e.touches[0];
+                pos1 = pos3 - touch.clientX;
+                pos2 = pos4 - touch.clientY;
+                pos3 = touch.clientX;
+                pos4 = touch.clientY;
+
+                let newTop = element.offsetTop - pos2;
+                let newLeft = element.offsetLeft - pos1;
+
+                element.style.top = newTop + "px";
+                element.style.left = newLeft + "px";
+            }
+
+            function closeDragElement() {
+                document.onmouseup = null;
+                document.onmousemove = null;
+                element.style.cursor = 'grab';
+                checkDrop(element);
+            }
+
+            function closeDragTouch() {
+                document.removeEventListener('touchend', closeDragTouch);
+                document.removeEventListener('touchmove', elementTouchMove);
+                checkDrop(element);
+            }
+        }
+
+        function checkDrop(element) {
+            const elemRect = element.getBoundingClientRect();
+            const bins = ['paper', 'plastic', 'glass', 'metal'];
+            let droppedInsideBin = false;
+
+            for (let binType of bins) {
+                const binElement = document.getElementById(`bin-${binType}`);
+                const binRect = binElement.getBoundingClientRect();
+
+                // Çarpışma Testi
+                if (
+                    elemRect.right > binRect.left &&
+                    elemRect.left < binRect.right &&
+                    elemRect.bottom > binRect.top &&
+                    elemRect.top < binRect.bottom
+                ) {
+                    droppedInsideBin = true;
+                    handleResult(binType, binElement, element);
+                    break;
+                }
+            }
+
+            if (!droppedInsideBin) {
+                const parentRect = spawnArea.getBoundingClientRect();
+                const elemRect = element.getBoundingClientRect();
+                
+                element.style.transition = "all 0.35s cubic-bezier(0.25, 1, 0.5, 1)";
+                element.style.left = ((parentRect.width - elemRect.width) / 2) + "px";
+                element.style.top = ((parentRect.height - elemRect.height) / 2) + "px";
+                element.style.transform = "rotate(0deg)";
+                
+                setTimeout(() => {
+                    element.style.transition = "none";
+                }, 350);
+            }
+        }
+
+        function handleResult(binType, binElement, element) {
+            if (binType === currentItem.type) {
+                // DOĞRU CEVAP
+                score += 10;
+                totalCorrectAnswers++;
+                scoreVal.textContent = score;
+                SoundFX.playCorrect();
+
+                // Kutuya Tatlı Bir Zıplama Animasyonu Ver
+                binElement.classList.add('bin-bounce');
+                setTimeout(() => {
+                    binElement.classList.remove('bin-bounce');
+                }, 450);
+
+                // Doğa köşesindeki ağacı büyüt ve parıltı saç
+                updateTreeState();
+                triggerSparkles();
+
+                // Eğitici Bilgiyi Göster
+                showInfoMessage(currentItem.info);
+
+                // Atığı Ortamdan Kaldır
+                element.remove();
+                
+                // Kazanma kontrolü (20 doğru eşleşme yapınca kazanır)
+                if (totalCorrectAnswers >= targetVictoryCount) {
+                    runTreeCelebration();
+                } else {
+                    spawnNextWaste();
+                }
+
+            } else {
+                // YANLIŞ CEVAP
+                lives--;
+                updateHearts();
+                SoundFX.playWrong();
+
+                // Kırmızı titreme efekti
+                binElement.classList.add('border-red-500', 'shake');
+                element.style.transition = "all 0.35s ease";
+                
+                // Ortaya Geri Gönder
+                const parentRect = spawnArea.getBoundingClientRect();
+                const elemRect = element.getBoundingClientRect();
+                element.style.left = ((parentRect.width - elemRect.width) / 2) + "px";
+                element.style.top = ((parentRect.height - elemRect.height) / 2) + "px";
+
+                setTimeout(() => {
+                    binElement.classList.remove('border-red-500', 'shake');
+                    element.style.transition = "none";
+                }, 450);
+
+                if (lives <= 0) {
+                    endGame(false);
+                }
+            }
+        }
+
+        // Bilgi Mesajı Gösterme
+        function showInfoMessage(message) {
+            infoText.innerHTML = `🌟 <strong>Harika Geri Dönüşüm!</strong> ${message}`;
+            infoBox.classList.remove('hidden');
+            infoBox.classList.remove('scale-95');
+            infoBox.classList.add('scale-100');
+
+            // 5 saniye sonra gizle
+            setTimeout(() => {
+                infoBox.classList.add('scale-95');
+                infoBox.classList.remove('scale-100');
+                setTimeout(() => {
+                    if (infoBox.classList.contains('scale-95')) {
+                        infoBox.classList.add('hidden');
+                    }
+                }, 300);
+            }, 5000);
+        }
+
+        // Ağacın Ekran Altına Sabitlenip Kutlanma Süreci
+        function runTreeCelebration() {
+            gameActive = false;
+            
+            // Tüm oyun arayüz elemanlarını gizle
+            document.getElementById('game-header').classList.add('opacity-0', 'pointer-events-none');
+            document.getElementById('game-main').classList.add('opacity-0', 'pointer-events-none');
+            document.getElementById('game-footer').classList.add('opacity-0', 'pointer-events-none');
+            
+            // Havada asılı kalmasını sağlayan HUD etiketi kaldırılıyor, böylece ağaç doğrudan tabana sıfırlanıyor
+            treeHudLabel.classList.add('hidden'); 
+            
+            // Doğa Widget'ını ekranın tam alt taban sınırına çakarak indir (Havada durması tamamen önlendi!)
+            gardenWidget.classList.add('centered');
+            
+            // Ağacı en gür haline geçir
+            updateTreeState();
+            
+            // 5 saniye boyunca sihirli parıltılar uçuşsun
+            let sparkleInterval = setInterval(triggerSparkles, 500);
+            
+            // Tam 5 saniye boyunca tabanda süzüldükten sonra tebrik ekranına geçiş yap
+            setTimeout(() => {
+                clearInterval(sparkleInterval);
+                endGame(true);
+            }, 5000);
+        }
+
+        // Oyunu Sonlandır ve Sonuç Ekranını Aç
+        function endGame(isVictory) {
+            gameActive = false;
+            
+            if (isVictory) {
+                SoundFX.playVictory();
+                modalEmoji.textContent = '🏆';
+                modalTitle.textContent = 'Mükemmel Doğa Dedektifi!';
+                modalDesc.textContent = 'Bütün atıkları başarıyla geri dönüştürdün! Sayende küçük tohumumuz kocaman, gür yapraklı, kuşların neşeyle şarkı söylediği dev bir çevre ağacına dönüştü. Dünyamız sana minnettar! 🌳✨';
+                
+                // Sonuç ekranındaki ağaç SVG'sini son aşamaya getir
+                finalTreeDisplay.innerHTML = TREE_STAGES_SVG[5];
+            } else {
+                SoundFX.playGameOver();
+                modalEmoji.textContent = '🍂';
+                modalTitle.textContent = 'Tekrar Deneyebilirsin!';
+                modalDesc.textContent = 'Hiç üzülme! Geri dönüşüm kahramanlığı pratik yaptıkça harika hale gelir. Yeniden oynayarak tohumunu devasa bir fidan yapabilirsin!';
+                
+                // Yenilgi durumunda küçük fidan aşamasını göster
+                finalTreeDisplay.innerHTML = TREE_STAGES_SVG[2];
+            }
+
+            finalScore.textContent = score;
+            gameOverModal.classList.remove('hidden');
+            
+            spawnArea.innerHTML = `
+                <div class="text-center py-6">
+                    <p class="text-sm md:text-base text-emerald-800 font-bold title-font">Gezegenimizi koruduğun için teşekkürler! 🌸</p>
+                </div>
+            `;
+        }
+
+        window.onload = function() {
+            // Tohumu ilk etapta sıfırıncı aşama olarak çiz
+            treeSvgWrapper.innerHTML = TREE_STAGES_SVG[0];
+        };
+    </script>
+</body>
+</html>

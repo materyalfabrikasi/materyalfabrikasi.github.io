@@ -1,0 +1,295 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Türk Bilim İnsanları - Eşleştirme Atölyesi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght=700&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0; padding: 0; height: 100%;
+            font-family: 'Quicksand', sans-serif;
+            overflow: hidden;
+        }
+        .game-title { font-family: 'Fredoka One', cursive; }
+
+        /* Arka Plan Görseli - Ekrana Tam Sığdırıldı (Kırpılma Engellendi) */
+        .bg-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('7.jpg');
+            background-size: 100% 100%; background-position: center; background-repeat: no-repeat;
+            z-index: -1;
+        }
+
+        /* Giriş Ekranı Arka Planı */
+        #start-screen {
+            position: fixed; inset: 0; z-index: 5000;
+            overflow: hidden;
+        }
+
+        /* Sarı Çerçeveli, Kibar Boyutlu ve Tam Ortalanmış Yönerge Kutusu */
+        .yonerge-text-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 5010;
+            max-width: 550px; 
+            width: 80%; 
+            text-align: center; 
+            padding: 30px 25px;
+            background: rgba(255, 255, 255, 0.95);
+            border: 4px solid #eab308; /* Sarı çerçeve */
+            border-radius: 28px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+        }
+
+        /* Oyun Ana Düzeni */
+        .game-wrapper {
+            display: flex; height: 100vh; padding: 25px; gap: 25px; box-sizing: border-box;
+        }
+
+        /* Sol Taraf: Görseller Grid Alanı */
+        .main-content {
+            width: 70%; height: 100%; overflow-y: auto;
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;
+            padding-right: 10px;
+        }
+
+        /* Sağ Taraf: Bilgi Kartları Listesi */
+        .sidebar {
+            width: 30%; height: 100%; overflow-y: auto;
+            display: flex; flex-direction: column; gap: 15px; padding: 15px;
+            background: rgba(30, 27, 75, 0.4); backdrop-filter: blur(10px);
+            border-radius: 24px; border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Görsel Kart Çerçeveleri */
+        .image-card {
+            background: rgba(255, 255, 255, 0.95); padding: 15px; border-radius: 20px;
+            text-align: center; box-shadow: 0 10px 20px rgba(30, 27, 75, 0.3);
+            border: 2px solid rgba(99, 102, 241, 0.2);
+            display: flex; flex-direction: column; justify-content: space-between;
+        }
+
+        /* Görselin Kırpılmadan Çerçeve İçinde Tamamı Görünmesi */
+        .image-card img {
+            width: 100%; height: 200px; object-fit: contain;
+            background-color: #f8fafc; border-radius: 15px; 
+            cursor: zoom-in; transition: transform 0.2s;
+        }
+        .image-card img:hover { transform: scale(1.02); }
+
+        .image-name {
+            font-weight: bold; margin: 10px 0; font-size: 20px; color: #1e1b4b;
+            background: #e0e7ff; border-radius: 12px; padding: 6px;
+        }
+
+        /* Sürükleme Alanları */
+        .drop-zone {
+            min-height: 75px; border: 3px dashed #6366f1; border-radius: 15px;
+            display: flex; align-items: center; justify-content: center;
+            padding: 10px; font-size: 15px; font-weight: bold; color: #4338ca;
+            background: rgba(255, 255, 255, 0.7); transition: all 0.3s;
+        }
+
+        .drop-zone.correct {
+            background-color: #10b981 !important; color: white !important;
+            border-style: solid; border-color: #059669;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.15);
+        }
+
+        /* Sağdaki Sarı Bilgi Kartları */
+        .word-card {
+            background-color: #fde047; padding: 16px; border-radius: 15px;
+            cursor: grab; font-size: 15px; font-weight: bold; color: #1e1b4b;
+            text-align: left; border: 2px solid #eab308;
+            box-shadow: 0 5px 12px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+        .word-card:active { transform: scale(0.96); }
+
+        /* Başarı Penceresi */
+        #success-msg {
+            display: none; position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%); background: white;
+            padding: 50px 80px; border-radius: 40px; text-align: center;
+            z-index: 6000; border: 4px solid #f59e0b;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(255,255,255,0.1); }
+        ::-webkit-scrollbar-thumb { background: #6366f1; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-indigo-950 w-screen h-screen overflow-hidden">
+
+<div class="bg-container"></div>
+
+<div id="start-screen">
+    <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover">
+        <source src="1.mp4" type="video/mp4">
+    </video>
+    
+    <div class="yonerge-text-container">
+        <!-- Dengeli Boyutta Sarı Başlık -->
+        <h2 class="game-title text-3xl mb-4 text-yellow-500 drop-shadow-[0_1px_1px_rgba(0,0,0,0.1)]">Bul Bakalım Ben Kimim?</h2>
+        <!-- Dengeli Boyutta ve Okunabilir Koyu Mavi/Lacivert Açıklama -->
+        <p class="text-base mb-6 leading-relaxed text-indigo-950 font-extrabold">
+            Türk bilim insanlarını keşfetmeye hazır mısın?<br>
+            Sağ tarafta verilen sarı bilgi kartlarını oku ve sol taraftaki doğru bilim insanıyla eşleştir!
+        </p>
+        <button onclick="startGame();" class="bg-indigo-600 text-white font-extrabold py-3 px-10 rounded-full text-lg hover:bg-indigo-700 hover:scale-105 shadow-[0_4px_12px_rgba(0,0,0,0.2)] transition duration-300">Oyuna Başla 🚀</button>
+    </div>
+</div>
+
+<header class="p-4 absolute top-0 left-0 z-10">
+    <h1 class="game-title text-3xl text-yellow-300 drop-shadow-md bg-indigo-950/80 px-4 py-2 rounded-2xl border border-indigo-500/30 inline-block">
+        🧬 Türk Bilim İnsanları
+    </h1>
+</header>
+
+<div class="game-wrapper pt-20">
+    <div class="main-content" id="image-grid"></div>
+    <div class="sidebar" id="word-list"></div>
+</div>
+
+<div id="image-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm cursor-pointer" onclick="closeModal()">
+    <span class="absolute top-4 right-6 text-white text-4xl font-bold">&times;</span>
+    <img id="modal-img" class="max-w-[90%] max-h-[85%] rounded-2xl border-4 border-white object-contain">
+</div>
+
+<div id="success-msg">
+    <h2 class="game-title text-5xl text-indigo-900 mb-2">Tebrikler!</h2>
+    <p class="text-2xl text-amber-500 font-bold mb-6">✨ Harikasın ✨</p>
+    <button onclick="location.reload()" class="bg-amber-500 text-white font-bold py-3 px-8 text-xl rounded-full shadow-lg hover:bg-amber-600 transition">Tekrar Oyna 🔄</button>
+</div>
+
+<script>
+    const gameData = [
+        { id: 'ibnisina', num: '1', name: 'İbn-i Sina', img: '1.jpg', text: 'Merhaba! Tıbbın Kanunu adlı eserimle tıp tarihine yön verdim, bil bakalım ben kimim?' },
+        { id: 'pirireis', num: '2', name: 'Pir-i Reis', img: '2.jpg', text: 'Merhaba! İlk dünya haritasını çizdim, bil bakalım ben kimim?' },
+        { id: 'alikuscu', num: '3', name: 'Ali Kuşçu', img: '3.jpg', text: 'Merhaba! Ay\'ın haritasını çıkardım ve Ay\'ın bir bölümüne adım verildi, bil bakalım ben kimim?' },
+        { id: 'aziz', num: '4', name: 'Aziz Sancar', img: '4.jpg', text: 'Merhaba! Ben Nobel ödülünü kazandım, bil bakalım ben kimim?' },
+        { id: 'canan', num: '5', name: 'Canan Dağdeviren', img: '5.jpg', text: 'Merhaba! Giyilebilir kalp pili geliştirdim, bil bakalım ben kimim?' },
+        { id: 'harezmi', num: '6', name: 'Harezmi', img: '6.jpg', text: 'Merhaba! Ben sıfırı buldum, bil bakalım ben kimim?' }
+    ];
+
+    let correctMatches = 0;
+    let winAudio = null;
+    let currentMatchAudio = null; 
+
+    function startGame() {
+        if(winAudio) {
+            winAudio.pause();
+            winAudio.currentTime = 0;
+        }
+        document.getElementById('start-screen').style.display = 'none';
+    }
+
+    function initGame() {
+        const wordList = document.getElementById('word-list');
+        const imageGrid = document.getElementById('image-grid');
+        const shuffledWords = [...gameData].sort(() => Math.random() - 0.5);
+
+        // Sağ panel metin kartları
+        shuffledWords.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'word-card';
+            card.id = `word-${item.id}`;
+            card.draggable = true;
+            card.innerHTML = `<span>${item.text}</span>`;
+            
+            card.addEventListener('dragstart', (ev) => {
+                ev.dataTransfer.setData("text", ev.target.id);
+            });
+            wordList.appendChild(card);
+        });
+
+        // Sol panel görsel kartları
+        gameData.forEach(item => {
+            const container = document.createElement('div');
+            container.className = 'image-card';
+            container.innerHTML = `
+                <img src="${item.img}" onclick="openModal('${item.img}')" onerror="this.src='https://placehold.co/150x150/indigo/white?text=Görsel+YOK'">
+                <div class="image-name">${item.name}</div>
+                <div class="drop-zone" id="drop-${item.id}" ondrop="drop(event)" ondragover="allowDrop(event)">
+                    Kartı buraya sürükle
+                </div>
+            `;
+            imageGrid.appendChild(container);
+        });
+    }
+
+    function allowDrop(ev) { ev.preventDefault(); }
+
+    function drop(ev) {
+        ev.preventDefault();
+        const dataId = ev.dataTransfer.getData("text");
+        const draggedElement = document.getElementById(dataId);
+        const targetZone = ev.target.closest('.drop-zone');
+        
+        if (!targetZone) return;
+
+        const wordId = dataId.split('-')[1];
+        const targetId = targetZone.id.split('-')[1];
+
+        if (wordId === targetId) {
+            const matchedScientist = gameData.find(s => s.id === wordId);
+            
+            targetZone.classList.add('correct');
+            targetZone.innerHTML = draggedElement.innerText;
+            draggedElement.remove();
+            correctMatches++;
+
+            if (matchedScientist) {
+                playMatchSound(matchedScientist.num);
+            }
+
+            if (correctMatches === gameData.length) {
+                setTimeout(() => {
+                    document.getElementById('success-msg').style.display = 'block';
+                    playWinMusic();
+                }, 2000); 
+            }
+        }
+    }
+
+    function playMatchSound(imgNum) {
+        try {
+            if (currentMatchAudio) {
+                currentMatchAudio.pause();
+                currentMatchAudio.currentTime = 0;
+            }
+            currentMatchAudio = new Audio(`${imgNum}.mp3`);
+            currentMatchAudio.play().catch(e => console.log("Eşleşme sesi otomatik oynatılamadı:", e));
+        } catch(err) {
+            console.error("Ses dosyası bulunamadı:", err);
+        }
+    }
+
+    function playWinMusic() {
+        try {
+            if (currentMatchAudio) { currentMatchAudio.pause(); }
+            winAudio = new Audio('11.mp3');
+            winAudio.play().catch(e => console.log("Oyun sonu müziği engellendi:", e));
+        } catch(err) { console.error(err); }
+    }
+
+    function openModal(imgSrc) {
+        const modal = document.getElementById('image-modal');
+        document.getElementById('modal-img').src = imgSrc;
+        modal.classList.remove('hidden');
+    }
+
+    function closeModal() {
+        document.getElementById('image-modal').classList.add('hidden');
+    }
+
+    initGame();
+</script>
+</body>
+</html>

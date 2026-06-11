@@ -1,0 +1,164 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Türk Bilim İnsanları Video Etkinliği</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Nunito', sans-serif; background-color: #eef2ff; }
+        
+        .bg-pattern {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.35;
+            pointer-events: none;
+            background-image: 
+                url('data:image/svg+xml;utf8,<svg width="300" height="300" xmlns="http://www.w3.org/2000/svg"><text x="30" y="50" font-size="24" fill="%234f46e5" font-family="sans-serif">1</text><text x="140" y="45" font-size="22" fill="%23312e81">E=mc²</text><text x="85" y="100" font-size="28" fill="%234338ca">+</text><text x="250" y="55" font-size="20" fill="%236366f1">π</text><text x="25" y="275" font-size="26" fill="%234f46e5">3</text><text x="270" y="260" font-size="22" fill="%236366f1">7</text><text x="145" y="165" font-size="18" fill="%234f46e5" font-family="sans-serif">Arf(V)</text><text x="200" y="210" font-size="28" fill="%234338ca">∑</text><text x="270" y="180" font-size="26" fill="%234f46e5">5</text><g transform="translate(15,130) rotate(-15)"><line x1="10" y1="18" x2="10" y2="24" stroke="%23ef4444" stroke-width="2"/><line x1="22" y1="10" x2="22" y2="28" stroke="%233b82f6" stroke-width="2"/><line x1="34" y1="6" x2="34" y2="30" stroke="%2310b981" stroke-width="2"/><line x1="46" y1="6" x2="46" y2="30" stroke="%23f59e0b" stroke-width="2"/><line x1="58" y1="10" x2="58" y2="28" stroke="%233b82f6" stroke-width="2"/><line x1="70" y1="18" x2="70" y2="24" stroke="%23ef4444" stroke-width="2"/><line x1="82" y1="24" x2="82" y2="18" stroke="%233b82f6" stroke-width="2"/><line x1="94" y1="28" x2="94" y2="10" stroke="%2310b981" stroke-width="2"/><line x1="106" y1="30" x2="106" y2="6" stroke="%23f59e0b" stroke-width="2"/><line x1="118" y1="28" x2="118" y2="10" stroke="%233b82f6" stroke-width="2"/><line x1="130" y1="22" x2="130" y2="16" stroke="%23ef4444" stroke-width="2"/><path d="M 0,20 C 15,2 30,2 45,20 C 60,38 75,38 90,20 C 105,2 120,2 135,20" fill="none" stroke="%234f46e5" stroke-width="3" stroke-linecap="round"/><path d="M 0,20 C 15,38 30,38 45,20 C 60,2 75,2 90,20 C 105,38 120,38 135,20" fill="none" stroke="%23818cf8" stroke-width="3" stroke-linecap="round"/></g><g transform="translate(200,60)"><circle cx="20" cy="20" r="5" fill="%23312e81"/><ellipse cx="20" cy="20" rx="20" ry="7" fill="none" stroke="%234f46e5" stroke-width="1.5" transform="rotate(35 20 20)"/><ellipse cx="20" cy="20" rx="20" ry="7" fill="none" stroke="%236366f1" stroke-width="1.5" transform="rotate(-35 20 20)"/><circle cx="5" cy="11" r="2" fill="%23ef4444"/><circle cx="35" cy="29" r="2" fill="%233b82f6"/></g><g transform="translate(130,210)"><circle cx="20" cy="20" r="16" fill="none" stroke="%236366f1" stroke-width="2" stroke-dasharray="3,3"/><circle cx="20" cy="20" r="6" fill="%234338ca"/><circle cx="16" cy="16" r="2.5" fill="%23ef4444"/><circle cx="24" cy="24" r="1.5" fill="%234f46e5"/></g></svg>');
+            background-repeat: repeat; animation: movePattern 45s linear infinite;
+        }
+        @keyframes movePattern { from { background-position: 0 0; } to { background-position: 500px 500px; } }
+
+        .video-container { border: 10px solid #000; border-radius: 1.5rem; background-color: #000; overflow: hidden; position: relative; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+        .question-modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); display: none; align-items: center; justify-content: center; z-index: 50; }
+        .question-box { background: white; border-radius: 1.5rem; padding: 2.5rem; max-width: 90%; width: 500px; text-align: center; border: 4px solid #4f46e5; }
+        
+        .btn-kid { cursor: pointer; transition: all 0.2s; border-radius: 9999px; font-family: 'Comic Neue', cursive; padding: 1rem 2rem; font-size: 1.5rem; }
+        .btn-kid:hover { transform: scale(1.05); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-6">
+    <div class="bg-pattern"></div>
+
+    <!-- Başlangıç Ekranı -->
+    <div id="startScreen" class="text-center w-full max-w-2xl bg-white p-10 rounded-3xl shadow-2xl border-4 border-indigo-200">
+        <h1 class="text-6xl font-bold text-indigo-900 mb-6 font-['Comic_Neue'] tracking-tight">Türk Bilim İnsanları</h1>
+        <p class="text-xl text-gray-700 mb-8 font-medium">Bu videoda tarihimize yön vermiş büyük bilim insanlarımızı tanıyacak ve mini bir teste tabi tutulacaksın. Hazırsan başlayalım!</p>
+        <button id="startGameBtn" class="btn-kid bg-indigo-600 text-white shadow-lg hover:bg-indigo-700 w-full">🎮 Oyunu Başlat</button>
+    </div>
+
+    <!-- Bitiş Ekranı -->
+    <div id="endScreen" class="text-center w-full max-w-2xl bg-white p-10 rounded-3xl shadow-2xl border-4 border-indigo-200 hidden">
+        <h1 class="text-6xl font-bold text-indigo-900 mb-6 font-['Comic_Neue'] tracking-tight">Tebrikler! 🎉</h1>
+        <p class="text-xl text-gray-700 mb-8 font-medium">Harika bir iş çıkardın! Tüm bilim insanlarımızı başarıyla tanıdın. Sen gerçek bir bilim dedektifisin!</p>
+        <button onclick="location.reload()" class="btn-kid bg-indigo-600 text-white shadow-lg hover:bg-indigo-700 w-full">🔄 Yeniden Başlat</button>
+    </div>
+
+    <!-- Oyun Ekranı -->
+    <main id="gameScreen" class="w-full max-w-5xl hidden">
+        <div class="video-container" id="videoContainer">
+            <video id="mainVideo" class="w-full h-auto aspect-video" controls preload="auto">
+                <source src="1.mp4" type="video/mp4">
+                Tarayıcınız video oynatmayı desteklemiyor.
+            </video>
+            
+            <div id="questionModal" class="question-modal">
+                <div class="question-box shadow-2xl">
+                    <h2 id="qText" class="text-2xl font-bold text-gray-800 mb-6"></h2>
+                    <div id="qOptions" class="space-y-3"></div>
+                    <div id="textInputArea" class="hidden">
+                        <textarea id="answerText" class="w-full border-2 border-indigo-200 rounded-xl p-3 mb-4"></textarea>
+                        <button id="submitText" class="btn-kid bg-indigo-600 text-white w-full text-lg">Cevabımı Gönder</button>
+                    </div>
+                    <p id="feedback" class="mt-4 font-bold text-lg"></p>
+                    <button id="nextBtn" class="btn-kid bg-emerald-500 text-white mt-4 hidden text-lg">Videoya Devam Et</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const video = document.getElementById('mainVideo');
+        const startScreen = document.getElementById('startScreen');
+        const endScreen = document.getElementById('endScreen');
+        const gameScreen = document.getElementById('gameScreen');
+        const startGameBtn = document.getElementById('startGameBtn');
+        const modal = document.getElementById('questionModal');
+        const qText = document.getElementById('qText');
+        const qOptions = document.getElementById('qOptions');
+        const feedback = document.getElementById('feedback');
+        const nextBtn = document.getElementById('nextBtn');
+
+        const questions = [
+            { time: 61, text: "Cahit Arf hangi alanda çalışmıştır?", options: ["Tıp", "Matematik", "Tarih"], correct: "Matematik" },
+            { time: 79, text: "Oktay Sinanoğlu kaç yaşında profesör olmuştur?", options: ["20", "26", "35"], correct: "26" },
+            { time: 148, text: "Nobel ödülü alan ilk Türk bilim insanı kimdir?", options: ["Cahit Arf", "Aziz Sancar", "Oktay Sinanoğlu"], correct: "Aziz Sancar" },
+            { time: 190, text: "Aziz Sancar Nobel ödülünü nereye teslim etmiştir?", type: "text", keyword: "anıtkabir" }
+        ];
+
+        let answered = new Set();
+
+        startGameBtn.onclick = () => {
+            startScreen.classList.add('hidden');
+            gameScreen.classList.remove('hidden');
+            video.play();
+        };
+
+        // Video bittiğinde bitiş kartının ekrana gelmesini tetikler
+        video.onended = () => {
+            gameScreen.classList.add('hidden');
+            endScreen.classList.remove('hidden');
+        };
+
+        video.ontimeupdate = () => {
+            questions.forEach((q, i) => {
+                if(!answered.has(i) && video.currentTime >= q.time && video.currentTime < q.time + 1) {
+                    showQuestion(q, i);
+                }
+            });
+        };
+
+        function showQuestion(q, index) {
+            video.pause();
+            modal.style.display = 'flex';
+            qText.textContent = q.text;
+            qOptions.innerHTML = '';
+            feedback.textContent = '';
+            
+            if(q.type === 'text') {
+                document.getElementById('textInputArea').classList.remove('hidden');
+                document.getElementById('submitText').onclick = () => {
+                    const ans = document.getElementById('answerText').value.toLowerCase();
+                    if(ans.includes(q.keyword)) {
+                        feedback.textContent = "Harika! Doğru.";
+                        feedback.className = "mt-4 font-bold text-lg text-emerald-600";
+                        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+                    } else {
+                        feedback.textContent = "Güzel deneme! Cevap Anıtkabir olmalıydı.";
+                        feedback.className = "mt-4 font-bold text-lg text-indigo-600";
+                    }
+                    answered.add(index);
+                    nextBtn.classList.remove('hidden');
+                };
+            } else {
+                q.options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = "btn-kid bg-indigo-500 text-white w-full text-lg hover:bg-indigo-600";
+                    btn.textContent = opt;
+                    btn.onclick = () => {
+                        if(opt === q.correct) {
+                            feedback.textContent = "Tebrikler! Doğru.";
+                            feedback.className = "mt-4 font-bold text-lg text-emerald-600";
+                            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+                        } else {
+                            feedback.textContent = "Yanlış, doğrusu: " + q.correct;
+                            feedback.className = "mt-4 font-bold text-lg text-red-600";
+                        }
+                        answered.add(index);
+                        nextBtn.classList.remove('hidden');
+                    };
+                    qOptions.appendChild(btn);
+                });
+            }
+        }
+
+        nextBtn.onclick = () => {
+            modal.style.display = 'none';
+            document.getElementById('textInputArea').classList.add('hidden');
+            nextBtn.classList.add('hidden');
+            video.play();
+        };
+    </script>
+</body>
+</html>

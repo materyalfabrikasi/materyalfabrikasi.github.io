@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bunları Biliyor Musun? - Yerli ve Millî Teknolojik Başarılarımız</title>
+    <!-- Tailwind CSS ve Google Fonts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* Kart sallanma animasyonu (Hata durumunda) */
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20%,
+            60% {
+                transform: translateX(-6px);
+            }
+
+            40%,
+            80% {
+                transform: translateX(6px);
+            }
+        }
+
+        .shake {
+            animation: shake 0.4s ease-in-out;
+        }
+
+        /* Doğru eşleşme yeşil parlama efekti */
+        @keyframes pulse-success {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0px rgba(34, 197, 94, 0.7);
+            }
+
+            50% {
+                box-shadow: 0 0 0 12px rgba(34, 197, 94, 0);
+            }
+        }
+
+        .success-glow {
+            animation: pulse-success 1s ease-in-out;
+        }
+
+        /* Seçim çerçeve dalgası */
+        @keyframes border-pulse {
+
+            0%,
+            100% {
+                border-color: #0284c7;
+                box-shadow: 0 0 8px #38bdf8;
+            }
+
+            50% {
+                border-color: #38bdf8;
+                box-shadow: 0 0 16px #0ea5e9;
+            }
+        }
+
+        .selected-card {
+            animation: border-pulse 1.5s infinite;
+            transform: scale(1.02);
+        }
+
+        /* Konfeti parçacık stili */
+        .confetti {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: confetti-fall 3s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-10px) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col items-center justify-between p-3 md:p-6 overflow-x-hidden">
+
+    <!-- KONFETİ ALANI (BİTİŞTE ÇALIŞACAK) -->
+    <div id="confetti-container" class="fixed inset-0 pointer-events-none z-50 hidden"></div>
+
+    <!-- ÜST BİLGİ ALANI / SKOR TABELASI -->
+    <header
+        class="w-full max-w-7xl bg-white/80 backdrop-blur shadow-md rounded-2xl p-3 mb-3 flex flex-wrap items-center justify-between gap-3 border border-white/50">
+        <div class="flex items-center gap-3">
+            <span class="text-3xl">🇹🇷</span>
+            <div>
+                <h1 class="text-lg md:text-xl font-extrabold text-slate-800 tracking-tight">Bunları Biliyor Musun?
+                </h1>
+                <p class="text-xs text-sky-700 font-semibold">Yerli ve Millî Teknolojilerimiz</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <!-- İlerleme Barı -->
+            <div class="hidden sm:flex flex-col items-end gap-1">
+                <span class="text-xs font-bold text-slate-500" id="progress-text">İlerleme: 0 / 5</span>
+                <div class="w-28 bg-slate-200 h-2 rounded-full overflow-hidden">
+                    <div id="progress-bar" class="bg-emerald-500 h-full w-0 transition-all duration-500"></div>
+                </div>
+            </div>
+            <!-- Skor Göstergesi -->
+            <div
+                class="bg-sky-100 text-sky-800 font-extrabold px-3 py-1.5 rounded-xl text-sm border border-sky-200 flex items-center gap-2">
+                <span>Skor:</span>
+                <span id="score-val"
+                    class="text-xl md:text-2xl font-black text-sky-900 transition-all duration-300 inline-block">100</span>
+            </div>
+            <!-- Yeniden Başlat Butonu -->
+            <button onclick="resetGameConfirm()"
+                class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold p-1.5 rounded-xl transition-all border border-slate-300 shadow-sm"
+                title="Yeniden Başlat">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H18.2" />
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- ANA OYUN ALANI -->
+    <main class="w-full max-w-7xl flex-grow flex flex-col items-center justify-center relative">
+
+        <!-- Sahneler: Giriş, Eşleştirme, Bitiş -->
+
+        <!-- 1. GİRİŞ & YÖNERGE EKRANI (ONBOARDING) -->
+        <section id="onboarding-screen"
+            class="w-full bg-white/95 shadow-2xl rounded-3xl p-6 md:p-8 border border-sky-100 max-w-2xl text-center flex flex-col items-center gap-5 animate-fade-in">
+            <div
+                class="w-20 h-20 bg-sky-100 rounded-full flex items-center justify-center text-4xl shadow-inner animate-bounce">
+                🚀
+            </div>
+            <h2 class="text-2xl md:text-3xl font-extrabold text-slate-800">Bunları Biliyor Musun?
+                <h2 class="text-2xl md:text-3xl font-extrabold text-slate-800"></h2>Teknoloji Yolculuğumuz
+            </h2>
+            <div
+                class="bg-amber-50 rounded-3xl p-8 border-2 border-amber-200 flex flex-col items-center justify-center gap-6 w-full shadow-inner my-4">
+                <button onclick="playInstructionAudio()"
+                    class="bg-amber-500 hover:bg-amber-600 text-white font-black text-xl md:text-2xl px-10 py-5 rounded-2xl shadow-xl hover:shadow-amber-300 transition-all flex flex-col items-center gap-3 transform hover:scale-105 active:scale-95">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                        class="h-14 w-14 animate-pulse">
+                        <path
+                            d="M13.5 4.06c0-1.336-1.616-2.005-2.56-1.06l-4.5 4.5H4.508c-1.141 0-2.318.664-2.66 1.905A9.76 9.76 0 0 0 1.5 12c0 .898.121 1.768.35 2.595.341 1.24 1.518 1.905 2.659 1.905h1.93l4.5 4.5c.945.945 2.561.276 2.561-1.06V4.06ZM18.584 5.106a.75.75 0 0 1 1.06 0c3.808 3.807 3.808 9.98 0 13.788a.75.75 0 0 1-1.06-1.06 8.25 8.25 0 0 0 0-11.668.75.75 0 0 1 0-1.06Z" />
+                        <path
+                            d="M15.932 7.757a.75.75 0 0 1 1.061 0 4.5 4.5 0 0 1 0 6.364.75.75 0 0 1-1.06-1.06 3 3 0 0 0 0-4.243.75.75 0 0 1 0-1.061Z" />
+                    </svg>
+                    YÖNERGEYİ DİNLE
+                </button>
+            </div>
+            <button onclick="startGame()"
+                class="w-full sm:w-auto bg-sky-600 hover:bg-sky-700 text-white font-extrabold text-base px-8 py-3.5 rounded-2xl shadow-lg hover:shadow-sky-300 transition-all duration-300 transform hover:-translate-y-0.5">
+                Haydi Başlayalım! 🎮
+            </button>
+        </section>
+
+        <!-- 2. EŞLEŞTİRME OYUN ALANI -->
+        <section id="game-screen" class="hidden w-full flex flex-col gap-5 items-stretch">
+
+            <!-- ÜST BÖLÜM: YATAY AÇIKLAMALAR (SESLER) -->
+            <div class="flex flex-col gap-2">
+                <h3 class="text-sm md:text-base font-extrabold text-slate-700 px-2 flex items-center gap-2">
+                    <span class="flex h-2 w-2 relative">
+                        <span
+                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                    </span>
+                    1. Önce Sesi Dinle:
+                </h3>
+                <!-- grid-cols-1 (mobil) | md:grid-cols-5 (masaüstü) -->
+                <div id="texts-column" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3 w-full">
+                    <!-- Dinamik olarak yüklenecek -->
+                </div>
+            </div>
+
+            <!-- ALT BÖLÜM: YATAY GÖRSELLER -->
+            <div class="flex flex-col gap-2">
+                <h3 class="text-sm md:text-base font-extrabold text-slate-700 px-2 flex items-center gap-2">
+                    <span class="flex h-2 w-2 relative">
+                        <span
+                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-sky-500"></span>
+                    </span>
+                    2. İlgili Görseli Seç:
+                </h3>
+                <!-- grid-cols-2 (mobil) | md:grid-cols-5 (masaüstü) -->
+                <div id="images-column" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 w-full">
+                    <!-- Dinamik olarak yüklenecek -->
+                </div>
+            </div>
+
+        </section>
+
+        <!-- 3. BAŞARI / BİTİŞ EKRANI -->
+        <section id="result-screen"
+            class="hidden w-full bg-white/95 shadow-2xl rounded-3xl p-6 md:p-8 border border-emerald-100 max-w-2xl text-center flex flex-col items-center gap-5">
+            <div
+                class="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center text-4xl shadow-inner animate-pulse">
+                🏆
+            </div>
+            <h2 class="text-2xl md:text-3xl font-extrabold text-slate-800">Harika Başarı!</h2>
+            <p class="text-slate-600 text-sm md:text-base">
+                Millî teknolojilerimizin tamamını başarıyla tanıyıp eşleştirdin! Ülkemizin göklerdeki, yollardaki ve
+                denizlerdeki gücünü öğrenmiş oldun.
+            </p>
+            <div
+                class="bg-emerald-50 rounded-2xl p-5 border border-emerald-100 w-full flex justify-around items-center">
+                <div>
+                    <span class="text-[10px] font-bold text-slate-400 block uppercase">Final Skoru</span>
+                    <span id="final-score" class="text-3xl font-black text-emerald-600">100</span>
+                </div>
+                <div class="h-10 w-px bg-emerald-200"></div>
+                <div>
+                    <span class="text-[10px] font-bold text-slate-400 block uppercase">Başarı Derecesi</span>
+                    <span id="badge-text" class="text-xl font-black text-amber-600">🏆 Altın Madalya</span>
+                </div>
+            </div>
+            <button onclick="restartGame()"
+                class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-base px-8 py-3.5 rounded-2xl shadow-lg hover:shadow-emerald-200 transition-all duration-300 transform hover:-translate-y-0.5">
+                Yeniden Keşfet 🔄
+            </button>
+        </section>
+
+    </main>
+
+    <!-- ALT BİLGİ VE YERLİ/MİLLİ NOTU -->
+    <footer class="w-full text-center mt-4 py-1 text-xs font-semibold text-sky-800/80">
+        T.C. Millî Eğitim Bakanlığı © 2026
+    </footer>
+
+    <!-- DETAYLI İPUCU / GERİ BİLDİRİM BİLGİ MODAL (Pop-up) -->
+    <div id="info-modal"
+        class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden transition-opacity duration-300 opacity-0">
+        <div
+            class="bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden transform scale-95 transition-transform duration-300 border border-sky-100">
+            <!-- Modal Başlık (Dinamik Renkli) -->
+            <div id="modal-header-bg" class="bg-emerald-500 text-white p-5 flex items-center gap-3">
+                <span id="modal-icon" class="text-3xl">👏</span>
+                <div>
+                    <h4 id="modal-title" class="text-lg font-black">Harika Eşleşme!</h4>
+                    <p id="modal-subtitle" class="text-[10px] text-white/80 font-bold uppercase tracking-wider">
+                        Tebrikler</p>
+                </div>
+            </div>
+            <!-- Modal İçerik -->
+            <div class="p-5 space-y-4">
+                <div class="flex gap-4 items-center">
+                    <div id="modal-img-container"
+                        class="w-20 h-20 bg-slate-100 rounded-2xl overflow-hidden border border-slate-200 flex-shrink-0 relative">
+                        <!-- Görsel dinamik yüklenir -->
+                    </div>
+                    <div>
+                        <h5 id="modal-item-name" class="text-2xl font-black text-slate-800">Öğe Adı</h5>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal Kapatma Butonu -->
+            <div class="bg-slate-50 px-5 py-3 flex justify-end border-t border-slate-100">
+                <button id="modal-close-btn" onclick="closeInfoModal()"
+                    class="bg-slate-800 hover:bg-slate-900 text-white font-extrabold text-sm px-5 py-2.5 rounded-xl shadow-md transition-all">
+                    Devam Et ➔
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- GÖRSEL BÜYÜTME (LIGHTBOX) MODAL -->
+    <div id="zoom-modal"
+        class="fixed inset-0 bg-slate-900/95 flex flex-col items-center justify-center p-4 z-50 hidden transition-opacity duration-300 opacity-0"
+        onclick="closeZoomModal()">
+        <div class="relative max-w-3xl w-full flex flex-col items-center gap-4" onclick="event.stopPropagation()">
+            <!-- Kapatma Butonu -->
+            <button onclick="closeZoomModal()"
+                class="absolute -top-12 right-0 text-white hover:text-slate-300 bg-white/20 hover:bg-white/30 p-2 rounded-full transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            <!-- Zoom Görsel Alanı -->
+            <div id="zoom-img-wrapper"
+                class="w-full max-h-[70vh] aspect-video bg-slate-800 rounded-3xl overflow-hidden shadow-2xl border border-white/10 flex items-center justify-center">
+                <!-- Dinamik Görsel veya SVG -->
+            </div>
+            <h4 id="zoom-title" class="text-white text-xl md:text-2xl font-black text-center mt-2">Öğe Adı</h4>
+            <p id="zoom-subtitle" class="text-sky-300 text-sm font-semibold text-center max-w-lg">Görsel detay açıklama
+            </p>
+        </div>
+    </div>
+
+    <!-- KULLANICI UYARI MODAL (ALTERNATİF) -->
+    <div id="alert-modal"
+        class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full p-5 text-center border border-slate-100 space-y-3">
+            <span class="text-3xl">⚠️</span>
+            <h4 id="alert-title" class="text-base font-bold text-slate-800">Emin misiniz?</h4>
+            <p id="alert-text" class="text-slate-600 text-xs">Mevcut ilerlemeniz sıfırlanacaktır.</p>
+            <div class="flex gap-3 justify-center">
+                <button onclick="closeAlertModal()"
+                    class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-4 py-2 rounded-xl text-xs transition-all">İptal</button>
+                <button id="alert-confirm-btn"
+                    class="bg-red-500 hover:bg-red-600 text-white font-bold px-4 py-2 rounded-xl text-xs transition-all">Sıfırla</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT OYUN MANTIĞI -->
+    <script>
+        // Web Audio API için Ses Sentezleyici
+        let audioCtx = null;
+        function playSound(type) {
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                if (type === 'success') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                    osc.frequency.exponentialRampToValueAtTime(783.99, audioCtx.currentTime + 0.15); // G5
+                    osc.frequency.exponentialRampToValueAtTime(1046.50, audioCtx.currentTime + 0.3); // C6
+                    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.45);
+                } else if (type === 'error') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, audioCtx.currentTime); // A3
+                    osc.frequency.setValueAtTime(147, audioCtx.currentTime + 0.08); // D3
+                    gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.3);
+                } else if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.06);
+                }
+            } catch (e) {
+                // Tarayıcı kısıtlamaları
+            }
+        }
+
+        let currentAudio = null;
+        function playInstructionAudio() {
+            if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
+            currentAudio = new Audio('yönerge.mp3');
+            currentAudio.play().catch(e => console.log('Audio play failed:', e));
+        }
+        function playItemAudio(file) {
+            if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
+            currentAudio = new Audio(file);
+            currentAudio.play().catch(e => console.log('Audio play failed:', e));
+        }
+
+        // Millî Projeler Veri Havuzu
+        const originalItems = [
+            {
+                id: 'togg',
+                name: 'Togg',
+                imgFile: 'togg.png',
+                audioFile: 'togg.mp3',
+                desc: 'Yerli ve millî otomobilimiz sadece elektrikle çalışır.',
+                pedagogicalTip: 'Togg, çevre dostu sıfır emisyonlu yapısı ve akıllı yaşam teknolojileriyle geleceğin mobilite dünyasında ülkemizi temsil ediyor!',
+                svgFallback: `
+                    <svg viewBox="0 0 100 60" class="w-full h-full p-2" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="toggGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#0284c7" />
+                                <stop offset="100%" stop-color="#0f172a" />
+                            </linearGradient>
+                        </defs>
+                        <rect width="100" height="60" rx="10" fill="url(#toggGrad)"/>
+                        <path d="M15,40 L25,28 L65,28 L75,34 L85,40 L88,44 L80,48 L20,48 Z" fill="#38bdf8"/>
+                        <path d="M30,30 L40,16 L62,16 L68,30 Z" fill="#bae6fd" opacity="0.8"/>
+                        <rect x="44" y="20" width="1" height="10" fill="#0284c7"/>
+                        <polygon points="16,40 22,41 20,44 15,42" fill="#fef08a" />
+                        <polygon points="84,41 88,44 85,45 81,42" fill="#ef4444" />
+                        <circle cx="32" cy="46" r="7" fill="#1e293b"/>
+                        <circle cx="32" cy="46" r="3" fill="#cbd5e1"/>
+                        <circle cx="70" cy="46" r="7" fill="#1e293b"/>
+                        <circle cx="70" cy="46" r="3" fill="#cbd5e1"/>
+                        <rect x="15" y="44" width="8" height="3" fill="#e2e8f0" rx="1"/>
+                        <text x="16" y="46.5" font-size="2" fill="#000" font-weight="bold">TOGG</text>
+                        <path d="M48,5 L54,5 L46,12 L53,12 L44,22 L47,14 L42,14 Z" fill="#eab308" transform="translate(4, 2) scale(0.6)"/>
+                    </svg>
+                `
+            },
+            {
+                id: 'hurkus',
+                name: 'Hürkuş',
+                imgFile: 'hurkus.png',
+                audioFile: 'hurkus.mp3',
+                desc: 'Yerli ve millî uçaklarımızdan olan Hürkuş, adını ilk Türk uçak üreticisi olan Vecihi Hürkuş’tan almıştır.',
+                pedagogicalTip: 'Hürkuş, temel eğitim ve yakın hava desteği görevleri için tasarlanmış turboprop motorlu bir uçağımızdır.',
+                svgFallback: `
+                    <svg viewBox="0 0 100 60" class="w-full h-full p-2" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="hurGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#475569" />
+                                <stop offset="100%" stop-color="#0f172a" />
+                            </linearGradient>
+                        </defs>
+                        <rect width="100" height="60" rx="10" fill="url(#hurGrad)"/>
+                        <path d="M10,28 L50,26 L80,29 L85,25 L88,25 L86,33 L50,32 Z" fill="#cbd5e1"/>
+                        <path d="M40,29 L48,10 L58,10 L48,29 Z" fill="#ef4444"/>
+                        <path d="M40,31 L48,50 L58,50 L48,31 Z" fill="#dc2626"/>
+                        <polygon points="78,28 85,12 88,12 83,28" fill="#ef4444"/>
+                        <path d="M32,27 C32,20 48,20 48,27 Z" fill="#bae6fd" opacity="0.9"/>
+                        <line x1="8" y1="18" x2="8" y2="40" stroke="#f8fafc" stroke-width="2"/>
+                        <circle cx="8" cy="29" r="2.5" fill="#f59e0b"/>
+                        <circle cx="78" cy="23" r="3" fill="#ef4444"/>
+                        <circle cx="79.5" cy="23" r="2.2" fill="#475569"/>
+                    </svg>
+                `
+            },
+            {
+                id: 'kaan',
+                name: 'Kaan',
+                imgFile: 'kaan.png',
+                audioFile: 'kaan.mp3',
+                desc: 'Türkiye’nin ilk yerli ve millî uçaklarından birinin adı Kaan’dır. Kaan; hükümdar, lider veya başkan anlamlarına gelmektedir.',
+                pedagogicalTip: 'KAAN, 5. nesil çok rollü savaş uçağıdır. Radarda düşük görünürlük (stealth), dahili silah yuvası ve üstün manevra yeteneğine sahiptir.',
+                svgFallback: `
+                    <svg viewBox="0 0 100 60" class="w-full h-full p-2" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="kaanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#1e293b" />
+                                <stop offset="100%" stop-color="#020617" />
+                            </linearGradient>
+                        </defs>
+                        <rect width="100" height="60" rx="10" fill="url(#kaanGrad)"/>
+                        <path d="M50,8 L53,24 L78,44 L78,48 L53,42 L53,52 L62,56 L62,58 L50,55 L38,58 L38,56 L47,52 L47,42 L22,48 L22,44 L47,24 Z" fill="#64748b"/>
+                        <path d="M50,8 L51,24 L68,44 L68,46 L51,42 L51,52 L57,55 L50,54 Z" fill="#94a3b8"/>
+                        <ellipse cx="50" cy="20" rx="2" ry="5" fill="#38bdf8" opacity="0.8"/>
+                        <polygon points="48,55 52,55 50,59" fill="#f97316"/>
+                    </svg>
+                `
+            },
+            {
+                id: 'gokbey',
+                name: 'Gökbey',
+                imgFile: 'gokbey.png',
+                audioFile: 'gokbey.mp3',
+                desc: 'Yerli ve millî imkânlar ile geliştirilmiş olan GÖKBEY helikopteri görevlerini gece ve gündüz her türlü koşulda yerine getirebilmektedir.',
+                pedagogicalTip: 'GÖKBEY, en zorlu iklim ve coğrafyalarda, yüksek irtifa ve sıcaklıkta, gece ve gündüz koşullarında etkin bir şekilde uçabilen genel maksat helikopterimizdir.',
+                svgFallback: `
+                    <svg viewBox="0 0 100 60" class="w-full h-full p-2" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="gokGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#0284c7" />
+                                <stop offset="100%" stop-color="#075985" />
+                            </linearGradient>
+                        </defs>
+                        <rect width="100" height="60" rx="10" fill="url(#gokGrad)"/>
+                        <path d="M22,38 L55,34 C64,34 72,25 88,22 L90,25 L68,38 L32,42 Z" fill="#cbd5e1"/>
+                        <path d="M25,32 C20,32 15,36 15,40 C15,44 24,44 28,42 Z" fill="#e2e8f0"/>
+                        <path d="M16,38 C18,34 25,34 28,38 Z" fill="#0f172a"/>
+                        <rect x="32" y="36" width="6" height="4" fill="#0f172a" rx="1"/>
+                        <rect x="40" y="36" width="6" height="4" fill="#0f172a" rx="1"/>
+                        <line x1="12" y1="20" x2="68" y2="20" stroke="#f8fafc" stroke-width="1.5"/>
+                        <rect x="38" y="20" width="4" height="13" fill="#475569"/>
+                        <circle cx="88" cy="23" r="3" fill="#ef4444"/>
+                        <line x1="84" y1="18" x2="92" y2="28" stroke="#f8fafc" stroke-width="1"/>
+                        <rect x="25" y="46" width="30" height="2" fill="#475569" rx="1"/>
+                        <line x1="30" y1="41" x2="30" y2="47" stroke="#475569" stroke-width="2"/>
+                        <line x1="50" y1="41" x2="50" y2="47" stroke="#475569" stroke-width="2"/>
+                    </svg>
+                `
+            },
+            {
+                id: 'anka',
+                name: 'Anka III',
+                imgFile: 'anka.png',
+                audioFile: 'anka.mp3',
+                desc: '“Hayalet Uçak” olarak adlandırılan ANKA III, radara yakalanmaması için kuyruksuz olarak tasarlanmıştır.',
+                pedagogicalTip: 'ANKA III, jet motorlu insansız savaş uçağımızdır. Kuyruksuz delta kanat yapısı sayesinde çok düşük radar izine sahiptir ve düşman hatlarına görünmeden sızabilir.',
+                svgFallback: `
+                    <svg viewBox="0 0 100 60" class="w-full h-full p-2" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="ankaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#334155" />
+                                <stop offset="100%" stop-color="#0f172a" />
+                            </linearGradient>
+                        </defs>
+                        <polygon points="50,15 88,44 76,46 50,38 24,46 12,44" fill="#475569"/>
+                        <polygon points="50,15 50,38 76,46 88,44" fill="#334155"/>
+                        <polygon points="46,24 54,24 50,28" fill="#1e293b"/>
+                        <line x1="50" y1="15" x2="50" y2="38" stroke="#1e293b" stroke-width="1"/>
+                    </svg>
+                `
+            }
+        ];
+
+        // Oyun Durum Değişkenleri
+        let items = [];
+        let selectedImgId = null;
+        let selectedTextId = null;
+        let score = 100;
+        let matchedCount = 0;
+        const maxScorePenalty = 10; // Hatalı eşleşmede düşecek puan
+
+        // Oyunu Başlatma Fonksiyonu
+        function startGame() {
+            playSound('click');
+            document.getElementById('onboarding-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.remove('hidden');
+            initGameData();
+        }
+
+        // Oyun Verisini Karıştırıp Sahneye Dizme
+        function initGameData() {
+            items = JSON.parse(JSON.stringify(originalItems));
+            score = 100;
+            matchedCount = 0;
+            selectedImgId = null;
+            selectedTextId = null;
+
+            updateScoreUI();
+            updateProgressUI();
+
+            // Sol ve Sağ sütunları bağımsız karıştır
+            const shuffledImages = [...items].sort(() => Math.random() - 0.5);
+            const shuffledTexts = [...items].sort(() => Math.random() - 0.5);
+
+            const imagesCol = document.getElementById('images-column');
+            const textsCol = document.getElementById('texts-column');
+
+            imagesCol.innerHTML = '';
+            textsCol.innerHTML = '';
+
+            // Görselleri yerleştir (Yatay Dashboard Düzeni)
+            shuffledImages.forEach((item, index) => {
+                const imgCard = document.createElement('div');
+                imgCard.id = `img-card-${item.id}`;
+                imgCard.className = "relative bg-white border-2 border-slate-200 p-2.5 rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col items-center gap-1.5 group overflow-hidden select-none active:scale-95";
+
+                // Tıklama ile Seçme Alanı
+                imgCard.onclick = () => selectImageCard(item.id);
+
+                // Görüntü alanı ve Fallback mekanizması (Hover Zoom katmanı kaldırıldı)
+                imgCard.innerHTML = `
+                    <div class="w-full aspect-video rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center relative overflow-hidden group/thumb">
+                        <!-- Gerçek PNG Dosyası -->
+                        <img src="${item.imgFile}" alt="Teknoloji" class="w-full h-full object-contain absolute inset-0 z-10 transition-transform duration-300 group-hover:scale-105" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                        <div class="w-full h-full hidden z-0">
+                            ${item.svgFallback}
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between w-full mt-2">
+                        <span class="text-slate-800 font-black text-sm md:text-lg">Görsel ${index + 1}</span>
+                        <!-- Büyüteç Butonu -->
+                        <button onclick="event.stopPropagation(); zoomItem('${item.id}', ${index + 1})" class="bg-sky-100 hover:bg-sky-200 text-sky-700 p-2 md:p-3 rounded-lg transition-all border border-sky-200 shadow-sm" title="Resmi Büyüt">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:h-6 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
+                            </svg>
+                        </button>
+                    </div>
+                    <!-- Seçildi Göstergesi -->
+                    <div class="absolute inset-x-0 bottom-0 h-1.5 bg-sky-500 rounded-b-2xl transform scale-x-0 transition-transform duration-300 group-hover:scale-x-100" id="indicator-${item.id}"></div>
+                `;
+                imagesCol.appendChild(imgCard);
+            });
+
+            // Ses Kartlarını yerleştir
+            shuffledTexts.forEach(item => {
+                const textCard = document.createElement('div');
+                textCard.id = `text-card-${item.id}`;
+                textCard.className = "bg-white border-2 border-slate-200 p-4 rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer select-none active:scale-98 flex flex-col justify-center items-center gap-3 relative min-h-[120px] sm:min-h-[140px]";
+                textCard.onclick = () => { playItemAudio(item.audioFile); selectTextCard(item.id); };
+
+                textCard.innerHTML = `
+                    <div class="absolute top-2 left-2 flex items-center justify-center w-6 h-6 rounded-full bg-slate-100 text-slate-400 font-bold text-xs" id="bullet-${item.id}">
+                        ?
+                    </div>
+                    <div class="w-14 h-14 sm:w-16 sm:h-16 bg-sky-100 text-sky-600 rounded-full flex items-center justify-center shadow-inner group-hover:bg-sky-200 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 sm:h-10 sm:w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <span class="text-xs sm:text-sm font-extrabold text-slate-700 uppercase tracking-wide">Sesi Dinle</span>
+                `;
+                textsCol.appendChild(textCard);
+            });
+        }
+
+        // Görsel Seçme Tetikleyicisi
+        function selectImageCard(id) {
+            playSound('click');
+
+            const card = document.getElementById(`img-card-${id}`);
+            if (card.classList.contains('success-glow') || card.style.opacity === '0.5') return;
+
+            if (selectedImgId) {
+                const prevCard = document.getElementById(`img-card-${selectedImgId}`);
+                if (prevCard) prevCard.classList.remove('selected-card');
+            }
+
+            selectedImgId = id;
+            card.classList.add('selected-card');
+
+            if (selectedImgId && selectedTextId) {
+                checkMatch();
+            }
+        }
+
+        // Metin Kartı Seçme Tetikleyicisi
+        function selectTextCard(id) {
+            playSound('click');
+
+            const card = document.getElementById(`text-card-${id}`);
+            if (card.classList.contains('success-glow') || card.style.opacity === '0.5') return;
+
+            if (selectedTextId) {
+                const prevCard = document.getElementById(`text-card-${selectedTextId}`);
+                if (prevCard) {
+                    prevCard.classList.remove('selected-card');
+                    prevCard.classList.remove('border-sky-500');
+                }
+            }
+
+            selectedTextId = id;
+            card.classList.add('selected-card', 'border-sky-500');
+
+            if (selectedImgId && selectedTextId) {
+                checkMatch();
+            }
+        }
+
+        // Eşleşme Kontrolü
+        function checkMatch() {
+            const imgCard = document.getElementById(`img-card-${selectedImgId}`);
+            const textCard = document.getElementById(`text-card-${selectedTextId}`);
+
+            if (selectedImgId === selectedTextId) {
+                // DOĞRU EŞLEŞME
+                playSound('success');
+
+                imgCard.classList.remove('selected-card');
+                textCard.classList.remove('selected-card', 'border-sky-500');
+
+                imgCard.classList.add('success-glow', 'border-emerald-500', 'bg-emerald-50/30');
+                textCard.classList.add('success-glow', 'border-emerald-500', 'bg-emerald-50/30');
+
+                const bullet = document.getElementById(`bullet-${selectedTextId}`);
+                if (bullet) {
+                    bullet.innerHTML = '✓';
+                    bullet.classList.remove('bg-slate-100', 'text-slate-400');
+                    bullet.classList.add('bg-emerald-100', 'text-emerald-600');
+                }
+
+                const matchedItemInfo = originalItems.find(i => i.id === selectedImgId);
+                setTimeout(() => {
+                    openInfoModal(matchedItemInfo);
+                }, 350);
+
+                matchedCount++;
+                updateProgressUI();
+
+                imgCard.onclick = null;
+                textCard.onclick = null;
+                imgCard.style.cursor = 'default';
+                textCard.style.cursor = 'default';
+
+                selectedImgId = null;
+                selectedTextId = null;
+            } else {
+                // YANLIŞ EŞLEŞME
+                playSound('error');
+
+                imgCard.classList.remove('selected-card');
+                textCard.classList.remove('selected-card', 'border-sky-500');
+
+                imgCard.classList.add('shake', 'border-red-500');
+                textCard.classList.add('shake', 'border-red-500');
+
+                score = Math.max(0, score - maxScorePenalty);
+                updateScoreUI();
+
+                const scoreEl = document.getElementById('score-val');
+                scoreEl.classList.add('text-red-500', 'scale-125');
+                setTimeout(() => {
+                    scoreEl.classList.remove('text-red-500', 'scale-125');
+                }, 300);
+
+                setTimeout(() => {
+                    imgCard.classList.remove('shake', 'border-red-500');
+                    textCard.classList.remove('shake', 'border-red-500');
+                }, 600);
+
+                selectedImgId = null;
+                selectedTextId = null;
+            }
+        }
+
+        // Skor Gösterge Güncellemesi
+        function updateScoreUI() {
+            document.getElementById('score-val').innerText = score;
+        }
+
+        // İlerleme Barı Güncellemesi
+        function updateProgressUI() {
+            document.getElementById('progress-text').innerText = `İlerleme: ${matchedCount} / 5`;
+            const percent = (matchedCount / 5) * 100;
+            document.getElementById('progress-bar').style.width = `${percent}%`;
+        }
+
+        // Pedagojik Bilgi Modalı Açılışı
+        function openInfoModal(item) {
+            const modal = document.getElementById('info-modal');
+            const headerBg = document.getElementById('modal-header-bg');
+            const icon = document.getElementById('modal-icon');
+            const title = document.getElementById('modal-title');
+            const subtitle = document.getElementById('modal-subtitle');
+            const imgContainer = document.getElementById('modal-img-container');
+            const itemName = document.getElementById('modal-item-name');
+
+            headerBg.className = "bg-emerald-600 text-white p-5 flex items-center gap-3";
+            icon.innerText = "🌟";
+            title.innerText = "Doğru Eşleşme!";
+            subtitle.innerText = "TEBRİKLER";
+
+            imgContainer.innerHTML = `
+                <img src="${item.imgFile}" class="w-full h-full object-contain absolute inset-0 z-10" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                <div class="w-full h-full hidden z-0">
+                    ${item.svgFallback}
+                </div>
+            `;
+
+            itemName.innerText = item.name;
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.firstElementChild.classList.remove('scale-95');
+            }, 10);
+        }
+
+        // Modal Kapatma
+        function closeInfoModal() {
+            playSound('click');
+            const modal = document.getElementById('info-modal');
+            modal.classList.add('opacity-0');
+            modal.firstElementChild.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+
+                if (matchedCount === 5) {
+                    endGame();
+                }
+            }, 300);
+        }
+
+        // Görsel Zoom/Büyütme Lightbox Açılışı (Detaylı güvenli inceleme)
+        function zoomItem(id, visualNumber) {
+            playSound('click');
+            const item = originalItems.find(i => i.id === id);
+            if (!item) return;
+
+            const modal = document.getElementById('zoom-modal');
+            const imgWrapper = document.getElementById('zoom-img-wrapper');
+            const title = document.getElementById('zoom-title');
+            const subtitle = document.getElementById('zoom-subtitle');
+
+            imgWrapper.innerHTML = `
+                <img src="${item.imgFile}" class="max-w-full max-h-[60vh] object-contain absolute z-10" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                <div class="w-3/4 aspect-video max-h-[60vh] hidden z-0">
+                    ${item.svgFallback}
+                </div>
+            `;
+
+            title.innerText = item.name;
+            subtitle.innerText = "";
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.firstElementChild.classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeZoomModal() {
+            playSound('click');
+            const modal = document.getElementById('zoom-modal');
+            modal.classList.add('opacity-0');
+            modal.firstElementChild.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        // Oyun Bitiş Sahnesi
+        function endGame() {
+            document.getElementById('game-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+            document.getElementById('final-score').innerText = score;
+
+            const badgeText = document.getElementById('badge-text');
+            if (score >= 90) {
+                badgeText.innerText = "🥇 Altın Madalya - Mükemmel!";
+                badgeText.className = "text-xl md:text-2xl font-black text-amber-500";
+            } else if (score >= 70) {
+                badgeText.innerText = "🥈 Gümüş Madalya - Harika!";
+                badgeText.className = "text-xl md:text-2xl font-black text-slate-500";
+            } else {
+                badgeText.innerText = "🥉 Bronz Madalya - İyi Deneme!";
+                badgeText.className = "text-xl md:text-2xl font-black text-amber-700";
+            }
+
+            startConfetti();
+        }
+
+        // Yeniden Oynama Tetikleyicisi
+        function restartGame() {
+            playSound('click');
+            stopConfetti();
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.remove('hidden');
+            initGameData();
+        }
+
+        // Oyun İçi Yeniden Başlatma Onayı (Custom Modal)
+        function resetGameConfirm() {
+            playSound('click');
+            const alertModal = document.getElementById('alert-modal');
+            const confirmBtn = document.getElementById('alert-confirm-btn');
+
+            alertModal.classList.remove('hidden');
+            confirmBtn.onclick = () => {
+                closeAlertModal();
+                initGameData();
+                playSound('click');
+            };
+        }
+
+        function closeAlertModal() {
+            playSound('click');
+            document.getElementById('alert-modal').classList.add('hidden');
+        }
+
+        // Konfeti Efektleri
+        let confettiInterval = null;
+        function startConfetti() {
+            const container = document.getElementById('confetti-container');
+            container.classList.remove('hidden');
+
+            const colors = ['#f43f5e', '#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#ec4899'];
+
+            confettiInterval = setInterval(() => {
+                for (let i = 0; i < 6; i++) {
+                    const conf = document.createElement('div');
+                    conf.className = 'confetti';
+                    conf.style.left = Math.random() * 100 + 'vw';
+                    conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    conf.style.transform = `scale(${Math.random() * 2 + 1})`;
+                    conf.style.animationDuration = Math.random() * 1.5 + 1 + 's';
+                    container.appendChild(conf);
+
+                    setTimeout(() => {
+                        conf.remove();
+                    }, 3000);
+                }
+            }, 30);
+        }
+
+        function stopConfetti() {
+            clearInterval(confettiInterval);
+            const container = document.getElementById('confetti-container');
+            container.innerHTML = '';
+            container.classList.add('hidden');
+        }
+
+        // Sayfa yüklendiğinde otomatik olarak ses API'si hazırlığı
+        window.onload = function () {
+            document.body.addEventListener('click', () => {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            }, { once: true });
+        };
+    </script>
+</body>
+
+</html>

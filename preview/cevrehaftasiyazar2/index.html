@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doğa Dostu Kahraman - Çevre ve İklim Haftası Oyunu</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Playful Quicksand Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #dcfce7 100%);
+            touch-action: manipulation;
+        }
+
+        .bouncy {
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .pulse-soft {
+            animation: pulse-soft 2s infinite;
+        }
+
+        @keyframes pulse-soft {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .glow-yellow {
+            box-shadow: 0 0 15px rgba(234, 179, 8, 0.6);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col justify-between overflow-x-hidden text-slate-800">
+
+    <!-- Üst Bar: Skor ve İlerleme -->
+    <header class="w-full max-w-4xl mx-auto p-4 flex justify-between items-center z-10">
+        <div
+            class="flex items-center gap-2 bg-white/80 backdrop-blur px-4 py-2 rounded-full shadow-md border border-green-200">
+            <span class="text-2xl">🌍</span>
+            <span class="font-bold text-green-700 tracking-wide">Doğa Dostu</span>
+        </div>
+
+        <div class="flex items-center gap-4">
+            <!-- Ses Aç/Kapat Butonu -->
+            <button id="muteBtn" onclick="toggleMute()"
+                class="w-10 h-10 bg-white/80 backdrop-blur border border-green-200 rounded-full shadow-md flex items-center justify-center text-lg hover:scale-105 transition active:scale-95">
+                🔊
+            </button>
+            <div
+                class="bg-yellow-100 border border-yellow-300 px-4 py-2 rounded-full shadow-md flex items-center gap-2">
+                <span class="text-xl">🏆</span>
+                <span id="scoreDisplay" class="font-bold text-yellow-700">Skor: 0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Ana Oyun Alanı -->
+    <main class="flex-grow w-full max-w-4xl mx-auto px-4 flex flex-col items-center justify-center">
+
+        <!-- Giriş Ekranı (Intro Screen) -->
+        <section id="introScreen"
+            class="bg-white/90 backdrop-blur-md p-8 rounded-3xl shadow-xl border-4 border-green-400 text-center max-w-md w-full my-4 transform transition duration-500 scale-100 flex flex-col items-center">
+            <span class="text-7xl bouncy mb-4">🌱</span>
+            <h1 class="text-3xl font-bold text-green-600 mb-2">Merhaba Kahraman!</h1>
+            <p class="text-slate-600 text-base mb-6 leading-relaxed">
+                Dünyamızı korumak senin elinde! 3 eğlenceli görevi tamamla, doğayı kurtar ve <b>Doğa Dostu Kahraman</b>
+                sertifikanı al!
+            </p>
+            <button onclick="startGame()"
+                class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-6 rounded-2xl shadow-lg shadow-green-200 hover:shadow-green-300 text-xl transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
+                🚀 Oyuna Başla!
+            </button>
+            <div class="mt-6 text-xs text-slate-400 flex items-center gap-1 justify-center">
+                <span>Destekleyen:</span>
+                <span class="font-bold text-green-600">Ülkem Yanımda</span>
+            </div>
+        </section>
+
+        <!-- OYUN ALANLARI -->
+        <!-- Görev 1: Atıkları Ayrıştır -->
+        <section id="stage1Screen"
+            class="hidden w-full bg-white/90 backdrop-blur-md p-6 rounded-3xl shadow-xl border-4 border-blue-400 my-4 flex flex-col items-center">
+            <div class="text-center mb-4">
+                <span class="bg-blue-100 text-blue-700 font-bold px-3 py-1 rounded-full text-xs">GÖREV 1 / 3</span>
+                <h2 class="text-2xl font-bold text-slate-800 mt-1">Atıkları Ayrıştır! ♻️</h2>
+                <p class="text-slate-500 text-sm">Atıkları doğru kutularla eşleştir!
+                </p>
+            </div>
+
+            <!-- Geri Dönüşüm Kutuları -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full mb-6">
+                <!-- Kağıt Kutusu -->
+                <div id="bin-paper"
+                    class="border-2 border-dashed border-blue-300 bg-blue-50/50 p-4 rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all hover:bg-blue-50"
+                    onclick="selectBin('paper')">
+                    <span class="text-4xl mb-2">🟦</span>
+                    <span class="font-bold text-xs text-blue-700">KÂĞIT KUTUSU</span>
+                </div>
+                <!-- Plastik Kutusu -->
+                <div id="bin-plastic"
+                    class="border-2 border-dashed border-yellow-300 bg-yellow-50/50 p-4 rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all hover:bg-yellow-50"
+                    onclick="selectBin('plastic')">
+                    <span class="text-4xl mb-2">🟨</span>
+                    <span class="font-bold text-xs text-yellow-700">PLASTİK KUTUSU</span>
+                </div>
+                <!-- Cam Kutusu -->
+                <div id="bin-glass"
+                    class="border-2 border-dashed border-green-300 bg-green-50/50 p-4 rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all hover:bg-green-50"
+                    onclick="selectBin('glass')">
+                    <span class="text-4xl mb-2">🟩</span>
+                    <span class="font-bold text-xs text-green-700">CAM KUTUSU</span>
+                </div>
+                <!-- Organik Kutusu -->
+                <div id="bin-organic"
+                    class="border-2 border-dashed border-amber-800/30 bg-amber-50/50 p-4 rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all hover:bg-amber-50"
+                    onclick="selectBin('organic')">
+                    <span class="text-4xl mb-2">🟫</span>
+                    <span class="font-bold text-xs text-amber-900">ORGANİK KUTUSU</span>
+                </div>
+            </div>
+
+            <!-- Ortaya Çıkan Atık -->
+            <div
+                class="flex flex-col items-center justify-center p-6 border-2 border-slate-100 bg-slate-50 rounded-2xl w-full max-w-sm relative min-h-[140px] mb-4 shadow-inner">
+                <span id="trashEmoji" class="text-6xl bouncy select-none cursor-pointer"></span>
+                <span id="trashName" class="font-bold text-slate-700 mt-2 text-sm"></span>
+            </div>
+
+            <!-- Dokunmatik Cihazlar için Kolay Butonlar -->
+            <p class="text-xs text-slate-400 mb-2 md:hidden">Kutulara dokunarak da gönderebilirsin!</p>
+
+            <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
+                <div id="stage1Progress" class="bg-blue-500 h-full w-0 transition-all duration-300"></div>
+            </div>
+        </section>
+
+        <!-- Görev 2: Fidanları Sula -->
+        <section id="stage2Screen"
+            class="hidden w-full bg-white/90 backdrop-blur-md p-6 rounded-3xl shadow-xl border-4 border-emerald-400 my-4 flex flex-col items-center">
+            <div class="text-center mb-4">
+                <span class="bg-emerald-100 text-emerald-700 font-bold px-3 py-1 rounded-full text-xs">GÖREV 2 /
+                    3</span>
+                <h2 class="text-2xl font-bold text-slate-800 mt-1">Susuz Fidanları Kurtar! 💧</h2>
+                <p class="text-slate-500 text-sm">Bulutlara dokunarak fidanlara yağmur yağdır, onları kocaman ağaç yap!
+                </p>
+            </div>
+
+            <!-- İnteraktif Bahçe Alanı -->
+            <div
+                class="relative w-full h-64 bg-gradient-to-b from-sky-200 to-amber-100 rounded-2xl overflow-hidden border border-emerald-200 shadow-inner mb-4 flex flex-col justify-between p-4">
+                <!-- Bulutlar (Tıklanabilir) -->
+                <div class="flex justify-around w-full">
+                    <button onclick="rainTrigger(0)" id="cloud-0"
+                        class="text-4xl md:text-5xl cursor-pointer hover:scale-110 active:scale-95 transition-transform animate-pulse">☁️</button>
+                    <button onclick="rainTrigger(1)" id="cloud-1"
+                        class="text-4xl md:text-5xl cursor-pointer hover:scale-110 active:scale-95 transition-transform animate-pulse">☁️</button>
+                    <button onclick="rainTrigger(2)" id="cloud-2"
+                        class="text-4xl md:text-5xl cursor-pointer hover:scale-110 active:scale-95 transition-transform animate-pulse">☁️</button>
+                </div>
+
+                <!-- Düşen Yağmurlar için Konteyner -->
+                <div id="rainArea" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
+
+                <!-- Fidanlar (Büyüyecekler) -->
+                <div class="flex justify-around items-end w-full pb-2 z-10">
+                    <div id="sapling-0" class="flex flex-col items-center transition-all duration-300">
+                        <span class="text-4xl transform origin-bottom transition-transform scale-75">🌱</span>
+                        <div class="w-12 bg-emerald-200 rounded-full h-2 overflow-hidden mt-1">
+                            <div id="saplingBar-0" class="bg-emerald-500 h-full w-0"></div>
+                        </div>
+                    </div>
+                    <div id="sapling-1" class="flex flex-col items-center transition-all duration-300">
+                        <span class="text-4xl transform origin-bottom transition-transform scale-75">🌱</span>
+                        <div class="w-12 bg-emerald-200 rounded-full h-2 overflow-hidden mt-1">
+                            <div id="saplingBar-1" class="bg-emerald-500 h-full w-0"></div>
+                        </div>
+                    </div>
+                    <div id="sapling-2" class="flex flex-col items-center transition-all duration-300">
+                        <span class="text-4xl transform origin-bottom transition-transform scale-75">🌱</span>
+                        <div class="w-12 bg-emerald-200 rounded-full h-2 overflow-hidden mt-1">
+                            <div id="saplingBar-2" class="bg-emerald-500 h-full w-0"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
+                <div id="stage2Progress" class="bg-emerald-500 h-full w-0 transition-all duration-300"></div>
+            </div>
+        </section>
+
+        <!-- Görev 3: Temiz Enerji Üret -->
+        <section id="stage3Screen"
+            class="hidden w-full bg-white/90 backdrop-blur-md p-6 rounded-3xl shadow-xl border-4 border-yellow-400 my-4 flex flex-col items-center">
+            <div class="text-center mb-4">
+                <span class="bg-yellow-100 text-yellow-700 font-bold px-3 py-1 rounded-full text-xs">GÖREV 3 / 3</span>
+                <h2 class="text-2xl font-bold text-slate-800 mt-1">Köyü Işıklandır! ⚡</h2>
+                <p class="text-slate-500 text-sm">Güneşe ve rüzgar gülüne tıklayarak köyümüz için temiz enerji üret!</p>
+            </div>
+
+            <div
+                class="relative w-full h-64 bg-gradient-to-b from-indigo-900 to-sky-800 rounded-2xl overflow-hidden border border-yellow-200 shadow-inner mb-4 flex flex-col justify-between p-4">
+                <!-- Güneş ve Rüzgar Bölmesi -->
+                <div class="flex justify-between items-center w-full">
+                    <!-- Güneş Paneli Butonu -->
+                    <button onclick="chargeSolar()"
+                        class="flex flex-col items-center bg-white/10 hover:bg-white/20 p-2 rounded-xl border border-white/20 transition active:scale-95">
+                        <span id="sunIcon" class="text-4xl bouncy">☀️</span>
+                        <span class="text-[10px] text-yellow-300 font-bold mt-1">Güneş Paneli</span>
+                    </button>
+
+                    <!-- Enerji Deposu Göstergesi -->
+                    <div class="flex flex-col items-center">
+                        <span class="text-xs text-white/80">Pil Gücü</span>
+                        <div
+                            class="w-24 bg-white/20 h-6 rounded-lg border border-white/40 overflow-hidden flex items-center justify-center relative">
+                            <div id="batteryBar" class="bg-yellow-400 h-full w-0 absolute left-0 top-0 transition-all">
+                            </div>
+                            <span id="batteryText" class="text-xs font-bold text-white z-10">0%</span>
+                        </div>
+                    </div>
+
+                    <!-- Rüzgar Türbini Butonu -->
+                    <button onclick="spinWind()"
+                        class="flex flex-col items-center bg-white/10 hover:bg-white/20 p-2 rounded-xl border border-white/20 transition active:scale-95">
+                        <span id="windIcon" class="text-4xl transition-transform duration-300">🌀</span>
+                        <span class="text-[10px] text-cyan-300 font-bold mt-1">Rüzgar Gülü</span>
+                    </button>
+                </div>
+
+                <!-- Şirin Köy ve Ev (Işığı yanacak olan) -->
+                <div class="w-full flex justify-center items-end relative pb-2">
+                    <div id="villageHouse" class="text-7xl transition-all filter grayscale brightness-50">🏠</div>
+                    <div id="villageTrees" class="text-4xl ml-2">🌲🌲</div>
+                    <!-- Işık Parıltısı -->
+                    <div id="glowCircle"
+                        class="absolute w-24 h-24 bg-yellow-400/0 rounded-full -translate-y-6 pointer-events-none transition-all duration-500 flex items-center justify-center">
+                        <span class="text-3xl opacity-0 transition-opacity duration-500">💡</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
+                <div id="stage3Progress" class="bg-yellow-500 h-full w-0 transition-all duration-300"></div>
+            </div>
+        </section>
+
+        <!-- Başarı Sertifikası ve Bitiş Ekranı -->
+        <section id="victoryScreen"
+            class="hidden w-full bg-white/95 backdrop-blur-md p-6 rounded-3xl shadow-xl border-4 border-yellow-400 my-4 text-center max-w-lg">
+            <!-- Tebrik Konfetileri İçin Gizli Canvas -->
+            <canvas id="confettiCanvas" class="absolute inset-0 pointer-events-none rounded-3xl w-full h-full"></canvas>
+
+            <span class="text-7xl bouncy mb-4 inline-block">👑</span>
+            <h2 class="text-3xl font-bold text-green-600 mb-1">Harikasın!</h2>
+            <p class="text-slate-600 mb-6">Tüm görevleri tamamladın ve doğayı mutlu ettin!</p>
+
+            <!-- Sertifika Kartı -->
+            <div id="certificateCard"
+                class="bg-gradient-to-r from-green-50 to-emerald-50 border-4 border-double border-green-500 p-6 rounded-2xl shadow-md mb-6 relative overflow-hidden">
+                <!-- Arka plan desen -->
+                <div class="absolute -right-8 -bottom-8 text-9xl opacity-10">🌍</div>
+                <div class="absolute -left-8 -top-8 text-9xl opacity-10">🌱</div>
+
+                <span class="text-xs tracking-widest text-green-600 font-bold uppercase block mb-1">DOĞA KORUYUCUSU
+                    SERTİFİKASI</span>
+                <h3 class="text-xl font-bold text-slate-800 border-b border-green-200 pb-2 mb-4">Üstün Başarı Belgesi
+                </h3>
+                <p class="text-sm text-slate-600 italic">Bu belge, Çevre ve İklim Değişikliği Haftasında tüm çevre
+                    görevlerini başarıyla tamamlayan geleceğin kahramanına verilmiştir.</p>
+
+                <div class="mt-6 flex justify-between items-end">
+                    <div class="text-left">
+                        <span class="block text-[10px] text-slate-400">Ünvan:</span>
+                        <span class="text-sm font-bold text-green-700">Doğa Dostu Kahraman</span>
+                    </div>
+                    <div class="text-right">
+                        <span class="block text-[10px] text-slate-400">Kaynak:</span>
+                        <span class="text-sm font-bold text-emerald-700">Ülkem Yanımda</span>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="restartGame()"
+                class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-xl shadow-md transition transform active:scale-95">
+                Yeniden Oyna 🔄
+            </button>
+        </section>
+
+    </main>
+
+    <!-- Alt Bilgi / Footer -->
+    <footer
+        class="w-full py-4 text-center text-xs text-slate-500 border-t border-slate-200 bg-white/50 backdrop-blur mt-4">
+        <p>Çevre ve İklim Değişikliği Haftası Eğitsel Oyunu</p>
+        <p class="font-semibold text-green-600 mt-1">Kaynak: Ülkem Yanımda</p>
+    </footer>
+
+    <script>
+        // Ses Sentezleme (Audio Synthesis) - Hiçbir harici dosya yüklenmeden ses üretmek için Web Audio API kullanıyoruz
+        let audioCtx = null;
+        let isMuted = false;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playSound(type) {
+            if (isMuted) return;
+            initAudio();
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            if (type === 'success') {
+                // Doğru işlem: Neşeli çınlama
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
+                osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.15); // A5
+                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
+            } else if (type === 'wrong') {
+                // Yanlış işlem: Alçak tonlu buzzer
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(220, audioCtx.currentTime); // A3
+                osc.frequency.linearRampToValueAtTime(110, audioCtx.currentTime + 0.2); // A2
+                gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.25);
+            } else if (type === 'victory') {
+                // Kazanınca çalan mini melodi
+                const notes = [261.63, 329.63, 392.00, 523.25]; // C4, E4, G4, C5
+                notes.forEach((freq, idx) => {
+                    const oscNote = audioCtx.createOscillator();
+                    const gainNote = audioCtx.createGain();
+                    oscNote.connect(gainNote);
+                    gainNote.connect(audioCtx.destination);
+                    oscNote.type = 'sine';
+                    oscNote.frequency.value = freq;
+                    gainNote.gain.setValueAtTime(0, audioCtx.currentTime + idx * 0.1);
+                    gainNote.gain.linearRampToValueAtTime(0.1, audioCtx.currentTime + idx * 0.1 + 0.05);
+                    gainNote.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + idx * 0.1 + 0.25);
+                    oscNote.start(audioCtx.currentTime + idx * 0.1);
+                    oscNote.stop(audioCtx.currentTime + idx * 0.1 + 0.3);
+                });
+            } else if (type === 'water') {
+                // Su damlama sesi
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1500, audioCtx.currentTime + 0.1);
+                gainNode.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.15);
+            } else if (type === 'wind') {
+                // Rüzgar sesi
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                osc.frequency.linearRampToValueAtTime(300, audioCtx.currentTime + 0.25);
+                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
+            }
+        }
+
+        function toggleMute() {
+            isMuted = !isMuted;
+            document.getElementById('muteBtn').innerText = isMuted ? '🔇' : '🔊';
+        }
+
+        // Genel Oyun Değişkenleri
+        let score = 0;
+        let activeStage = 1;
+
+        // Görev 1 Verileri (Atık Listesi)
+        const trashItems = [
+            { emoji: '📰', name: 'Eski Gazete', type: 'paper' },
+            { emoji: '🥤', name: 'Plastik Bardak', type: 'plastic' },
+            { emoji: '🍎', name: 'Elma Çöpü', type: 'organic' },
+            { emoji: '📦', name: 'Karton Kutu', type: 'paper' },
+            { emoji: '🧴', name: 'Şampuan Şişesi', type: 'plastic' },
+            { emoji: '🫙', name: 'Cam Kavanoz', type: 'glass' },
+            { emoji: '🍌', name: 'Muz Kabuğu', type: 'organic' }
+        ];
+        let currentTrashIndex = 0;
+        let stage1Count = 0;
+        const targetStage1 = 4; // 4 adet doğru eşleştirme gereklidir
+
+        // Görev 2 Verileri (Fidanlar)
+        let saplingStates = [0, 0, 0]; // 0-100 arası büyüme seviyeleri
+        let stage2Completed = false;
+
+        // Görev 3 Verileri (Temiz Enerji)
+        let energyLevel = 0;
+        let rotationAngle = 0;
+
+        // Ekran geçiş fonksiyonları
+        function showScreen(screenId) {
+            document.getElementById('introScreen').classList.add('hidden');
+            document.getElementById('stage1Screen').classList.add('hidden');
+            document.getElementById('stage2Screen').classList.add('hidden');
+            document.getElementById('stage3Screen').classList.add('hidden');
+            document.getElementById('victoryScreen').classList.add('hidden');
+
+            document.getElementById(screenId).classList.remove('hidden');
+        }
+
+        function updateScore(amount) {
+            score += amount;
+            document.getElementById('scoreDisplay').innerText = `Skor: ${score}`;
+        }
+
+        function startGame() {
+            initAudio();
+            score = 0;
+            updateScore(0);
+            activeStage = 1;
+            stage1Count = 0;
+            saplingStates = [0, 0, 0];
+            energyLevel = 0;
+            stage2Completed = false;
+
+            // Fidan barlarını sıfırla
+            for (let i = 0; i < 3; i++) {
+                document.getElementById(`saplingBar-${i}`).style.width = '0%';
+                document.getElementById(`sapling-${i}`).querySelector('span').innerText = '🌱';
+                document.getElementById(`sapling-${i}`).querySelector('span').className = 'text-4xl transform origin-bottom transition-transform scale-75';
+            }
+
+            // Enerji panellerini sıfırla
+            document.getElementById('batteryBar').style.width = '0%';
+            document.getElementById('batteryText').innerText = '0%';
+            document.getElementById('villageHouse').className = 'text-7xl transition-all filter grayscale brightness-50';
+            document.getElementById('glowCircle').querySelector('span').classList.add('opacity-0');
+
+            showScreen('stage1Screen');
+            loadNextTrash();
+        }
+
+        function loadNextTrash() {
+            if (stage1Count >= targetStage1) {
+                // Bir sonraki aşamaya geç
+                playSound('success');
+                setTimeout(() => {
+                    activeStage = 2;
+                    showScreen('stage2Screen');
+                }, 800);
+                return;
+            }
+
+            // Rastgele bir atık seç
+            currentTrashIndex = Math.floor(Math.random() * trashItems.length);
+            const trash = trashItems[currentTrashIndex];
+
+            document.getElementById('trashEmoji').innerText = trash.emoji;
+            document.getElementById('trashName').innerText = trash.name;
+
+            // İlerleme çubuğunu güncelle
+            const progressPct = (stage1Count / targetStage1) * 100;
+            document.getElementById('stage1Progress').style.width = `${progressPct}%`;
+        }
+
+        function selectBin(binType) {
+            const trash = trashItems[currentTrashIndex];
+            const correctBin = trash.type;
+
+            if (binType === correctBin) {
+                // Doğru eşleşme
+                stage1Count++;
+                updateScore(10);
+                playSound('success');
+
+                // Konfeti parçacığı efekti veya yeşil parıltı
+                const activeBinEl = document.getElementById(`bin-${binType}`);
+                activeBinEl.classList.add('bg-green-100', 'scale-105');
+                setTimeout(() => {
+                    activeBinEl.classList.remove('bg-green-100', 'scale-105');
+                }, 300);
+
+                loadNextTrash();
+            } else {
+                // Yanlış eşleşme
+                playSound('wrong');
+                const wrongBinEl = document.getElementById(`bin-${binType}`);
+                wrongBinEl.classList.add('bg-red-100', 'animate-shake');
+
+                // Titreme animasyonu efekti
+                wrongBinEl.style.transform = 'translateX(-5px)';
+                setTimeout(() => { wrongBinEl.style.transform = 'translateX(5px)'; }, 50);
+                setTimeout(() => { wrongBinEl.style.transform = 'translateX(-3px)'; }, 100);
+                setTimeout(() => { wrongBinEl.style.transform = 'none'; wrongBinEl.classList.remove('bg-red-100'); }, 150);
+            }
+        }
+
+        function rainTrigger(index) {
+            if (stage2Completed) return;
+
+            playSound('water');
+
+            // Yağmur damlaları oluşturma efekti
+            const cloud = document.getElementById(`cloud-${index}`);
+            const rect = cloud.getBoundingClientRect();
+            const rainArea = document.getElementById('rainArea');
+
+            for (let i = 0; i < 5; i++) {
+                const drop = document.createElement('span');
+                drop.innerText = '💧';
+                drop.className = 'absolute text-xs transition-all duration-700 ease-in pointer-events-none';
+
+                // Bulutun hemen altından başlat
+                const cloudOffset = cloud.offsetLeft + (Math.random() * 50);
+                drop.style.left = `${cloudOffset}px`;
+                drop.style.top = `40px`;
+
+                rainArea.appendChild(drop);
+
+                // Düşme efekti
+                setTimeout(() => {
+                    drop.style.transform = 'translateY(150px)';
+                    drop.style.opacity = '0';
+                }, 20);
+
+                // Bellekten temizleme
+                setTimeout(() => {
+                    drop.remove();
+                }, 700);
+            }
+
+            // Fidan gelişimini arttır
+            saplingStates[index] += 25;
+            if (saplingStates[index] > 100) saplingStates[index] = 100;
+
+            const progress = saplingStates[index];
+            const bar = document.getElementById(`saplingBar-${index}`);
+            const sapling = document.getElementById(`sapling-${index}`).querySelector('span');
+
+            bar.style.width = `${progress}%`;
+
+            // Görsel fidan değişimi (Fidan -> Küçük Ağaç -> Büyük Ağaç)
+            if (progress >= 100) {
+                sapling.innerText = '🌳';
+                sapling.className = 'text-5xl transform origin-bottom transition-transform scale-110 pulse-soft';
+            } else if (progress >= 50) {
+                sapling.innerText = '🌿';
+                sapling.className = 'text-4xl transform origin-bottom transition-transform scale-100';
+            }
+
+            // İlerlemeyi kontrol et
+            checkStage2Completion();
+        }
+
+        function checkStage2Completion() {
+            const totalProgress = saplingStates.reduce((a, b) => a + b, 0);
+            const totalPct = (totalProgress / 300) * 100;
+            document.getElementById('stage2Progress').style.width = `${totalPct}%`;
+
+            if (totalProgress >= 300 && !stage2Completed) {
+                stage2Completed = true;
+                updateScore(50);
+                playSound('success');
+
+                setTimeout(() => {
+                    activeStage = 3;
+                    showScreen('stage3Screen');
+                }, 1200);
+            }
+        }
+
+        function chargeSolar() {
+            if (energyLevel >= 100) return;
+
+            playSound('water'); // Parlak klik tonu
+            energyLevel += 10;
+            if (energyLevel > 100) energyLevel = 100;
+
+            // Güneş ikonunu parlat
+            const sun = document.getElementById('sunIcon');
+            sun.classList.add('scale-125');
+            setTimeout(() => sun.classList.remove('scale-125'), 150);
+
+            updateEnergyUI();
+        }
+
+        function spinWind() {
+            if (energyLevel >= 100) return;
+
+            playSound('wind');
+            energyLevel += 10;
+            if (energyLevel > 100) energyLevel = 100;
+
+            // Rüzgar gülünü döndür
+            rotationAngle += 90;
+            const wind = document.getElementById('windIcon');
+            wind.style.transform = `rotate(${rotationAngle}deg)`;
+
+            updateEnergyUI();
+        }
+
+        function updateEnergyUI() {
+            document.getElementById('batteryBar').style.width = `${energyLevel}%`;
+            document.getElementById('batteryText').innerText = `${energyLevel}%`;
+            document.getElementById('stage3Progress').style.width = `${energyLevel}%`;
+
+            // Enerji seviyesine göre köyü ışıklandır
+            const house = document.getElementById('villageHouse');
+            const glow = document.getElementById('glowCircle');
+
+            if (energyLevel >= 100) {
+                house.className = 'text-7xl transition-all filter grayscale-0 brightness-110';
+                glow.style.backgroundColor = 'rgba(234, 179, 8, 0.2)';
+                glow.querySelector('span').classList.remove('opacity-0');
+
+                // Oyunu bitir
+                setTimeout(() => {
+                    endGame();
+                }, 1200);
+            } else if (energyLevel > 50) {
+                house.className = 'text-7xl transition-all filter grayscale-0 brightness-90';
+            }
+        }
+
+        function endGame() {
+            playSound('victory');
+            updateScore(100); // Bölüm tamamlama ödülü
+            showScreen('victoryScreen');
+            triggerConfetti();
+        }
+
+        function triggerConfetti() {
+            const canvas = document.getElementById('confettiCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+
+            let particles = [];
+            const colors = ['#f59e0b', '#10b981', '#3b82f6', '#ec4899', '#8b5cf6'];
+
+            for (let i = 0; i < 60; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    r: Math.random() * 6 + 4,
+                    d: Math.random() * canvas.height,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    tilt: Math.random() * 10 - 5,
+                    tiltAngleIncremental: Math.random() * 0.07 + 0.02,
+                    tiltAngle: 0
+                });
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                particles.forEach((p, idx) => {
+                    p.tiltAngle += p.tiltAngleIncremental;
+                    p.y += (Math.cos(p.d) + 3 + p.r / 2) / 2;
+                    p.x += Math.sin(p.tiltAngle);
+                    p.tilt = Math.sin(p.tiltAngle - idx / 3) * 15;
+
+                    ctx.beginPath();
+                    ctx.lineWidth = p.r;
+                    ctx.strokeStyle = p.color;
+                    ctx.moveTo(p.x + p.tilt + p.r / 2, p.y);
+                    ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r / 2);
+                    ctx.stroke();
+                });
+
+                if (particles.some(p => p.y < canvas.height)) {
+                    requestAnimationFrame(draw);
+                }
+            }
+            draw();
+        }
+
+        function restartGame() {
+            showScreen('introScreen');
+        }
+
+        // Klavye veya fare ile sürükle-bırak yapılamayan durumlarda tuş ataması/yedekler
+        window.onload = function () {
+            // Oyun alanını başlatmaya hazır hale getir
+        };
+    </script>
+</body>
+
+</html>

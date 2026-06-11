@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>19 Mayıs Atatürk'ü Anma, Gençlik ve Spor Bayramı</title>
+    <style>
+        :root {
+            --primary-red: #e30a17;
+            --white: #ffffff;
+            --shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            --slot-size: 180px;
+            /* Daha büyük puzzle parçaları */
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #1a1a1a;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: var(--primary-red);
+            color: var(--white);
+            width: 100%;
+            padding: 40px 0;
+            text-align: center;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 95%;
+            background: var(--white);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .audio-explanation-card {
+            background: linear-gradient(135deg, #fff5f5 0%, #fff 100%);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 40px;
+            text-align: center;
+            border: 2px solid #ffccd0;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .audio-explanation-card h3 {
+            margin-top: 0;
+            color: var(--primary-red);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        audio {
+            width: 100%;
+            height: 40px;
+            border-radius: 20px;
+        }
+
+        .game-section {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #puzzle-board {
+            display: grid;
+            grid-template-columns: repeat(3, var(--slot-size));
+            grid-template-rows: repeat(3, var(--slot-size));
+            gap: 6px;
+            background-color: #cbd5e0;
+            border: 8px solid var(--primary-red);
+            padding: 6px;
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            margin: 30px 0;
+        }
+
+        .slot {
+            width: var(--slot-size);
+            height: var(--slot-size);
+            background-color: #edf2f7;
+            border: 1px dashed #a0aec0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-sizing: border-box;
+        }
+
+        #pieces-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            min-height: 200px;
+            padding: 30px;
+            background-color: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .piece {
+            width: var(--slot-size);
+            height: var(--slot-size);
+            background-image: url('1.png');
+            background-size: calc(var(--slot-size) * 3) calc(var(--slot-size) * 3);
+            cursor: grab;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            touch-action: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+            transition: transform 0.2s;
+        }
+
+        .piece:active {
+            cursor: grabbing;
+            transform: scale(1.05);
+            z-index: 100;
+        }
+
+        #feedback-area {
+            margin-top: 30px;
+            font-weight: 700;
+            font-size: 1.5rem;
+            min-height: 2em;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        .success-msg {
+            color: #2f855a;
+            animation: celebrate 0.6s ease infinite alternate;
+        }
+
+        @keyframes celebrate {
+            from {
+                transform: scale(1);
+            }
+
+            to {
+                transform: scale(1.05);
+            }
+        }
+
+        .action-button {
+            background-color: var(--primary-red);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 40px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(227, 10, 23, 0.3);
+            margin-top: 20px;
+        }
+
+        .action-button:hover {
+            background-color: #c40813;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(227, 10, 23, 0.4);
+        }
+
+        .music-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: white;
+            padding: 15px;
+            border-radius: 50%;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            z-index: 1000;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--primary-red);
+        }
+
+        @media (max-width: 768px) {
+            :root {
+                --slot-size: 100px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            header h1 {
+                font-size: 1.2rem;
+            }
+
+            .action-button {
+                font-size: 1rem;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <audio id="bgMusic" loop>
+        <source src="1.mp3" type="audio/mpeg">
+    </audio>
+
+    <header>
+        <h1>19 Mayıs Atatürk'ü Anma, Gençlik ve Spor Bayramı</h1>
+    </header>
+
+    <div class="container">
+        <div class="audio-explanation-card">
+            <h3>🔊 Sesli Açıklamayı Dinle</h3>
+            <audio controls>
+                <source src="2.mp3" type="audio/mpeg">
+                Tarayıcınız ses dosyasını desteklemiyor.
+            </audio>
+        </div>
+
+        <div class="game-section">
+            <div id="puzzle-board">
+                <!-- JavaScript ile doldurulacak -->
+            </div>
+
+            <div id="pieces-container">
+                <!-- JavaScript ile doldurulacak -->
+            </div>
+
+            <button class="action-button" id="checkBtn">Millî Mücadele Ruhunu Tamamla</button>
+            <div id="feedback-area"></div>
+        </div>
+    </div>
+
+    <div class="music-toggle" onclick="toggleMusic()" title="Arka Plan Müziği">
+        🎵
+    </div>
+
+    <script>
+        const board = document.getElementById('puzzle-board');
+        const container = document.getElementById('pieces-container');
+        const feedback = document.getElementById('feedback-area');
+        const checkBtn = document.getElementById('checkBtn');
+        const bgMusic = document.getElementById('bgMusic');
+
+        let isMusicPlaying = false;
+        const size = 3;
+        const totalPieces = size * size;
+
+        function initGame() {
+            // Slotları oluştur
+            for (let i = 0; i < totalPieces; i++) {
+                const slot = document.createElement('div');
+                slot.classList.add('slot');
+                slot.dataset.index = i;
+                slot.addEventListener('dragover', e => e.preventDefault());
+                slot.addEventListener('drop', handleDrop);
+                board.appendChild(slot);
+            }
+
+            // Parçaları oluştur ve karıştır
+            let indices = Array.from({ length: totalPieces }, (_, i) => i);
+            indices = indices.sort(() => Math.random() - 0.5);
+
+            indices.forEach(idx => {
+                const piece = document.createElement('div');
+                piece.classList.add('piece');
+                piece.id = 'piece-' + idx;
+                piece.draggable = true;
+                piece.dataset.correctIndex = idx;
+
+                // Arka plan pozisyonu (3x3 grid)
+                const row = Math.floor(idx / size);
+                const col = idx % size;
+
+                // Dinamik slot büyüklüğüne göre arka plan ayarı
+                const updateBg = () => {
+                    const currentSlotSize = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--slot-size'));
+                    piece.style.backgroundPosition = `-${col * currentSlotSize}px -${row * currentSlotSize}px`;
+                };
+
+                updateBg();
+                window.addEventListener('resize', updateBg);
+
+                piece.addEventListener('dragstart', handleDragStart);
+                container.appendChild(piece);
+            });
+        }
+
+        let draggedItem = null;
+
+        function handleDragStart(e) {
+            draggedItem = this;
+            e.dataTransfer.setData('text/plain', this.id);
+
+            // İlk etkileşimde müziği başlatmayı dene
+            if (!isMusicPlaying) {
+                bgMusic.play().catch(() => console.log("Müzik etkileşim bekliyor..."));
+                isMusicPlaying = true;
+            }
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const target = e.target.closest('.slot');
+            if (target && target.children.length === 0) {
+                target.appendChild(draggedItem);
+            }
+        }
+
+        container.addEventListener('dragover', e => e.preventDefault());
+        container.addEventListener('drop', e => {
+            e.preventDefault();
+            container.appendChild(draggedItem);
+        });
+
+        checkBtn.addEventListener('click', () => {
+            const slots = document.querySelectorAll('.slot');
+            let correctCount = 0;
+            let isComplete = true;
+
+            slots.forEach(slot => {
+                if (slot.children.length === 0) {
+                    isComplete = false;
+                } else {
+                    const piece = slot.children[0];
+                    if (piece.dataset.correctIndex == slot.dataset.index) {
+                        correctCount++;
+                    }
+                }
+            });
+
+            if (!isComplete) {
+                feedback.innerHTML = "<span style='color: #d97706;'>Tüm parçaları panoya yerleştirmelisin!</span>";
+            } else if (correctCount === totalPieces) {
+                feedback.innerHTML = "<span class='success-msg'>Tebrikler!🇹🇷<br>Bayramın kutlu olsun!</span>";
+                checkBtn.style.display = 'none';
+            } else {
+                feedback.innerHTML = "<span style='color: #dc2626;'>Henüz tam olmadı, bazı parçalar yanlış yerde. Tekrar denemeye ne dersin?</span>";
+            }
+        });
+
+        function toggleMusic() {
+            if (bgMusic.paused) {
+                bgMusic.play();
+                isMusicPlaying = true;
+            } else {
+                bgMusic.pause();
+                isMusicPlaying = false;
+            }
+        }
+
+        window.onload = initGame;
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,187 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doğa Elçisi: İnteraktif Video Görevi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Nunito', sans-serif; overflow-x: hidden; }
+        
+        .video-bg {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: -1;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        .animate-wrong { animation: shake 0.3s linear; }
+
+        @keyframes fly {
+            0% { transform: translateY(0) scale(0); opacity: 0; }
+            50% { transform: translateY(-50px) scale(1); opacity: 1; }
+            100% { transform: translateY(-100px) scale(1.5); opacity: 0; }
+        }
+        .feedback-item {
+            position: absolute;
+            animation: fly 2s ease-out forwards;
+            font-size: 2rem;
+            pointer-events: none;
+            z-index: 50;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <video id="bg-video" autoplay loop muted playsinline class="video-bg">
+        <source src="2.mp4" type="video/mp4">
+    </video>
+    <div class="overlay"></div>
+
+    <div id="app" class="w-full max-w-5xl">
+        
+        <!-- Sadece küçük zarif kare çerçeve kalacak şekilde düzenlendi -->
+        <div id="screen-instructions" class="text-center p-8 mx-auto aspect-square flex flex-col justify-center items-center w-full max-w-[360px] border-2 border-emerald-500/20 bg-emerald-50/40 rounded-[2.5rem] shadow-lg backdrop-blur-sm transition-all duration-300 hover:shadow-emerald-100/50">
+            <h1 class="text-2xl font-black text-emerald-800 mb-3 tracking-wide">🌍 Doğa Elçisi</h1>
+            <p class="mb-5 font-bold leading-relaxed text-center" style="color: #064e3b; font-size: 14pt;">
+                Harika bir çevre videosu izleyeceğiz! Dikkatle izle. Video sonunda seni bazı sorular bekliyor. Soruları cevapla ve bir çevre dostu olduğunu ispatla.
+            </p>
+            <button onclick="startActivity()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-black text-xs px-5 py-2.5 rounded-xl shadow-md transition transform hover:scale-105 active:scale-95">
+                VİDEOYU BAŞLAT 🎥
+            </button>
+        </div>
+
+        <!-- Video ekranı için büyük kart tasarımı buraya taşındı -->
+        <div id="screen-video" class="hidden text-center w-full max-w-4xl bg-white/95 backdrop-blur-md p-4 rounded-3xl shadow-2xl border-4 border-emerald-200 mx-auto">
+            <video id="eco-video" class="w-full rounded-2xl shadow-xl mb-4 bg-black" controls>
+                <source src="1.mp4" type="video/mp4">
+            </video>
+        </div>
+
+        <!-- Test ekranı için büyük kart tasarımı buraya taşındı -->
+        <div id="screen-quiz" class="hidden w-full max-w-3xl bg-white/95 backdrop-blur-md p-8 rounded-3xl shadow-2xl border-4 border-emerald-200 mx-auto">
+            <h2 id="question-text" class="text-2xl font-black text-emerald-900 mb-6 text-center"></h2>
+            <div id="options-container" class="space-y-4"></div>
+            <p id="error-msg" class="text-red-500 font-bold text-center mt-4 h-6 opacity-0 transition-opacity">Bu doğru değil, tekrar dene!</p>
+        </div>
+
+        <!-- Başarı ekranı için büyük kart tasarımı buraya taşındı -->
+        <div id="screen-success" class="hidden text-center w-full max-w-2xl bg-white/95 backdrop-blur-md p-8 rounded-3xl shadow-2xl border-4 border-emerald-200 mx-auto">
+            <h2 class="text-4xl font-black text-emerald-800 mb-4">Tebrikler! 🎉</h2>
+            <p class="text-lg text-emerald-700 font-bold mb-6">Tüm soruları doğru yanıtladın. Gerçek bir doğa elçisisin!</p>
+            <button onclick="location.reload()" class="bg-amber-500 hover:bg-amber-600 text-white font-black px-8 py-3 rounded-2xl transition">YENİDEN BAŞLA</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                q: "Videoya göre çevre bilinci kavramı nedir?",
+                options: ["Her gün bol suyla temizlik yapmalıyız.", "Doğayı koruyup temiz tutmalıyız.", "Sadece kendi evimizi ve sokağımzı temizlemeliyiz."],
+                correct: "Doğayı koruyup temiz tutmalıyız."
+            },
+            {
+                q: "Videoya göre bahsedilen en önemli tasarruf yöntemi hangisidir?",
+                options: ["Işıkları açık bırakmak", "Suyu boşa harcamamak", "Çok fazla alışveriş yapmamak"],
+                correct: "Suyu boşa harcamamak"
+            },
+            {
+                q: "Doğayı korumak için en basit adım hangisidir?",
+                options: ["Çöpleri geri dönüşüme atmak", "Çöpleri ayrıştırmadan atmak", "Çöpleri biriktirmek"],
+                correct: "Çöpleri geri dönüşüme atmak"
+            }
+        ];
+
+        let currentQuestion = 0;
+        const bgVideo = document.getElementById('bg-video');
+        const mainVideo = document.getElementById('eco-video');
+
+        function startActivity() {
+            document.getElementById('screen-instructions').classList.add('hidden');
+            document.getElementById('screen-video').classList.remove('hidden');
+            
+            bgVideo.pause();
+            mainVideo.play();
+            
+            mainVideo.onended = () => {
+                bgVideo.play();
+                setTimeout(showQuiz, 1000);
+            };
+        }
+
+        function showQuiz() {
+            document.getElementById('screen-video').classList.add('hidden');
+            document.getElementById('screen-quiz').classList.remove('hidden');
+            renderQuestion();
+        }
+
+        function triggerFeedback() {
+            const container = document.getElementById('app');
+            const icons = ['🦋', '🌸', '🌼', '🌻'];
+            for(let i = 0; i < 5; i++) {
+                const span = document.createElement('span');
+                span.textContent = icons[Math.floor(Math.random() * icons.length)];
+                span.className = 'feedback-item';
+                span.style.left = Math.random() * 80 + 10 + '%';
+                span.style.top = '50%';
+                container.appendChild(span);
+                setTimeout(() => span.remove(), 2000);
+            }
+        }
+
+        function renderQuestion() {
+            const q = questions[currentQuestion];
+            document.getElementById('question-text').textContent = q.q;
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            
+            const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
+            
+            shuffledOptions.forEach((opt) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 bg-emerald-50 border-2 border-emerald-200 rounded-xl font-bold hover:bg-emerald-100 transition hover:border-emerald-400";
+                btn.textContent = opt;
+                btn.onclick = (e) => checkAnswer(opt, e.target);
+                container.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selected, btn) {
+            if (selected === questions[currentQuestion].correct) {
+                triggerFeedback();
+                currentQuestion++;
+                if (currentQuestion < questions.length) {
+                    setTimeout(renderQuestion, 800);
+                } else {
+                    document.getElementById('screen-quiz').classList.add('hidden');
+                    document.getElementById('screen-success').classList.remove('hidden');
+                }
+            } else {
+                btn.classList.add('animate-wrong');
+                const err = document.getElementById('error-msg');
+                err.classList.remove('opacity-0');
+                setTimeout(() => {
+                    btn.classList.remove('animate-wrong');
+                    err.classList.add('opacity-0');
+                }, 500);
+            }
+        }
+    </script>
+</body>
+</html>
