@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Türkçe ve Türk Kültürü Dersi Dönem Sonu Etkinliği</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+        }
+
+        .serif-title {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* Akıcı geçişler için özel animasyonlar */
+        .fade-transition {
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex items-center justify-center p-4 text-slate-100 overflow-x-hidden">
+
+    <!-- Ana Konteyner -->
+    <div
+        class="w-full max-w-4xl bg-slate-900/80 border border-slate-700/50 rounded-3xl shadow-2xl backdrop-blur-md overflow-hidden relative">
+
+        <!-- Üst Dekoratif Kültürel Şerit -->
+        <div class="h-2 w-full bg-gradient-to-r from-emerald-500 via-teal-500 to-amber-500"></div>
+
+        <div class="p-6 md:p-12">
+
+            <!-- 1. YÖNERGE EKRANI -->
+            <div id="instructionScreen"
+                class="fade-transition opacity-100 scale-100 flex flex-col items-center text-center space-y-8">
+
+                <!-- Başlık ve Logo Alanı -->
+                <div class="space-y-3">
+                    <div
+                        class="inline-flex items-center justify-center p-3 bg-teal-500/10 text-teal-400 rounded-full mb-2">
+                        <!-- Kitap / Kültür İkonu (SVG) -->
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25">
+                            </path>
+                        </svg>
+                    </div>
+                    <span class="text-xs md:text-sm font-semibold tracking-widest text-teal-400 uppercase block">
+                        Türkçe ve Türk Kültürü Dersi
+                    </span>
+                    <h1 class="text-3xl md:text-4xl font-bold text-slate-100 serif-title">
+                        Dönem Sonu Etkinliği
+                    </h1>
+                </div>
+
+                <!-- Yönerge Kartı -->
+                <div
+                    class="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-6 md:p-8 max-w-2xl w-full space-y-4 shadow-inner">
+                    <p class="text-lg md:text-xl text-amber-200 font-medium leading-relaxed">
+                        "Açılacak videoyu dikkatle dinleyiniz/izleyiniz."
+                    </p>
+                    <p class="text-base md:text-lg text-slate-300 leading-relaxed">
+                        Arkadaşınız size bir soru soracak. Videoyu izledikten sonra sorusuna cevap veriniz.
+                    </p>
+                </div>
+
+                <!-- Başlat Butonu -->
+                <button id="startBtn"
+                    class="group relative px-8 py-4 bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-400 hover:to-emerald-500 text-white font-bold text-lg rounded-xl shadow-lg hover:shadow-teal-500/20 transform hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:ring-offset-2 focus:ring-offset-slate-900 cursor-pointer">
+                    <span class="flex items-center justify-center gap-2">
+                        Anladım, Videoyu Başlat
+                        <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none"
+                            stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"></path>
+                        </svg>
+                    </span>
+                </button>
+
+                <!-- Kaynak ve Kurum Bilgisi (Yönerge Altı) -->
+                <div class="pt-4 border-t border-slate-800 w-full text-xs text-slate-500 space-y-1">
+                    <p>Kaynak: <span class="text-slate-400 font-medium">Ülkem Yanımda</span></p>
+                </div>
+
+            </div>
+
+            <!-- 2. VİDEO EKRANI (Başlangıçta Gizli) -->
+            <div id="videoScreen"
+                class="hidden fade-transition opacity-0 scale-95 flex flex-col items-center space-y-6">
+
+                <!-- Küçük Üst Bilgi Barı -->
+                <div
+                    class="w-full flex items-center justify-between text-xs text-slate-400 border-b border-slate-800 pb-3 mb-2">
+                    <span class="flex items-center gap-1.5 text-teal-400 font-medium">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        Video Oynatılıyor
+                    </span>
+                    <span>Kaynak: Ülkem Yanımda</span>
+                </div>
+
+                <!-- Video Oynatıcı Yuvası -->
+                <div
+                    class="relative w-full aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl border border-slate-700">
+                    <video id="mainVideo" class="w-full h-full object-contain" controls preload="auto">
+                        <source src="1.mp4" type="video/mp4">
+                        Tarayıcınız video oynatmayı desteklemiyor. Lütfen modern bir tarayıcı kullanın veya videoyu
+                        doğrudan indirin.
+                    </video>
+                </div>
+
+                <!-- Video Altı Bilgilendirme -->
+                <div class="text-center space-y-2 max-w-lg">
+                    <p class="text-sm text-amber-200">
+                        Pür dikkat izlemeyi ve dinlemeyi unutmayın! Video bitiminde arkadaşınızın sorusu gelecektir.
+                    </p>
+                    <button id="restartBtn"
+                        class="text-xs text-slate-500 hover:text-slate-300 underline cursor-pointer transition-colors pt-2">
+                        Yönergeyi Tekrar Göster
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- JavaScript Etkileşim Kodları -->
+    <script>
+        const startBtn = document.getElementById('startBtn');
+        const restartBtn = document.getElementById('restartBtn');
+        const instructionScreen = document.getElementById('instructionScreen');
+        const videoScreen = document.getElementById('videoScreen');
+        const mainVideo = document.getElementById('mainVideo');
+
+        // Yönerge kabul edilip "Tamam" dendiğinde videoya geçiş
+        startBtn.addEventListener('click', () => {
+            // Yönerge ekranını yumuşakça gizle
+            instructionScreen.classList.replace('opacity-100', 'opacity-0');
+            instructionScreen.classList.replace('scale-100', 'scale-95');
+
+            setTimeout(() => {
+                instructionScreen.classList.add('hidden');
+                videoScreen.classList.remove('hidden');
+
+                // Video ekranını yumuşakça göster
+                setTimeout(() => {
+                    videoScreen.classList.replace('opacity-0', 'opacity-100');
+                    videoScreen.classList.replace('scale-95', 'scale-100');
+
+                    // Videoyu otomatik başlat (Kullanıcı etkileşimi alındığı için tarayıcılar izin verir)
+                    mainVideo.play().catch(error => {
+                        console.log("Otomatik oynatma engellendi, kullanıcının oynat tuşuna basması bekleniyor.", error);
+                    });
+                }, 50);
+
+            }, 500); // CSS transition süresi ile uyumlu (500ms)
+        });
+
+        // İstenirse yönerge ekranına geri dönme opsiyonu
+        restartBtn.addEventListener('click', () => {
+            mainVideo.pause();
+            mainVideo.currentTime = 0;
+
+            videoScreen.classList.replace('opacity-100', 'opacity-0');
+            videoScreen.classList.replace('scale-100', 'scale-95');
+
+            setTimeout(() => {
+                videoScreen.classList.add('hidden');
+                instructionScreen.classList.remove('hidden');
+
+                setTimeout(() => {
+                    instructionScreen.classList.replace('opacity-0', 'opacity-100');
+                    instructionScreen.classList.replace('scale-95', 'scale-100');
+                }, 50);
+            }, 500);
+        });
+    </script>
+</body>
+
+</html>

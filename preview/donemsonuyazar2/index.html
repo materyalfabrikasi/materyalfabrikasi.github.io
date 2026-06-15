@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geleceğe Esintiler: Türkçe ve Türk Kültürü Zaman Kapsülü</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for retro/handwritten and premium Turkish styling -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Cinzel:wght@600;900&family=Inter:wght@400;600;800&family=Pacifico&display=swap" rel="stylesheet">
+    <!-- FontAwesome for beautiful icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- html2canvas and jsPDF for PDF exporting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- Canvas Confetti for celebratory animations -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #fdf6e2 0%, #f4e3b1 50%, #e9d391 100%);
+            min-height: 100vh;
+        }
+
+        /* Handwritten font for the letter editor */
+        .handwritten {
+            font-family: 'Caveat', cursive;
+            font-size: 1.65rem;
+            line-height: 1.8rem;
+        }
+
+        /* Title styling */
+        .title-font {
+            font-family: 'Cinzel', serif;
+        }
+
+        .fancy-font {
+            font-family: 'Pacifico', cursive;
+        }
+
+        /* Authentic Parchment Style with margins and lining */
+        .parchment-paper {
+            background-color: #f6ecdc;
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(255,255,255,0.4) 0%, rgba(0,0,0,0.06) 100%),
+                repeating-linear-gradient(rgba(0,0,0,0) 0px, rgba(0,0,0,0) 31px, rgba(160,110,50,0.15) 32px);
+            box-shadow: inset 0 0 50px rgba(115, 74, 30, 0.25), 0 10px 30px rgba(0,0,0,0.15);
+            border: 12px double #b19360;
+            position: relative;
+        }
+
+        .parchment-paper::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border: 2px solid #8e7243;
+            margin: 4px;
+            pointer-events: none;
+        }
+
+        /* Wax Seal Stamp Animation */
+        @keyframes stamp-press {
+            0% { transform: scale(3) rotate(-15deg); opacity: 0; filter: blur(4px); }
+            70% { transform: scale(0.9) rotate(5deg); opacity: 0.9; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; filter: blur(0); }
+        }
+
+        .seal-animate {
+            animation: stamp-press 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        /* Glassmorphism containers */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(142, 114, 67, 0.15);
+        }
+
+        /* Custom Scrollbar for vintage textareas */
+        .custom-scroll::-webkit-scrollbar {
+            width: 8px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: rgba(139, 90, 43, 0.1);
+            border-radius: 4px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: rgba(139, 90, 43, 0.4);
+            border-radius: 4px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: rgba(139, 90, 43, 0.6);
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen text-slate-800 antialiased overflow-x-hidden">
+
+    <!-- Top Navigation with Sound Controller & Classroom Title -->
+    <header class="w-full py-4 px-6 flex justify-between items-center bg-white/60 backdrop-blur-md shadow-sm border-b border-orange-100 z-10">
+        <div class="flex items-center gap-3">
+            <span class="text-3xl">🇹🇷</span>
+            <div>
+                <h1 class="font-bold text-orange-800 text-sm md:text-base tracking-wide">ÜLKEM YANIMDA</h1>
+                <p class="text-xs text-amber-700 font-semibold">Türkçe ve Türk Kültürü Ders Sonu Etkinliği</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <!-- Sound Button -->
+            <button id="soundToggleBtn" onclick="toggleMute()" class="flex items-center gap-2 bg-amber-100 hover:bg-amber-200 text-amber-900 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300">
+                <i id="soundIcon" class="fas fa-volume-up"></i>
+                <span class="hidden md:inline">Müzik & Ses: Açık</span>
+            </button>
+            <span class="bg-red-500 text-white font-bold text-xs px-3 py-1.5 rounded-full shadow-sm animate-pulse">
+                🎓 Yılın Son Günü Özel!
+            </span>
+        </div>
+    </header>
+
+    <!-- Main Game Workspace -->
+    <main class="flex-grow container mx-auto px-4 py-6 max-w-5xl flex flex-col justify-center">
+        
+        <!-- Companion Character Guide Bubble -->
+        <div id="guideBubble" class="mb-6 flex flex-col md:flex-row items-center gap-4 bg-orange-50 border border-orange-200 rounded-2xl p-4 shadow-sm transition-all duration-500">
+            <div class="relative flex-shrink-0">
+                <!-- Cute SVG Mail Pigeon / Postacı Güvercin -->
+                <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center border-4 border-white shadow-md relative overflow-hidden">
+                    <svg viewBox="0 0 64 64" class="w-16 h-16 transform -scale-x-100">
+                        <circle cx="32" cy="32" r="28" fill="#e0f2fe"/>
+                        <!-- Head -->
+                        <path d="M42,22a8,8,0,1,0-8-8A8,8,0,0,0,42,22Z" fill="#93c5fd"/>
+                        <!-- Body -->
+                        <path d="M26,38C26,26,46,24,46,38c0,10-12,14-20,14S26,44,26,38Z" fill="#60a5fa"/>
+                        <!-- Wing -->
+                        <path d="M22,34C24,28,34,26,34,36c0,8-6,10-12,10S20,38,22,34Z" fill="#3b82f6"/>
+                        <!-- Beak -->
+                        <polygon points="50,14 42,16 46,20" fill="#fbbf24"/>
+                        <!-- Eye -->
+                        <circle cx="41" cy="13" r="2.5" fill="#1e3a8a"/>
+                        <!-- Letter in Beak -->
+                        <rect x="42" y="20" width="10" height="7" rx="1" fill="#ffffff" transform="rotate(15 42 20)" stroke="#1e3a8a" stroke-width="1"/>
+                        <line x1="44" y1="24" x2="50" y2="24" stroke="#e11d48" stroke-width="1"/>
+                    </svg>
+                </div>
+                <!-- Mini Badge -->
+                <span class="absolute -bottom-1 -right-1 bg-red-500 text-white rounded-full p-1 text-[10px] font-bold shadow-sm">Barış</span>
+            </div>
+            <div class="text-center md:text-left">
+                <h3 class="font-bold text-amber-900 text-lg flex items-center justify-center md:justify-start gap-2">
+                    <span>Postacı Güvercin Barış Diyor ki:</span>
+                    <span class="animate-bounce">✉️</span>
+                </h3>
+                <p id="guideSpeech" class="text-amber-800 text-sm mt-1 font-medium">
+                    Merhaba sevgili Türkçe ve Türk Kültürü öğrencisi! Harika bir eğitim yılının son günündeyiz. Gelecek yılki kendine bir sürpriz yapmaya hazır mısın? Haydi hemen oyuna başlayalım!
+                </p>
+            </div>
+        </div>
+
+        <!-- GAME STEPS CONTROLLER -->
+        <div id="gameWindow" class="glass-card rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden">
+            <!-- Step Progress Indicator -->
+            <div class="mb-8 relative">
+                <div class="flex justify-between items-center max-w-xs mx-auto relative z-10">
+                    <div id="stepDot1" class="w-10 h-10 rounded-full bg-amber-600 text-white flex items-center justify-center font-bold shadow-md transition-all duration-300">1</div>
+                    <div class="h-1 flex-grow bg-amber-200 transition-all duration-300" id="stepLine1"></div>
+                    <div id="stepDot2" class="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold shadow-sm transition-all duration-300">2</div>
+                    <div class="h-1 flex-grow bg-slate-200 transition-all duration-300" id="stepLine2"></div>
+                    <div id="stepDot3" class="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold shadow-sm transition-all duration-300">3</div>
+                </div>
+                <div class="flex justify-between items-center max-w-xs mx-auto mt-2 text-xs font-semibold text-amber-800 px-1">
+                    <span class="text-center w-12">Yönerge</span>
+                    <span class="text-center w-12">Mektubunu Yaz</span>
+                    <span class="text-center w-12">Mühürle & Sakla</span>
+                </div>
+            </div>
+
+            <!-- STEP 1: WELCOME & DETAILED INSTRUCTIONS (YÖNERGE) -->
+            <div id="stepContent1" class="step-pane flex flex-col items-center text-center py-4">
+                <span class="text-6xl mb-4 animate-pulse">⏳</span>
+                <h2 class="title-font text-2xl md:text-3xl font-extrabold text-orange-950 mb-3">Zaman Kapsülü Oyunu</h2>
+                
+                <div class="bg-amber-50/70 border-2 border-dashed border-amber-300 rounded-2xl p-5 max-w-xl text-left text-slate-700 leading-relaxed space-y-3 mb-6">
+                    <h4 class="font-bold text-amber-900 text-base flex items-center gap-2">
+                        <i class="fas fa-clipboard-list text-orange-600"></i>
+                        Nasıl Oynanır?
+                    </h4>
+                    <p class="text-xs md:text-sm">
+                        <strong>Türkçe ve Türk Kültürü</strong> dersimizin bu güzel yıl sonu etkinliğine hoş geldin! Gelecek yılki kendine sürpriz bir mektup bırakmaya hazır mısın?
+                    </p>
+                    <ul class="list-disc pl-5 space-y-1.5 text-xs md:text-sm text-slate-600 font-medium">
+                        <li><strong class="text-amber-800">Hedeflerini yaz:</strong> Gelecek yıl Türkçe ve Türk Kültürü dersinde neleri başarmak istersin?</li>
+                        <li><strong class="text-amber-800">Hayallerini fısılda:</strong> Gelecek yıl için en büyük hayalin ne?</li>
+                        <li><strong class="text-amber-800">Anılarını sakla:</strong> Bu yıl dersimizde en çok güldüğün an neydi?</li>
+                    </ul>
+                    <p class="text-[11px] text-amber-800 font-bold bg-amber-100/50 p-2 rounded-lg border border-amber-200">
+                        💡 Mektubun kilitlenip güvenle PDF olarak bilgisayarına inecek. Gelecek yılın son günü açacaksın!
+                    </p>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-4 w-full justify-center">
+                    <button onclick="goToStep(2)" class="bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white font-extrabold text-base md:text-lg px-8 py-3.5 rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2">
+                        Mektubumu Yazmaya Başlıyorum! <i class="fas fa-pen-fancy"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 2: VINTAGE LETTER WRITING (MEKTUBUNU YAZ) -->
+            <div id="stepContent2" class="step-pane hidden">
+                <h2 class="title-font text-2xl font-bold text-orange-950 mb-4 text-center">Geleceğe Mektup Kağıdı (Eskitilmiş Parşömen)</h2>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+                    <!-- Writing Workspace Tips & Identification Box (Left) -->
+                    <div class="lg:col-span-4 space-y-4 flex flex-col justify-between">
+                        <div class="space-y-4">
+                            <!-- Student Identity Input -->
+                            <div class="bg-amber-50 border border-amber-200 p-4 rounded-2xl space-y-3">
+                                <h4 class="font-bold text-amber-950 text-xs uppercase tracking-wider flex items-center gap-1">
+                                    <i class="fas fa-id-card text-orange-500"></i> Kimlik Bilgilerin:
+                                </h4>
+                                <div>
+                                    <label for="studentNameInput" class="block text-[11px] font-bold text-amber-900 mb-0.5">Adın ve Soyadın:</label>
+                                    <input type="text" id="studentNameInput" onkeyup="updateEnvelopeText()" placeholder="Örn: Elif Yılmaz" class="w-full bg-white px-3 py-1.5 rounded-lg border border-amber-200 text-xs focus:outline-none focus:ring-2 focus:ring-orange-500">
+                                </div>
+                                <div>
+                                    <label for="studentLocationInput" class="block text-[11px] font-bold text-amber-900 mb-0.5">Yaşadığın Şehir:</label>
+                                    <input type="text" id="studentLocationInput" onkeyup="updateEnvelopeText()" placeholder="Örn: Köln" class="w-full bg-white px-3 py-1.5 rounded-lg border border-amber-200 text-xs focus:outline-none focus:ring-2 focus:ring-orange-500">
+                                </div>
+                            </div>
+
+                            <h3 class="font-bold text-amber-950 text-sm flex items-center gap-2">
+                                <span class="bg-orange-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">✍️</span>
+                                Nelere Değinmelisin?
+                            </h3>
+                            <p class="text-[11px] text-slate-600">Aşağıdaki kutucuklara tıklayarak mektubuna otomatik kılavuz başlıklar ekleyebilirsin!</p>
+                            
+                            <!-- Prompt Buttons -->
+                            <div class="space-y-2">
+                                <button onclick="insertTemplateText('goals')" class="w-full text-left bg-orange-50/70 hover:bg-orange-100 border border-orange-200 rounded-xl p-2.5 text-xs transition-all flex gap-2 items-start">
+                                    <span class="text-base">🎯</span>
+                                    <div>
+                                        <p class="font-bold text-orange-900 text-xs">Hedeflerimi Ekle</p>
+                                        <p class="text-[10px] text-slate-500">Türkçe ve Türk Kültürü hedeflerim...</p>
+                                    </div>
+                                </button>
+                                
+                                <button onclick="insertTemplateText('dreams')" class="w-full text-left bg-sky-50/70 hover:bg-sky-100 border border-sky-200 rounded-xl p-2.5 text-xs transition-all flex gap-2 items-start">
+                                    <span class="text-base">✨</span>
+                                    <div>
+                                        <p class="font-bold text-sky-950 text-xs">Hayallerimi Ekle</p>
+                                        <p class="text-[10px] text-slate-500">Düşlediğim güzel şeyler...</p>
+                                    </div>
+                                </button>
+                                
+                                <button onclick="insertTemplateText('memories')" class="w-full text-left bg-emerald-50/70 hover:bg-emerald-100 border border-emerald-200 rounded-xl p-2.5 text-xs transition-all flex gap-2 items-start">
+                                    <span class="text-base">📸</span>
+                                    <div>
+                                        <p class="font-bold text-emerald-950 text-xs">Unutulmaz Anılarımı Ekle</p>
+                                        <p class="text-[10px] text-slate-500">Dersimizdeki en tatlı anı...</p>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Traditional Tulip / Turkish Culture Motif graphic -->
+                        <div class="hidden lg:block bg-amber-50 border border-amber-200/50 p-3 rounded-2xl text-center">
+                            <svg viewBox="0 0 100 120" class="w-16 mx-auto fill-orange-700 opacity-80">
+                                <path d="M50 110 C50 110, 50 60, 50 40 C44 48, 30 50, 30 35 C30 20, 50 5, 50 5 C50 5, 70 20, 70 35 C70 50, 56 48, 50 40 L50 110 Z"/>
+                                <path d="M50 110 C50 110, 25 90, 20 70 C25 75, 40 85, 50 85" fill="none" stroke="#78350f" stroke-width="2"/>
+                                <path d="M50 110 C50 110, 75 90, 80 70 C75 75, 60 85, 50 85" fill="none" stroke="#78350f" stroke-width="2"/>
+                            </svg>
+                            <p class="text-[9px] font-bold text-amber-800 mt-1">Türkçe ve Türk Kültürüyle Büyüyen Gençlik!</p>
+                        </div>
+                    </div>
+
+                    <!-- Aged Paper Letter Editor Area (Right) -->
+                    <div class="lg:col-span-8 flex flex-col">
+                        <!-- Parchment Container for high-quality snapshot -->
+                        <div id="parchmentContainer" class="parchment-paper rounded-xl p-6 md:p-8 flex-grow flex flex-col justify-between">
+                            
+                            <!-- Letter Header: Date & Traditional Motif -->
+                            <div class="flex justify-between items-center border-b border-amber-900/10 pb-4 mb-4">
+                                <div class="text-amber-900 font-bold font-serif text-sm">
+                                    <span>Tarih:</span> <span id="currentDateSpan">05.06.2026</span>
+                                </div>
+                                <div class="text-amber-800 text-xs font-semibold flex items-center gap-1.5 bg-amber-900/5 px-2.5 py-1 rounded">
+                                    <span>🌷 Ülkem Yanımda</span>
+                                </div>
+                            </div>
+
+                            <!-- Styled Letter Content Textarea -->
+                            <textarea id="letterTextArea" placeholder="Sevgili Gelecekteki Kendim,
+
+Bu satırları Türkçe ve Türk Kültürü dersimin son gününde yazıyorum... 
+
+[Buraya hayallerini, hedeflerini ve asla unutmak istemediğin anılarını yazmaya başla! Sol taraftaki butonları da kullanabilirsin.]" 
+                                class="w-full h-80 bg-transparent text-amber-950 focus:outline-none resize-none handwritten custom-scroll placeholder:text-amber-900/40 relative z-10"
+                                onkeyup="countCharacters()"></textarea>
+
+                            <!-- Letter Footer: Signatures -->
+                            <div class="border-t border-amber-900/10 pt-4 mt-4 flex justify-between items-end text-amber-900">
+                                <div>
+                                    <p class="text-[10px] font-bold tracking-wider uppercase opacity-80">İmza:</p>
+                                    <p id="letterSignatureName" class="handwritten text-xl font-bold mt-1">İmzanı At...</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-[10px] opacity-75 font-mono" id="charCounter">0 karakter yazıldı</p>
+                                    <p class="text-xs font-bold text-amber-700 font-serif">Açılış: Haziran 2027</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step Actions Navigation -->
+                <div class="mt-8 pt-6 border-t border-slate-100 flex justify-between">
+                    <button onclick="goToStep(1)" class="px-6 py-3 rounded-xl border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold text-sm transition-all">
+                        <i class="fas fa-chevron-left mr-2"></i> Geri
+                    </button>
+                    <button onclick="goToStep(3)" class="px-8 py-3.5 bg-gradient-to-r from-red-600 to-amber-700 hover:from-red-700 hover:to-amber-800 text-white rounded-xl font-bold text-sm shadow-md hover:shadow-lg transition-all flex items-center gap-2">
+                        Mektubu Mühürle & Kapat! <i class="fas fa-stamp"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 3: SEALING & EXPORT (MÜHÜRLE & SAKLA) -->
+            <div id="stepContent3" class="step-pane hidden text-center py-6">
+                <h2 class="title-font text-2xl font-bold text-orange-950 mb-4">Mektubunu Dijital Balmumu ile Mühürle</h2>
+                <p class="text-sm text-slate-600 max-w-lg mx-auto mb-8">
+                    Zaman kapsülünü güvenle kapatmak için kırmızı balmumunu eritip mühürleyeceğiz. Aşağıdaki mühür butonuna tıkla ve mühürlenme efektini izle!
+                </p>
+
+                <div class="flex flex-col md:flex-row justify-center items-center gap-12 my-6">
+                    <!-- Sealed Envelope Preview Area -->
+                    <div class="relative">
+                        <!-- Simulated folded vintage parchment letter pack -->
+                        <div id="envelopeBack" class="w-80 h-52 bg-[#e9d391] rounded-xl shadow-2xl relative overflow-hidden flex items-center justify-center border-4 border-amber-900/30">
+                            <!-- Triangular folding pattern representing folded parchment pack -->
+                            <div class="absolute inset-x-0 top-0 h-24 bg-amber-900/10 border-b border-amber-900/20 z-10" style="clip-path: polygon(0 0, 100% 0, 50% 100%);"></div>
+                            <div class="absolute inset-y-0 left-0 w-40 bg-amber-900/5" style="clip-path: polygon(0 0, 100% 50%, 0 100%);"></div>
+                            <div class="absolute inset-y-0 right-0 w-40 bg-amber-900/5" style="clip-path: polygon(100% 0, 0 50%, 100% 100%);"></div>
+
+                            <!-- Interactive Wax Stamp Place -->
+                            <div class="relative z-20 flex flex-col items-center justify-center">
+                                <div id="waxSealSeal" class="w-20 h-20 rounded-full bg-red-700 shadow-lg border-4 border-red-800 flex items-center justify-center text-white text-3xl cursor-pointer hover:scale-105 active:scale-95 transition-all opacity-40">
+                                    <i class="fas fa-fingerprint"></i>
+                                </div>
+                                <span id="sealStatusText" class="text-amber-950 font-bold text-xs mt-3 bg-white/60 px-3 py-1 rounded-full backdrop-blur-sm shadow-sm">Mühürlemek için Tıkla!</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stamp Tool Panel -->
+                    <div class="space-y-4 max-w-xs text-left">
+                        <h4 class="font-bold text-amber-900 text-sm uppercase tracking-wider">Mühür Seçenekleri:</h4>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button onclick="changeSealType('tuğra')" class="border border-amber-300 bg-amber-50 hover:bg-amber-100 p-2.5 rounded-lg text-xs font-bold text-amber-950 transition-all flex items-center gap-2">
+                                <span class="text-lg">⚜️</span> Tuğra Mührü
+                            </button>
+                            <button onclick="changeSealType('ay-yildiz')" class="border border-amber-300 bg-amber-50 hover:bg-amber-100 p-2.5 rounded-lg text-xs font-bold text-amber-950 transition-all flex items-center gap-2">
+                                <span class="text-lg">🇹🇷</span> Ay-Yıldız
+                            </button>
+                            <button onclick="changeSealType('lale')" class="border border-amber-300 bg-amber-50 hover:bg-amber-100 p-2.5 rounded-lg text-xs font-bold text-amber-950 transition-all flex items-center gap-2">
+                                <span class="text-lg">🌷</span> Lale Mührü
+                            </button>
+                            <button onclick="changeSealType('kalp')" class="border border-amber-300 bg-amber-50 hover:bg-amber-100 p-2.5 rounded-lg text-xs font-bold text-amber-950 transition-all flex items-center gap-2">
+                                <span class="text-lg">❤️</span> Sevgi Mührü
+                            </button>
+                        </div>
+                        <p class="text-[11px] text-slate-500 italic">Mührünü seçtikten sonra mektup zarfının üzerindeki kırmızı daireye tıkla!</p>
+                    </div>
+                </div>
+
+                <!-- DOWNLOAD COMPLETED LETTER PORTION -->
+                <div id="downloadSection" class="hidden mt-8 p-6 bg-emerald-50 border border-emerald-200 rounded-2xl max-w-lg mx-auto animate-bounce">
+                    <h3 class="font-bold text-emerald-900 text-lg flex items-center justify-center gap-2 mb-2">
+                        <i class="fas fa-check-circle"></i> Tebrikler! Mektubun Mühürlendi!
+                    </h3>
+                    <p class="text-xs text-emerald-800 mb-4">
+                        Mektubun güvenli bir şekilde kilitlendi. Şimdi bu özel mektubunu PDF formatında indirme zamanı. Gelecek yıl açmak üzere dosyayı bilgisayarında iyi bir yerde sakla!
+                    </p>
+                    <button id="pdfDownloadBtn" onclick="exportToPDF()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-base py-3 px-6 rounded-xl shadow-md transition-all flex items-center justify-center gap-2">
+                        <i class="fas fa-file-pdf"></i> Zaman Kapsülünü PDF Olarak İndir
+                    </button>
+                </div>
+
+                <!-- Step Actions Navigation -->
+                <div class="mt-8 pt-6 border-t border-slate-100 flex justify-between">
+                    <button onclick="goToStep(2)" class="px-6 py-3 rounded-xl border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold text-sm transition-all">
+                        <i class="fas fa-chevron-left mr-2"></i> Geri
+                    </button>
+                    <!-- Simulated Reset/Play Again Button -->
+                    <button onclick="restartGame()" class="px-6 py-3 rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 text-red-700 font-bold text-sm transition-all">
+                        <i class="fas fa-undo"></i> Sıfırla ve Yeniden Başla
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- HIDDEN PDF CANVAS SOURCE -->
+    <div style="position: absolute; left: -9999px; top: -9999px;">
+        <div id="pdfSnapshotPage" class="w-[794px] min-h-[1123px] bg-[#fdf6e2] p-12 flex flex-col justify-between relative" style="font-family: 'Inter', sans-serif;">
+            
+            <!-- Traditional Cultural Frames -->
+            <div class="absolute inset-4 border-4 border-[#b19360] pointer-events-none"></div>
+            <div class="absolute inset-6 border border-[#b19360]/50 pointer-events-none"></div>
+
+            <!-- Header Content -->
+            <div class="flex justify-between items-center border-b-2 border-amber-900/20 pb-6">
+                <div>
+                    <h1 class="title-font text-2xl font-black text-amber-900 tracking-wider">GELECEĞE ZAMAN KAPSÜLÜ MEKTUBU</h1>
+                    <p class="text-xs font-bold text-amber-700 uppercase tracking-widest mt-1">Ülkem Yanımda: Türkçe ve Türk Kültürü Dersi</p>
+                </div>
+                <div class="text-right">
+                    <span class="text-3xl">🇹🇷</span>
+                    <p class="text-xs font-bold text-amber-900 font-serif mt-1" id="pdfDate">05.06.2026</p>
+                </div>
+            </div>
+
+            <!-- Aged Letter Content Box -->
+            <div class="flex-grow my-6 p-10 rounded-xl bg-[#f6ecdc] border-2 border-[#b19360] shadow-inner relative" style="min-height: 700px;">
+                <div class="absolute inset-0 opacity-15" style="background-image: repeating-linear-gradient(rgba(0,0,0,0) 0px, rgba(0,0,0,0) 31px, rgba(139,90,43,0.15) 32px);"></div>
+                <p id="pdfLetterBody" class="handwritten text-amber-950 leading-relaxed whitespace-pre-wrap relative z-10 text-xl" style="font-family: 'Caveat', cursive;">
+                    <!-- Raw text injected by JS -->
+                </p>
+            </div>
+
+            <!-- Certificate Footer of Authentication -->
+            <div class="border-t border-amber-900/20 pt-6 flex justify-between items-center">
+                <div>
+                    <p class="text-[10px] uppercase font-bold text-amber-900/60">Geleceğe İmzayı Atan Öğrenci:</p>
+                    <p id="pdfStudentSignature" class="handwritten text-2xl text-amber-900 font-bold mt-1">İsim Soyisim</p>
+                    <p id="pdfStudentLocation" class="text-xs text-amber-800/80 font-semibold"></p>
+                </div>
+                
+                <!-- Digital Seal Visualization on the PDF -->
+                <div class="flex items-center gap-4">
+                    <div id="pdfWaxSeal" class="w-20 h-20 rounded-full bg-red-800 border-4 border-red-950 flex items-center justify-center text-white text-3xl shadow-md rotate-6">
+                        <span id="pdfSealIcon">⚜️</span>
+                    </div>
+                    <div class="text-right max-w-[200px]">
+                        <p class="text-xs font-extrabold text-amber-900">🔒 Zaman Kapsülü Kilitlendi</p>
+                        <p class="text-[9px] text-slate-500 mt-0.5">Bu mektup Haziran 2027 tarihinde açılmak üzere mühürlenmiştir.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Section with traditional vibes -->
+    <footer class="w-full py-4 text-center bg-white/40 border-t border-orange-100/50 text-slate-500 text-xs font-semibold">
+        <div class="flex items-center justify-center gap-2 mb-1">
+            <span>🔴 Türkçe Bizim Ses Bayrağımızdır 🔴</span>
+        </div>
+        <p>&copy; 2026 Ülkem Yanımda ile Türkçe ve Türk Kültürü Zaman Kapsülü Oyunu</p>
+    </footer>
+
+    <!-- GAMEPLAY LOGIC & STATE CONTROLLER -->
+    <script>
+        // Global State Variables
+        let currentStep = 1;
+        let selectedSeal = 'tuğra';
+        let isMuted = false;
+        let isSealed = false;
+
+        // Custom Sound Synthesizer via Web Audio API (Prevents external asset load failures)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        let backgroundSynthNode = null;
+
+        // Synth Sound Player Helper
+        function playSound(type) {
+            if (isMuted) return;
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                const now = audioCtx.currentTime;
+
+                if (type === 'click') {
+                    // Quick bubble click
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(440, now);
+                    osc.frequency.exponentialRampToValueAtTime(880, now + 0.1);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                    osc.start(now);
+                    osc.stop(now + 0.1);
+                } else if (type === 'seal_melt') {
+                    // Sizzling hot wax effect
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(150, now);
+                    osc.frequency.linearRampToValueAtTime(50, now + 0.6);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+                    osc.start(now);
+                    osc.stop(now + 0.6);
+                } else if (type === 'stamp') {
+                    // Deep thud stamp sound
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(120, now);
+                    osc.frequency.linearRampToValueAtTime(20, now + 0.3);
+                    gain.gain.setValueAtTime(0.3, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                    osc.start(now);
+                    osc.stop(now + 0.3);
+                } else if (type === 'success') {
+                    // Happy fanfare chime
+                    const freqs = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6 chords
+                    freqs.forEach((freq, idx) => {
+                        const chordOsc = audioCtx.createOscillator();
+                        const chordGain = audioCtx.createGain();
+                        chordOsc.connect(chordGain);
+                        chordGain.connect(audioCtx.destination);
+                        
+                        chordOsc.type = 'sine';
+                        chordOsc.frequency.setValueAtTime(freq, now + (idx * 0.1));
+                        chordGain.gain.setValueAtTime(0.07, now + (idx * 0.1));
+                        chordGain.gain.exponentialRampToValueAtTime(0.001, now + (idx * 0.1) + 0.4);
+                        
+                        chordOsc.start(now + (idx * 0.1));
+                        chordOsc.stop(now + (idx * 0.1) + 0.4);
+                    });
+                }
+            } catch (err) {
+                console.log("Web Audio not allowed/blocked by policy.", err);
+            }
+        }
+
+        // Initialize Background Soft Music (Synthesized Ambient)
+        function startBackgroundMusic() {
+            try {
+                if (backgroundSynthNode) return; // already running
+                backgroundSynthNode = audioCtx.createOscillator();
+                const lfo = audioCtx.createOscillator();
+                const filter = audioCtx.createBiquadFilter();
+                const musicGain = audioCtx.createGain();
+
+                backgroundSynthNode.type = 'triangle';
+                backgroundSynthNode.frequency.setValueAtTime(164.81, audioCtx.currentTime); // Cozy warm base tone (E3)
+
+                lfo.frequency.setValueAtTime(0.15, audioCtx.currentTime); // Low speed
+                const lfoGain = audioCtx.createGain();
+                lfoGain.gain.setValueAtTime(3, audioCtx.currentTime); // dynamic range
+
+                filter.type = 'lowpass';
+                filter.Q.setValueAtTime(1, audioCtx.currentTime);
+                filter.frequency.setValueAtTime(400, audioCtx.currentTime);
+
+                musicGain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+
+                lfo.connect(lfoGain);
+                lfoGain.connect(backgroundSynthNode.frequency);
+                backgroundSynthNode.connect(filter);
+                filter.connect(musicGain);
+                musicGain.connect(audioCtx.destination);
+
+                lfo.start();
+                backgroundSynthNode.start();
+            } catch (e) {
+                console.log("Background synth fail:", e);
+            }
+        }
+
+        function toggleMute() {
+            isMuted = !isMuted;
+            const btn = document.getElementById('soundToggleBtn');
+            const icon = document.getElementById('soundIcon');
+            
+            if (isMuted) {
+                icon.className = 'fas fa-volume-mute';
+                btn.innerHTML = `<i id="soundIcon" class="fas fa-volume-mute"></i> <span class="hidden md:inline">Müzik & Ses: Kapalı</span>`;
+                btn.className = 'flex items-center gap-2 bg-slate-200 hover:bg-slate-300 text-slate-900 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300';
+                if (backgroundSynthNode) {
+                    try { backgroundSynthNode.stop(); } catch(e){}
+                    backgroundSynthNode = null;
+                }
+            } else {
+                icon.className = 'fas fa-volume-up';
+                btn.innerHTML = `<i id="soundIcon" class="fas fa-volume-up"></i> <span class="hidden md:inline">Müzik & Ses: Açık</span>`;
+                btn.className = 'flex items-center gap-2 bg-amber-100 hover:bg-amber-200 text-amber-900 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300';
+                startBackgroundMusic();
+                playSound('click');
+            }
+        }
+
+        // Page Navigation (3 Steps)
+        function goToStep(step) {
+            playSound('click');
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            if (!isMuted && !backgroundSynthNode) {
+                startBackgroundMusic();
+            }
+
+            // Hide all steps
+            document.querySelectorAll('.step-pane').forEach(el => el.classList.add('hidden'));
+            
+            // Show requested step
+            document.getElementById(`stepContent${step}`).classList.remove('hidden');
+            
+            // Update step indicator classes (for 3 steps)
+            for (let i = 1; i <= 3; i++) {
+                const dot = document.getElementById(`stepDot${i}`);
+                const line = document.getElementById(`stepLine${i - 1}`);
+                
+                if (i < step) {
+                    dot.className = "w-10 h-10 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold shadow-md transition-all duration-300";
+                    dot.innerHTML = `<i class="fas fa-check"></i>`;
+                } else if (i === step) {
+                    dot.className = "w-10 h-10 rounded-full bg-orange-600 text-white flex items-center justify-center font-bold shadow-md ring-4 ring-orange-200 transition-all duration-300";
+                    dot.innerHTML = i;
+                } else {
+                    dot.className = "w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold shadow-sm transition-all duration-300";
+                    dot.innerHTML = i;
+                }
+
+                if (line) {
+                    if (i <= step) {
+                        line.className = "h-1 flex-grow bg-emerald-500 transition-all duration-300";
+                    } else {
+                        line.className = "h-1 flex-grow bg-slate-200 transition-all duration-300";
+                    }
+                }
+            }
+
+            currentStep = step;
+            updateSpeechBubble(step);
+        }
+
+        // Helper character speech content generator
+        function updateSpeechBubble(step) {
+            const speech = document.getElementById('guideSpeech');
+            const bubble = document.getElementById('guideBubble');
+            
+            // Pulse animation effect when bubble content shifts
+            bubble.classList.add('scale-95', 'opacity-80');
+            
+            setTimeout(() => {
+                switch(step) {
+                    case 1:
+                        speech.innerHTML = "Merhaba sevgili Türkçe ve Türk Kültürü öğrencisi! Harika bir eğitim yılının son günündeyiz. Gelecek yılki kendine bir sürpriz yapmaya hazır mısın? Haydi hemen mektubumuzu yazarak işe başlayalım!";
+                        break;
+                    case 2:
+                        speech.innerHTML = "İşte mektup kâğıdın! Sana özel eskitilmiş bir parşömen kâğıdı hazırladım. Sol taraftaki yönlendirici sorulara tıklayarak hedeflerini, hayallerini ve unutulmaz anılarını yazmaya başla. Kendine çok samimi ol!";
+                        break;
+                    case 3:
+                        speech.innerHTML = "Sırada en eğlenceli kısım var: Mektubu mühürlemek! Sol taraftan mührünün sembolünü (Tuğra, Ay-Yıldız, Lale...) seç ve ardından mektubun üzerindeki kırmızı balmumunun üzerine basarak kilitle!";
+                        break;
+                }
+                bubble.classList.remove('scale-95', 'opacity-80');
+            }, 250);
+        }
+
+        // Sync inputs from Step 2 to the interactive letter visualization
+        function updateEnvelopeText() {
+            const studentName = document.getElementById('studentNameInput').value || "Sevgili Öğrenci";
+            document.getElementById('letterSignatureName').innerText = studentName;
+        }
+
+        // Characters Counter helper
+        function countCharacters() {
+            const text = document.getElementById('letterTextArea').value;
+            document.getElementById('charCounter').innerText = `${text.length} karakter yazıldı`;
+        }
+
+        // Insert structured Turkish educational letter prompts helper
+        function insertTemplateText(type) {
+            playSound('click');
+            const textarea = document.getElementById('letterTextArea');
+            let textToInsert = '';
+
+            switch(type) {
+                case 'goals':
+                    textToInsert = "\n\n🎯 GELECEK YIL İÇİN HEDEFLERİM:\n- ";
+                    break;
+                case 'dreams':
+                    textToInsert = "\n\n✨ EN BÜYÜK HAYALLERİM:\n- ";
+                    break;
+                case 'memories':
+                    textToInsert = "\n\n📸 ASLA UNUTMAK İSTEMEDİĞİM ANILARIM:\n- ";
+                    break;
+            }
+
+            textarea.value += textToInsert;
+            textarea.focus();
+            countCharacters();
+        }
+
+        // Customizing Seal Icons
+        function changeSealType(type) {
+            playSound('click');
+            selectedSeal = type;
+            const sealEl = document.getElementById('waxSealSeal');
+            const pdfSealIcon = document.getElementById('pdfSealIcon');
+            
+            let iconMarkup = `⚜️`;
+            switch(type) {
+                case 'tuğra':
+                    iconMarkup = `⚜️`;
+                    break;
+                case 'ay-yildiz':
+                    iconMarkup = `🇹🇷`;
+                    break;
+                case 'lale':
+                    iconMarkup = `🌷`;
+                    break;
+                case 'kalp':
+                    iconMarkup = `❤️`;
+                    break;
+            }
+            sealEl.innerHTML = `<span class="text-xl">${iconMarkup}</span>`;
+            pdfSealIcon.innerText = iconMarkup;
+        }
+
+        // Melting and stamping physical interactive simulation
+        document.getElementById('waxSealSeal').addEventListener('click', function() {
+            if (isSealed) return;
+            
+            const sealEl = this;
+            const statusText = document.getElementById('sealStatusText');
+            
+            // Step A: Play melting audio & pulse
+            playSound('seal_melt');
+            statusText.innerText = "Balmumu eritiliyor...";
+            sealEl.className = "w-20 h-20 rounded-full bg-red-600 shadow-xl border-4 border-red-700 flex items-center justify-center text-white text-3xl cursor-pointer scale-110 duration-500 opacity-90 animate-pulse";
+
+            // Step B: Apply Wax Stamp thud/press
+            setTimeout(() => {
+                playSound('stamp');
+                sealEl.classList.remove('animate-pulse');
+                sealEl.classList.add('seal-animate');
+                sealEl.className = "w-20 h-20 rounded-full bg-red-800 shadow-2xl border-4 border-red-950 flex items-center justify-center text-white text-3xl cursor-pointer transition-all opacity-100 seal-animate";
+                
+                statusText.innerText = "Mühür Kilitlendi! 🔒";
+                statusText.className = "text-emerald-800 font-extrabold text-xs mt-3 bg-white/80 px-3 py-1 rounded-full backdrop-blur-sm shadow-sm";
+                
+                isSealed = true;
+
+                // Step C: Open PDF Export Module with confetti splash
+                setTimeout(() => {
+                    playSound('success');
+                    confetti({
+                        particleCount: 150,
+                        spread: 80,
+                        origin: { y: 0.6 }
+                    });
+                    
+                    document.getElementById('downloadSection').classList.remove('hidden');
+                    document.getElementById('downloadSection').scrollIntoView({ behavior: 'smooth' });
+                }, 600);
+
+            }, 800);
+        });
+
+        // High Quality PDF Synthesis and Download 
+        function exportToPDF() {
+            playSound('click');
+            
+            // Map live values into the hidden PDF template before capturing
+            const studentName = document.getElementById('studentNameInput').value || "Sevgili Öğrenci";
+            const studentLoc = document.getElementById('studentLocationInput').value || "Türkçe Sınıfı";
+            const letterText = document.getElementById('letterTextArea').value || "Gelecek yıl görüşmek üzere...";
+            const systemDate = new Date().toLocaleDateString('tr-TR');
+
+            document.getElementById('pdfDate').innerText = systemDate;
+            document.getElementById('pdfLetterBody').innerText = letterText;
+            document.getElementById('pdfStudentSignature').innerText = studentName;
+            document.getElementById('pdfStudentLocation').innerText = studentLoc;
+
+            // Display loading indicator on button
+            const downloadBtn = document.getElementById('pdfDownloadBtn');
+            downloadBtn.innerHTML = `<i class="fas fa-spinner animate-spin"></i> Zaman Kapsülü Yapılıyor...`;
+            downloadBtn.disabled = true;
+
+            // Snapshot Render Action
+            const sourceEl = document.getElementById('pdfSnapshotPage');
+            
+            // Allow fonts to load correctly before taking canvas shot
+            setTimeout(() => {
+                html2canvas(sourceEl, {
+                    scale: 2, // High DPI capture
+                    useCORS: true,
+                    allowTaint: true
+                }).then(canvas => {
+                    const imgData = canvas.toDataURL('image/png');
+                    const { jsPDF } = window.jspdf;
+                    
+                    // Setup standard A4 size PDF (Portrait, mm, [210, 297])
+                    const pdf = new jsPDF('p', 'mm', 'a4');
+                    const imgWidth = 210;
+                    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                    
+                    pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+                    
+                    // Dynamic filename friendly formulation
+                    const safeName = studentName.toLowerCase().replace(/[^a-z0-9]/g, '_');
+                    pdf.save(`zaman_kapsulu_${safeName || 'mektubum'}.pdf`);
+
+                    // Restore button state
+                    downloadBtn.innerHTML = `<i class="fas fa-file-pdf"></i> Zaman Kapsülünü PDF Olarak İndir`;
+                    downloadBtn.disabled = false;
+                    
+                    // Final Success Message
+                    confetti({
+                        particleCount: 100,
+                        spread: 50,
+                        colors: ['#22c55e', '#10b981', '#ffffff']
+                    });
+                }).catch(err => {
+                    console.error("PDF Render Error:", err);
+                    downloadBtn.innerHTML = `<i class="fas fa-file-pdf"></i> Tekrar Dene`;
+                    downloadBtn.disabled = false;
+                });
+            }, 600);
+        }
+
+        // Reset the workspace state to start over
+        function restartGame() {
+            if (confirm("Mektubun sıfırlanacak. Baştan başlamak istediğine emin misin?")) {
+                isSealed = false;
+                document.getElementById('letterTextArea').value = '';
+                document.getElementById('studentNameInput').value = '';
+                document.getElementById('studentLocationInput').value = '';
+                document.getElementById('downloadSection').classList.add('hidden');
+                
+                // Revert wax seal state
+                const sealEl = document.getElementById('waxSealSeal');
+                sealEl.className = "w-20 h-20 rounded-full bg-red-700 shadow-lg border-4 border-red-800 flex items-center justify-center text-white text-3xl cursor-pointer hover:scale-105 active:scale-95 transition-all opacity-40";
+                document.getElementById('sealStatusText').innerText = "Mühürlemek için Tıkla!";
+                document.getElementById('sealStatusText').className = "text-amber-950 font-bold text-xs mt-3 bg-white/60 px-3 py-1 rounded-full backdrop-blur-sm shadow-sm";
+                
+                updateEnvelopeText();
+                goToStep(1);
+            }
+        }
+
+        // Init action on page load
+        window.onload = function() {
+            // Populate current date in writing page
+            const d = new Date();
+            const formattedDate = d.toLocaleDateString('tr-TR');
+            document.getElementById('currentDateSpan').innerText = formattedDate;
+            
+            // Set base text updates
+            updateEnvelopeText();
+        }
+    </script>
+</body>
+</html>
