@@ -1,0 +1,930 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yıl Sonu Veda Şenliği ve Dijital Sertifikam</title>
+    <!-- Tailwind CSS ve FontAwesome CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts (Türkçe Karakter Destekli, Zarif Quicksand ve Şık Dancing Script Yazı Tipleri) -->
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700;900&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <style>
+        /* Arka Plan Görsellerini Doğrudan, Saf, Üstten ve Alttan Ekrana Tam Sığacak Şekilde Sabitleme */
+        body.bg-intro {
+            background-image: url('1.jpg') !important;
+            background-size: 100% 100% !important;
+            background-position: center center !important;
+            background-repeat: no-repeat !important;
+            background-attachment: fixed !important;
+        }
+        body.bg-game {
+            background-image: url('2.jpg') !important;
+            background-size: 100% 100% !important;
+            background-position: center center !important;
+            background-repeat: no-repeat !important;
+            background-attachment: fixed !important;
+        }
+        body.bg-cert {
+            background-image: url('2.jpg') !important;
+            background-size: 100% 100% !important;
+            background-position: center center !important;
+            background-repeat: no-repeat !important;
+            background-attachment: fixed !important;
+        }
+        
+        body {
+            font-family: 'Quicksand', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background 0.3s ease-in-out;
+        }
+        
+        .fancy-title {
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 900;
+        }
+        .cert-font {
+            font-family: 'Dancing Script', cursive;
+        }
+
+        /* Sade, temiz ve okunabilir çocuksu yazı gölgesi */
+        .kids-text-shadow {
+            text-shadow: 0 2px 4px rgba(0,0,0,0.08);
+        }
+        
+        /* Yapboz parçası ve yuva stilleri */
+        .puzzle-piece {
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: grab;
+            touch-action: none;
+        }
+        .puzzle-piece:active {
+            cursor: grabbing;
+            transform: scale(1.05);
+            z-index: 50;
+        }
+        .puzzle-slot {
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 2px dashed #d97706;
+            position: relative;
+            overflow: hidden;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+        .puzzle-slot.hovered {
+            background-color: rgba(240, 253, 244, 0.95);
+            border-color: #10b981;
+        }
+        /* Parça yerleştiğinde tüm sınırları ve kesik çizgileri sıfırla */
+        .puzzle-slot[data-placed="true"] {
+            border: none !important;
+            background-color: transparent !important;
+        }
+        
+        /* Arka plan konfetileri */
+        .confetti {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            opacity: 0.8;
+            animation: fall 4s linear infinite;
+        }
+        @keyframes fall {
+            0% { transform: translateY(-20px) rotate(0deg); }
+            100% { transform: translateY(100vh) rotate(360deg); }
+        }
+        
+        /* Sayfa Çevirme Butonu Parlama Animasyonu */
+        @keyframes pulse-gold {
+            0%, 100% { transform: scale(1); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
+            50% { transform: scale(1.03); box-shadow: 0 4px 20px rgba(16, 185, 129, 0.6); }
+        }
+        .pulse-btn {
+            animation: pulse-gold 2s infinite;
+        }
+
+        /* Ses Dalgaları Animasyonu */
+        @keyframes wave {
+            0%, 100% { transform: scaleY(0.3); }
+            50% { transform: scaleY(1); }
+        }
+        .sound-bar {
+            animation: wave 1.2s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="bg-intro text-slate-800 flex items-center justify-center p-4 relative min-h-screen">
+
+    <!-- Konfeti Arka Planı (Yönerge ve Sertifika ekranında aktifleşecek) -->
+    <div id="confetti-wrapper" class="absolute inset-0 pointer-events-none hidden z-40 overflow-hidden"></div>
+
+    <!-- ANA KAP (Tamamen çerçevesiz, arka planı doğrudan dışarıya vuran pürüzsüz taşıyıcı) -->
+    <div id="main-container" class="relative w-full max-w-5xl min-h-[580px] flex flex-col justify-between p-4 md:p-8 transition-all duration-500">
+        
+        <!-- 1. ADIM: YÖNERGE EKRANI (Doğrudan 1.jpg Üzerinde, Görsel Şeklin Etrafına Konumlandırılmış Düzen) -->
+        <div id="step-intro" class="flex flex-col items-center justify-between min-h-[500px] w-full py-6">
+            
+            <!-- ŞEKLİN ÜSTÜNDE: Başlık ve Ses Kontrol Paneli -->
+            <div class="flex flex-col items-center space-y-6 pt-12">
+                <h1 class="text-3xl md:text-5xl font-black fancy-title tracking-wide text-[#3e2723] drop-shadow-sm text-center">
+                    Yıl Sonu Vedası!
+                </h1>
+
+                <!-- Çocuklar için Sevimli Ses Dinleme Paneli (1.mp3) -->
+                <div class="flex items-center space-x-4 bg-amber-500 hover:bg-amber-600 text-white px-6 py-3 rounded-full shadow-lg border-4 border-white transition-all transform hover:scale-105 cursor-pointer" onclick="toggleAudio('intro')">
+                    <button class="text-2xl">
+                        <i id="audio-icon-intro" class="fa-solid fa-volume-high"></i>
+                    </button>
+                    <span class="font-extrabold text-base md:text-lg tracking-wide uppercase">Beni Dinle!</span>
+                    <div class="flex items-center space-x-1 h-5">
+                        <div class="w-1 bg-white rounded-full sound-bar" style="height: 100%; animation-delay: 0.1s;"></div>
+                        <div class="w-1 bg-white rounded-full sound-bar" style="height: 80%; animation-delay: 0.3s;"></div>
+                        <div class="w-1 bg-white rounded-full sound-bar" style="height: 100%; animation-delay: 0.5s;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GÖRSELİN ORTASINDAKİ ŞEKLİN KAPANMAMASI İÇİN BIRAKILAN GEÇİT (BOŞ ALAN) -->
+            <div class="h-32 md:h-48 w-full pointer-events-none"></div>
+
+            <!-- ŞEKLİN ALTINDA: Başla Butonu -->
+            <div class="pt-2 z-10">
+                <button onclick="startApp()" class="px-10 py-4 bg-gradient-to-r from-yellow-400 via-amber-500 to-emerald-500 hover:from-yellow-500 hover:to-emerald-600 text-white font-black text-xl rounded-full shadow-lg transform hover:scale-105 active:scale-95 transition-all duration-200 flex items-center space-x-1 mx-auto">
+                    <span>BAŞLA</span>
+                    <i class="fa-solid fa-play text-sm"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- 2. ADIM: GÖREV 1 (GÖRSEL BULMACA - Açıklamalar Silindi, Sesli Panel Eklendi - 2.mp3) -->
+        <div id="step-riddle" class="hidden flex-col justify-between h-full my-auto space-y-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pr-10">
+                <div>
+                    <span class="px-4 py-1 bg-amber-500 text-white text-xs font-bold rounded-full shadow-sm uppercase tracking-wider">GÖREV 1</span>
+                    <h2 class="text-2xl md:text-3xl font-extrabold mt-2 text-amber-950 kids-text-shadow">Mezuniyet Kepini Bul! 🎓</h2>
+                </div>
+
+                <!-- Çocuklar için Sevimli Ses Dinleme Paneli (2.mp3) -->
+                <div class="flex items-center space-x-4 bg-amber-500 hover:bg-amber-600 text-white px-6 py-3 rounded-full shadow-lg border-4 border-white transition-all transform hover:scale-105 cursor-pointer max-w-xs" onclick="toggleAudio('riddle')">
+                    <button class="text-xl">
+                        <i id="audio-icon-riddle" class="fa-solid fa-volume-high"></i>
+                    </button>
+                    <span class="font-extrabold text-sm md:text-base tracking-wide uppercase">Beni Dinle!</span>
+                    <div class="flex items-center space-x-1 h-4">
+                        <div class="w-1 bg-white rounded-full sound-bar" style="height: 100%; animation-delay: 0.1s;"></div>
+                        <div class="w-1 bg-white rounded-full sound-bar" style="height: 80%; animation-delay: 0.3s;"></div>
+                        <div class="w-1 bg-white rounded-full sound-bar" style="height: 100%; animation-delay: 0.5s;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kart Seçme Alanı -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto w-full my-auto py-4 z-10">
+                
+                <!-- Yanlış Kart 1 (Ayıcık) -->
+                <button onclick="selectToyCard(false, this)" class="bg-white hover:bg-amber-50 border-2 border-slate-200 hover:border-amber-300 p-5 rounded-2xl flex flex-col items-center justify-center space-y-2 transform active:scale-95 transition-all shadow-md group">
+                    <span class="text-5xl md:text-6xl group-hover:animate-bounce">🧸</span>
+                    <span class="font-extrabold text-slate-700 text-sm md:text-base"> </span>
+                </button>
+
+                <!-- Doğru Kart (Kep) -->
+                <button onclick="selectToyCard(true, this)" class="bg-white hover:bg-amber-100 border-2 border-slate-200 hover:border-amber-400 p-5 rounded-2xl flex flex-col items-center justify-center space-y-2 transform active:scale-95 transition-all shadow-md group">
+                    <span class="text-5xl md:text-6xl group-hover:animate-bounce">🎓</span>
+                    <span class="font-extrabold text-slate-700 text-sm md:text-base"> </span>
+                </button>
+
+                <!-- Yanlış Kart 2 (Elma) -->
+                <button onclick="selectToyCard(false, this)" class="bg-white hover:bg-amber-50 border-2 border-slate-200 hover:border-amber-300 p-5 rounded-2xl flex flex-col items-center justify-center space-y-2 transform active:scale-95 transition-all shadow-md group">
+                    <span class="text-5xl md:text-6xl group-hover:animate-bounce">🍎</span>
+                    <span class="font-extrabold text-slate-700 text-sm md:text-base"> </span>
+                </button>
+
+                <!-- Yanlış Kart 3 (Balon) -->
+                <button onclick="selectToyCard(false, this)" class="bg-white hover:bg-amber-50 border-2 border-slate-200 hover:border-amber-300 p-5 rounded-2xl flex flex-col items-center justify-center space-y-2 transform active:scale-95 transition-all shadow-md group">
+                    <span class="text-5xl md:text-6xl group-hover:animate-bounce">🎈</span>
+                    <span class="font-extrabold text-slate-700 text-sm md:text-base"> </span>
+                </button>
+
+            </div>
+
+            <!-- Geri Bildirim Baloncuğu -->
+            <div id="toy-feedback" class="text-center text-base md:text-lg font-black text-amber-950 h-8 kids-text-shadow">
+                Hadi, doğru resme dokun! 🌟
+            </div>
+
+            <!-- Alt Butonlar ve Sağ Alttaki Çerçevesiz Sayfayı Çevir Butonu -->
+            <div class="flex justify-between items-center pt-4 border-t border-slate-300/30">
+                <button onclick="showStep('intro')" class="text-slate-900 hover:text-black flex items-center space-x-2 font-black text-sm md:text-base kids-text-shadow">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span>Ana Sayfa</span>
+                </button>
+                
+                <!-- Sağ Alt Köşedeki Sayfayı Çevir Butonu -->
+                <button id="btn-riddle-next" onclick="goToStepTwo()" class="px-6 py-3 bg-slate-300 text-slate-500 font-black rounded-xl shadow-md transition-all flex items-center space-x-2 cursor-not-allowed text-sm md:text-base" disabled>
+                    <span>SAYFAYI ÇEVİR</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- 3. ADIM: GÖREV 2 (YAPBOZ - Açıklamalar Silindi, Sesli Panel Eklendi - 3.mp3) -->
+        <div id="step-puzzle" class="hidden flex-col justify-between h-full my-auto space-y-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pr-10">
+                <div>
+                    <span class="px-4 py-1 bg-amber-500 text-white text-xs font-bold rounded-full shadow-sm uppercase tracking-wider">GÖREV 2</span>
+                    <h2 class="text-2xl md:text-3xl font-extrabold mt-2 text-amber-950 kids-text-shadow">Resim Tamamlama Yapbozu! 🧩</h2>
+                </div>
+
+                <!-- Çocuklar için Sevimli Ses Dinleme Paneli (3.mp3) -->
+                <div class="flex items-center space-x-4 bg-amber-500 hover:bg-amber-600 text-white px-6 py-3 rounded-full shadow-lg border-4 border-white transition-all transform hover:scale-105 cursor-pointer max-w-xs" onclick="toggleAudio('puzzle')">
+                    <button class="text-xl">
+                        <i id="audio-icon-puzzle" class="fa-solid fa-volume-high"></i>
+                    </button>
+                    <span class="font-extrabold text-sm md:text-base tracking-wide uppercase">Beni Dinle!</span>
+                    <div class="flex items-center space-x-1 h-4">
+                        <div class="w-1 bg-white rounded-full sound-bar" style="height: 100%; animation-delay: 0.1s;"></div>
+                        <div class="w-1 bg-white rounded-full sound-bar" style="height: 80%; animation-delay: 0.3s;"></div>
+                        <div class="w-1 bg-white rounded-full sound-bar" style="height: 100%; animation-delay: 0.5s;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- YAPBOZ OYUN ALANI (Tamamen Çerçevesiz ve Dağıtılmış Yapboz Alanı) -->
+            <div class="flex flex-col lg:flex-row gap-8 items-center justify-center my-auto py-2 w-full z-10">
+                
+                <!-- Sol Taraf: Tamamen Çerçevesiz, Arka Plansız Dağınık Parçalar Havuzu -->
+                <div class="w-full lg:w-[260px] flex flex-wrap lg:flex-row justify-center items-center gap-4 p-2 min-h-[140px] lg:max-h-[480px] overflow-y-auto" id="pieces-container">
+                    <!-- Yapboz parçaları JS ile buraya tamamen serbest ve görünür şekilde yerleştirilecek -->
+                </div>
+
+                <!-- Sağ Taraf: Büyük Yapboz Çerçevesi (Maksimum Büyütülmüş Seamless Tahta) -->
+                <div class="relative w-[320px] h-[320px] md:w-[480px] md:h-[480px] bg-white border-8 border-amber-500 rounded-[1.5rem] shadow-2xl p-0 grid grid-cols-3 grid-rows-3 overflow-hidden" id="puzzle-board">
+                    <!-- Yapboz çerçevesi JS ile oluşturulacak -->
+                </div>
+
+            </div>
+
+            <!-- Alt Butonlar ve Sağ Alttaki Sayfayı Çevir Butonu -->
+            <div class="flex justify-between items-center pt-4 border-t border-slate-300/30">
+                <button onclick="showStep('riddle')" class="text-slate-900 hover:text-black flex items-center space-x-2 font-black text-sm md:text-base kids-text-shadow">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span>Geri Dön</span>
+                </button>
+                
+                <div class="hidden md:block bg-yellow-400 text-slate-900 px-4 py-1.5 rounded-full font-black text-sm border border-yellow-500 shadow-sm animate-bounce" id="puzzle-status">
+                    Yerleşen: <span id="placed-count" class="text-emerald-800 font-extrabold">0</span> / 9 Parça
+                </div>
+
+                <!-- Yapboz bittiğinde aktifleşecek Sağ Alt Köşedeki Sayfayı Çevir Butonu -->
+                <button id="btn-puzzle-next" onclick="goToCertificate()" class="px-6 py-3 bg-slate-300 text-slate-500 font-black rounded-xl shadow-md transition-all flex items-center space-x-2 cursor-not-allowed text-sm md:text-base" disabled>
+                    <span>SAYFAYI ÇEVİR</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- 4. ADIM: ÖDÜL TÖRENİ VE SERTİFİKA EKRANI (Doğrudan 2.jpg Üzerinde - 4.mp3) -->
+        <div id="step-certificate" class="hidden flex-col items-center text-center py-4 my-auto space-y-6">
+            <div class="flex flex-col items-center space-y-4">
+                <h2 class="text-3xl md:text-5xl font-black fancy-title text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 via-amber-500 to-emerald-600 animate-bounce">
+                
+                </h2>
+
+                <!-- Çocuklar için Sevimli Ses Dinleme Paneli (4.mp3) -->
+                <div class="flex items-center space-x-4 bg-amber-500 hover:bg-amber-600 text-white px-6 py-3 rounded-full shadow-lg border-4 border-white transition-all transform hover:scale-105 cursor-pointer" onclick="toggleAudio('certificate')">
+                    <button class="text-xl">
+                        <i id="audio-icon-certificate" class="fa-solid fa-volume-high"></i>
+                    </button>
+                    <span class="font-extrabold text-sm md:text-base tracking-wide uppercase">Beni Dinle!</span>
+                    <div class="flex items-center space-x-1 h-4">
+                        <div class="w-1 bg-white rounded-full sound-bar" style="height: 100%; animation-delay: 0.1s;"></div>
+                        <div class="w-1 bg-white rounded-full sound-bar" style="height: 80%; animation-delay: 0.3s;"></div>
+                        <div class="w-1 bg-white rounded-full sound-bar" style="height: 100%; animation-delay: 0.5s;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- İsim Girişi -->
+            <div class="w-full max-w-md mx-auto space-y-1 bg-white/95 p-4 rounded-2xl shadow-md border border-amber-100">
+                <label for="student-name" class="block text-xs font-bold text-left uppercase text-amber-800 tracking-wider">Benim Adım Soyadım:</label>
+                <div class="relative">
+                    <input type="text" id="student-name" placeholder="Adını ve soyadını yaz..." oninput="updateCertificateName()" class="w-full px-4 py-2.5 bg-white border-2 border-amber-200 rounded-xl focus:ring-2 focus:ring-amber-200 focus:outline-none text-slate-800 text-center font-bold text-base placeholder-slate-400">
+                    <span class="absolute right-4 top-3 text-amber-500"><i class="fa-solid fa-face-smile animate-spin"></i></span>
+                </div>
+            </div>
+
+            <!-- SERTİFİKA ÖNİZLEME ALANI (Baskı için bu alan bağımsız bir tasarım kartıdır) -->
+            <div id="certificate-print-area" class="w-full max-w-2xl bg-amber-50 text-slate-800 p-5 md:p-8 rounded-2xl shadow-xl border-8 border-double border-amber-500 relative overflow-hidden flex flex-col justify-between aspect-[1.414/1] mx-auto">
+                
+                <!-- Köşe Süslemeleri -->
+                <div class="absolute top-2 left-2 text-amber-600 text-2xl"><i class="fa-solid fa-graduation-cap"></i></div>
+                <div class="absolute top-2 right-2 text-amber-600 text-2xl"><i class="fa-solid fa-star"></i></div>
+                <div class="absolute bottom-2 left-2 text-amber-600 text-2xl"><i class="fa-solid fa-heart"></i></div>
+                <div class="absolute bottom-2 right-2 text-amber-600 text-2xl"><i class="fa-solid fa-award"></i></div>
+
+                <!-- Çift çizgili şirin iç çerçeve -->
+                <div class="absolute inset-4 border-4 border-double border-amber-300 rounded-xl pointer-events-none"></div>
+
+                <!-- Arka plan sevimli kepleri amblemi -->
+                <div class="absolute inset-0 flex items-center justify-center opacity-5 pointer-events-none">
+                    <i class="fa-solid fa-school text-[14rem] text-amber-900"></i>
+                </div>
+
+                <!-- Sertifika İçerik -->
+                <div class="space-y-3 md:space-y-4 z-10 my-auto text-center">
+                    <div class="flex justify-center text-yellow-500 space-x-1 text-2xl md:text-3xl">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-trophy text-4xl md:text-5xl text-amber-600 mx-2"></i>
+                        <i class="fa-solid fa-star"></i>
+                    </div>
+
+                    <h3 class="text-2xl md:text-3xl font-black tracking-wide uppercase text-amber-800 fancy-title">Ülkem Yanımda Başarı Sertifikası</h3>
+                    
+                    <p class="text-xs md:text-base text-slate-700 max-w-md mx-auto leading-relaxed font-semibold">
+                        Zarif dilimiz Türkçeyi ve değerli kültürümüzü öğrenmek için gösterdiği yüksek çabadan dolayı sevgili öğrencimiz;
+                    </p>
+
+                    <!-- Değişken İsim Bölümü (Dancing Script el yazısı yazı tipi) -->
+                    <div class="py-1 border-b-2 border-dotted border-amber-400 max-w-sm mx-auto">
+                        <h2 id="cert-display-name" class="cert-font text-4xl md:text-5xl font-bold text-amber-600 min-h-[44px] leading-tight">
+                            Minik Kahramanımız
+                        </h2>
+                    </div>
+
+                    <p class="text-xs md:text-sm text-slate-600 max-w-xs mx-auto font-bold">
+                        Bu güzel başarı belgesini almaya hak kazanmıştır. Seninle gurur duyuyoruz! 🥳
+                    </p>
+                </div>
+
+                <!-- Alt Detaylar (Yıl Sonu Şenliği üzerine indir.png yerleştirildi) -->
+                <div class="flex justify-between items-end mt-2 text-[12px] md:text-xs z-10 px-2 md:px-6">
+                    <div class="text-left">
+                        <p class="text-slate-400 text-[9px]">Tarih</p>
+                        <p class="font-bold text-amber-950">Haziran 2026</p>
+                    </div>
+                    <div class="text-center flex flex-col items-center justify-end">
+                        <!-- Yıl sonu şenliği komite logosu olarak indir.png eklendi -->
+                        <img src="indir.png" alt="Yıl Sonu Şenliği" onerror="this.src='https://images.unsplash.com/photo-1516627145497-ae6968895b74?auto=format&fit=crop&w=150&q=80'; this.style.borderRadius='50%';" class="h-5 w-20 object-contain mb-1">
+                        <p class="text-[9px] text-slate-400 font-bold">Yıl Sonu Şenliği</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-slate-400 text-[9px]">Sertifika No</p>
+                        <p class="font-bold text-amber-950" id="cert-id">SYS-2026-001</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- İşlem Butonları -->
+            <div class="flex flex-col sm:flex-row gap-3 justify-center w-full max-w-md pt-2">
+                <button onclick="window.print()" class="px-6 py-3.5 bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-600 hover:to-yellow-500 text-white font-black rounded-xl shadow-md transition-all flex items-center justify-center space-x-2 text-base transform hover:scale-103">
+                    <i class="fa-solid fa-print"></i>
+                    <span>Sertifikamı Yazdır / PDF</span>
+                </button>
+                <button onclick="resetGame()" class="px-5 py-2.5 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-xl shadow-sm transition-all flex items-center justify-center space-x-2 border border-slate-200 text-sm">
+                    <i class="fa-solid fa-rotate-left"></i>
+                    <span>Baştan Oyna</span>
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Sürükle Bırak, Ses ve Konfeti Kontrolleri -->
+    <script>
+        // Oyun Durumları
+        let currentStep = 'intro';
+        
+        // Yapboz Ayarları
+        const PUZZLE_ROWS = 3;
+        const PUZZLE_COLS = 3;
+        const totalPieces = PUZZLE_ROWS * PUZZLE_COLS;
+        let placedPieces = 0;
+        let selectedPiece = null;
+        let dragOffset = { x: 0, y: 0 };
+        const puzzleImgUrl = "a.jpg";
+
+        // SES DOSYALARI TANIMLAMASI
+        const audioFiles = {
+            intro: new Audio('1.mp3'),
+            riddle: new Audio('2.mp3'),
+            puzzle: new Audio('3.mp3'),
+            certificate: new Audio('4.mp3')
+        };
+
+        // Mevcut çalan sesi yönetmek için
+        let activeAudio = null;
+
+        // Ses dosyalarını çalma/durdurma fonksiyonu
+        function toggleAudio(stepId) {
+            const audio = audioFiles[stepId];
+            const iconId = `audio-icon-${stepId}`;
+            const iconEl = document.getElementById(iconId);
+
+            if (!audio) return;
+
+            // Eğer başka bir ses zaten çalıyorsa onu durdur
+            if (activeAudio && activeAudio !== audio) {
+                activeAudio.pause();
+                resetAudioIcons();
+            }
+
+            if (audio.paused) {
+                audio.play().then(() => {
+                    activeAudio = audio;
+                    if (iconEl) {
+                        iconEl.className = "fa-solid fa-circle-pause animate-pulse";
+                    }
+                }).catch(err => console.log("Ses oynatma hatası:", err));
+            } else {
+                audio.pause();
+                if (iconEl) {
+                    iconEl.className = "fa-solid fa-volume-high";
+                }
+                activeAudio = null;
+            }
+        }
+
+        // Tüm ses simgelerini varsayılana döndürür
+        function resetAudioIcons() {
+            ['intro', 'riddle', 'puzzle', 'certificate'].forEach(step => {
+                const el = document.getElementById(`audio-icon-${step}`);
+                if (el) el.className = "fa-solid fa-volume-high";
+            });
+        }
+
+        // Sesleri tamamen durdurmak için
+        function stopAllAudios() {
+            Object.values(audioFiles).forEach(audio => {
+                audio.pause();
+                audio.currentTime = 0;
+            });
+            resetAudioIcons();
+            activeAudio = null;
+        }
+
+        // BASİT SES SENTEZLEYİCİSİ (Efektler için standart bip sesleri)
+        function playTone(freq, type, duration) {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                
+                osc.type = type || 'sine';
+                osc.frequency.setValueAtTime(freq, ctx.currentTime);
+                
+                gain.gain.setValueAtTime(0.12, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
+                
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                
+                osc.start();
+                osc.stop(ctx.currentTime + duration);
+            } catch (e) {
+                console.log("Synthesizer engellendi.");
+            }
+        }
+
+        function playSuccessSound() {
+            playTone(523.25, 'triangle', 0.15); // C5
+            setTimeout(() => playTone(659.25, 'triangle', 0.15), 100); // E5
+            setTimeout(() => playTone(783.99, 'triangle', 0.3), 200); // G5
+        }
+
+        function playErrorSound() {
+            playTone(220, 'sawtooth', 0.25); // A3
+        }
+
+        function playSnapSound() {
+            playTone(880, 'sine', 0.1); // A5
+        }
+
+        // Oyun Başlatma
+        function startApp() {
+            playSuccessSound();
+            showStep('riddle');
+        }
+
+        // Adım Değiştirme
+        function showStep(stepId) {
+            currentStep = stepId;
+            const body = document.body;
+
+            // Önceki sesleri sustur ve yenisini yükle
+            stopAllAudios();
+
+            document.getElementById('step-intro').classList.add('hidden');
+            document.getElementById('step-riddle').classList.add('hidden');
+            document.getElementById('step-puzzle').classList.add('hidden');
+            document.getElementById('step-certificate').classList.add('hidden');
+
+            const targetElement = document.getElementById(`step-${stepId}`);
+            if (targetElement) {
+                targetElement.classList.remove('hidden');
+                targetElement.classList.add('flex');
+            }
+
+            // Body Arka Plan Sınıflarını Yönet
+            body.className = "text-slate-800 flex items-center justify-center p-4 relative min-h-screen transition-all duration-300";
+
+            if (stepId === 'intro') {
+                body.classList.add('bg-intro');
+                startConfetti(); // Yönerge ekranında da konfeti patlatılır
+                toggleAudio('intro'); // Yönerge sesini otomatik çalmayı dener
+            } else if (stepId === 'riddle') {
+                body.classList.add('bg-game');
+                stopConfetti();
+                toggleAudio('riddle'); // Birinci görev sesini otomatik başlatır
+            } else if (stepId === 'puzzle') {
+                body.classList.add('bg-game');
+                stopConfetti();
+                toggleAudio('puzzle'); // İkinci görev sesini otomatik başlatır
+            } else if (stepId === 'certificate') {
+                body.classList.add('bg-cert');
+                startConfetti(); // Sertifika ekranında konfeti patlatılır
+                toggleAudio('certificate'); // Sertifika töreni sesini otomatik başlatır
+                
+                document.getElementById('cert-id').innerText = "SYS-2026-" + Math.floor(1000 + Math.random() * 9000);
+            }
+        }
+
+        /* ---------------- GÖREV 1: KART SEÇME MANTIĞI ---------------- */
+        function selectToyCard(isCorrect, element) {
+            const feedbackEl = document.getElementById('toy-feedback');
+            const nextBtn = document.getElementById('btn-riddle-next');
+
+            // Tüm kartlardan seçim stillerini temizle
+            document.querySelectorAll('#step-riddle button').forEach(btn => {
+                btn.classList.remove('border-green-500', 'border-red-400', 'bg-green-100', 'bg-red-100');
+            });
+
+            if (isCorrect) {
+                playSuccessSound();
+                element.classList.add('border-green-500', 'bg-green-100');
+                feedbackEl.innerHTML = "🎉 Harika! Kepimizi buldun! Şimdi sağ alttaki 'Sayfayı Çevir' butonuna dokun! 👉";
+                feedbackEl.className = "text-center text-base md:text-lg font-black text-emerald-700 animate-bounce kids-text-shadow";
+                
+                // Sağ alttaki Sayfayı Çevir butonunu aktif et
+                nextBtn.classList.remove('bg-slate-200', 'text-slate-400', 'cursor-not-allowed');
+                nextBtn.classList.add('bg-gradient-to-r', 'from-emerald-500', 'to-green-500', 'text-white', 'pulse-btn', 'hover:scale-105');
+                nextBtn.removeAttribute('disabled');
+            } else {
+                playErrorSound();
+                element.classList.add('border-red-400', 'bg-red-100');
+                feedbackEl.innerHTML = "🧸 Aradığımız şey Mezuniyet Kepi (🎓). Hadi bir kez daha dene!";
+                feedbackEl.className = "text-center text-sm md:text-base font-black text-amber-700 kids-text-shadow";
+                
+                nextBtn.classList.remove('bg-gradient-to-r', 'from-emerald-500', 'to-green-500', 'text-white', 'pulse-btn', 'hover:scale-105');
+                nextBtn.classList.add('bg-slate-200', 'text-slate-400', 'cursor-not-allowed');
+                nextBtn.setAttribute('disabled', 'true');
+            }
+        }
+
+        function goToStepTwo() {
+            playSuccessSound();
+            showStep('puzzle');
+            initPuzzle();
+        }
+
+
+        /* ---------------- GÖREV 2: YAPBOZ MANTIĞI (Kesin Oturma ve Çözüm) ---------------- */
+        function initPuzzle() {
+            placedPieces = 0;
+            document.getElementById('placed-count').innerText = 0;
+            
+            const puzzleNextBtn = document.getElementById('btn-puzzle-next');
+            puzzleNextBtn.classList.add('bg-slate-200', 'text-slate-400', 'cursor-not-allowed');
+            puzzleNextBtn.classList.remove('bg-gradient-to-r', 'from-emerald-500', 'to-green-500', 'text-white', 'pulse-btn');
+            puzzleNextBtn.setAttribute('disabled', 'true');
+
+            const board = document.getElementById('puzzle-board');
+            const piecesContainer = document.getElementById('pieces-container');
+            
+            board.innerHTML = '';
+            piecesContainer.innerHTML = '';
+
+            const boardWidth = board.clientWidth || 480; 
+            const pieceSize = boardWidth / PUZZLE_COLS;
+
+            const fallbackImg = "https://images.unsplash.com/photo-1516627145497-ae6968895b74?auto=format&fit=crop&w=600&q=80";
+            let puzzlePiecesArray = [];
+
+            for (let r = 0; r < PUZZLE_ROWS; r++) {
+                for (let c = 0; c < PUZZLE_COLS; c++) {
+                    const slotIndex = r * PUZZLE_COLS + c;
+                    
+                    // 1. Hedef Yuva
+                    const slot = document.createElement('div');
+                    slot.className = 'puzzle-slot';
+                    slot.dataset.index = slotIndex.toString();
+                    slot.dataset.placed = "false";
+
+                    // Gölgeli yardımcı görsel (Ghost Guide)
+                    const guide = document.createElement('div');
+                    guide.className = 'absolute inset-0 opacity-15 pointer-events-none bg-cover';
+                    guide.style.backgroundImage = `url('${puzzleImgUrl}')`;
+                    guide.style.backgroundSize = `${boardWidth}px ${boardWidth}px`;
+                    const posXGuide = -c * pieceSize;
+                    const posYGuide = -r * pieceSize;
+                    guide.style.backgroundPosition = `${posXGuide}px ${posYGuide}px`;
+
+                    const imgTestGuide = new Image();
+                    imgTestGuide.src = puzzleImgUrl;
+                    imgTestGuide.onerror = () => {
+                        guide.style.backgroundImage = `url('${fallbackImg}')`;
+                    };
+                    slot.appendChild(guide);
+                    
+                    slot.addEventListener('dragover', dragOver);
+                    slot.addEventListener('dragenter', dragEnter);
+                    slot.addEventListener('dragleave', dragLeave);
+                    slot.addEventListener('drop', dragDrop);
+
+                    board.appendChild(slot);
+
+                    // 2. Sürüklenebilir Yapboz Parçası (Kutusuz serbest tasarım)
+                    const piece = document.createElement('div');
+                    piece.className = 'puzzle-piece rounded-md shadow-md border border-white/50 overflow-hidden relative';
+                    piece.style.width = `${pieceSize - 6}px`;
+                    piece.style.height = `${pieceSize - 6}px`;
+                    piece.style.backgroundImage = `url('${puzzleImgUrl}')`;
+                    piece.style.backgroundSize = `${boardWidth}px ${boardWidth}px`;
+                    
+                    const posX = -c * pieceSize;
+                    const posY = -r * pieceSize;
+                    piece.style.backgroundPosition = `${posX}px ${posY}px`;
+                    piece.style.backgroundColor = '#f59e0b'; 
+                    piece.innerHTML = `<span class="absolute bottom-1 right-2 bg-black/30 text-white text-[9px] px-1.5 py-0.5 rounded-full font-bold">${slotIndex+1}</span>`;
+
+                    const imgTest = new Image();
+                    imgTest.src = puzzleImgUrl;
+                    imgTest.onerror = () => {
+                        piece.style.backgroundImage = `url('${fallbackImg}')`;
+                        piece.style.backgroundSize = `${boardWidth}px ${boardWidth}px`;
+                    };
+
+                    piece.setAttribute('draggable', 'true');
+                    piece.dataset.index = slotIndex.toString();
+
+                    piece.addEventListener('dragstart', dragStart);
+                    piece.addEventListener('dragend', dragEnd);
+
+                    // Mobil Dokunmatik Desteği
+                    piece.addEventListener('touchstart', handleTouchStart, { passive: false });
+                    piece.addEventListener('touchmove', handleTouchMove, { passive: false });
+                    piece.addEventListener('touchend', handleTouchEnd);
+
+                    puzzlePiecesArray.push(piece);
+                }
+            }
+
+            // Karıştır ve Havuza At
+            puzzlePiecesArray.sort(() => Math.random() - 0.5);
+            puzzlePiecesArray.forEach(p => piecesContainer.appendChild(p));
+        }
+
+        // Mıknatıslı Oturtma Fonksiyonu
+        function checkSnapping(piece, clientX, clientY) {
+            const pieceIndex = piece.dataset.index;
+            const slots = document.querySelectorAll('.puzzle-slot');
+            let targetSlot = null;
+
+            slots.forEach(slot => {
+                if (slot.dataset.index === pieceIndex) {
+                    targetSlot = slot;
+                }
+            });
+
+            if (!targetSlot) return false;
+
+            const slotRect = targetSlot.getBoundingClientRect();
+            const slotCenterX = slotRect.left + slotRect.width / 2;
+            const slotCenterY = slotRect.top + slotRect.height / 2;
+
+            const distance = Math.hypot(clientX - slotCenterX, clientY - slotCenterY);
+
+            if (distance < 70 && targetSlot.dataset.placed !== "true") {
+                snapPieceToSlot(piece, targetSlot);
+                return true;
+            }
+            return false;
+        }
+
+        function snapPieceToSlot(piece, slot) {
+            playSnapSound();
+            slot.innerHTML = ''; // Kılavuzu sil
+            
+            const finalPiece = boardPieceFix(slot.dataset.index);
+            slot.appendChild(finalPiece);
+            slot.dataset.placed = "true";
+            
+            piece.remove();
+            
+            placedPieces++;
+            document.getElementById('placed-count').innerText = placedPieces;
+            checkPuzzleComplete();
+        }
+
+        // Masaüstü Sürükle Bırak API Tetikleyicileri
+        function dragStart(e) {
+            selectedPiece = this;
+            e.dataTransfer.setData('text/plain', this.dataset.index);
+            setTimeout(() => this.classList.add('opacity-0'), 0);
+        }
+
+        function dragEnd() {
+            this.classList.remove('opacity-0');
+            selectedPiece = null;
+        }
+
+        function dragOver(e) {
+            e.preventDefault();
+        }
+
+        function dragEnter(e) {
+            e.preventDefault();
+            this.classList.add('hovered');
+        }
+
+        function dragLeave() {
+            this.classList.remove('hovered');
+        }
+
+        function dragDrop(e) {
+            this.classList.remove('hovered');
+            const pieceIndex = e.dataTransfer.getData('text/plain') || (selectedPiece ? selectedPiece.dataset.index : null);
+            
+            if (pieceIndex === null || this.dataset.index !== pieceIndex) {
+                playErrorSound();
+                return;
+            }
+
+            if (this.dataset.placed !== "true") {
+                snapPieceToSlot(selectedPiece, this);
+            }
+        }
+
+        function boardPieceFix(index) {
+            const boardWidth = document.getElementById('puzzle-board').clientWidth || 480;
+            const pieceSize = boardWidth / PUZZLE_COLS;
+            const r = Math.floor(index / PUZZLE_COLS);
+            const c = index % PUZZLE_COLS;
+            
+            const fixedPiece = document.createElement('div');
+            fixedPiece.className = 'w-full h-full rounded-none border-none shadow-none';
+            fixedPiece.style.borderRadius = '0px';
+            fixedPiece.style.border = 'none';
+            fixedPiece.style.boxShadow = 'none';
+            fixedPiece.style.margin = '0px';
+            fixedPiece.style.padding = '0px';
+            fixedPiece.style.backgroundImage = `url('${puzzleImgUrl}')`;
+            fixedPiece.style.backgroundSize = `${boardWidth}px ${boardWidth}px`;
+            fixedPiece.style.backgroundPosition = `${-c * pieceSize}px ${-r * pieceSize}px`;
+            fixedPiece.style.backgroundColor = '#f59e0b';
+
+            const fallbackImg = "https://images.unsplash.com/photo-1516627145497-ae6968895b74?auto=format&fit=crop&w=600&q=80";
+            const imgTest = new Image();
+            imgTest.src = puzzleImgUrl;
+            imgTest.onerror = () => {
+                fixedPiece.style.backgroundImage = `url('${fallbackImg}')`;
+                fixedPiece.style.backgroundSize = `${boardWidth}px ${boardWidth}px`;
+            };
+
+            return fixedPiece;
+        }
+
+        // MOBİL DOKUNMATİK DESTEĞİ
+        function handleTouchStart(e) {
+            selectedPiece = this;
+            const touch = e.touches[0];
+            const rect = selectedPiece.getBoundingClientRect();
+            dragOffset.x = touch.clientX - rect.left;
+            dragOffset.y = touch.clientY - rect.top;
+            
+            selectedPiece.style.position = 'fixed';
+            selectedPiece.style.zIndex = '100';
+            updateTouchPosition(touch.clientX, touch.clientY);
+        }
+
+        function handleTouchMove(e) {
+            if (!selectedPiece) return;
+            e.preventDefault();
+            const touch = e.touches[0];
+            updateTouchPosition(touch.clientX, touch.clientY);
+        }
+
+        function updateTouchPosition(clientX, clientY) {
+            selectedPiece.style.left = `${clientX - dragOffset.x}px`;
+            selectedPiece.style.top = `${clientY - dragOffset.y}px`;
+        }
+
+        function handleTouchEnd(e) {
+            if (!selectedPiece) return;
+            
+            selectedPiece.style.position = 'relative';
+            selectedPiece.style.left = 'auto';
+            selectedPiece.style.top = 'auto';
+            selectedPiece.style.zIndex = 'auto';
+
+            const touch = e.changedTouches[0];
+            
+            const wasSnapped = checkSnapping(selectedPiece, touch.clientX, touch.clientY);
+            if (!wasSnapped) {
+                playErrorSound();
+            }
+            selectedPiece = null;
+        }
+
+        function checkPuzzleComplete() {
+            if (placedPieces === totalPieces) {
+                playSuccessSound();
+                const puzzleNextBtn = document.getElementById('btn-puzzle-next');
+                puzzleNextBtn.classList.remove('bg-slate-200', 'text-slate-400', 'cursor-not-allowed');
+                puzzleNextBtn.classList.add('bg-gradient-to-r', 'from-emerald-500', 'to-green-500', 'text-white', 'pulse-btn', 'hover:scale-105');
+                puzzleNextBtn.removeAttribute('disabled');
+            }
+        }
+
+        function goToCertificate() {
+            showStep('certificate');
+        }
+
+
+        /* ---------------- SERTİFİKA KİŞİSELLEŞTİRME ---------------- */
+        function updateCertificateName() {
+            const inputVal = document.getElementById('student-name').value;
+            const displayEl = document.getElementById('cert-display-name');
+            if (inputVal.trim() !== "") {
+                displayEl.innerText = inputVal;
+            } else {
+                displayEl.innerText = "Minik Kahramanımız";
+            }
+        }
+
+        function resetGame() {
+            placedPieces = 0;
+            document.getElementById('student-name').value = '';
+            document.getElementById('cert-display-name').innerText = 'Minik Kahramanımız';
+            
+            const nextBtn = document.getElementById('btn-riddle-next');
+            nextBtn.classList.add('bg-slate-200', 'text-slate-400', 'cursor-not-allowed');
+            nextBtn.classList.remove('bg-gradient-to-r', 'from-emerald-500', 'to-green-500', 'text-white', 'pulse-btn', 'hover:scale-105');
+            nextBtn.setAttribute('disabled', 'true');
+            
+            document.getElementById('toy-feedback').innerHTML = "Hadi, doğru resme dokun! 🌟";
+            document.getElementById('toy-feedback').className = "text-center text-lg font-bold text-amber-600 h-8";
+
+            showStep('intro');
+        }
+
+
+        /* ---------------- NEŞELİ KONFETİ EFEKTİ ---------------- */
+        let confettiInterval = null;
+
+        function startConfetti() {
+            const wrapper = document.getElementById('confetti-wrapper');
+            wrapper.classList.remove('hidden');
+            wrapper.innerHTML = '';
+
+            const colors = ['#eab308', '#f59e0b', '#10b981', '#3b82f6', '#f97316'];
+
+            if (confettiInterval) clearInterval(confettiInterval);
+
+            confettiInterval = setInterval(() => {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDuration = Math.random() * 2 + 1.5 + 's';
+                confetti.style.width = Math.random() * 14 + 8 + 'px';
+                confetti.style.height = confetti.style.width;
+                
+                if (Math.random() > 0.5) {
+                    confetti.style.borderRadius = '0%';
+                }
+
+                wrapper.appendChild(confetti);
+
+                setTimeout(() => {
+                    confetti.remove();
+                }, 3500);
+            }, 80);
+        }
+
+        function stopConfetti() {
+            if (confettiInterval) {
+                clearInterval(confettiInterval);
+            }
+            const wrapper = document.getElementById('confetti-wrapper');
+            wrapper.classList.add('hidden');
+            wrapper.innerHTML = '';
+        }
+
+        window.onload = function() {
+            showStep('intro');
+        }
+    </script>
+</body>
+</html>

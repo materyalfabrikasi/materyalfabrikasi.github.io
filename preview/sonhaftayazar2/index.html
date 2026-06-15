@@ -1,0 +1,760 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ülkem Yanımda Gazetesi - Kültürel Türkçe Yolculuğum</title>
+    <!-- Tailwind CSS ve Font kütüphaneleri -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800;900&family=Playfair+Display:ital,wght@0,500;0,700;1,400&family=Special+Elite&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Gazete Dokusu ve Nostalji Renkleri */
+        body {
+            background-color: #f2ebd9;
+            background-image: radial-gradient(#faf6ee 1px, transparent 0), radial-gradient(#faf6ee 1px, transparent 0);
+            background-size: 8px 8px;
+            background-position: 0 0, 4px 4px;
+            color: #2b251f;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .newspaper-page {
+            background-color: #fbf6eb;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1), inset 0 0 40px rgba(139,90,43,0.03);
+            border: 1px solid #d4c4a8;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Gazete Başlığı */
+        .gothic-title {
+            font-family: 'Cinzel', serif;
+            letter-spacing: -1px;
+        }
+
+        /* Daktilo Tarzı Alanlar */
+        .typewriter-text {
+            font-family: 'Special Elite', cursive;
+        }
+
+        .editorial-text {
+            font-family: 'Courier Prime', monospace;
+            line-height: 1.4;
+        }
+
+        /* Fotoğraf Alanı Tasarımı */
+        .photo-placeholder {
+            border: 2px dashed #8b7355;
+            background-color: #f7f0e1;
+            transition: all 0.3s ease;
+        }
+        .photo-placeholder:hover {
+            background-color: #eedfb8;
+            border-color: #5c4033;
+        }
+
+        /* Çift gazete çizgisi */
+        .double-border {
+            border-top: 4px double #2b251f;
+            border-bottom: 4px double #2b251f;
+        }
+
+        /* Tıklanabilir alan belirteci (Düzenleme modu ipucu) */
+        [contenteditable="true"] {
+            outline: none;
+            transition: background-color 0.2s ease;
+            cursor: pointer;
+        }
+        [contenteditable="true"]:hover {
+            background-color: rgba(212, 196, 168, 0.4);
+            border-radius: 4px;
+        }
+        [contenteditable="true"]:focus {
+            background-color: rgba(212, 196, 168, 0.6);
+            box-shadow: 0 0 0 2px #8b7355;
+            border-radius: 4px;
+        }
+
+        /* Kültürel Silüetlerin Renk ve Opasite Ayarı */
+        .landmark-silhouette {
+            fill: #8b7355;
+            opacity: 0.08;
+            pointer-events: none;
+        }
+
+        /* Logo Arka Plan Beyazlığını Kaldırma Filtresi */
+        .transparent-logo {
+            mix-blend-mode: multiply;
+        }
+
+        /* Baskı (Yazıcı/PDF) Ayarları */
+        @media print {
+            body {
+                background: #fff;
+                color: #000;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            #instruction-screen, .no-print {
+                display: none !important;
+            }
+            #editor-screen {
+                display: block !important;
+            }
+            .newspaper-page {
+                box-shadow: none;
+                border: none;
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 0 0 20px 0 !important;
+                padding: 20px !important;
+                background: #fff;
+                page-break-after: always;
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body class="py-6 px-4 md:px-8 min-h-screen flex flex-col justify-center">
+
+    <!-- ================= YÖNERGE EKRANI ================= -->
+    <!-- Arka plan resmi, ekranda hiç boşluk veya beyazlık bırakmayacak ve deforme olmayacak şekilde background-size: 100% 100% olarak ayarlanmıştır -->
+    <div id="instruction-screen" class="fixed inset-0 w-full h-full z-50 overflow-y-auto flex flex-col justify-center p-6 md:p-12" 
+         style="background-image: url('1.jpg'), url('https://images.unsplash.com/photo-1504711434269-d0385422453e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80'); background-size: 100% 100%; background-position: center; background-repeat: no-repeat; background-color: #f2ebd9;">
+        
+        <div class="max-w-4xl w-full mx-auto text-stone-900 flex flex-col justify-between py-8">
+            <!-- Gazete Başlığı (Doğrudan Gazete Üzerine Basılmış) -->
+            <div class="text-center mb-8">
+                <h1 class="gothic-title text-3xl md:text-5xl font-black text-stone-950 tracking-wider uppercase drop-shadow-sm pb-4 border-b-4 border-double border-stone-800">
+                    
+                </h1>
+                <div class="text-xs md:text-sm font-bold tracking-widest text-stone-700 mt-2 uppercase">
+                    
+                </div>
+            </div>
+
+            <!-- Gazete Makalesi Formatında Çerçevesiz Doğrudan Yazı Sütunları -->
+            <div class="columns-1 md:columns-2 gap-10 font-serif text-sm md:text-base text-stone-900 leading-relaxed text-justify py-6 border-b-2 border-stone-800">
+                <h2 class="text-xl md:text-2xl font-bold text-stone-950 font-serif mb-4 leading-tight">
+                    Sevgili Genç Editör,
+                </h2>
+                <p class="mb-4">
+                    Kendi gazetenizi tasarlayarak Türkçe ve kültür serüveninizi ölümsüzleştirmeye hazır mısınız? 
+                    Bu dijital gazete üzerinde yer alan tüm başlıkları, haberleri, sınıfın yıldızlarını ve Türkçe dersi anılarını 
+                    hiçbir kutu sınırlaması olmaksızın <strong>doğrudan üzerlerine tıklayarak</strong> özgürce düzenleyebilirsiniz.
+                </p>
+                <p class="mb-4">
+                    Gazetenizin özel köşelerindeki fotoğraf çerçevelerine tıklayarak bilgisayarınızdan veya mobil cihazınızdan kendi çizimlerinizi, sınıf anılarınızı veya fotoğraflarınızı kolayca yükleyebilirsiniz.
+                </p>
+                <p>
+                    Tüm sayfa düzenleme işlemleriniz bittiğinde, üst tarafta yer alan kontrol panelini kullanarak eserinizi PDF olarak bilgisayarınıza kaydedebilir veya yazıcıdan çıktısını alarak sınıf panosuna asabilirsiniz. Şimdi kelimelerin gücünü gösterme zamanı!
+                </p>
+            </div>
+
+            <!-- Başlatma Butonu (Doğrudan Gazete Altında) -->
+            <div class="mt-8 text-center">
+                <button onclick="showEditor()" class="bg-amber-900 hover:bg-amber-950 text-amber-50 font-bold py-4 px-16 rounded shadow-xl text-xl tracking-wider transition-all transform hover:scale-105 border-2 border-amber-950">
+                    GAZETENİ OLUŞTUR 🚀
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ================= GAZETE DÜZENLEME EKRANI (Başlangıçta gizli) ================= -->
+    <div id="editor-screen" class="hidden w-full">
+
+        <!-- Üst Kontrol Paneli -->
+        <div class="max-w-5xl mx-auto mb-6 p-4 bg-amber-100/90 border border-amber-300 rounded-lg shadow-sm flex flex-wrap gap-4 justify-between items-center no-print">
+            <div class="text-sm text-amber-950">
+                <span class="font-bold">✨ Düzenleme Modu Aktif:</span> Yazıların üzerine tıklayarak değiştirebilir, kutulara tıklayarak fotoğraf yükleyebilirsiniz.
+            </div>
+            <div class="flex gap-2">
+                <button onclick="hideEditor()" class="bg-stone-500 hover:bg-stone-600 text-stone-50 font-bold px-4 py-2 rounded shadow transition text-sm">
+                    Geri Dön
+                </button>
+                <button onclick="window.print()" class="bg-amber-800 hover:bg-amber-900 text-amber-50 font-bold px-4 py-2 rounded shadow transition flex items-center gap-2 text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v2a2 2 0 002 2h6a2 2 0 002-2v-2h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm8 0H7v3h6V4zM4 9a1 1 0 11-2 0 1 1 0 012 0zm3 4h6v3H7v-3z" clip-rule="evenodd" />
+                    </svg>
+                    PDF Olarak Kaydet / Yazdır
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= SAYFA 1: MANŞET & GİRİŞ ================= -->
+        <div class="newspaper-page max-w-5xl mx-auto p-6 md:p-10 relative mb-8">
+            
+            <!-- SİLÜETLER (Kapadokya Balonları) -->
+            <div class="absolute right-10 top-28 w-48 h-48 landmark-silhouette">
+                <svg viewBox="0 0 100 100" class="w-full h-full">
+                    <path d="M50,10 C65,10 75,22 75,37 C75,52 62,68 55,75 L45,75 C38,68 25,52 25,37 C25,22 35,10 50,10 Z" />
+                    <rect x="47" y="77" width="6" height="5" />
+                    <line x1="45" y1="75" x2="47" y2="77" stroke="#8b7355" stroke-width="2" />
+                    <line x1="55" y1="75" x2="53" y2="77" stroke="#8b7355" stroke-width="2" />
+                    <path d="M85,50 C92,50 97,56 97,63 C97,70 91,78 87,81 L83,81 C79,78 73,70 73,63 C73,56 78,50 85,50 Z" opacity="0.6" />
+                </svg>
+            </div>
+
+            <!-- ÜST BİLGİ VE LOGO ALANI -->
+            <header class="mb-6 relative z-10">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-6 pb-4">
+                    
+                    <!-- Yüklenen Orijinal Logo -->
+                    <div class="flex items-center">
+                        <img id="logo_img_s1" src="indir.png" alt="Ülkem Yanımda Logo" class="h-20 w-auto object-contain transparent-logo" onload="document.getElementById('logo_svg_s1').style.display='none';" onerror="this.style.display='none'; document.getElementById('logo_svg_s1').style.display='flex';">
+                        
+                        <!-- Resim bulunamazsa devreye girecek kusursuz vektörel logo -->
+                        <div id="logo_svg_s1" class="items-center gap-3" style="display: none;">
+                            <div class="w-16 h-12 flex-shrink-0">
+                                <svg viewBox="0 0 110 100" class="w-full h-full">
+                                    <circle cx="28" cy="15" r="9" fill="#d01c1c" />
+                                    <circle cx="70" cy="15" r="9" fill="#d01c1c" />
+                                    <path d="M 10,35 C 10,75 52,90 52,90" fill="none" stroke="#d01c1c" stroke-width="12" stroke-linecap="round" />
+                                    <path d="M 52,35 C 52,75 94,75 94,35" fill="none" stroke="#32b59b" stroke-width="12" stroke-linecap="round" />
+                                </svg>
+                            </div>
+                            <div class="flex flex-col justify-center">
+                                <div class="text-xl font-extrabold tracking-wider text-gray-900 leading-none" style="font-family: 'Cinzel', serif;">ÜLKEM</div>
+                                <div class="text-xs font-bold tracking-widest text-gray-700 mt-1" style="font-family: 'Cinzel', serif;">YANIMDA</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- GAZETE BAŞLIĞI -->
+                    <div class="text-center flex-1">
+                        <h1 class="gothic-title text-4xl md:text-5xl lg:text-6xl font-black text-stone-900 leading-tight border-b-2 border-stone-800 pb-2 md:pb-0 md:border-b-0">
+                            Ülkem Yanımda Gazetesi
+                        </h1>
+                    </div>
+                </div>
+
+                <!-- Gazete Künyesi -->
+                <div class="double-border py-1 px-4 flex flex-wrap justify-between items-center text-xs md:text-sm font-bold tracking-wide text-stone-800">
+                    <div class="flex items-center gap-1">
+                        <span>SAYI:</span>
+                        <span contenteditable="true" class="px-1 focus:bg-amber-100">1</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="hidden md:inline">🎈 KÜLTÜREL TÜRKÇE YOLCULUĞUM 🎈</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <span>TARİH:</span>
+                        <span contenteditable="true" class="px-1 focus:bg-amber-100">Haziran 2026</span>
+                    </div>
+                </div>
+                
+                <div class="text-right text-xs italic text-stone-600 mt-1">SAYFA 1</div>
+            </header>
+
+            <!-- GAZETE İÇERİK -->
+            <main class="grid grid-cols-1 lg:grid-cols-12 gap-6 relative z-10">
+                
+                <!-- SOL SÜTUN (YILIN OLAYI - MANŞET HABER) -->
+                <section class="lg:col-span-7 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-stone-400 pb-6 lg:pb-0 lg:pr-6">
+                    <div>
+                        <!-- Bölüm Başlığı -->
+                        <div class="bg-stone-900 text-[#fbf6eb] px-3 py-1 text-xs font-extrabold tracking-widest mb-4 inline-block typewriter-text">
+                            📢 YILIN OLAYI (MANŞET)
+                        </div>
+
+                        <!-- Haber Manşeti -->
+                        <h2 contenteditable="true" class="text-2xl md:text-3xl font-bold leading-tight mb-4 text-stone-950 hover:bg-stone-100">
+                            Manşetimizi Buraya Yazalım! (Örn: Sınıfımızın Mezuniyet Coşkusu!)
+                        </h2>
+
+                        <!-- Görsel Alanı (Büyütülmüş) -->
+                        <div class="mb-4 relative group">
+                            <input type="file" accept="image/*" class="hidden" id="photo_yilin_olayi" data-target="preview_yilin_olayi">
+                            <div onclick="document.getElementById('photo_yilin_olayi').click()" id="preview_yilin_olayi" class="photo-placeholder h-80 w-full rounded flex flex-col items-center justify-center cursor-pointer p-4 text-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-stone-500 mb-2 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                                <span class="font-bold text-stone-700 text-sm">📸 MEZUNİYET / SINIF GÖRSELİ EKLE</span>
+                                <span class="text-[10px] text-stone-500">(Büyük Boyutlu Resim Alanı)</span>
+                            </div>
+                        </div>
+
+                        <!-- Haber Alt Başlığı / Spot -->
+                        <p contenteditable="true" class="text-base font-bold italic text-stone-800 mb-3 border-l-4 border-stone-800 pl-3">
+                            Günün heyecanını anlatan kısa bir başlık veya slogan yazalım...
+                        </p>
+
+                        <!-- Haber Detay Metni -->
+                        <div contenteditable="true" class="editorial-text text-sm text-stone-600 min-h-[120px] p-2 border border-dashed border-stone-300 rounded bg-stone-50/50">
+                            Buraya bu yıl sınıfta yaşadığımız en büyük olayı kendi cümlelerimizle yazalım. Neler yaptık? Neden bu günü unutmayacağız? (Buraya tıklayarak hemen yazmaya başla!)
+                        </div>
+                    </div>
+
+                    <!-- Günün Sözü Kutusu -->
+                    <div class="mt-6 p-4 bg-stone-200/60 border border-stone-300 rounded">
+                        <h4 class="font-bold text-xs uppercase tracking-wider text-stone-700 mb-1">💬 GÜNÜN EN SEVİLEN SÖZÜ</h4>
+                        <p contenteditable="true" class="italic text-stone-800 font-serif text-sm">
+                            "Buraya öğretmenimizin veya bir arkadaşımızın sınıfta söylediği en güzel sözü yazalım..."
+                        </p>
+                    </div>
+                </section>
+
+                <!-- SAĞ SÜTUN (DUYURULAR & EDİTÖRDEN) -->
+                <section class="lg:col-span-5 flex flex-col gap-6 justify-between">
+                    
+                    <!-- YIL SONU DUYURUSU -->
+                    <div class="border-b border-stone-400 pb-6">
+                        <div class="bg-stone-900 text-[#fbf6eb] px-3 py-1 text-xs font-extrabold tracking-widest mb-4 inline-block typewriter-text">
+                            🎓 YIL SONU DUYURUMUZ
+                        </div>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
+                            <!-- Fotoğraf Kutusu -->
+                            <div class="sm:col-span-5 relative group">
+                                <input type="file" accept="image/*" class="hidden" id="photo_toren" data-target="preview_toren">
+                                <div onclick="document.getElementById('photo_toren').click()" id="preview_toren" class="photo-placeholder h-44 w-full rounded flex flex-col items-center justify-center cursor-pointer p-2 text-center text-[10px]">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-stone-500 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                    </svg>
+                                    <span class="font-bold text-stone-700">KEP RESMİ YÜKLE</span>
+                                </div>
+                            </div>
+
+                            <!-- Tören Bilgileri -->
+                            <div class="sm:col-span-7 space-y-2 text-stone-900 text-xs">
+                                <h3 contenteditable="true" class="font-bold text-sm leading-tight hover:bg-stone-100">Büyük Gün Geliyor!</h3>
+                                <div class="space-y-1 font-serif">
+                                    <p><strong>📍 Yerimiz:</strong> <span contenteditable="true">Okulumuzun Bahçesi</span></p>
+                                    <p><strong>⏰ Saatimiz:</strong> <span contenteditable="true">Buraya yaz...</span></p>
+                                    <p><strong>🎉 Konuşmacı:</strong> <span contenteditable="true">Öğretmenimiz ve Biz</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BENİM GAZETEM / BAŞYAZI -->
+                    <div class="flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="bg-stone-900 text-[#fbf6eb] px-3 py-1 text-xs font-extrabold tracking-widest mb-4 inline-block typewriter-text">
+                                ✍️ BAŞYAZAR BENİM!
+                            </div>
+                            <h3 contenteditable="true" class="font-bold text-base mb-2 text-stone-900 hover:bg-stone-100">"Geleceğe Gülümserken..."</h3>
+                            <div contenteditable="true" class="editorial-text text-xs text-stone-600 min-h-[100px] p-2 border border-dashed border-stone-300 rounded bg-stone-50/50">
+                                Buraya gazetenin başyazarı olarak duygularını yaz. Bu yıl en çok neye güldün? Büyüyünce ne olmak istiyorsun? Arkadaşlarından ayrılırken neler hissediyorsun?
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 pt-4 border-t border-stone-300 text-right">
+                            <span contenteditable="true" class="font-bold text-stone-800 text-xs italic">Gazete Sahibi: Adın Soyadın</span>
+                        </div>
+                    </div>
+
+                </section>
+            </main>
+
+            <!-- GAZETE ALTI BİLGİ YAZISI -->
+            <footer class="mt-10 pt-6 border-t-4 border-stone-800 text-center">
+                <h3 class="text-xl font-extrabold tracking-wider text-stone-900 uppercase typewriter-text mb-1">
+                    Ülkem Yanımda 2026
+                </h3>
+                <p class="text-sm font-medium italic text-stone-700 font-serif">
+                    "Türkçemizin ve kültürümüzün dünyaya açılan kapısı"
+                </p>
+            </footer>
+        </div>
+
+
+        <!-- ================= SAYFA 2: EĞLENCE & SINIFIN EN'LERİ ================= -->
+        <div class="newspaper-page max-w-5xl mx-auto p-6 md:p-10 relative mb-8">
+            
+            <!-- SİLÜETLER (Galata Kulesi) -->
+            <div class="absolute left-4 bottom-24 w-32 h-64 landmark-silhouette">
+                <svg viewBox="0 0 100 200" class="w-full h-full">
+                    <path d="M40,190 L60,190 L60,100 L65,100 L65,90 L60,90 L60,60 L63,60 L63,53 L58,53 L58,40 L50,20 L42,40 L42,53 L37,53 L37,60 L40,60 L40,90 L35,90 L35,100 L40,100 Z" />
+                    <path d="M47,65 L53,65 L53,75 L47,75 Z" fill="#fbf6eb" />
+                    <path d="M47,110 L53,110 L53,125 L47,125 Z" fill="#fbf6eb" />
+                    <path d="M47,140 L53,140 L53,155 L47,155 Z" fill="#fbf6eb" />
+                </svg>
+            </div>
+
+            <!-- ÜST BİLGİ VE LOGO ALANI (SAYFA 2) -->
+            <header class="mb-6 relative z-10">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-6 pb-4">
+                    
+                    <!-- Yüklenen Orijinal Logo -->
+                    <div class="flex items-center">
+                        <img id="logo_img_s2" src="indir.png" alt="Ülkem Yanımda Logo" class="h-16 w-auto object-contain transparent-logo" onload="document.getElementById('logo_svg_s2').style.display='none';" onerror="this.style.display='none'; document.getElementById('logo_svg_s2').style.display='flex';">
+                        
+                        <!-- Resim bulunamazsa devreye girecek kusursuz vektörel logo -->
+                        <div id="logo_svg_s2" class="items-center gap-3" style="display: none;">
+                            <div class="w-12 h-10 flex-shrink-0">
+                                <svg viewBox="0 0 110 100" class="w-full h-full">
+                                    <circle cx="28" cy="15" r="9" fill="#d01c1c" />
+                                    <circle cx="70" cy="15" r="9" fill="#d01c1c" />
+                                   <path d="M 10,35 C 10,75 52,90 52,90" fill="none" stroke="#d01c1c" stroke-width="12" stroke-linecap="round" />
+                                    <path d="M 52,35 C 52,75 94,75 94,35" fill="none" stroke="#32b59b" stroke-width="12" stroke-linecap="round" />
+                                </svg>
+                            </div>
+                            <div class="flex flex-col justify-center">
+                                <div class="text-lg font-extrabold tracking-wider text-gray-900 leading-none" style="font-family: 'Cinzel', serif;">ÜLKEM</div>
+                                <div class="text-[10px] font-bold tracking-widest text-gray-700 mt-1" style="font-family: 'Cinzel', serif;">YANIMDA</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center flex-1">
+                        <h2 class="gothic-title text-2xl md:text-3xl font-black text-stone-900 tracking-wider">
+                            😂 SINIFIMIZIN YILDIZLARI VE SÖZLÜĞÜ
+                        </h2>
+                    </div>
+                </div>
+
+                <div class="double-border py-1 px-4 flex justify-between items-center text-xs font-bold text-stone-800">
+                    <span>EN TATLI SINIFIN EN ÖZEL SAYFASI</span>
+                    <span>BÜLTEN NO: 1</span>
+                    <span>SAYFA 2</span>
+                </div>
+            </header>
+
+            <!-- KÖŞE YAZILARI VE SÖZLÜK -->
+            <main class="grid grid-cols-1 lg:grid-cols-12 gap-6 relative z-10">
+                
+                <!-- SOL TARAF: SINIFIN EN'LERİ -->
+                <section class="lg:col-span-7 border-b lg:border-b-0 lg:border-r border-stone-400 pb-6 lg:pb-0 lg:pr-6 flex flex-col justify-between">
+                    <div>
+                        <div class="bg-stone-900 text-[#fbf6eb] px-3 py-1 text-xs font-extrabold tracking-widest mb-4 inline-block typewriter-text">
+                            ⭐ SINIFIMIZIN YILDIZLARI (HER EN İÇİN BİR RESİM!)
+                        </div>
+                        
+                        <p class="text-xs text-stone-600 italic mb-4">Sınıf arkadaşlarımızın fotoğraflarını yükleyelim ve altına "En" özelliklerini yazalım:</p>
+
+                        <!-- En'ler 2x2 Grid Düzeni -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            
+                            <!-- Yıldız 1 -->
+                            <div class="p-3 border border-stone-300 rounded bg-stone-100/40 flex flex-col justify-between">
+                                <div>
+                                    <strong contenteditable="true" class="text-amber-950 text-sm block mb-1">👑 En Başlığı (Örn: En Neşeli):</strong>
+                                    <p contenteditable="true" class="italic text-xs text-stone-500 mb-2">Arkadaşının adını yaz...</p>
+                                </div>
+                                <div class="relative group mt-1">
+                                    <input type="file" accept="image/*" class="hidden" id="photo_en_1" data-target="preview_en_1">
+                                    <div onclick="document.getElementById('photo_en_1').click()" id="preview_en_1" class="photo-placeholder h-36 w-full rounded flex flex-col items-center justify-center cursor-pointer p-1 text-center text-[10px]">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-stone-400 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                        </svg>
+                                        <span class="font-bold text-stone-600">FOTOĞRAF YÜKLE</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Yıldız 2 -->
+                            <div class="p-3 border border-stone-300 rounded bg-stone-100/40 flex flex-col justify-between">
+                                <div>
+                                    <strong contenteditable="true" class="text-amber-950 text-sm block mb-1">📚 En Başlığı (Örn: En Kitap Kurdu):</strong>
+                                    <p contenteditable="true" class="italic text-xs text-stone-500 mb-2">Arkadaşının adını yaz...</p>
+                                </div>
+                                <div class="relative group mt-1">
+                                    <input type="file" accept="image/*" class="hidden" id="photo_en_2" data-target="preview_en_2">
+                                    <div onclick="document.getElementById('photo_en_2').click()" id="preview_en_2" class="photo-placeholder h-36 w-full rounded flex flex-col items-center justify-center cursor-pointer p-1 text-center text-[10px]">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-stone-400 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                        </svg>
+                                        <span class="font-bold text-stone-600">FOTOĞRAF YÜKLE</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Yıldız 3 -->
+                            <div class="p-3 border border-stone-300 rounded bg-stone-100/40 flex flex-col justify-between">
+                                <div>
+                                    <strong contenteditable="true" class="text-amber-950 text-sm block mb-1">🎨 En Başlığı (Örn: En Sanatçı):</strong>
+                                    <p contenteditable="true" class="italic text-xs text-stone-500 mb-2">Arkadaşının adını yaz...</p>
+                                </div>
+                                <div class="relative group mt-1">
+                                    <input type="file" accept="image/*" class="hidden" id="photo_en_3" data-target="preview_en_3">
+                                    <div onclick="document.getElementById('photo_en_3').click()" id="preview_en_3" class="photo-placeholder h-36 w-full rounded flex flex-col items-center justify-center cursor-pointer p-1 text-center text-[10px]">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-stone-400 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                        </svg>
+                                        <span class="font-bold text-stone-600">FOTOĞRAF YÜKLE</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Yıldız 4 -->
+                            <div class="p-3 border border-stone-300 rounded bg-stone-100/40 flex flex-col justify-between">
+                                <div>
+                                    <strong contenteditable="true" class="text-amber-950 text-sm block mb-1">🤝 En Başlığı (Örn: En Paylaşımcı):</strong>
+                                    <p contenteditable="true" class="italic text-xs text-stone-500 mb-2">Arkadaşının adını yaz...</p>
+                                </div>
+                                <div class="relative group mt-1">
+                                    <input type="file" accept="image/*" class="hidden" id="photo_en_4" data-target="preview_en_4">
+                                    <div onclick="document.getElementById('photo_en_4').click()" id="preview_en_4" class="photo-placeholder h-36 w-full rounded flex flex-col items-center justify-center cursor-pointer p-1 text-center text-[10px]">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-stone-400 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                        </svg>
+                                        <span class="font-bold text-stone-600">FOTOĞRAF YÜKLE</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SAĞ TARAF: VEDA SÖZLÜĞÜ -->
+                <section class="lg:col-span-5 flex flex-col justify-between">
+                    <div>
+                        <div class="bg-stone-900 text-[#fbf6eb] px-3 py-1 text-xs font-extrabold tracking-widest mb-4 inline-block typewriter-text">
+                            📖 BİZİM SINIFIN VEDA SÖZLÜĞÜ
+                        </div>
+                        
+                        <p class="text-xs text-stone-600 italic mb-4">Sadece bizim sınıfın bildiği kelimeleri, eğlenceli öğretmen sözlerini veya şakaları yazalım!</p>
+
+                        <div class="grid grid-cols-1 gap-3 text-xs font-serif">
+                            <!-- Kart 1 -->
+                            <div class="p-3 border border-stone-300 rounded bg-stone-50">
+                                <strong contenteditable="true" class="block text-sm text-stone-900 border-b border-stone-200 pb-1 mb-1">Eğlenceli Kelime 1 (Örn: "Kantin Koşusu")</strong>
+                                <span contenteditable="true" class="text-stone-500 leading-relaxed">Buraya bu kelimenin / şakanın anlamını sınıfımıza göre yazalım...</span>
+                            </div>
+                            
+                            <!-- Kart 2 -->
+                            <div class="p-3 border border-stone-300 rounded bg-stone-50">
+                                <strong contenteditable="true" class="block text-sm text-stone-900 border-b border-stone-200 pb-1 mb-1">Eğlenceli Kelime 2</strong>
+                                <span contenteditable="true" class="text-stone-500 leading-relaxed">Sınıfımızın meşhur bir sözünü ve ne anlama geldiğini yazalım...</span>
+                            </div>
+
+                            <!-- Kart 3 -->
+                            <div class="p-3 border border-stone-300 rounded bg-stone-50">
+                                <strong contenteditable="true" class="block text-sm text-stone-900 border-b border-stone-200 pb-1 mb-1">Eğlenceli Kelime 3</strong>
+                                <span contenteditable="true" class="text-stone-500 leading-relaxed">Öğretmenimizin en çok söylediği ve duyduğumuzda gülümsediğimiz o tatlı sözü yazalım...</span>
+                            </div>
+
+                            <!-- Kart 4 -->
+                            <div class="p-3 border border-stone-300 rounded bg-stone-50">
+                                <strong contenteditable="true" class="block text-sm text-stone-900 border-b border-stone-200 pb-1 mb-1">Eğlenceli Kelime 4 (Örn: "Teneffüs Deparı")</strong>
+                                <span contenteditable="true" class="text-stone-500 leading-relaxed">Sınıfımızdaki başka bir eğlenceli anı, kavram veya oyunun adını ve hikayesini buraya yazalım...</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+
+            <!-- GAZETE ALTI BİLGİ YAZISI -->
+            <footer class="mt-10 pt-6 border-t-4 border-stone-800 text-center">
+                <h3 class="text-xl font-extrabold tracking-wider text-stone-900 uppercase typewriter-text mb-1">
+                    Ülkem Yanımda 2026
+                </h3>
+                <p class="text-sm font-medium italic text-stone-700 font-serif">
+                    "Türkçemizin ve kültürümüzün dünyaya açılan kapısı"
+                </p>
+            </footer>
+        </div>
+
+
+        <!-- ================= SAYFA 3: KÜLTÜREL ÖGELER BÖLÜMÜ ================= -->
+        <div class="newspaper-page max-w-5xl mx-auto p-6 md:p-10 relative">
+            
+            <!-- SİLÜETLER (İstanbul Tarihi Camii / Minare Silüeti) -->
+            <div class="absolute right-4 bottom-24 w-64 h-32 landmark-silhouette">
+                <svg viewBox="0 0 200 100" class="w-full h-full">
+                    <path d="M0,90 L200,90 L200,85 L180,80 L160,82 L150,55 L140,82 L110,80 L100,20 L90,80 L60,83 L50,45 L40,83 L0,85 Z" />
+                    <rect x="98" y="20" width="4" height="60" />
+                    <rect x="148" y="55" width="4" height="27" />
+                    <path d="M10,85 C10,60 40,60 40,85 Z" />
+                    <path d="M115,80 C115,50 145,50 145,80 Z" />
+                </svg>
+            </div>
+
+            <!-- ÜST BİLGİ VE LOGO ALANI (SAYFA 3) -->
+            <header class="mb-6 relative z-10">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-6 pb-4">
+                    
+                    <!-- Yüklenen Orijinal Logo -->
+                    <div class="flex items-center">
+                        <img id="logo_img_s3" src="indir.png" alt="Ülkem Yanımda Logo" class="h-16 w-auto object-contain transparent-logo" onload="document.getElementById('logo_svg_s3').style.display='none';" onerror="this.style.display='none'; document.getElementById('logo_svg_s3').style.display='flex';">
+                        
+                        <!-- Resim bulunamazsa devreye girecek kusursuz vektörel logo -->
+                        <div id="logo_svg_s3" class="items-center gap-3" style="display: none;">
+                            <div class="w-12 h-10 flex-shrink-0">
+                                <svg viewBox="0 0 110 100" class="w-full h-full">
+                                    <circle cx="28" cy="15" r="9" fill="#d01c1c" />
+                                    <circle cx="70" cy="15" r="9" fill="#d01c1c" />
+                                    <path d="M 10,35 C 10,75 52,90 52,90" fill="none" stroke="#d01c1c" stroke-width="12" stroke-linecap="round" />
+                                    <path d="M 52,35 C 52,75 94,75 94,35" fill="none" stroke="#32b59b" stroke-width="12" stroke-linecap="round" />
+                                </svg>
+                            </div>
+                            <div class="flex flex-col justify-center">
+                                <div class="text-lg font-extrabold tracking-wider text-gray-900 leading-none" style="font-family: 'Cinzel', serif;">ÜLKEM</div>
+                                <div class="text-[10px] font-bold tracking-widest text-gray-700 mt-1" style="font-family: 'Cinzel', serif;">YANIMDA</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center flex-1">
+                        <h2 class="gothic-title text-2xl md:text-3xl font-black text-stone-900 tracking-wider">
+                            🌍 KÜLTÜREL TÜRKÇE YOLCULUĞUM
+                        </h2>
+                    </div>
+                </div>
+
+                <div class="double-border py-1 px-4 flex justify-between items-center text-xs font-bold text-stone-800">
+                    <span>DİLİMİZ, KÜLTÜRÜMÜZ VE KİMLİĞİMİZ</span>
+                    <span>"DÜNYAYA AÇILAN TÜRKÇE KAPISI"</span>
+                    <span>SAYFA 3</span>
+                </div>
+            </header>
+
+            <!-- KÜLTÜREL ÖGELER İÇERİK ALANI -->
+            <main class="grid grid-cols-1 lg:grid-cols-12 gap-6 relative z-10">
+                
+                <!-- SOL SÜTUN: TÜRKÇENİN ZENGİNLİĞİ & KÜLTÜREL BAĞLARIMIZ -->
+                <section class="lg:col-span-7 border-b lg:border-b-0 lg:border-r border-stone-400 pb-6 lg:pb-0 lg:pr-6 flex flex-col justify-between">
+                    <div>
+                        <!-- Bölüm Başlığı -->
+                        <div class="bg-stone-900 text-[#fbf6eb] px-3 py-1 text-xs font-extrabold tracking-widest mb-4 inline-block typewriter-text">
+                            🇹🇷 KÜLTÜREL DEĞERLERİMİZ
+                        </div>
+
+                        <!-- Ana Başlık -->
+                        <h3 contenteditable="true" class="text-xl font-bold leading-tight mb-3 text-stone-950 hover:bg-stone-100">
+                            Güzel Dilimiz Türkçe ve Bizim Kültürümüz!
+                        </h3>
+
+                        <!-- Öğrencinin yazacağı kültür alanı -->
+                        <div contenteditable="true" class="editorial-text text-sm text-stone-600 min-h-[140px] p-3 border border-dashed border-stone-300 rounded bg-stone-50/50 mb-4">
+                            Buraya bu yıl Türkçe dersinde veya kültürel etkinliklerimizde öğrendiğin en güzel bilgileri yazabilirsin. Güzel Türkçemiz hakkında ne düşünüyorsun? Büyüklerimize saygı, misafirperverlik gibi değerlerimiz bize neler hissettiriyor?
+                        </div>
+
+                        <!-- KÜLTÜREL ANILARIMIZ VE FOTOĞRAF ALANI -->
+                        <div class="p-4 bg-amber-50/70 border border-amber-200 rounded">
+                            <h4 class="font-bold text-xs uppercase tracking-wider text-amber-950 mb-2 typewriter-text">📸 KÜLTÜREL ANILARIMIZ</h4>
+                            
+                            <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
+                                <div class="sm:col-span-5 group relative">
+                                    <input type="file" accept="image/*" class="hidden" id="photo_kultur_ani" data-target="preview_kultur_ani">
+                                    <div onclick="document.getElementById('photo_kultur_ani').click()" id="preview_kultur_ani" class="photo-placeholder h-40 w-full rounded flex flex-col items-center justify-center cursor-pointer p-2 text-center text-xs">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-stone-500 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                        </svg>
+                                        <span class="font-bold text-stone-700">ANINI EKLE</span>
+                                        <span class="text-[9px] text-stone-400 mt-1">(Geleneksel Kıyafet, Bayram, Tören Resmi vb.)</span>
+                                    </div>
+                                </div>
+                                <div class="sm:col-span-7">
+                                    <p contenteditable="true" class="italic text-stone-800 font-serif text-xs">
+                                        "Yandaki kutuya kültürel etkinliklerimizde, bayramlarımızda veya milli günlerde çekildiğimiz bir fotoğrafı yükleyip altına en sevdiğin anını yaz..."
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SAĞ SÜTUN: UNUTULMAYAN DEĞERLER & KELİME KÖŞESİ -->
+                <section class="lg:col-span-5 flex flex-col justify-between gap-6">
+                    
+                    <!-- KÜLTÜRÜM - UNUTULMAYAN KÜLTÜREL DERSLER -->
+                    <div>
+                        <div class="bg-stone-900 text-[#fbf6eb] px-3 py-1 text-xs font-extrabold tracking-widest mb-4 inline-block typewriter-text">
+                            ❤️ KÜLTÜRÜM: EN GÜZEL DERSLERİMİZ
+                        </div>
+                        
+                        <p class="text-xs text-stone-600 italic mb-3">Öğretmenlerimizden ve büyüklerimizden öğrendiğimiz, hayat boyu unutmayacağımız en değerli dersleri yazıp tamamlayalım:</p>
+
+                        <div class="space-y-3 font-serif text-xs">
+                            <!-- Değer 1 -->
+                            <div class="p-2 border border-dashed border-stone-300 rounded bg-stone-50">
+                                <strong contenteditable="true" class="text-stone-900 block mb-1 hover:bg-stone-100 italic font-bold">👉 1. Ders Başlığını Buraya Yazın...</strong>
+                                <div contenteditable="true" class="text-stone-400 italic min-h-[50px] focus:text-stone-800">
+                                    Sınıfımızda bu ders hakkında öğrendiğimiz en güzel dersleri buraya kendi cümlelerimizle yazalım...
+</div>
+                            </div>
+
+                            <!-- Değer 2 -->
+                            <div class="p-2 border border-dashed border-stone-300 rounded bg-stone-50">
+                                <strong contenteditable="true" class="text-stone-900 block mb-1 hover:bg-stone-100 italic font-bold">👉 2. Ders Başlığını Buraya Yazın...</strong>
+                                <div contenteditable="true" class="text-stone-400 italic min-h-[50px] focus:text-stone-800">
+                                    Sınıfımızda bu ders hakkında öğrendiğimiz en güzel dersleri buraya kendi cümlelerimizle yazalım...
+                                </div>
+                            </div>
+
+                            <!-- Değer 3 -->
+                            <div class="p-2 border border-dashed border-stone-300 rounded bg-stone-50">
+                                <strong contenteditable="true" class="text-stone-900 block mb-1 hover:bg-stone-100 italic font-bold">👉 3. Ders Başlığını Buraya Yazın...</strong>
+                                <div contenteditable="true" class="text-stone-400 italic min-h-[50px] focus:text-stone-800">
+                                    Sınıfımızda bu ders hakkında öğrendiğimiz en güzel dersleri buraya kendi cümlelerimizle yazalım...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ETKİNLİK ALANI: ÖĞRENCİLERİN MEZUNİYET SÖZLERİ -->
+                    <div class="p-4 border-2 border-dashed border-stone-400 bg-stone-100/30 rounded">
+                        <h4 class="font-extrabold text-xs uppercase tracking-widest text-stone-800 mb-2 typewriter-text">✍️ BENİM GELECEK NOTUM</h4>
+                        <p class="text-[11px] text-stone-600 italic mb-2">Büyüdüğümüzde bu gazeteye dönüp bakınca kendimize ne söylemek isteriz? Kendimize mini bir mesaj yazalım:</p>
+                        
+                        <div class="space-y-2 text-xs italic font-serif text-stone-800">
+                            <div contenteditable="true" class="border-l-2 border-stone-400 pl-2 min-h-[40px] text-stone-400 focus:text-stone-800">
+                                "Sevgili Gelecekteki Kendim, umarım hâlâ çok gülüyorsundur..."
+                            </div>
+                        </div>
+                    </div>
+
+                </section>
+            </main>
+
+            <!-- GAZETE ALTI BİLGİ YAZISI (SAYFA 3) -->
+            <footer class="mt-10 pt-6 border-t-4 border-stone-800 text-center">
+                <h3 class="text-xl font-extrabold tracking-wider text-stone-900 uppercase typewriter-text mb-1">
+                    Ülkem Yanımda 2026
+                </h3>
+                <p class="text-sm font-medium italic text-stone-700 font-serif">
+                    "Türkçemizin ve kültürümüzün dünyaya açılan kapısı"
+                </p>
+            </footer>
+        </div>
+
+    </div>
+
+    <!-- Dinamik Fotoğraf Yükleme ve Ekran Yönetimi Fonksiyonları -->
+    <script>
+        // Ekran geçiş fonksiyonları
+        function showEditor() {
+            document.getElementById('instruction-screen').classList.add('hidden');
+            document.getElementById('editor-screen').classList.remove('hidden');
+            // Ekran değiştirildiğinde sayfa en yukarı kaydırılsın
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function hideEditor() {
+            document.getElementById('editor-screen').classList.add('hidden');
+            document.getElementById('instruction-screen').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            // Gazetedeki tüm dosya girdilerini yakalayalım ve olay dinleyicisi ekleyelim
+            document.querySelectorAll('input[type="file"]').forEach(input => {
+                input.addEventListener('change', function() {
+                    const targetId = this.getAttribute('data-target');
+                    const targetDiv = document.getElementById(targetId);
+                    const file = this.files[0];
+                    if (file && targetDiv) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            // Kutunun içini sadece seçilen görselle güncelliyoruz
+                            targetDiv.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover rounded shadow border border-stone-400" alt="Yüklenen Görsel">`;
+                            // Paddingleme sınıflarını görselin tam oturması için kaldırıyoruz
+                            targetDiv.classList.remove('p-4', 'p-2', 'p-1');
+                        }
+                        reader.readAsDataURL(file);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

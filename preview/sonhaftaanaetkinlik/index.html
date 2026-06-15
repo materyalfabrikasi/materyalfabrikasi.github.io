@@ -1,0 +1,510 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Etkileşimli Video Etkinliği</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts - Playfair Display, Plus Jakarta Sans & Dancing Script -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Tipografi Sınıfları */
+        .font-heading {
+            font-family: 'Playfair Display', serif;
+        }
+        .font-body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .font-cursive {
+            font-family: 'Dancing Script', cursive;
+        }
+
+        /* Görselleri ekrana tam sığdıran ve kırpılmasını önleyen arka plan tanımlamaları */
+        .bg-instructions {
+            background-image: url('1.jpg') !important;
+            background-size: 100% 100% !important;
+            background-position: center center !important;
+            background-repeat: no-repeat !important;
+            background-attachment: fixed !important;
+        }
+        .bg-video-arena {
+            background-image: url('2.jpg') !important;
+            background-size: 100% 100% !important;
+            background-position: center center !important;
+            background-repeat: no-repeat !important;
+            background-attachment: fixed !important;
+        }
+        /* Yazı okunabilirliği için güçlü gölgelendirme */
+        .shadow-text {
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.95), 0 4px 15px rgba(0, 0, 0, 0.9);
+        }
+        .shadow-text-subtle {
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.85);
+        }
+    </style>
+</head>
+<body class="bg-instructions text-slate-100 font-body h-screen w-screen overflow-hidden flex flex-col justify-between transition-all duration-700 select-none">
+
+    <!-- Üst Bar (Tamamen Şeffaf ve Minimal) -->
+    <header class="bg-transparent py-4 px-6 flex-shrink-0 z-50">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <!-- Yönerge ekranında gizli tutulup, etkinlik başlayınca aktifleşen logo alanı -->
+            <div id="headerLeft" class="invisible flex items-center space-x-3 transition-opacity duration-300">
+                <div class="bg-amber-600 p-2 rounded-lg text-white shadow-lg shadow-amber-500/30">
+                    <i class="fa-solid fa-graduation-cap text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-heading font-bold text-lg tracking-wide shadow-text text-white">Video Eğitimi</h1>
+                    <p class="text-xs text-slate-200 shadow-text-subtle">Videoyu izleyin ve soruları yanıtlayın</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ANA İÇERİK ALANI -->
+    <main class="flex-grow flex items-center justify-center p-4 md:p-6 overflow-hidden">
+        
+        <!-- YÖNERGE EKRANI (Başlık, Açıklama ve Buton bilet görselinin içine hizalandı) -->
+        <section id="instructionScreen" class="w-full max-w-xl transition-all duration-500 transform scale-100 flex flex-col justify-center items-center">
+            
+            <!-- Açıklamayı bilet resminin tam içine konumlandırmak için daha fazla sağa (ml-36 / md:ml-72) kaydırılmış alan -->
+            <div class="text-center p-6 w-full mt-40 ml-36 md:mt-52 md:ml-72">
+                
+                <!-- Başlık (İstek üzerine kırmızı renk yapıldı) -->
+                <h2 class="font-heading text-3xl md:text-4xl font-black mb-3 text-red-600 tracking-wider uppercase">
+                    NELER ÖĞRENDİK? 
+                </h2>
+
+                <!-- Kısaltılmış Açıklama Metni (Bilet içinde mükemmel okunabilen tam siyah ve kalın renk) -->
+                <div class="max-w-md mx-auto mb-8 text-black text-base md:text-xl font-black leading-relaxed tracking-wide">
+                    <p>
+                        Videoyu dikkatlice izleyin ve karşınıza çıkan soruları yanıtlayın!
+                    </p>
+                </div>
+
+                <!-- Başlat Butonu (Kırmızı renkli) -->
+                <div class="flex justify-center w-full max-w-xs mx-auto">
+                    <button id="startBtn" class="w-full bg-red-600 hover:bg-red-750 text-white font-extrabold px-10 py-3.5 rounded-xl shadow-xl hover:shadow-red-600/40 transition-all duration-300 flex items-center justify-center gap-2 text-md uppercase tracking-wider">
+                        <span>Etkinliği Başlat</span>
+                        <i class="fa-solid fa-play"></i>
+                    </button>
+                </div>
+            </div>
+            
+        </section>
+
+        <!-- VİDEO VE ETKİLEŞİM ARENASI -->
+        <section id="videoScreen" class="hidden w-full max-w-4xl h-full max-h-[85vh] p-2 flex flex-col justify-between transition-all duration-500 transform opacity-0 scale-95 overflow-hidden">
+            
+            <!-- Video Alanı (Tamamen çerçevesiz) -->
+            <div class="flex-grow flex items-center justify-center overflow-hidden relative">
+                <div class="relative w-full h-full max-h-[70vh] flex items-center justify-center">
+                    
+                    <!-- Çerçevesiz Video Elementi -->
+                    <video id="interactiveVideo" class="w-full h-full object-contain">
+                        <source src="1.mp4" type="video/mp4">
+                        Tarayıcınız HTML5 video formatını desteklemiyor.
+                    </video>
+
+                    <!-- Özel Soru Katmanı (Cevap alanı kaldırıldı, sadece soru ve devam butonu) -->
+                    <div id="overlayQuestion" class="absolute inset-0 bg-slate-950/90 backdrop-blur-sm flex items-center justify-center p-6 opacity-0 pointer-events-none transition-all duration-300 z-20">
+                        <div class="w-full max-w-lg bg-white border border-slate-200 p-8 rounded-3xl shadow-2xl transform scale-90 transition-transform duration-300 text-slate-900" id="overlayBox">
+                            <div class="flex justify-between items-center mb-5 border-b border-slate-100 pb-3">
+                                <span class="text-xs font-bold uppercase tracking-widest text-amber-600 flex items-center gap-1.5 font-heading">
+                                    <i class="fa-regular fa-star"></i> Bilgi Durağı
+                                </span>
+                                <span class="bg-slate-100 text-slate-500 text-xs px-2.5 py-1 rounded-full font-semibold" id="questionProgress">Soru: 1/3</span>
+                            </div>
+                            
+                            <!-- Soru Metni -->
+                            <h4 class="font-heading text-lg md:text-xl font-bold text-slate-900 mb-8 leading-relaxed" id="overlayQuestionText">Soru içeriği buraya gelecektir?</h4>
+                            
+                            <!-- Devam Et Butonu (Her zaman aktif) -->
+                            <button id="submitAnswerBtn" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-amber-600/20 flex items-center justify-center gap-2 text-md tracking-wider uppercase">
+                                <span>Devam Et</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Geri bildirim pop-up'ı -->
+                    <div id="feedbackPopup" class="absolute inset-0 flex flex-col items-center justify-center z-30 pointer-events-none opacity-0 transition-all duration-300">
+                        <div id="feedbackIconWrapper" class="w-16 h-16 rounded-full flex items-center justify-center mb-4 text-3xl shadow-lg"></div>
+                        <h5 id="feedbackTitle" class="text-xl font-bold text-white">Harika!</h5>
+                        <p id="feedbackText" class="text-xs text-slate-300 mt-1 bg-slate-950/80 px-4 py-1.5 rounded-full"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Video Kontrolleri (Alt Kısım) -->
+            <div class="mt-4 flex-shrink-0 flex flex-wrap gap-4 items-center justify-between bg-slate-900/90 p-3 rounded-xl border border-slate-800/80 shadow-2xl w-full">
+                <div class="flex items-center gap-3">
+                    <button id="playPauseBtn" class="text-white hover:text-amber-400 text-lg w-10 h-10 rounded-lg bg-slate-850 hover:bg-slate-800 flex items-center justify-center transition-colors">
+                        <i class="fa-solid fa-play"></i>
+                    </button>
+                    <span id="timeDisplay" class="text-xs font-mono text-slate-300">00:00 / 00:00</span>
+                </div>
+                <!-- İlerleme Çubuğu ve Soru İşaretçileri -->
+                <div class="flex-grow mx-4 relative group/timeline">
+                    <div class="w-full bg-slate-800 h-2 rounded-full cursor-pointer relative" id="progressBarContainer">
+                        <div id="progressBar" class="bg-amber-500 h-full rounded-full w-0 transition-all duration-100"></div>
+                        <!-- Soru işaretçileri buraya JS ile eklenecek -->
+                        <div id="questionMarkers" class="absolute inset-0 pointer-events-none"></div>
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <button id="restartVideoBtn" class="text-slate-300 hover:text-white text-xs bg-slate-850 hover:bg-slate-800 px-3 py-2 rounded-lg flex items-center gap-1.5 transition-colors">
+                        <i class="fa-solid fa-rotate-left"></i> Sıfırla
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- BAŞARI / ZARİF TEBRİK KARTI EKRANI (Kutu tamamen kaldırıldı, doğrudan 2.jpg görselinin üzerine yerleşti) -->
+        <section id="resultScreen" class="hidden w-full max-w-xl p-4 text-center transition-all duration-500 transform opacity-0 scale-95">
+            <div class="flex flex-col items-center text-white relative">
+                
+                <!-- Zarif Tebrik Kalbi (Daire Turkuaz #00f5d4, Kalp Kırmızı) -->
+                <div class="w-24 h-24 bg-[#00f5d4] rounded-full flex items-center justify-center text-4xl mb-8 animate-pulse shadow-2xl border-4 border-white/20">
+                    <i class="fa-solid fa-heart text-red-600 animate-bounce"></i>
+                </div>
+                
+                <h2 class="font-heading text-4xl md:text-5xl font-extrabold text-white mb-6 tracking-wide shadow-text">Tebrikler!</h2>
+                
+                <!-- Özel Aile Tebrik Mesajı (Yazı rengi siyah, Aile yazısı kırmızı ve el yazısı fontunda) -->
+                <div class="max-w-2xl mx-auto mb-12 space-y-4">
+                    <p class="text-teal-300 text-sm font-bold uppercase tracking-widest font-body shadow-text-subtle"></p>
+                    <p class="font-cursive text-4xl md:text-5xl font-bold leading-normal text-black italic">
+                        "Önümüzdeki dönem yeniden buluşmak üzere...
+                    </p>
+                    <p class="font-cursive text-4xl md:text-5xl font-bold leading-normal text-red-600 italic">
+                        Ülkem Yanımda Ailesi"
+                    </p>
+                </div>
+
+                <!-- Butonlar -->
+                <div class="flex flex-col sm:flex-row gap-4 justify-center w-full max-w-sm z-10">
+                    <button id="restartActivityBtn" class="w-full bg-white hover:bg-slate-100 text-slate-950 font-bold px-6 py-3.5 rounded-xl shadow-xl transition-all flex items-center justify-center gap-2 text-xs uppercase tracking-wider">
+                        <i class="fa-solid fa-arrow-rotate-left"></i> Yeniden Başlat
+                    </button>
+                    <button id="backToHomeBtn" class="w-full bg-slate-900/90 hover:bg-slate-800 text-white border border-slate-700/50 font-bold px-6 py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 text-xs uppercase tracking-wider">
+                        <i class="fa-solid fa-house"></i> ...
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Alt Bilgi (Şeffaf ve Sabit Yükseklik) -->
+    <footer class="bg-transparent py-4 flex-shrink-0 text-center text-xs text-slate-300 font-semibold shadow-text">
+        <p>&copy; 2026 Ülkem Yanımda/Türkçemizin ve kültürümüzün dünyaya açılan kapısı.</p>
+    </footer>
+
+    <!-- JavaScript Uygulama Mantığı -->
+    <script>
+        const DEFAULT_QUESTIONS = [
+            {
+                id: 1,
+                time: 14, // 0.14
+                question: "Başka neler öğrendik? Öğrendiklerini bizimle paylaşır mısın?"
+            },
+            {
+                id: 2,
+                time: 19, // 0.19
+                question: "En eğlendiğin ve unutamadığın ders hangisiydi?"
+            },
+            {
+                id: 3,
+                time: 24, // 0.24
+                question: "Öğrendiğin en zor Türkçe sözcük hangisiydi?"
+            }
+        ];
+
+        // Uygulama Durumu (State)
+        let questions = JSON.parse(JSON.stringify(DEFAULT_QUESTIONS));
+        let activeQuestionIndex = -1;
+        let triggeredQuestions = new Set(); 
+
+        // DOM Elementlerini Yakalama
+        const startBtn = document.getElementById('startBtn');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const restartVideoBtn = document.getElementById('restartVideoBtn');
+        const restartActivityBtn = document.getElementById('restartActivityBtn');
+        const backToHomeBtn = document.getElementById('backToHomeBtn');
+        const submitAnswerBtn = document.getElementById('submitAnswerBtn');
+
+        const instructionScreen = document.getElementById('instructionScreen');
+        const videoScreen = document.getElementById('videoScreen');
+        const resultScreen = document.getElementById('resultScreen');
+        const headerLeft = document.getElementById('headerLeft');
+
+        const video = document.getElementById('interactiveVideo');
+        const progressBar = document.getElementById('progressBar');
+        const progressBarContainer = document.getElementById('progressBarContainer');
+        const questionMarkers = document.getElementById('questionMarkers');
+        const timeDisplay = document.getElementById('timeDisplay');
+
+        const overlayQuestion = document.getElementById('overlayQuestion');
+        const overlayBox = document.getElementById('overlayBox');
+        const overlayQuestionText = document.getElementById('overlayQuestionText');
+        const questionProgress = document.getElementById('questionProgress');
+
+        const feedbackPopup = document.getElementById('feedbackPopup');
+        const feedbackIconWrapper = document.getElementById('feedbackIconWrapper');
+        const feedbackTitle = document.getElementById('feedbackTitle');
+        const feedbackText = document.getElementById('feedbackText');
+
+        // ETKİNLİK BAŞLATMA
+        startBtn.addEventListener('click', () => {
+            instructionScreen.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                instructionScreen.classList.add('hidden');
+                
+                // Arka planı 2.jpg olarak değiştir
+                document.body.classList.remove('bg-instructions');
+                document.body.classList.add('bg-video-arena');
+
+                // Üst bar sol kısmını göster
+                headerLeft.classList.remove('invisible');
+                headerLeft.classList.add('opacity-100');
+
+                videoScreen.classList.remove('hidden');
+                setTimeout(() => {
+                    videoScreen.classList.remove('opacity-0', 'scale-95');
+                    videoScreen.classList.add('opacity-100', 'scale-100');
+                    initializeActivity();
+                }, 50);
+            }, 300);
+        });
+
+        // AKTİVİTEYİ SIFIRLAMA VE YÜKLEME
+        function initializeActivity() {
+            triggeredQuestions.clear();
+            buildProgressMarkers();
+            
+            // Videoyu başlat
+            video.currentTime = 0;
+            video.play();
+            updatePlayPauseButton(true);
+        }
+
+        // VİDEO SÜRESİNDEKİ İŞARETÇİLERİ ÇİZME
+        function buildProgressMarkers() {
+            questionMarkers.innerHTML = '';
+            const duration = video.duration || 60;
+            
+            questions.forEach(q => {
+                const percentage = (q.time / duration) * 100;
+                if (percentage <= 100) {
+                    const marker = document.createElement('div');
+                    marker.className = 'absolute top-0 w-3.5 h-3.5 bg-amber-400 border border-slate-950 rounded-full transform -translate-x-1/2 -translate-y-[2px] shadow-lg cursor-help transition-all duration-200 hover:scale-125';
+                    marker.style.left = `${percentage}%`;
+                    marker.title = `Soru Noktası: ${q.time}sn`;
+                    questionMarkers.appendChild(marker);
+                }
+            });
+        }
+
+        // VİDEO KONTROLLERİ VE OYNATMA TAKİBİ
+        video.addEventListener('timeupdate', () => {
+            const currentTime = video.currentTime;
+            const duration = video.duration || 1;
+            
+            // İlerleme Çubuğu Güncellemesi
+            const progressPercent = (currentTime / duration) * 100;
+            progressBar.style.width = `${progressPercent}%`;
+            
+            // Süre Göstergesini Güncelleme
+            timeDisplay.innerText = `${formatTime(currentTime)} / ${formatTime(duration)}`;
+
+            // Soru Tetikleme Kontrolü
+            questions.forEach((q, index) => {
+                if (Math.floor(currentTime) === q.time && !triggeredQuestions.has(q.id)) {
+                    video.pause();
+                    updatePlayPauseButton(false);
+                    triggerQuestion(index);
+                }
+            });
+        });
+
+        // Video Yüklendiğinde İşaretçileri Tekrar Güncelle
+        video.addEventListener('loadedmetadata', () => {
+            buildProgressMarkers();
+        });
+
+        // Video Sona Erdiğinde Sonuç Ekranına Geç
+        video.addEventListener('ended', () => {
+            showResultScreen();
+        });
+
+        // Oynat / Duraklat Butonu
+        playPauseBtn.addEventListener('click', () => {
+            if (!overlayQuestion.classList.contains('pointer-events-none')) return;
+            
+            if (video.paused) {
+                video.play();
+                updatePlayPauseButton(true);
+            } else {
+                video.pause();
+                updatePlayPauseButton(false);
+            }
+        });
+
+        function updatePlayPauseButton(isPlaying) {
+            if (isPlaying) {
+                playPauseBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+            } else {
+                playPauseBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+            }
+        }
+
+        function formatTime(seconds) {
+            if (isNaN(seconds)) return "00:00";
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // İlerleme Çubuğuna Tıklayarak İleri/Geri Sarma
+        progressBarContainer.addEventListener('click', (e) => {
+            if (!overlayQuestion.classList.contains('pointer-events-none')) return;
+
+            const rect = progressBarContainer.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const width = rect.width;
+            const clickPercent = clickX / width;
+            const targetTime = clickPercent * video.duration;
+
+            questions.forEach(q => {
+                if (targetTime < q.time) {
+                    triggeredQuestions.delete(q.id);
+                }
+            });
+
+            video.currentTime = targetTime;
+        });
+
+        // Yeniden Başlat Butonu
+        restartVideoBtn.addEventListener('click', () => {
+            if (!overlayQuestion.classList.contains('pointer-events-none')) return;
+            initializeActivity();
+        });
+
+        // ETKİLEŞİMLİ SORU PANELİNİ AÇMA (Sadece Soru ve Devam Butonu)
+        function triggerQuestion(index) {
+            activeQuestionIndex = index;
+            const currentQ = questions[index];
+            triggeredQuestions.add(currentQ.id);
+
+            questionProgress.innerText = `Soru: ${index + 1}/${questions.length}`;
+            overlayQuestionText.innerText = currentQ.question;
+
+            overlayQuestion.classList.remove('pointer-events-none', 'opacity-0');
+            setTimeout(() => {
+                overlayBox.classList.remove('scale-90');
+                overlayBox.classList.add('scale-100');
+            }, 50);
+        }
+
+        // DEVAM ET BUTONUNA BASILDIĞINDA
+        submitAnswerBtn.addEventListener('click', () => {
+            if (activeQuestionIndex === -1) return;
+
+            // Başarıyla yanıtlandı bildirimi
+            showFeedback(true, "Teşekkürler, devam ediliyor!");
+
+            overlayBox.classList.remove('scale-100');
+            overlayBox.classList.add('scale-90');
+            overlayQuestion.classList.add('opacity-0', 'pointer-events-none');
+
+            activeQuestionIndex = -1;
+
+            setTimeout(() => {
+                video.play();
+                updatePlayPauseButton(true);
+            }, 1800);
+        });
+
+        // POP-UP GERİ BİLDİRİM
+        function showFeedback(isCorrect, text) {
+            feedbackPopup.classList.remove('opacity-0');
+            
+            feedbackIconWrapper.className = "w-16 h-16 rounded-full flex items-center justify-center mb-4 text-3xl shadow-lg bg-amber-500 text-white animate-bounce";
+            feedbackIconWrapper.innerHTML = '<i class="fa-solid fa-circle-check animate-pulse"></i>';
+            feedbackTitle.innerText = "Harika!";
+            feedbackTitle.className = "text-xl font-bold text-amber-500 font-heading";
+
+            feedbackText.innerText = text;
+
+            setTimeout(() => {
+                feedbackPopup.classList.add('opacity-0');
+            }, 1600);
+        }
+
+        // SONUÇ EKRANINI GÖSTERME (Zarif Tebrik Kartı - 2.jpg Üzerinde)
+        function showResultScreen() {
+            videoScreen.classList.add('scale-95', 'opacity-0');
+            
+            // Sonuç ekranında da arka planı 2.jpg yapıp sol üstteki başlığı gizliyoruz
+            document.body.classList.remove('bg-instructions');
+            document.body.classList.add('bg-video-arena');
+            headerLeft.classList.add('invisible');
+
+            setTimeout(() => {
+                videoScreen.classList.add('hidden');
+                resultScreen.classList.remove('hidden');
+                setTimeout(() => {
+                    resultScreen.classList.remove('opacity-0', 'scale-95');
+                    resultScreen.classList.add('opacity-100', 'scale-100');
+                }, 50);
+            }, 300);
+        }
+
+        // YENİDEN BAŞLATMA VE ANA SAYFAYA DÖNME İŞLEMLERİ
+        restartActivityBtn.addEventListener('click', () => {
+            resultScreen.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                resultScreen.classList.add('hidden');
+                
+                // Arka planı 2.jpg yap
+                document.body.classList.remove('bg-instructions');
+                document.body.classList.add('bg-video-arena');
+                headerLeft.classList.remove('invisible');
+
+                videoScreen.classList.remove('hidden');
+                setTimeout(() => {
+                    videoScreen.classList.remove('opacity-0', 'scale-95');
+                    videoScreen.classList.add('opacity-100', 'scale-100');
+                    initializeActivity();
+                }, 50);
+            }, 300);
+        });
+
+        backToHomeBtn.addEventListener('click', () => {
+            resultScreen.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                resultScreen.classList.add('hidden');
+                headerLeft.classList.add('invisible');
+                
+                // Arka planı 1.jpg yap
+                document.body.classList.remove('bg-video-arena');
+                document.body.classList.add('bg-instructions');
+
+                instructionScreen.classList.remove('hidden');
+                setTimeout(() => {
+                    instructionScreen.classList.remove('opacity-0', 'scale-95');
+                    instructionScreen.classList.add('opacity-100', 'scale-100');
+                }, 50);
+            }, 300);
+        });
+    </script>
+</body>
+</html>
