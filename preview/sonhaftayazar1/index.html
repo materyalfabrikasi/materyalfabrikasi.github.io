@@ -1,19 +1,14 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dijital Anı Duvarı 🌟</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Baloo 2 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&display=swap" rel="stylesheet">
-    <!-- FontAwesome Simgeleri -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Konfeti Efekti Kütüphanesi -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
@@ -90,12 +85,12 @@
 
         /* Balon Uçma Efekti (Çerçevenin en altından yukarı doğru) */
         @keyframes floatBalloon {
-            0% { transform: translateY(0) scale(1); }
-            100% { transform: translateY(-640px) scale(1.1); } 
+            0% { transform: translateY(100%) scale(1); }
+            100% { transform: translateY(-700px) scale(1.1); } 
         }
         .flying-balloon {
             position: absolute;
-            bottom: -120px; 
+            bottom: 0; 
             animation: floatBalloon var(--speed) linear infinite;
             cursor: pointer;
         }
@@ -117,32 +112,21 @@
 </head>
 <body class="min-h-screen relative flex flex-col justify-between pb-12">
 
-    <!-- 📋 Giriş Yönerge Ekranı (1.jpg Arka Planlı, Çerçevesiz, Ekranı Tamamen Boşluksuz ve Kesilmesiz Kaplayan Tasarım) -->
     <div id="introOverlay" class="fixed inset-0 z-50 flex items-center justify-center transition-all duration-700" style="background-image: url('1.jpg');">
-        <!-- Bilet Alanına Tam Hizalanmış ve Çerçevesiz Şeffaf Konteyner -->
         <div class="absolute left-[38%] right-[10%] top-[40%] bottom-[12%] flex flex-col items-center justify-center gap-2 p-2 sm:p-4 text-center overflow-y-auto">
-            
             <h1 class="text-lg sm:text-2xl md:text-3xl font-black text-amber-950 leading-none drop-shadow-sm tracking-wide">
                 Dijital Anı Duvarı
             </h1>
-            
-            <!-- Orijinal Yönerge Metni -->
             <p class="text-amber-900/90 text-[10px] sm:text-xs md:text-base font-bold leading-relaxed max-w-[180px] sm:max-w-[320px]">
                 Bir yıl boyunca hep birlikte eğlendik, kültürümüzü tanıdık, Türkçemizi geliştirdik. Şimdi geride bıraktığımız anılarımızdan bir hatıra köşesi oluşturma zamanı. Hazırsanız başlayalım.
             </p>
-            
             <button onclick="closeIntroOverlay()" class="btn-kids-yellow bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-white font-black text-[9px] sm:text-xs md:text-sm py-1.5 sm:py-2.5 px-4 sm:px-8 rounded-full shadow-md mt-1 sm:mt-3 transform hover:scale-105 active:scale-95 transition">
                 Hazırsanız başlayalım 🚀
             </button>
         </div>
     </div>
 
-    <!-- Başlık Bölümü -->
     <header class="relative z-10 container mx-auto px-4 pt-8 text-center">
-        <div class="flex justify-center items-center gap-3 mb-2 animate-bounce">
-            
-        </div>
-        
         <h1 id="mainTitle" class="text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-amber-600 via-rose-500 to-orange-500 drop-shadow-sm tracking-wide">
             Dijital Anı Duvarı
         </h1>
@@ -160,7 +144,6 @@
         </div>
     </header>
 
-    <!-- Ana Menü -->
     <main class="relative z-10 container mx-auto px-4 mt-8 flex-grow">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-4xl mx-auto mb-8">
             <button onclick="switchTab('tab-duvar')" id="btn-tab-duvar" class="tab-btn bg-pink-400 text-white font-bold py-4 px-3 rounded-2xl flex flex-col items-center justify-center gap-2 border-4 border-white shadow-md transform hover:-translate-y-1 transition duration-200">
@@ -181,7 +164,6 @@
             </button>
         </div>
 
-        <!-- BÖLÜM 1: DİLEK & NOT DUVARI -->
         <section id="tab-duvar" class="tab-content block">
             <div class="bg-white/70 backdrop-blur-md rounded-3xl p-6 md:p-8 shadow-xl border-4 border-pink-200 max-w-6xl mx-auto">
                 <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
@@ -195,13 +177,10 @@
                         <i class="fas fa-plus-circle"></i> Yeni Not As!
                     </button>
                 </div>
-                <div id="notesContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Dinamik notlar buraya yüklenecek -->
-                </div>
+                <div id="notesContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
             </div>
         </section>
 
-        <!-- BÖLÜM 2: SINIF ALBÜMÜ -->
         <section id="tab-album" class="tab-content hidden">
             <div class="bg-white/70 backdrop-blur-md rounded-3xl p-6 md:p-8 shadow-xl border-4 border-sky-200 max-w-6xl mx-auto">
                 <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
@@ -215,13 +194,10 @@
                         <i class="fas fa-camera"></i> Yeni Fotoğraf Ekle!
                     </button>
                 </div>
-                <div id="photosContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
-                    <!-- Dinamik polaroid kartları buraya yüklenecek -->
-                </div>
+                <div id="photosContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center"></div>
             </div>
         </section>
 
-        <!-- BÖLÜM 3: MİNİ ÇİZİM ALANI -->
         <section id="tab-cizim" class="tab-content hidden">
             <div class="bg-white/70 backdrop-blur-md rounded-3xl p-6 md:p-8 shadow-xl border-4 border-teal-200 max-w-5xl mx-auto">
                 <div class="text-center mb-6">
@@ -256,17 +232,17 @@
                         <div>
                             <span class="block text-xs font-bold text-teal-700 mb-2">Sevimli Damgalar:</span>
                             <div class="grid grid-cols-4 gap-2">
-                                <button onclick="selectStamp('⭐')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Yıldız">⭐</button>
-                                <button onclick="selectStamp('❤️')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Kalp">❤️</button>
-                                <button onclick="selectStamp('😊')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Gülen Yüz">😊</button>
-                                <button onclick="selectStamp('🎈')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Balon">🎈</button>
-                                <button onclick="selectStamp('🌸')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Çiçek">🌸</button>
-                                <button onclick="selectStamp('🐱')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Kedi">🐱</button>
-                                <button onclick="selectStamp('🦖')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Dinozor">🦖</button>
-                                <button onclick="selectStamp('🚀')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Roket">🚀</button>
-                                <button onclick="selectStamp('🌈')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Gökkuşağı">🌈</button>
-                                <button onclick="selectStamp('🍭')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Şeker">🍭</button>
-                                <button onclick="selectStamp('🎨')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Boya">🎨</button>
+                                <button onclick="selectStamp(event, '⭐')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Yıldız">⭐</button>
+                                <button onclick="selectStamp(event, '❤️')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Kalp">❤️</button>
+                                <button onclick="selectStamp(event, '😊')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Gülen Yüz">😊</button>
+                                <button onclick="selectStamp(event, '🎈')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Balon">🎈</button>
+                                <button onclick="selectStamp(event, '🌸')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Çiçek">🌸</button>
+                                <button onclick="selectStamp(event, '🐱')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Kedi">🐱</button>
+                                <button onclick="selectStamp(event, '🦖')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Dinozor">🦖</button>
+                                <button onclick="selectStamp(event, '🚀')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Roket">🚀</button>
+                                <button onclick="selectStamp(event, '🌈')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Gökkuşağı">🌈</button>
+                                <button onclick="selectStamp(event, '🍭')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Şeker">🍭</button>
+                                <button onclick="selectStamp(event, '🎨')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Boya">🎨</button>
                             </div>
                         </div>
 
@@ -292,7 +268,6 @@
             </div>
         </section>
 
-        <!-- BÖLÜM 4: BALON PATLATMA ETKİNLİĞİ -->
         <section id="tab-oyun" class="tab-content hidden">
             <div class="bg-white/80 backdrop-blur-md rounded-3xl p-6 md:p-8 shadow-2xl border-4 border-yellow-300 max-w-4xl mx-auto text-center relative overflow-hidden" style="min-height: 550px;">
                 <h2 class="text-2xl md:text-3xl font-extrabold text-slate-800 flex items-center justify-center gap-2">
@@ -302,13 +277,11 @@
                     Ekranda süzülen renkli balonları bul ve patlat! Sınıfımıza ait tam 5 tatlı mesajı sırayla ortaya çıkar!
                 </p>
 
-                <!-- Canlı Skor Göstergesi -->
                 <div class="mb-5 inline-flex items-center gap-3 bg-pink-500 border-2 border-white px-6 py-2 rounded-full shadow-md text-white font-extrabold text-lg md:text-xl">
                     <span>🎈 Patlatılan Balon:</span>
                     <span id="scoreCounter" class="bg-yellow-300 text-pink-700 px-4 py-1 rounded-full shadow-inner">0 / 5</span>
                 </div>
 
-                <!-- Oyun Kontrol Butonları -->
                 <div class="flex justify-center gap-4 mb-5">
                     <button id="btnStartGame" onclick="startBalloonGame()" class="btn-kids btn-kids-yellow bg-amber-500 hover:bg-amber-600 text-white font-black py-2 px-6 rounded-full text-md flex items-center gap-2">
                         <i class="fas fa-play"></i> Yeniden Başlat
@@ -318,17 +291,11 @@
                     </button>
                 </div>
 
-                <!-- OYUN ALANI (2.JPG ARKA PLANLI - DOĞRUDAN OYUN BAŞLAYACAK ŞEKİLDE AYARLANDI) -->
-                <!-- 2.jpg arka planının hiçbir şekilde kesilmemesi ve sığması için background-size: 100% 100% yapıldı -->
-                <div id="gameStage" class="w-full aspect-[3/2] max-h-[480px] rounded-2xl relative overflow-hidden shadow-inner border-4 border-amber-200 bg-center bg-no-repeat bg-[#fbf5e6]" style="background-image: url('2.jpg'); background-size: 100% 100%;">
-                    <!-- Balonlar doğrudan bu sahnede uçacak -->
-                </div>
-
+                <div id="gameStage" class="w-full aspect-[3/2] max-h-[480px] rounded-2xl relative overflow-hidden shadow-inner border-4 border-amber-200 bg-center bg-no-repeat bg-[#fbf5e6]" style="background-image: url('2.jpg'); background-size: 100% 100%;"></div>
             </div>
         </section>
     </main>
 
-    <!-- DİLEK / NOT EKLEME MODAL -->
     <div id="noteModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 md:p-8 max-w-md w-full border-4 border-emerald-300 shadow-2xl transform scale-95 transition-all duration-300">
             <div class="flex justify-between items-center mb-4">
@@ -346,21 +313,21 @@
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Sevimli Bir Emoji Seç:</label>
                     <div class="flex justify-around text-2xl bg-emerald-50 p-2 rounded-xl">
-                        <button onclick="selectEmoji('🌟')" class="emoji-opt border-2 border-transparent hover:border-emerald-300 rounded p-1">🌟</button>
-                        <button onclick="selectEmoji('🚀')" class="emoji-opt border-2 border-transparent hover:border-emerald-300 rounded p-1">🚀</button>
-                        <button onclick="selectEmoji('🍭')" class="emoji-opt border-2 border-transparent hover:border-emerald-300 rounded p-1">🍭</button>
-                        <button onclick="selectEmoji('🦖')" class="emoji-opt border-2 border-transparent hover:border-emerald-300 rounded p-1">🦖</button>
-                        <button onclick="selectEmoji('🎨')" class="emoji-opt border-2 border-transparent hover:border-emerald-300 rounded p-1">🎨</button>
+                        <button onclick="selectEmoji(event, '🌟')" class="emoji-opt border-2 border-transparent hover:border-emerald-300 rounded p-1">🌟</button>
+                        <button onclick="selectEmoji(event, '🚀')" class="emoji-opt border-2 border-transparent hover:border-emerald-300 rounded p-1">🚀</button>
+                        <button onclick="selectEmoji(event, '🍭')" class="emoji-opt border-2 border-transparent hover:border-emerald-300 rounded p-1">🍭</button>
+                        <button onclick="selectEmoji(event, '🦖')" class="emoji-opt border-2 border-transparent hover:border-emerald-300 rounded p-1">🦖</button>
+                        <button onclick="selectEmoji(event, '🎨')" class="emoji-opt border-2 border-transparent hover:border-emerald-300 rounded p-1">🎨</button>
                         <input type="hidden" id="selectedEmoji" value="🌟">
                     </div>
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Not Kartı Rengi:</label>
                     <div class="grid grid-cols-4 gap-2">
-                        <button onclick="selectNoteBg('#fef08a')" class="note-bg-opt h-8 rounded-lg bg-yellow-200 border-2 border-amber-400"></button>
-                        <button onclick="selectNoteBg('#fbcfe8')" class="note-bg-opt h-8 rounded-lg bg-pink-200 border-2 border-transparent"></button>
-                        <button onclick="selectNoteBg('#bfdbfe')" class="note-bg-opt h-8 rounded-lg bg-blue-200 border-2 border-transparent"></button>
-                        <button onclick="selectNoteBg('#bbf7d0')" class="note-bg-opt h-8 rounded-lg bg-green-200 border-2 border-transparent"></button>
+                        <button onclick="selectNoteBg(event, '#fef08a')" class="note-bg-opt h-8 rounded-lg bg-yellow-200 border-2 border-amber-400"></button>
+                        <button onclick="selectNoteBg(event, '#fbcfe8')" class="note-bg-opt h-8 rounded-lg bg-pink-200 border-2 border-transparent"></button>
+                        <button onclick="selectNoteBg(event, '#bfdbfe')" class="note-bg-opt h-8 rounded-lg bg-blue-200 border-2 border-transparent"></button>
+                        <button onclick="selectNoteBg(event, '#bbf7d0')" class="note-bg-opt h-8 rounded-lg bg-green-200 border-2 border-transparent"></button>
                         <input type="hidden" id="selectedNoteBg" value="#fef08a">
                     </div>
                 </div>
@@ -381,7 +348,6 @@
         </div>
     </div>
 
-    <!-- FOTOĞRAF EKLEME MODAL -->
     <div id="photoModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 md:p-8 max-w-md w-full border-4 border-sky-300 shadow-2xl transform scale-95 transition-all duration-300">
             <div class="flex justify-between items-center mb-4">
@@ -398,7 +364,6 @@
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Fotoğraf Seç:</label>
-                    
                     <label for="photoInput" class="block border-2 border-dashed border-sky-200 rounded-2xl p-6 text-center bg-sky-50/50 hover:bg-sky-100/70 transition cursor-pointer relative">
                         <input type="file" id="photoInput" accept="image/*" class="hidden" onchange="previewSelectedPhoto(event)">
                         <div id="photoPlaceholder">
@@ -422,7 +387,6 @@
         </div>
     </div>
 
-    <!-- ÖĞRETMEN SEVGİ MESAJI POPUP (Sadece "Seni Seven Öğretmenin" İmzalı) -->
     <div id="messageModal" class="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center p-4 hidden z-50">
         <div class="bg-gradient-to-br from-yellow-100 to-orange-100 rounded-3xl p-6 md:p-8 max-w-lg w-full border-4 border-yellow-400 shadow-2xl transform scale-95 transition-all duration-300 text-center relative overflow-hidden">
             <div class="absolute -right-8 -bottom-8 opacity-20 text-7xl">🎈</div>
@@ -445,7 +409,6 @@
         </div>
     </div>
 
-    <!-- Alt Bilgi / Footer -->
     <footer class="relative z-10 text-center text-gray-600 text-sm mt-12 bg-white/40 py-3 backdrop-blur-sm border-t border-pink-100">
         <p class="font-bold text-pink-700"> Ülkem Yanımda &copy; 2026</p>
         <p class="text-xs text-gray-500 mt-1">Türkçemizin ve kültürümüzün dünyaya açılan kapısı. 🌸</p>
@@ -525,11 +488,9 @@
             });
         }
 
-        // --- STREAMING_CHUNK: Sekme geçiş ve görünüm mantığı çalıştırılıyor... ---
         function switchTab(tabId) {
             playSound('click');
             
-            // Tüm sekmeleri gizle
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.add('hidden');
                 content.classList.remove('block');
@@ -538,7 +499,6 @@
             selectedTab.classList.remove('hidden');
             selectedTab.classList.add('block');
 
-            // Aktif buton tasarımını güncelle
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.className = btn.className.replace(/bg-\w+-400 text-white/g, 'bg-white text-gray-600');
                 btn.classList.add('bg-white');
@@ -558,25 +518,22 @@
             }
             if (tabId === 'tab-oyun') {
                 activeBtn.className += ' bg-yellow-400 text-white';
-                applyLoadedAssets(); // Oyun sekmesi açılınca yüklenmiş resimleri kontrol et
-                startBalloonGame();  // Sekmeye tıklandığında doğrudan oyunu başlat
+                applyLoadedAssets(); 
+                startBalloonGame();  
             }
 
-            // Eğer oyun sekmesinden çıkıldıysa balonları temizle ve intervalı durdur
             if (tabId !== 'tab-oyun') {
                 stopBalloonGame();
             }
         }
 
-        // --- VERİLER ---
-        const defaultNotes = [
-           
-        ];
+        // --- VERİLER VE EKSİK TANIMLAMALARIN DÜZELTİLMESİ ---
+        const defaultNotes = [];
+        const defaultPhotos = []; // Eksik olan default tanım eklendi.
 
         let notes = JSON.parse(localStorage.getItem('ani_duvari_notes')) || defaultNotes;
         let photos = JSON.parse(localStorage.getItem('ani_duvari_photos')) || defaultPhotos;
 
-        // --- STREAMING_CHUNK: Dilek notu ekleme ve listeleme işlevleri... ---
         // --- 1. DİLEK & NOT DUVARI ---
         function renderNotes() {
             const container = document.getElementById('notesContainer');
@@ -616,14 +573,16 @@
             document.getElementById('noteModal').classList.add('hidden');
         }
 
-        function selectEmoji(emoji) {
+        // event parametresi kapsama eklendi
+        function selectEmoji(event, emoji) {
             playSound('click');
             document.querySelectorAll('.emoji-opt').forEach(opt => opt.classList.remove('border-emerald-300', 'bg-emerald-100'));
             event.currentTarget.classList.add('border-emerald-300', 'bg-emerald-100');
             document.getElementById('selectedEmoji').value = emoji;
         }
 
-        function selectNoteBg(colorHex) {
+        // event parametresi kapsama eklendi
+        function selectNoteBg(event, colorHex) {
             playSound('click');
             document.querySelectorAll('.note-bg-opt').forEach(opt => opt.classList.remove('border-amber-400'));
             event.currentTarget.classList.add('border-amber-400');
@@ -673,7 +632,6 @@
             renderNotes();
         }
 
-        // --- STREAMING_CHUNK: Fotoğraf albümü işleme ve Base64 kodlama... ---
         // --- 2. SINIF ALBÜMÜ ---
         function renderPhotos() {
             const container = document.getElementById('photosContainer');
@@ -784,7 +742,6 @@
             renderPhotos();
         }
 
-        // --- STREAMING_CHUNK: Parmak/Fare çizim ve damga mantığı oluşturuluyor... ---
         // --- 3. ÇİZİM ALANI VE SEVİMLİ DAMGALAR ---
         const canvas = document.getElementById('doodleCanvas');
         const ctx = canvas.getContext('2d');
@@ -795,7 +752,7 @@
 
         function resizeCanvas() {
             const parent = document.getElementById('canvasParent');
-            if (parent) {
+            if (parent && canvas) {
                 canvas.width = parent.clientWidth;
                 canvas.height = parent.clientHeight;
                 
@@ -875,7 +832,8 @@
             document.getElementById('eraserBtn').classList.remove('bg-teal-200');
         }
 
-        function selectStamp(emoji) {
+        // event parametresi kapsama eklendi
+        function selectStamp(event, emoji) {
             playSound('click');
             selectedStamp = emoji;
             deactivateStamps();
@@ -900,8 +858,7 @@
             ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
 
-        // --- STREAMING_CHUNK: Balon patlatma oyun mekanikleri geliştiriliyor... ---
-        // --- 4. BALON PATLATMA ETKİNLİĞİ ---
+        // --- 4. BALON PATLATMA ETKİNLİĞİ (GÜNCEL DURUM) ---
         let gameInterval = null;
         let balloonId = 0;
         let poppedCount = 0;
@@ -911,13 +868,13 @@
         const sweetMessages = [
             "Sen sınıfımızın en bilginisin çocuğum! 🌟",
             "Sen Türkçesin çocuğum! 📚",
-            "Sen çok özel bir çocuksun! 😊",
+            "Sen çok özel bir child'sın! 😊",
             "Sınıfımızın en narin çiçeğisin! 🎨",
             "Sen sınıfımızın doğan güneşisin! 🌸"
         ];
 
         function startBalloonGame() {
-            if (isGameRunning) return;
+            if (isGameRunning) stopBalloonGame(); // Önceki açık oyunu güvenle temizle
             isGameRunning = true;
             poppedCount = 0;
             updateScoreUI();
@@ -936,34 +893,37 @@
                 const randomColor = colors[Math.floor(Math.random() * colors.length)];
                 
                 balloon.id = `balloon-${balloonId++}`;
-                balloon.className = "flying-balloon flex flex-col items-center justify-center z-20";
+                // Z-index ve tıklama alanlarını korumak amacıyla stil tashihi yapıldı.
+                balloon.className = "flying-balloon flex flex-col items-center justify-center z-30";
                 
                 balloon.innerHTML = `
-                    <div class="relative w-12 h-16 sm:w-16 sm:h-20 rounded-full flex items-center justify-center shadow-lg transition transform active:scale-95 border-[3px] border-black" style="background-color: ${randomColor};">
-                        <div class="absolute bottom-[-5px] w-2.5 h-2.5 sm:w-3 sm:h-3 rotate-45 border-r-[3px] border-b-[3px] border-black" style="background-color: ${randomColor};"></div>
+                    <div class="relative w-12 h-16 sm:w-16 sm:h-20 rounded-full flex items-center justify-center shadow-lg transition transform active:scale-95 border-[3px] border-black pointer-events-none" style="background-color: ${randomColor};">
+                        <div class="absolute bottom-[-5px] w-2.5 h-2.5 sm:w-3 sm:h-3 rotate-45 border-r-[3px] border-b-[3px] border-black pointer-events-none" style="background-color: ${randomColor};"></div>
                     </div>
-                    <div class="w-0.5 h-12 sm:h-16 bg-black opacity-90"></div>
+                    <div class="w-0.5 h-12 sm:h-16 bg-black opacity-90 pointer-events-none"></div>
                 `;
 
-                const leftPos = 5 + (Math.random() * 85); 
-                const speed = 4 + Math.random() * 4; 
+                const leftPos = 5 + (Math.random() * 80); 
+                const speed = 4 + Math.random() * 3; 
                 
                 balloon.style.left = leftPos + '%';
                 balloon.style.setProperty('--speed', speed + 's');
                 
-                balloon.onclick = () => {
+                // Click tetikleyicisi doğrudan ana kapsayıcı elemente bağlandı
+                balloon.addEventListener('click', function() {
                     popBalloon(balloon);
-                };
+                });
 
                 stage.appendChild(balloon);
 
+                // Süresi dolup sahneden taşan balonları bellekten temizleme mekanizması
                 setTimeout(() => {
                     if (balloon && balloon.parentNode) {
                         balloon.parentNode.removeChild(balloon);
                     }
                 }, speed * 1000);
 
-            }, 900);
+            }, 1000);
         }
 
         function stopBalloonGame() {
@@ -977,12 +937,13 @@
             if (!isGameRunning) return;
             playSound('pop');
             
+            const stage = document.getElementById('gameStage');
             confetti({
                 particleCount: 20,
                 spread: 30,
                 origin: { 
-                    x: balloonEl.offsetLeft / document.getElementById('gameStage').clientWidth, 
-                    y: 0.6
+                    x: (balloonEl.offsetLeft + 24) / stage.clientWidth, 
+                    y: 0.5
                 }
             });
 
@@ -992,7 +953,6 @@
             
             balloonEl.remove();
 
-            // Mektup Modalını Göster
             document.getElementById('balloonMessageText').innerText = `"${currentMessage}"`;
             document.getElementById('messageModal').classList.remove('hidden');
 
@@ -1028,7 +988,6 @@
             document.body.appendChild(alertDiv);
         }
 
-        // --- STREAMING_CHUNK: Arka plan sığdırma ve yerel depolama köprüsü kuruluyor... ---
         // --- GİRİŞ YÖNERGE EKRANINI KAPATMA VE ARKA PLAN DEĞİŞTİRME ---
         function closeIntroOverlay() {
             playSound('confetti');
@@ -1050,13 +1009,11 @@
             } else {
                 document.body.style.backgroundImage = "url('2.jpg')";
             }
-            // 2.jpg'nin tam sığması ve kesilmemesi için ayarlar uygulanıyor
             document.body.style.backgroundSize = "100% 100%";
             document.body.style.backgroundAttachment = "fixed";
             document.body.style.backgroundRepeat = "no-repeat";
         }
 
-        // --- 🛠️ BASE64 VERİ SİHİRBAZI ---
         function applyLoadedAssets() {
             const gameStage = document.getElementById('gameStage');
             const introOverlay = document.getElementById('introOverlay');
@@ -1079,30 +1036,9 @@
                 } else {
                     document.body.style.backgroundImage = "url('2.jpg')";
                 }
-                // Ana sayfanın kesilmeden tam sığması için JS üzerinden sığdırma zorlanıyor
                 document.body.style.backgroundSize = "100% 100%";
                 document.body.style.backgroundAttachment = "fixed";
                 document.body.style.backgroundRepeat = "no-repeat";
-            }
-        }
-
-        // --- 🛠️ LOCAL STORAGE DOSYA KÖPRÜSÜ ---
-        function uploadLocalAsset(event, assetKey) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const base64Data = e.target.result;
-                    try {
-                        localStorage.setItem('cached_asset_' + assetKey, base64Data);
-                        playSound('confetti');
-                        applyLoadedAssets();
-                    } catch (err) {
-                        console.error("Hafıza doluluk hatası: ", err);
-                        alertModal("Dosya çok büyük olduğu için kaydedilemedi! Lütfen görselinizi küçültüp tekrar deneyin.");
-                    }
-                };
-                reader.readAsDataURL(file);
             }
         }
 
