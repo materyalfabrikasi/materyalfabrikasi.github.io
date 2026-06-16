@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
@@ -271,17 +271,17 @@
                         <div>
                             <span class="block text-xs font-bold text-teal-700 mb-2">Sevimli Damgalar:</span>
                             <div class="grid grid-cols-4 gap-2">
-                                <button onclick="selectStamp('⭐')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Yıldız">⭐</button>
-                                <button onclick="selectStamp('❤️')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Kalp">❤️</button>
-                                <button onclick="selectStamp('😊')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Gülen Yüz">😊</button>
-                                <button onclick="selectStamp('🎈')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Balon">🎈</button>
-                                <button onclick="selectStamp('🌸')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Çiçek">🌸</button>
-                                <button onclick="selectStamp('🐱')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Kedi">🐱</button>
-                                <button onclick="selectStamp('🦖')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Dinozor">🦖</button>
-                                <button onclick="selectStamp('🚀')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Roket">🚀</button>
-                                <button onclick="selectStamp('🌈')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Gökkuşağı">🌈</button>
-                                <button onclick="selectStamp('🍭')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Şeker">🍭</button>
-                                <button onclick="selectStamp('🎨')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Boya">🎨</button>
+                                <button onclick="selectStamp(event, '⭐')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Yıldız">⭐</button>
+                                <button onclick="selectStamp(event, '❤️')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Kalp">❤️</button>
+                                <button onclick="selectStamp(event, '😊')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Gülen Yüz">😊</button>
+                                <button onclick="selectStamp(event, '🎈')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Balon">🎈</button>
+                                <button onclick="selectStamp(event, '🌸')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Çiçek">🌸</button>
+                                <button onclick="selectStamp(event, '🐱')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Kedi">🐱</button>
+                                <button onclick="selectStamp(event, '🦖')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Dinozor">🦖</button>
+                                <button onclick="selectStamp(event, '🚀')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Roket">🚀</button>
+                                <button onclick="selectStamp(event, '🌈')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Gökkuşağı">🌈</button>
+                                <button onclick="selectStamp(event, '🍭')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Şeker">🍭</button>
+                                <button onclick="selectStamp(event, '🎨')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Boya">🎨</button>
                             </div>
                         </div>
 
@@ -357,21 +357,21 @@
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Sevimli Bir Emoji Seç:</label>
                     <div class="flex justify-around text-2xl bg-emerald-50 p-2 rounded-xl">
-                        <button onclick="selectEmoji('🌟')" class="emoji-opt border-2 border-transparent hover:border-emerald-300 rounded p-1">🌟</button>
-                        <button onclick="selectEmoji('🚀')" class="emoji-opt border-2 border-transparent hover:border-emerald-300 rounded p-1">🚀</button>
-                        <button onclick="selectEmoji('🍭')" class="emoji-opt border-2 border-transparent hover:border-emerald-300 rounded p-1">🍭</button>
-                        <button onclick="selectEmoji('🦖')" class="emoji-opt border-2 border-transparent hover:border-emerald-300 rounded p-1">🦖</button>
-                        <button onclick="selectEmoji('🎨')" class="emoji-opt border-2 border-transparent hover:border-emerald-300 rounded p-1">🎨</button>
+                        <button onclick="selectEmoji(event, '🌟')" class="emoji-opt border-2 border-transparent hover:border-emerald-300 rounded p-1">🌟</button>
+                        <button onclick="selectEmoji(event, '🚀')" class="emoji-opt border-2 border-transparent hover:border-emerald-300 rounded p-1">🚀</button>
+                        <button onclick="selectEmoji(event, '🍭')" class="emoji-opt border-2 border-transparent hover:border-emerald-300 rounded p-1">🍭</button>
+                        <button onclick="selectEmoji(event, '🦖')" class="emoji-opt border-2 border-transparent hover:border-emerald-300 rounded p-1">🦖</button>
+                        <button onclick="selectEmoji(event, '🎨')" class="emoji-opt border-2 border-transparent hover:border-emerald-300 rounded p-1">🎨</button>
                         <input type="hidden" id="selectedEmoji" value="🌟">
                     </div>
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Not Kartı Rengi:</label>
                     <div class="grid grid-cols-4 gap-2">
-                        <button onclick="selectNoteBg('#fef08a')" class="note-bg-opt h-8 rounded-lg bg-yellow-200 border-2 border-amber-400"></button>
-                        <button onclick="selectNoteBg('#fbcfe8')" class="note-bg-opt h-8 rounded-lg bg-pink-200 border-2 border-transparent"></button>
-                        <button onclick="selectNoteBg('#bfdbfe')" class="note-bg-opt h-8 rounded-lg bg-blue-200 border-2 border-transparent"></button>
-                        <button onclick="selectNoteBg('#bbf7d0')" class="note-bg-opt h-8 rounded-lg bg-green-200 border-2 border-transparent"></button>
+                        <button onclick="selectNoteBg(event, '#fef08a')" class="note-bg-opt h-8 rounded-lg bg-yellow-200 border-2 border-amber-400"></button>
+                        <button onclick="selectNoteBg(event, '#fbcfe8')" class="note-bg-opt h-8 rounded-lg bg-pink-200 border-2 border-transparent"></button>
+                        <button onclick="selectNoteBg(event, '#bfdbfe')" class="note-bg-opt h-8 rounded-lg bg-blue-200 border-2 border-transparent"></button>
+                        <button onclick="selectNoteBg(event, '#bbf7d0')" class="note-bg-opt h-8 rounded-lg bg-green-200 border-2 border-transparent"></button>
                         <input type="hidden" id="selectedNoteBg" value="#fef08a">
                     </div>
                 </div>
@@ -409,21 +409,21 @@
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Sevimli Bir Emoji Seç:</label>
                     <div class="flex justify-around text-2xl bg-purple-50 p-2 rounded-xl">
-                        <button onclick="selectVoiceEmoji('🌟')" class="voice-emoji-opt border-2 border-transparent hover:border-purple-300 rounded p-1">🌟</button>
-                        <button onclick="selectVoiceEmoji('🚀')" class="voice-emoji-opt border-2 border-transparent hover:border-purple-300 rounded p-1">🚀</button>
-                        <button onclick="selectVoiceEmoji('🍭')" class="voice-emoji-opt border-2 border-transparent hover:border-purple-300 rounded p-1">🍭</button>
-                        <button onclick="selectVoiceEmoji('🦖')" class="voice-emoji-opt border-2 border-transparent hover:border-purple-300 rounded p-1">🦖</button>
-                        <button onclick="selectVoiceEmoji('🎨')" class="voice-emoji-opt border-2 border-transparent hover:border-purple-300 rounded p-1">🎨</button>
+                        <button onclick="selectVoiceEmoji(event, '🌟')" class="voice-emoji-opt border-2 border-transparent hover:border-purple-300 rounded p-1">🌟</button>
+                        <button onclick="selectVoiceEmoji(event, '🚀')" class="voice-emoji-opt border-2 border-transparent hover:border-purple-300 rounded p-1">🚀</button>
+                        <button onclick="selectVoiceEmoji(event, '🍭')" class="voice-emoji-opt border-2 border-transparent hover:border-purple-300 rounded p-1">🍭</button>
+                        <button onclick="selectVoiceEmoji(event, '🦖')" class="voice-emoji-opt border-2 border-transparent hover:border-purple-300 rounded p-1">🦖</button>
+                        <button onclick="selectVoiceEmoji(event, '🎨')" class="voice-emoji-opt border-2 border-transparent hover:border-purple-300 rounded p-1">🎨</button>
                         <input type="hidden" id="selectedVoiceEmoji" value="🌟">
                     </div>
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Not Kartı Rengi:</label>
                     <div class="grid grid-cols-4 gap-2">
-                        <button onclick="selectVoiceNoteBg('#fef08a')" class="voice-note-bg-opt h-8 rounded-lg bg-yellow-200 border-2 border-amber-400"></button>
-                        <button onclick="selectVoiceNoteBg('#fbcfe8')" class="voice-note-bg-opt h-8 rounded-lg bg-pink-200 border-2 border-transparent"></button>
-                        <button onclick="selectVoiceNoteBg('#bfdbfe')" class="voice-note-bg-opt h-8 rounded-lg bg-blue-200 border-2 border-transparent"></button>
-                        <button onclick="selectVoiceNoteBg('#bbf7d0')" class="voice-note-bg-opt h-8 rounded-lg bg-green-200 border-2 border-transparent"></button>
+                        <button onclick="selectVoiceNoteBg(event, '#fef08a')" class="voice-note-bg-opt h-8 rounded-lg bg-yellow-200 border-2 border-amber-400"></button>
+                        <button onclick="selectVoiceNoteBg(event, '#fbcfe8')" class="voice-note-bg-opt h-8 rounded-lg bg-pink-200 border-2 border-transparent"></button>
+                        <button onclick="selectVoiceNoteBg(event, '#bfdbfe')" class="voice-note-bg-opt h-8 rounded-lg bg-blue-200 border-2 border-transparent"></button>
+                        <button onclick="selectVoiceNoteBg(event, '#bbf7d0')" class="voice-note-bg-opt h-8 rounded-lg bg-green-200 border-2 border-transparent"></button>
                         <input type="hidden" id="selectedVoiceNoteBg" value="#fef08a">
                     </div>
                 </div>
@@ -520,12 +520,12 @@
     </footer>
 
     <script>
-        // --- 🚀 KÜRESEL DEĞİŞKENLER VE HOISTING DÜZELTMELERİ ---
+        // --- 🚀 KÜRESEL DURUM DEĞİŞKENLERİ VE HOISTING TANIMLAMALARI ---
         let audioCtx = null;
         let isSoundEnabled = true;
         let activeAudio = null; 
 
-        // Oyun durum değişkenleri en üste taşındı (Initialization hatasını çözer)
+        // Oyun ve zamanlayıcı durum elemanları tarayıcı okuması için en tepeye alındı
         let gameInterval = null;
         let balloonId = 0;
         let poppedCount = 0;
@@ -533,12 +533,14 @@
         let isGameRunning = false;
         const magicAudios = ["a.mp3", "b.mp3", "c.mp3", "d.mp3", "e.mp3"];
 
+        // Boş varsayılan veri dizileri (ReferenceError çözümü için lokal depolama öncesi şart)
         const defaultNotes = [];
-        const defaultPhotos = []; // defaultPhotos tanımsızlık hatası çözüldü
+        const defaultPhotos = [];
 
         let notes = JSON.parse(localStorage.getItem('ani_duvari_notes')) || defaultNotes;
         let photos = JSON.parse(localStorage.getItem('ani_duvari_photos')) || defaultPhotos;
 
+        // --- 🔉 SES VE AUDIO CONTEXT YÖNETİMİ ---
         function initAudio() {
             if (!audioCtx) {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -553,7 +555,7 @@
             }
             activeAudio = new Audio(filename);
             activeAudio.play().catch(err => {
-                console.log("Ses oynatılamadı. Etkileşim gerekiyor:", err);
+                console.log("Ses oynatılamadı. Kullanıcı etkileşimi gerekiyor:", err);
             });
         }
 
@@ -600,7 +602,7 @@
                     osc.stop(audioCtx.currentTime + 0.2);
                 }
             } catch (e) {
-                console.log('Ses çalınamadı.', e);
+                console.log('Ses sentezlenemedi.', e);
             }
         }
 
@@ -631,6 +633,7 @@
             });
         }
 
+        // --- 📑 SEKME GEÇİŞLERİ VE KONTROLLER ---
         function switchTab(tabId) {
             playSound('click');
             
@@ -678,9 +681,10 @@
             }
         }
 
-        // --- 1. DİLEK & NOT DUVARI ---
+        // --- 📌 1. DİLEK & NOT DUVARI MODÜLÜ ---
         function renderNotes() {
             const container = document.getElementById('notesContainer');
+            if(!container) return;
             container.innerHTML = '';
             
             notes.forEach(note => {
@@ -730,17 +734,17 @@
             document.getElementById('noteModal').classList.add('hidden');
         }
 
-        function selectEmoji(emoji) {
+        function selectEmoji(e, emoji) {
             playSound('click');
             document.querySelectorAll('.emoji-opt').forEach(opt => opt.classList.remove('border-emerald-300', 'bg-emerald-100'));
-            event.currentTarget.classList.add('border-emerald-300', 'bg-emerald-100');
+            e.currentTarget.classList.add('border-emerald-300', 'bg-emerald-100');
             document.getElementById('selectedEmoji').value = emoji;
         }
 
-        function selectNoteBg(colorHex) {
+        function selectNoteBg(e, colorHex) {
             playSound('click');
             document.querySelectorAll('.note-bg-opt').forEach(opt => opt.classList.remove('border-amber-400'));
-            event.currentTarget.classList.add('border-amber-400');
+            e.currentTarget.classList.add('border-amber-400');
             document.getElementById('selectedNoteBg').value = colorHex;
         }
 
@@ -773,7 +777,7 @@
             document.getElementById('noteContent').value = '';
         }
 
-        // --- 🎙️ SES KAYIT YÖNETİMİ ---
+        // --- 🎙️ 2. SES KAYIT YÖNETİM MODÜLÜ ---
         let mediaRecorder = null;
         let audioChunks = [];
         let audioBlob = null;
@@ -795,17 +799,17 @@
             stopAudioStream();
         }
 
-        function selectVoiceEmoji(emoji) {
+        function selectVoiceEmoji(e, emoji) {
             playSound('click');
             document.querySelectorAll('.voice-emoji-opt').forEach(opt => opt.classList.remove('border-purple-300', 'bg-purple-100'));
-            event.currentTarget.classList.add('border-purple-300', 'bg-purple-100');
+            e.currentTarget.classList.add('border-purple-300', 'bg-purple-100');
             document.getElementById('selectedVoiceEmoji').value = emoji;
         }
 
-        function selectVoiceNoteBg(colorHex) {
+        function selectVoiceNoteBg(e, colorHex) {
             playSound('click');
             document.querySelectorAll('.voice-note-bg-opt').forEach(opt => opt.classList.remove('border-amber-400'));
-            event.currentTarget.classList.add('border-amber-400');
+            e.currentTarget.classList.add('border-amber-400');
             document.getElementById('selectedVoiceNoteBg').value = colorHex;
         }
 
@@ -842,8 +846,8 @@
                     updateRecordUI();
                     playSound('click');
                 } catch (err) {
-                    console.error("Mikrofon izni alınamadı:", err);
-                    document.getElementById('recordStatus').innerText = "Hta: Mikrofon iznini kontrol et. 🥺";
+                    console.error("Mikrofon erişim izni reddedildi:", err);
+                    document.getElementById('recordStatus').innerText = "Hata: Mikrofon iznini kontrol et. 🥺";
                 }
             } else {
                 if (mediaRecorder && mediaRecorder.state !== "inactive") {
@@ -912,16 +916,17 @@
             try {
                 localStorage.setItem('ani_duvari_notes', JSON.stringify(notes));
             } catch (e) {
-                console.log("Tarayıcı depolama limiti aşıldı.", e);
+                console.log("Tarayıcı yerel veri depolama sınırı aşıldı.", e);
             }
             renderNotes();
             closeVoiceNoteModal();
             triggerConfetti();
         }
 
-        // --- 2. SINIF ALBÜMÜ ---
+        // --- 📸 3. SINIF ALBÜMÜ MODÜLÜ ---
         function renderPhotos() {
             const container = document.getElementById('photosContainer');
+            if(!container) return;
             container.innerHTML = '';
 
             photos.forEach(photo => {
@@ -1006,7 +1011,7 @@
                 photos.unshift(newPhoto);
                 localStorage.setItem('ani_duvari_photos', JSON.stringify(photos));
             } catch (error) {
-                console.error("Yerel depolama hatası:", error);
+                console.error("Yerel depolama kotası hatası:", error);
             }
             
             renderPhotos();
@@ -1029,9 +1034,9 @@
             renderPhotos();
         }
 
-        // --- 3. ÇİZİM ALANI VE SEVİMLİ DAMGALAR ---
+        // --- 🎨 4. İMZA VE TUVAL ÇİZİM MODÜLÜ ---
         const canvas = document.getElementById('doodleCanvas');
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas ? canvas.getContext('2d') : null;
         let drawing = false;
         let brushColor = '#000000';
         let brushSize = 8;
@@ -1039,7 +1044,7 @@
 
         function resizeCanvas() {
             const parent = document.getElementById('canvasParent');
-            if (parent && canvas) {
+            if (parent && canvas && ctx) {
                 canvas.width = parent.clientWidth;
                 canvas.height = parent.clientHeight;
                 
@@ -1050,6 +1055,7 @@
         }
 
         function setupCanvasBrush() {
+            if(!ctx) return;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
             ctx.strokeStyle = brushColor;
@@ -1071,6 +1077,7 @@
         }
 
         function startDrawing(e) {
+            if(!ctx) return;
             e.preventDefault();
             const coords = getEventCoords(e);
             
@@ -1090,7 +1097,7 @@
         }
 
         function draw(e) {
-            if (!drawing || selectedStamp) return;
+            if (!drawing || selectedStamp || !ctx) return;
             e.preventDefault();
             const coords = getEventCoords(e);
             ctx.lineTo(coords.x, coords.y);
@@ -1101,13 +1108,15 @@
             drawing = false;
         }
 
-        canvas.addEventListener('mousedown', startDrawing);
-        canvas.addEventListener('mousemove', draw);
-        window.addEventListener('mouseup', stopDrawing);
+        if (canvas) {
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            window.addEventListener('mouseup', stopDrawing);
 
-        canvas.addEventListener('touchstart', startDrawing, { passive: false });
-        canvas.addEventListener('touchmove', draw, { passive: false });
-        window.addEventListener('touchend', stopDrawing);
+            canvas.addEventListener('touchstart', startDrawing, { passive: false });
+            canvas.addEventListener('touchmove', draw, { passive: false });
+            window.addEventListener('touchend', stopDrawing);
+        }
 
         function setBrushColor(color) {
             playSound('click');
@@ -1119,11 +1128,11 @@
             document.getElementById('eraserBtn').classList.remove('bg-teal-200');
         }
 
-        function selectStamp(emoji) {
+        function selectStamp(e, emoji) {
             playSound('click');
             selectedStamp = emoji;
             deactivateStamps();
-            event.currentTarget.classList.add('bg-teal-200', 'border-teal-400');
+            e.currentTarget.classList.add('bg-teal-200', 'border-teal-400');
         }
 
         function deactivateStamps() {
@@ -1139,12 +1148,13 @@
         }
 
         function clearCanvas() {
+            if(!ctx) return;
             playSound('click');
             ctx.fillStyle = "#ffffff";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
 
-        // --- 4. BALON PATLATMA ETKİNLİĞİ ---
+        // --- 🎈 5. BALON PATLATMA ETKİNLİK MOTORU ---
         function startBalloonGame() {
             if (isGameRunning) return;
             isGameRunning = true;
@@ -1153,6 +1163,7 @@
             
             document.getElementById('btnStartGame').classList.add('opacity-50', 'pointer-events-none');
             const stage = document.getElementById('gameStage');
+            if(!stage) return;
             stage.innerHTML = ''; 
             
             gameInterval = setInterval(() => {
@@ -1202,7 +1213,8 @@
             isGameRunning = false;
             clearInterval(gameInterval);
             document.querySelectorAll('.flying-balloon').forEach(b => b.remove());
-            document.getElementById('btnStartGame').classList.remove('opacity-50', 'pointer-events-none');
+            const startBtn = document.getElementById('btnStartGame');
+            if(startBtn) startBtn.classList.remove('opacity-50', 'pointer-events-none');
         }
 
         function handleBalloonClick(balloonEl, isMagic) {
@@ -1250,7 +1262,8 @@
         }
 
         function updateScoreUI() {
-            document.getElementById('scoreCounter').innerText = `${poppedCount} / ${maxBalloons}`;
+            const counter = document.getElementById('scoreCounter');
+            if(counter) counter.innerText = `${poppedCount} / ${maxBalloons}`;
         }
 
         function closeMessageModal() {
@@ -1328,11 +1341,12 @@
             try {
                 localStorage.setItem('ani_duvari_notes', JSON.stringify(notes));
             } catch (e) {
-                console.error("Local storage error:", e);
+                console.error("Not silinirken hata oluştu:", e);
             }
             renderNotes();
         }
 
+        // --- 🏁 BAŞLANGIÇ TETİKLEYİCİLERİ ---
         window.onload = function() {
             renderNotes();
             renderPhotos();
