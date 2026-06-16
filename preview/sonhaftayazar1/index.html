@@ -21,10 +21,9 @@
             transition: background 0.8s ease;
         }
 
-        /* 2.jpg arka planının hiçbir şekilde kesilmemesi için 100% 100% sığdırma uygulandı */
         body.game-started {
             background: url('2.jpg') no-repeat center center fixed !important;
-            background-size: 100% 100% !important; /* Boşluk kalmaması ve kesilmemesi için tam sığdırma yapıldı */
+            background-size: 100% 100% !important;
             background-position: center center !important;
             animation: none !important;
         }
@@ -35,7 +34,6 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* Yapışkan Not Hover Efekti */
         .sticky-note {
             transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
@@ -44,7 +42,6 @@
             z-index: 10;
         }
 
-        /* Sevimli 3D Butonlar */
         .btn-kids {
             box-shadow: 0px 6px 0px 0px #db2777;
             transition: all 0.1s ease;
@@ -75,7 +72,6 @@
             box-shadow: 0px 2px 0px 0px #d97706;
         }
 
-        /* Giriş Ekranı Yönergesi İçin 1.jpg Ölçeklendirmesi */
         #introOverlay {
             background-size: 100% 100% !important;
             background-position: center center !important;
@@ -83,7 +79,6 @@
             background-color: #fef9c3; 
         }
 
-        /* Balon Uçma Efekti (Çerçevenin en altından yukarı doğru) */
         @keyframes floatBalloon {
             0% { transform: translateY(100%) scale(1); }
             100% { transform: translateY(-700px) scale(1.1); } 
@@ -95,7 +90,6 @@
             cursor: pointer;
         }
 
-        /* Özel Kaydırma Çubuğu */
         ::-webkit-scrollbar {
             width: 12px;
         }
@@ -387,7 +381,7 @@
         </div>
     </div>
 
-    <div id="messageModal" class="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center p-4 hidden z-50">
+    <div id="messageModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
         <div class="bg-gradient-to-br from-yellow-100 to-orange-100 rounded-3xl p-6 md:p-8 max-w-lg w-full border-4 border-yellow-400 shadow-2xl transform scale-95 transition-all duration-300 text-center relative overflow-hidden">
             <div class="absolute -right-8 -bottom-8 opacity-20 text-7xl">🎈</div>
             <div class="absolute -left-8 -top-8 opacity-20 text-7xl">🌟</div>
@@ -400,7 +394,7 @@
                 <p id="balloonMessageText" class="text-lg md:text-xl font-bold text-gray-800 italic leading-relaxed">
                     "Gelecekte de hep böyle güler yüzlü ve meraklı kalman dileğiyle!"
                 </p>
-                <p class="text-sm font-bold text-emerald-600 mt-3">— Seni Seven Öğretmenin</p>
+                <p class="text-sm font-bold text-emerald-600 mt-3">— Seni Velvet Öğretmenin</p>
             </div>
 
             <button onclick="closeMessageModal()" class="btn-kids bg-yellow-500 hover:bg-yellow-600 text-white font-black py-3 px-8 rounded-full text-lg">
@@ -415,10 +409,31 @@
     </footer>
 
     <script>
-        // --- SES SENTEZLEYİCİ & SES KONTROLÜ (Web Audio API) ---
+        // --- 1. GLOBAL DEĞİŞKENLER VE HOISTING ÖNLEMLERİ ---
+        // Uygulamanın web ortamında çökmesini önlemek için tüm değişkenler ve durumlar en üstte tanımlandı.
+        let isGameRunning = false;
+        let gameInterval = null;
+        let balloonId = 0;
+        let poppedCount = 0;
+        const maxBalloons = 5;
         let audioCtx = null;
         let isSoundEnabled = true;
 
+        const defaultNotes = [];
+        const defaultPhotos = []; // Konsoldaki 'defaultPhotos is not defined' hatasını çözen kritik satır.
+
+        let notes = JSON.parse(localStorage.getItem('ani_duvari_notes')) || defaultNotes;
+        let photos = JSON.parse(localStorage.getItem('ani_duvari_photos')) || defaultPhotos;
+
+        const sweetMessages = [
+            "Sen sınıfımızın en bilginisin çocuğum! 🌟",
+            "Sen Türkçesin çocuğum! 📚",
+            "Sen çok özel bir çocuksun! 😊",
+            "Sınıfımızın en narin çiçeğisin! 🎨",
+            "Sen sınıfımızın doğan güneşisin! 🌸"
+        ];
+
+        // --- 2. SES SENTEZLEYİCİ ETKİLEŞİM YÖNETİMİ (Web Audio API) ---
         function initAudio() {
             if (!audioCtx) {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -460,7 +475,7 @@
                     osc.stop(audioCtx.currentTime + 0.4);
                 }
             } catch (e) {
-                console.log('Ses çalınamadı.', e);
+                console.log('Ses motoru başlatılamadı.', e);
             }
         }
 
@@ -488,6 +503,7 @@
             });
         }
 
+        // --- 3. SEKME VE GÖRÜNÜM KONTROLÜ ---
         function switchTab(tabId) {
             playSound('click');
             
@@ -527,14 +543,7 @@
             }
         }
 
-        // --- VERİLER VE EKSİK TANIMLAMALARIN DÜZELTİLMESİ ---
-        const defaultNotes = [];
-        const defaultPhotos = []; // Eksik olan default tanım eklendi.
-
-        let notes = JSON.parse(localStorage.getItem('ani_duvari_notes')) || defaultNotes;
-        let photos = JSON.parse(localStorage.getItem('ani_duvari_photos')) || defaultPhotos;
-
-        // --- 1. DİLEK & NOT DUVARI ---
+        // --- 4. DİLEK & NOT DUVARI İŞLEVLERİ ---
         function renderNotes() {
             const container = document.getElementById('notesContainer');
             container.innerHTML = '';
@@ -573,7 +582,6 @@
             document.getElementById('noteModal').classList.add('hidden');
         }
 
-        // event parametresi kapsama eklendi
         function selectEmoji(event, emoji) {
             playSound('click');
             document.querySelectorAll('.emoji-opt').forEach(opt => opt.classList.remove('border-emerald-300', 'bg-emerald-100'));
@@ -581,7 +589,6 @@
             document.getElementById('selectedEmoji').value = emoji;
         }
 
-        // event parametresi kapsama eklendi
         function selectNoteBg(event, colorHex) {
             playSound('click');
             document.querySelectorAll('.note-bg-opt').forEach(opt => opt.classList.remove('border-amber-400'));
@@ -632,7 +639,7 @@
             renderNotes();
         }
 
-        // --- 2. SINIF ALBÜMÜ ---
+        // --- 5. SINIF ALBÜMÜ İŞLEVLERİ ---
         function renderPhotos() {
             const container = document.getElementById('photosContainer');
             container.innerHTML = '';
@@ -719,7 +726,7 @@
                 photos.unshift(newPhoto);
                 localStorage.setItem('ani_duvari_photos', JSON.stringify(photos));
             } catch (error) {
-                console.error("Yerel depolama dolu, yine de bellekte saklandı.", error);
+                console.error("Yerel depolama kotası doldu.", error);
             }
             
             renderPhotos();
@@ -742,7 +749,7 @@
             renderPhotos();
         }
 
-        // --- 3. ÇİZİM ALANI VE SEVİMLİ DAMGALAR ---
+        // --- 6. İMZA & ÇİZİM TAHTASI İŞLEVLERİ ---
         const canvas = document.getElementById('doodleCanvas');
         const ctx = canvas.getContext('2d');
         let drawing = false;
@@ -814,13 +821,15 @@
             drawing = false;
         }
 
-        canvas.addEventListener('mousedown', startDrawing);
-        canvas.addEventListener('mousemove', draw);
-        window.addEventListener('mouseup', stopDrawing);
+        if (canvas) {
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            window.addEventListener('mouseup', stopDrawing);
 
-        canvas.addEventListener('touchstart', startDrawing, { passive: false });
-        canvas.addEventListener('touchmove', draw, { passive: false });
-        window.addEventListener('touchend', stopDrawing);
+            canvas.addEventListener('touchstart', startDrawing, { passive: false });
+            canvas.addEventListener('touchmove', draw, { passive: false });
+            window.addEventListener('touchend', stopDrawing);
+        }
 
         function setBrushColor(color) {
             playSound('click');
@@ -832,7 +841,6 @@
             document.getElementById('eraserBtn').classList.remove('bg-teal-200');
         }
 
-        // event parametresi kapsama eklendi
         function selectStamp(event, emoji) {
             playSound('click');
             selectedStamp = emoji;
@@ -858,32 +866,21 @@
             ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
 
-        // --- 4. BALON PATLATMA ETKİNLİĞİ (GÜNCEL DURUM) ---
-        let gameInterval = null;
-        let balloonId = 0;
-        let poppedCount = 0;
-        const maxBalloons = 5;
-        let isGameRunning = false;
-
-        const sweetMessages = [
-            "Sen sınıfımızın en bilginisin çocuğum! 🌟",
-            "Sen Türkçesin çocuğum! 📚",
-            "Sen çok özel bir child'sın! 😊",
-            "Sınıfımızın en narin çiçeğisin! 🎨",
-            "Sen sınıfımızın doğan güneşisin! 🌸"
-        ];
-
+        // --- 7. BALON PATLATMA OYUN MEKANİĞİ ---
         function startBalloonGame() {
-            if (isGameRunning) stopBalloonGame(); // Önceki açık oyunu güvenle temizle
+            // Önceki aktif interval varsa temizleniyor, durum sıfırlanıyor.
+            if (gameInterval) clearInterval(gameInterval);
+            
             isGameRunning = true;
             poppedCount = 0;
             updateScoreUI();
             
             document.getElementById('btnStartGame').classList.add('opacity-50', 'pointer-events-none');
             const stage = document.getElementById('gameStage');
+            if (!stage) return;
             
             gameInterval = setInterval(() => {
-                if (poppedCount >= maxBalloons) {
+                if (poppedCount >= maxBalloons || !isGameRunning) {
                     stopBalloonGame();
                     return;
                 }
@@ -893,7 +890,6 @@
                 const randomColor = colors[Math.floor(Math.random() * colors.length)];
                 
                 balloon.id = `balloon-${balloonId++}`;
-                // Z-index ve tıklama alanlarını korumak amacıyla stil tashihi yapıldı.
                 balloon.className = "flying-balloon flex flex-col items-center justify-center z-30";
                 
                 balloon.innerHTML = `
@@ -909,14 +905,12 @@
                 balloon.style.left = leftPos + '%';
                 balloon.style.setProperty('--speed', speed + 's');
                 
-                // Click tetikleyicisi doğrudan ana kapsayıcı elemente bağlandı
                 balloon.addEventListener('click', function() {
                     popBalloon(balloon);
                 });
 
                 stage.appendChild(balloon);
 
-                // Süresi dolup sahneden taşan balonları bellekten temizleme mekanizması
                 setTimeout(() => {
                     if (balloon && balloon.parentNode) {
                         balloon.parentNode.removeChild(balloon);
@@ -928,9 +922,10 @@
 
         function stopBalloonGame() {
             isGameRunning = false;
-            clearInterval(gameInterval);
+            if (gameInterval) clearInterval(gameInterval);
             document.querySelectorAll('.flying-balloon').forEach(b => b.remove());
-            document.getElementById('btnStartGame').classList.remove('opacity-50', 'pointer-events-none');
+            const startBtn = document.getElementById('btnStartGame');
+            if (startBtn) startBtn.classList.remove('opacity-50', 'pointer-events-none');
         }
 
         function popBalloon(balloonEl) {
@@ -966,7 +961,8 @@
         }
 
         function updateScoreUI() {
-            document.getElementById('scoreCounter').innerText = `${poppedCount} / ${maxBalloons}`;
+            const counter = document.getElementById('scoreCounter');
+            if (counter) counter.innerText = `${poppedCount} / ${maxBalloons}`;
         }
 
         function closeMessageModal() {
@@ -988,27 +984,22 @@
             document.body.appendChild(alertDiv);
         }
 
-        // --- GİRİŞ YÖNERGE EKRANINI KAPATMA VE ARKA PLAN DEĞİŞTİRME ---
+        // --- 8. GLOBAL GÖRSEL VE AÇILIŞ AYARLARI ---
         function closeIntroOverlay() {
+            initAudio(); // Global tarayıcıların ses engelini aşmak için tetikleme alanı.
             playSound('confetti');
             triggerConfetti();
             
             const overlay = document.getElementById('introOverlay');
             if (overlay) {
                 overlay.classList.add('opacity-0', 'pointer-events-none');
-                setTimeout(() => {
-                    overlay.remove();
-                }, 700);
+                setTimeout(() => { overlay.remove(); }, 700);
             }
 
             document.body.classList.add('game-started');
             
             const local2 = localStorage.getItem('cached_asset_2');
-            if (local2) {
-                document.body.style.backgroundImage = `url('${local2}')`;
-            } else {
-                document.body.style.backgroundImage = "url('2.jpg')";
-            }
+            document.body.style.backgroundImage = local2 ? `url('${local2}')` : "url('2.jpg')";
             document.body.style.backgroundSize = "100% 100%";
             document.body.style.backgroundAttachment = "fixed";
             document.body.style.backgroundRepeat = "no-repeat";
@@ -1031,11 +1022,7 @@
             }
             
             if (document.body.classList.contains('game-started')) {
-                if (local2) {
-                    document.body.style.backgroundImage = `url('${local2}')`;
-                } else {
-                    document.body.style.backgroundImage = "url('2.jpg')";
-                }
+                document.body.style.backgroundImage = local2 ? `url('${local2}')` : "url('2.jpg')";
                 document.body.style.backgroundSize = "100% 100%";
                 document.body.style.backgroundAttachment = "fixed";
                 document.body.style.backgroundRepeat = "no-repeat";
