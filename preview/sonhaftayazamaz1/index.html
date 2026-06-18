@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dijital Anı Duvarı 🌟</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Baloo 2', 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #fef9c3 0%, #fbcfe8 50%, #ccfbf1 100%);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            overflow-x: hidden;
+            transition: background 0.8s ease;
+        }
+
+        body.game-started {
+            background: url('2.jpg') no-repeat center center fixed !important;
+            background-size: cover !important; 
+            background-position: center center !important; 
+            animation: none !important;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .sticky-note {
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .sticky-note:hover {
+            transform: scale(1.05) rotate(2deg);
+            z-index: 10;
+        }
+
+        .btn-kids {
+            box-shadow: 0px 6px 0px 0px #db2777;
+            transition: all 0.1s ease;
+        }
+        .btn-kids:active {
+            transform: translateY(4px);
+            box-shadow: 0px 2px 0px 0px #db2777;
+        }
+        .btn-kids-green {
+            box-shadow: 0px 6px 0px 0px #16a34a;
+        }
+        .btn-kids-green:active {
+            transform: translateY(4px);
+            box-shadow: 0px 2px 0px 0px #16a34a;
+        }
+        .btn-kids-purple {
+            box-shadow: 0px 6px 0px 0px #7c3aed;
+        }
+        .btn-kids-purple:active {
+            transform: translateY(4px);
+            box-shadow: 0px 2px 0px 0px #7c3aed;
+        }
+        .btn-kids-yellow {
+            box-shadow: 0px 6px 0px 0px #d97706;
+        }
+        .btn-kids-yellow:active {
+            transform: translateY(4px);
+            box-shadow: 0px 2px 0px 0px #d97706;
+        }
+
+        #introOverlay {
+            background-size: 100% 100% !important;
+            background-position: center center !important;
+            background-repeat: no-repeat !important;
+            background-color: #fef9c3; 
+        }
+
+        @keyframes floatBalloon {
+            0% { transform: translateY(0) scale(1); }
+            100% { transform: translateY(-640px) scale(1.1); } 
+        }
+        .flying-balloon {
+            position: absolute;
+            bottom: -120px; 
+            animation: floatBalloon var(--speed) linear infinite;
+            cursor: pointer;
+        }
+
+        @keyframes wobble {
+            0%, 100% { transform: translateX(0) scale(1); }
+            25% { transform: translateX(-8px) rotate(-5deg) scale(0.95); }
+            75% { transform: translateX(8px) rotate(5deg) scale(0.95); }
+        }
+        .wobble-anim {
+            animation: wobble 0.3s ease-in-out !important;
+        }
+
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #fdf2f8;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #f472b6;
+            border-radius: 10px;
+            border: 3px solid #fdf2f8;
+        }
+
+        .audio-playing-pulse {
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .recording-pulse {
+            animation: redPulse 1s infinite;
+        }
+        @keyframes redPulse {
+            0%, 100% { transform: scale(1); background-color: #ef4444; }
+            50% { transform: scale(1.1); background-color: #b91c1c; }
+        }
+    </style>
+</head>
+<body class="min-h-screen relative flex flex-col justify-between pb-12">
+
+    <div id="introOverlay" class="fixed inset-0 z-50 flex items-center justify-center transition-all duration-700" style="background-image: url('1.jpg');">
+        <div class="absolute left-[38%] right-[10%] top-[38%] bottom-[12%] flex flex-col items-center justify-center gap-4 p-2 sm:p-4 text-center overflow-y-auto">
+            <h1 class="text-xl sm:text-2xl md:text-4xl font-black text-amber-950 leading-none drop-shadow-sm tracking-wide">
+                Dijital Anı Duvarı
+            </h1>
+
+            <button onclick="playVoice('1.mp3')" class="audio-playing-pulse bg-gradient-to-r from-rose-400 to-pink-500 hover:from-rose-500 hover:to-pink-600 border-2 border-white text-white rounded-full py-2 px-6 flex items-center gap-2 text-xs sm:text-sm font-bold shadow-md transform active:scale-95 transition-all">
+                <i class="fas fa-volume-up text-sm sm:text-base animate-bounce"></i> Dinle 🔊
+            </button>
+            
+            <button onclick="closeIntroOverlay()" class="btn-kids-yellow bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-white font-black text-[10px] sm:text-xs md:text-sm py-2 px-6 sm:px-10 rounded-full shadow-md transform hover:scale-105 active:scale-95 transition">
+                Başlayalım 🚀
+            </button>
+        </div>
+    </div>
+
+    <header class="relative z-10 container mx-auto px-4 pt-8 text-center">
+        <h1 id="mainTitle" class="text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-amber-600 via-rose-500 to-orange-500 drop-shadow-sm tracking-wide">
+            Dijital Anı Duvarı
+        </h1>
+        <p id="subTitle" class="text-gray-700 text-lg md:text-2xl mt-3 font-medium bg-white/60 inline-block px-6 py-2 rounded-full shadow-sm border border-pink-100">
+            ✨ Bir Yıllık Muhteşem Serüvenimizin Tatlı Anıları ✨
+        </p>
+
+        <div class="flex flex-wrap justify-center gap-4 mt-6">
+            <button onclick="triggerConfetti()" class="btn-kids bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-6 rounded-full flex items-center gap-2 text-lg transform hover:scale-105 transition">
+                🎉 Şenlik Konfetisi Patlat!
+            </button>
+            <button id="soundToggle" onclick="toggleSound()" class="btn-kids btn-kids-purple bg-purple-500 hover:bg-purple-600 text-white font-bold py-3 px-6 rounded-full flex items-center gap-2 text-lg transform hover:scale-105 transition">
+                <i class="fas fa-volume-up"></i> <span id="soundText">Ses Efektleri Açık</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="relative z-10 container mx-auto px-4 mt-8 flex-grow">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-4xl mx-auto mb-8">
+            <button onclick="switchTab('tab-duvar')" id="btn-tab-duvar" class="tab-btn bg-pink-400 text-white font-bold py-4 px-3 rounded-2xl flex flex-col items-center justify-center gap-2 border-4 border-white shadow-md transform hover:-translate-y-1 transition duration-200">
+                <span class="text-3xl">📌 🔊</span>
+                <span class="text-sm md:text-base">Dilek Duvarı</span>
+            </button>
+            <button onclick="switchTab('tab-album')" id="btn-tab-album" class="tab-btn bg-white text-pink-600 hover:bg-pink-50 font-bold py-4 px-3 rounded-2xl flex flex-col items-center justify-center gap-2 border-4 border-transparent shadow-md transform hover:-translate-y-1 transition duration-200">
+                <span class="text-3xl">📸 🔊</span>
+                <span class="text-sm md:text-base">Sınıf Albümü</span>
+            </button>
+            <button onclick="switchTab('tab-cizim')" id="btn-tab-cizim" class="tab-btn bg-white text-teal-600 hover:bg-teal-50 font-bold py-4 px-3 rounded-2xl flex flex-col items-center justify-center gap-2 border-4 border-transparent shadow-md transform hover:-translate-y-1 transition duration-200">
+                <span class="text-3xl">🎨 🔊</span>
+                <span class="text-sm md:text-base">İmza & Çizim</span>
+            </button>
+            <button onclick="switchTab('tab-oyun')" id="btn-tab-oyun" class="tab-btn bg-white text-yellow-600 hover:bg-yellow-50 font-bold py-4 px-3 rounded-2xl flex flex-col items-center justify-center gap-2 border-4 border-transparent shadow-md transform hover:-translate-y-1 transition duration-200 col-span-2 md:col-span-1">
+                <span class="text-3xl">🎈 🔊</span>
+                <span class="text-sm md:text-base">Balon Patlatma</span>
+            </button>
+        </div>
+
+        <section id="tab-duvar" class="tab-content block">
+            <div class="bg-white/70 backdrop-blur-md rounded-3xl p-6 md:p-8 shadow-xl border-4 border-pink-200 max-w-6xl mx-auto">
+                <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                    <div class="flex items-center gap-3">
+                        <button onclick="playVoice('2.mp3')" class="bg-pink-500 text-white rounded-full p-2.5 shadow hover:scale-105 transition" title="Sekme Yönergesini Dinle">
+                            <i class="fas fa-volume-up text-lg"></i>
+                        </button>
+                        <div>
+                            <h2 class="text-2xl md:text-3xl font-bold text-pink-600 flex items-center gap-2 justify-center md:justify-start">
+                                <span>📌</span> Renkli Not Duvarı
+                            </h2>
+                            <p class="text-gray-600 text-sm md:text-base mt-1">Sınıf arkadaşlarına ve öğretmenine en tatlı mesajını yazıp veya sesini kaydedip buraya as!</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-2 justify-center">
+                        <button onclick="openNoteModal()" class="btn-kids bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-6 rounded-full flex items-center gap-2 text-md transition">
+                            <i class="fas fa-plus-circle"></i> Yeni Not As!
+                        </button>
+                        <button onclick="openVoiceNoteModal()" class="btn-kids btn-kids-purple bg-purple-500 hover:bg-purple-600 text-white font-bold py-3 px-6 rounded-full flex items-center gap-2 text-md transition">
+                            <i class="fas fa-microphone"></i> Sesli Not Kaydet! 🎙️
+                        </button>
+                    </div>
+                </div>
+                <div id="notesContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            </div>
+        </section>
+
+        <section id="tab-album" class="tab-content hidden">
+            <div class="bg-white/70 backdrop-blur-md rounded-3xl p-6 md:p-8 shadow-xl border-4 border-sky-200 max-w-6xl mx-auto">
+                <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                    <div class="flex items-center gap-3">
+                        <button onclick="playVoice('3.mp3')" class="bg-sky-500 text-white rounded-full p-2.5 shadow hover:scale-105 transition" title="Sekme Yönergesini Dinle">
+                            <i class="fas fa-volume-up text-lg"></i>
+                        </button>
+                        <div>
+                            <h2 class="text-2xl md:text-3xl font-bold text-sky-600 flex items-center gap-2 justify-center md:justify-start">
+                                <span>📸</span> Sevgi Dolu Fotoğraf Albümümüz
+                            </h2>
+                            <p class="text-gray-600 text-sm md:text-base mt-1">Bu güzel seneden geriye kalan en neşeli gülüşler!</p>
+                        </div>
+                    </div>
+                    <button onclick="openPhotoModal()" class="btn-kids btn-kids-purple bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-6 rounded-full flex items-center gap-2 text-md transition">
+                        <i class="fas fa-camera"></i> Yeni Fotoğraf Ekle!
+                    </button>
+                </div>
+                <div id="photosContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center"></div>
+            </div>
+        </section>
+
+        <section id="tab-cizim" class="tab-content hidden">
+            <div class="bg-white/70 backdrop-blur-md rounded-3xl p-6 md:p-8 shadow-xl border-4 border-teal-200 max-w-5xl mx-auto">
+                <div class="text-center mb-6 relative">
+                    <button onclick="playVoice('4.mp3')" class="absolute left-0 top-0 bg-teal-500 text-white rounded-full p-2.5 shadow hover:scale-105 transition" title="Sekme Yönergesini Dinle">
+                        <i class="fas fa-volume-up text-lg"></i>
+                    </button>
+                    <h2 class="text-2xl md:text-3xl font-bold text-teal-600 flex items-center justify-center gap-2">
+                        <span>🎨</span> Rengarenk İmza & Resim Tahtası
+                    </h2>
+                    <p class="text-gray-600 text-sm md:text-base mt-1">İster adını yaz, ister arkadaşların için şirin bir resim çiz!</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                    <div class="lg:col-span-1 bg-teal-50/80 p-4 rounded-2xl border-2 border-teal-100 flex flex-col gap-4">
+                        <h3 class="font-bold text-teal-800 text-center border-b border-teal-200 pb-2">Boyama Çantası</h3>
+                        <div>
+                            <span class="block text-xs font-bold text-teal-700 mb-2">Renk Seç:</span>
+                            <div class="grid grid-cols-4 gap-2">
+                                <button onclick="setBrushColor('#ef4444')" class="w-8 h-8 rounded-full bg-red-500 border-2 border-white focus:scale-110 active:scale-90" title="Kırmızı"></button>
+                                <button onclick="setBrushColor('#f97316')" class="w-8 h-8 rounded-full bg-orange-500 border-2 border-white focus:scale-110 active:scale-90" title="Turuncu"></button>
+                                <button onclick="setBrushColor('#eab308')" class="w-8 h-8 rounded-full bg-yellow-500 border-2 border-white focus:scale-110 active:scale-90" title="Sarı"></button>
+                                <button onclick="setBrushColor('#22c55e')" class="w-8 h-8 rounded-full bg-green-500 border-2 border-white focus:scale-110 active:scale-90" title="Yeşil"></button>
+                                <button onclick="setBrushColor('#06b6d4')" class="w-8 h-8 rounded-full bg-cyan-500 border-2 border-white focus:scale-110 active:scale-90" title="Mavi"></button>
+                                <button onclick="setBrushColor('#a855f7')" class="w-8 h-8 rounded-full bg-purple-500 border-2 border-white focus:scale-110 active:scale-90" title="Mor"></button>
+                                <button onclick="setBrushColor('#ec4899')" class="w-8 h-8 rounded-full bg-pink-500 border-2 border-white focus:scale-110 active:scale-90" title="Pembe"></button>
+                                <button onclick="setBrushColor('#000000')" class="w-8 h-8 rounded-full bg-black border-2 border-white focus:scale-110 active:scale-90" title="Siyah"></button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <span class="block text-xs font-bold text-teal-700 mb-2">Kalem Boyutu:</span>
+                            <input type="range" id="brushSize" min="3" max="25" value="8" class="w-full accent-teal-600">
+                        </div>
+
+                        <div>
+                            <span class="block text-xs font-bold text-teal-700 mb-2">Sevimli Damgalar:</span>
+                            <div class="grid grid-cols-4 gap-2">
+                                <button onclick="selectStamp(event, '⭐')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Yıldız">⭐</button>
+                                <button onclick="selectStamp(event, '❤️')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Kalp">❤️</button>
+                                <button onclick="selectStamp(event, '😊')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Gülen Yüz">😊</button>
+                                <button onclick="selectStamp(event, '🎈')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Balon">🎈</button>
+                                <button onclick="selectStamp(event, '🌸')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Çiçek">🌸</button>
+                                <button onclick="selectStamp(event, '🐱')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Kedi">🐱</button>
+                                <button onclick="selectStamp(event, '🦖')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Dinozor">🦖</button>
+                                <button onclick="selectStamp(event, '🚀')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Roket">🚀</button>
+                                <button onclick="selectStamp(event, '🌈')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Gökkuşağı">🌈</button>
+                                <button onclick="selectStamp(event, '🍭')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Şeker">🍭</button>
+                                <button onclick="selectStamp(event, '🎨')" class="stamp-btn p-1 bg-white rounded-xl text-xl hover:bg-teal-100 transition" title="Boya">🎨</button>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col gap-2 mt-2">
+                            <button onclick="useEraser()" id="eraserBtn" class="py-2 bg-white hover:bg-gray-100 text-teal-700 border-2 border-teal-200 rounded-xl font-bold text-sm flex items-center justify-center gap-2">
+                                <i class="fas fa-eraser"></i> Silgi Modu
+                            </button>
+                            <button onclick="clearCanvas()" class="py-2 bg-red-100 hover:bg-red-200 text-red-700 border-2 border-red-200 rounded-xl font-bold text-sm flex items-center justify-center gap-2">
+                                <i class="fas fa-trash-alt"></i> Tahtayı Temizle
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-3 flex flex-col justify-between items-stretch">
+                        <div class="bg-white rounded-2xl border-4 border-teal-300 shadow-inner overflow-hidden relative" style="height: 400px;" id="canvasParent">
+                            <canvas id="doodleCanvas" class="w-full h-full cursor-crosshair block bg-white"></canvas>
+                        </div>
+                        <p class="text-xs text-center text-teal-700 mt-2 font-medium">
+                            💡 Çizim yapmak için parmağını veya fareyi sürükle. Damgayı seçtiysen tahtaya dokunarak pıt diye bırak!
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-oyun" class="tab-content hidden">
+            <div class="bg-white/80 backdrop-blur-md rounded-3xl p-6 md:p-8 shadow-2xl border-4 border-yellow-300 max-w-4xl mx-auto text-center relative overflow-hidden" style="min-height: 550px;">
+                <div class="flex items-center justify-center gap-3 relative">
+                    <button onclick="playVoice('5.mp3')" class="bg-yellow-500 text-white rounded-full p-2.5 shadow hover:scale-105 transition" title="Sekme Yönergesini Dinle">
+                        <i class="fas fa-volume-up text-lg"></i>
+                    </button>
+                    <h2 class="text-2xl md:text-3xl font-extrabold text-slate-800 flex items-center gap-2">
+                        <span>🎈🎯</span> Balon Patlatma Etkinliği
+                    </h2>
+                </div>
+                <p class="text-gray-700 text-sm md:text-base mt-2 mb-4 font-medium">
+                    Ekranda süzülen renkli balonları bul ve patlat! Sınıfımıza ait tam 5 sihirli balonun seslerini dinle!
+                </p>
+
+                <div class="mb-5 inline-flex items-center gap-3 bg-pink-500 border-2 border-white px-6 py-2 rounded-full shadow-md text-white font-extrabold text-lg md:text-xl">
+                    <span>🎈 Dinlenen Sihirli Ses:</span>
+                    <span id="scoreCounter" class="bg-yellow-300 text-pink-700 px-4 py-1 rounded-full shadow-inner">0 / 5</span>
+                </div>
+
+                <div class="flex justify-center gap-4 mb-5">
+                    <button id="btnStartGame" onclick="startBalloonGame()" class="btn-kids btn-kids-yellow bg-amber-500 hover:bg-amber-600 text-white font-black py-2 px-6 rounded-full text-md flex items-center gap-2">
+                        <i class="fas fa-play"></i> Yeniden Başlat
+                    </button>
+                    <button id="btnStopGame" onclick="stopBalloonGame()" class="btn-kids btn-kids-purple bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded-full text-md flex items-center gap-2">
+                        <i class="fas fa-stop"></i> Oyunu Durdur
+                    </button>
+                </div>
+
+                <div id="gameStage" class="w-full aspect-[3/2] max-h-[480px] rounded-2xl relative overflow-hidden shadow-inner border-4 border-amber-200 bg-cover bg-center bg-no-repeat bg-[#fbf5e6]" style="background-image: url('2.jpg');"></div>
+            </div>
+        </section>
+    </main>
+
+    <div id="noteModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-3xl p-6 md:p-8 max-w-md w-full border-4 border-emerald-300 shadow-2xl transform scale-95 transition-all duration-300">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl md:text-2xl font-bold text-emerald-600 flex items-center gap-2">
+                    <span>📝</span> Yeni Not Yaz
+                </h3>
+                <button onclick="closeNoteModal()" class="text-gray-400 hover:text-gray-600 text-2xl"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Adın & Soyadın:</label>
+                    <input type="text" id="noteAuthor" placeholder="Örn: Kuzey Yılmaz" class="w-full px-4 py-2 rounded-xl border-2 border-emerald-100 focus:outline-none focus:border-emerald-300 font-medium text-gray-800">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Sevimli Bir Emoji Seç:</label>
+                    <div class="flex justify-around text-2xl bg-emerald-50 p-2 rounded-xl">
+                        <button onclick="selectEmoji(event, '🌟')" class="emoji-opt border-2 border-transparent hover:border-emerald-300 rounded p-1">🌟</button>
+                        <button onclick="selectEmoji(event, '🚀')" class="emoji-opt border-2 border-transparent hover:border-emerald-300 rounded p-1">🚀</button>
+                        <button onclick="selectEmoji(event, '🍭')" class="emoji-opt border-2 border-transparent hover:border-emerald-300 rounded p-1">🍭</button>
+                        <button onclick="selectEmoji(event, '🦖')" class="emoji-opt border-2 border-transparent hover:border-emerald-300 rounded p-1">🦖</button>
+                        <button onclick="selectEmoji(event, '🎨')" class="emoji-opt border-2 border-transparent hover:border-emerald-300 rounded p-1">🎨</button>
+                        <input type="hidden" id="selectedEmoji" value="🌟">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Not Kartı Rengi:</label>
+                    <div class="grid grid-cols-4 gap-2">
+                        <button onclick="selectNoteBg(event, '#fef08a')" class="note-bg-opt h-8 rounded-lg bg-yellow-200 border-2 border-amber-400"></button>
+                        <button onclick="selectNoteBg(event, '#fbcfe8')" class="note-bg-opt h-8 rounded-lg bg-pink-200 border-2 border-transparent"></button>
+                        <button onclick="selectNoteBg(event, '#bfdbfe')" class="note-bg-opt h-8 rounded-lg bg-blue-200 border-2 border-transparent"></button>
+                        <button onclick="selectNoteBg(event, '#bbf7d0')" class="note-bg-opt h-8 rounded-lg bg-green-200 border-2 border-transparent"></button>
+                        <input type="hidden" id="selectedNoteBg" value="#fef08a">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Mesajın:</label>
+                    <textarea id="noteContent" rows="3" placeholder="Öğretmenimi ve tüm arkadaşlarımı çok seviyorum! İyi ki varsınız!" class="w-full px-4 py-2 rounded-xl border-2 border-emerald-100 focus:outline-none focus:border-emerald-300 font-medium text-gray-800 resize-none"></textarea>
+                </div>
+            </div>
+
+            <div class="mt-6 flex gap-3">
+                <button onclick="saveNote()" class="btn-kids bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-6 rounded-xl flex-1">
+                    Duvara As! 📌
+                </button>
+                <button onclick="closeNoteModal()" class="py-3 px-6 bg-gray-100 hover:bg-gray-200 rounded-xl text-gray-600 font-bold">
+                    Vazgeç
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="voiceNoteModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-3xl p-6 md:p-8 max-w-md w-full border-4 border-purple-300 shadow-2xl transform scale-95 transition-all duration-300">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl md:text-2xl font-bold text-purple-600 flex items-center gap-2">
+                    <span>🎙️</span> Sesli Not Kaydet
+                </h3>
+                <button onclick="closeVoiceNoteModal()" class="text-gray-400 hover:text-gray-600 text-2xl"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Adın & Soyadın:</label>
+                    <input type="text" id="voiceNoteAuthor" placeholder="Örn: Kuzey Yılmaz" class="w-full px-4 py-2 rounded-xl border-2 border-purple-100 focus:outline-none focus:border-purple-300 font-medium text-gray-800">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Sevimli Bir Emoji Seç:</label>
+                    <div class="flex justify-around text-2xl bg-purple-50 p-2 rounded-xl">
+                        <button onclick="selectVoiceEmoji(event, '🌟')" class="voice-emoji-opt border-2 border-transparent hover:border-purple-300 rounded p-1">🌟</button>
+                        <button onclick="selectVoiceEmoji(event, '🚀')" class="voice-emoji-opt border-2 border-transparent hover:border-purple-300 rounded p-1">🚀</button>
+                        <button onclick="selectVoiceEmoji(event, '🍭')" class="voice-emoji-opt border-2 border-transparent hover:border-purple-300 rounded p-1">🍭</button>
+                        <button onclick="selectVoiceEmoji(event, '🦖')" class="voice-emoji-opt border-2 border-transparent hover:border-purple-300 rounded p-1">🦖</button>
+                        <button onclick="selectVoiceEmoji(event, '🎨')" class="voice-emoji-opt border-2 border-transparent hover:border-purple-300 rounded p-1">🎨</button>
+                        <input type="hidden" id="selectedVoiceEmoji" value="🌟">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Not Kartı Rengi:</label>
+                    <div class="grid grid-cols-4 gap-2">
+                        <button onclick="selectVoiceNoteBg(event, '#fef08a')" class="voice-note-bg-opt h-8 rounded-lg bg-yellow-200 border-2 border-amber-400"></button>
+                        <button onclick="selectVoiceNoteBg(event, '#fbcfe8')" class="voice-note-bg-opt h-8 rounded-lg bg-pink-200 border-2 border-transparent"></button>
+                        <button onclick="selectVoiceNoteBg(event, '#bfdbfe')" class="voice-note-bg-opt h-8 rounded-lg bg-blue-200 border-2 border-transparent"></button>
+                        <button onclick="selectVoiceNoteBg(event, '#bbf7d0')" class="voice-note-bg-opt h-8 rounded-lg bg-green-200 border-2 border-transparent"></button>
+                        <input type="hidden" id="selectedVoiceNoteBg" value="#fef08a">
+                    </div>
+                </div>
+                
+                <div class="bg-purple-50 border-2 border-purple-200 rounded-2xl p-4 text-center">
+                    <span class="block text-sm font-bold text-purple-700 mb-3">Sihirli Mikrofon</span>
+                    <div class="flex justify-center items-center gap-3">
+                        <button id="btnRecord" onclick="toggleAudioRecording()" class="w-14 h-14 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition transform active:scale-90" title="Kaydı Başlat / Durdur">
+                            <i id="recordIcon" class="fas fa-microphone text-xl"></i>
+                        </button>
+                        <button id="btnPlayPreview" onclick="playRecordingPreview()" class="w-14 h-14 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full flex items-center justify-center shadow-lg transition transform active:scale-90 opacity-50 cursor-not-allowed" disabled title="Kaydı Dinle">
+                            <i class="fas fa-play text-xl"></i>
+                        </button>
+                    </div>
+                    <span id="recordStatus" class="block text-xs font-bold text-gray-500 mt-3">Kayıt Yapmak İçin Kırmızı Mikrofon Butonuna Dokun!</span>
+                </div>
+            </div>
+
+            <div class="mt-6 flex gap-3">
+                <button id="btnSaveVoiceNote" onclick="saveVoiceNote()" class="btn-kids bg-purple-500 hover:bg-purple-600 text-white font-bold py-3 px-6 rounded-xl flex-1 opacity-50 cursor-not-allowed" disabled>
+                    Duvara As! 📌
+                </button>
+                <button onclick="closeVoiceNoteModal()" class="py-3 px-6 bg-gray-100 hover:bg-gray-200 rounded-xl text-gray-600 font-bold">
+                    Vazgeç
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="photoModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-3xl p-6 md:p-8 max-w-md w-full border-4 border-sky-300 shadow-2xl transform scale-95 transition-all duration-300">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl md:text-2xl font-bold text-sky-600 flex items-center gap-2">
+                    <span>📸</span> Sınıf Albümüne Katıl
+                </h3>
+                <button onclick="closePhotoModal()" class="text-gray-400 hover:text-gray-600 text-2xl"><i class="fas fa-times"></i></button>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Fotoğraf Başlığı / Açıklaması:</label>
+                    <input type="text" id="photoTitle" placeholder="Örn: Harika bir piknik günü!" class="w-full px-4 py-2 rounded-xl border-2 border-sky-100 focus:outline-none focus:border-sky-300 font-medium text-gray-800">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Fotoğraf Seç:</label>
+                    <label for="photoInput" class="block border-2 border-dashed border-sky-200 rounded-2xl p-6 text-center bg-sky-50/50 hover:bg-sky-100/70 transition cursor-pointer relative">
+                        <input type="file" id="photoInput" accept="image/*" class="hidden" onchange="previewSelectedPhoto(event)">
+                        <div id="photoPlaceholder">
+                            <span class="text-4xl block mb-2">📁</span>
+                            <span class="text-sm text-sky-600 font-bold block">Resim Seçmek İçin Tıkla</span>
+                            <span class="text-[10px] text-gray-400 block mt-1">Her boyuttaki tüm fotoğraflar otomatik sıkıştırılır</span>
+                        </div>
+                        <img id="photoPreviewImg" class="hidden w-full h-36 object-cover rounded-xl shadow-inner border border-sky-200" src="" alt="Önizleme">
+                    </label>
+                </div>
+            </div>
+
+            <div class="mt-6 flex gap-3">
+                <button onclick="savePhoto()" class="btn-kids btn-kids-purple bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-6 rounded-xl flex-1">
+                    Albümüme Ekle! 📸
+                </button>
+                <button onclick="closePhotoModal()" class="py-3 px-6 bg-gray-100 hover:bg-gray-200 rounded-xl text-gray-600 font-bold">
+                    İptal
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="messageModal" class="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-gradient-to-br from-yellow-100 to-orange-100 rounded-3xl p-6 md:p-8 max-w-lg w-full border-4 border-yellow-400 shadow-2xl transform scale-95 transition-all duration-300 text-center relative overflow-hidden">
+            <div class="absolute -right-8 -bottom-8 opacity-20 text-7xl">🎈</div>
+            <div class="absolute -left-8 -top-8 opacity-20 text-7xl">🌟</div>
+
+            <span class="text-5xl">💝</span>
+            <h3 class="text-2xl font-black text-amber-700 mt-4">Harika, Balonu Patlattın!</h3>
+            <p class="text-xs text-amber-600 tracking-wider uppercase font-semibold mt-1">Sihirli Sesli Mektup</p>
+            
+            <div class="my-6 p-6 bg-white/80 rounded-2xl border-2 border-yellow-200 shadow-inner flex flex-col items-center gap-4">
+                <button id="btnReplayMessage" class="audio-playing-pulse bg-emerald-500 hover:bg-emerald-600 text-white text-lg font-bold p-4 px-8 rounded-full flex items-center gap-2 shadow-md transform active:scale-95 transition-all">
+                    <i class="fas fa-volume-up text-2xl animate-bounce"></i> Sesi Tekrar Dinle! 🔊
+                </button>
+                <p class="text-sm font-bold text-emerald-600">— Seni Seven Öğretmenin</p>
+            </div>
+
+            <button onclick="closeMessageModal()" class="btn-kids bg-yellow-500 hover:bg-yellow-600 text-white font-black py-3 px-8 rounded-full text-lg">
+                Devam Et 💫
+            </button>
+        </div>
+    </div>
+
+    <footer class="relative z-10 text-center text-gray-600 text-sm mt-12 bg-white/40 py-3 backdrop-blur-sm border-t border-pink-100">
+        <p class="font-bold text-pink-700"> Ülkem Yanımda &copy; 2026</p>
+        <p class="text-xs text-gray-500 mt-1">Türkçemizin ve kültürümüzün dünyaya açılan kapısı. 🌸</p>
+    </footer>
+
+    <script>
+        // --- 🚀 KÜRESEL DURUM DEĞİŞKENLERİ VE HOISTING TANIMLAMALARI ---
+        let audioCtx = null;
+        let isSoundEnabled = true;
+        let activeAudio = null; 
+
+        // Oyun ve zamanlayıcı durum elemanları tarayıcı okuması için en tepeye alındı
+        let gameInterval = null;
+        let balloonId = 0;
+        let poppedCount = 0;
+        const maxBalloons = 5;
+        let isGameRunning = false;
+        const magicAudios = ["a.mp3", "b.mp3", "c.mp3", "d.mp3", "e.mp3"];
+
+        // Boş varsayılan veri dizileri (ReferenceError çözümü için lokal depolama öncesi şart)
+        const defaultNotes = [];
+        const defaultPhotos = [];
+
+        let notes = JSON.parse(localStorage.getItem('ani_duvari_notes')) || defaultNotes;
+        let photos = JSON.parse(localStorage.getItem('ani_duvari_photos')) || defaultPhotos;
+
+        // --- 🔉 SES VE AUDIO CONTEXT YÖNETİMİ ---
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playVoice(filename) {
+            initAudio();
+            if (activeAudio) {
+                activeAudio.pause();
+                activeAudio.currentTime = 0;
+            }
+            activeAudio = new Audio(filename);
+            activeAudio.play().catch(err => {
+                console.log("Ses oynatılamadı. Kullanıcı etkileşimi gerekiyor:", err);
+            });
+        }
+
+        function playSound(type) {
+            if (!isSoundEnabled) return;
+            try {
+                initAudio();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                if (type === 'pop') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(80, audioCtx.currentTime + 0.15);
+                    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.15);
+                } else if (type === 'click') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.08);
+                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.08);
+                } else if (type === 'confetti') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+                    osc.frequency.linearRampToValueAtTime(800, audioCtx.currentTime + 0.4);
+                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.4);
+                } else if (type === 'bounce') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(280, audioCtx.currentTime + 0.2);
+                    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.2);
+                }
+            } catch (e) {
+                console.log('Ses sentezlenemedi.', e);
+            }
+        }
+
+        function toggleSound() {
+            isSoundEnabled = !isSoundEnabled;
+            const soundIcon = document.querySelector('#soundToggle i');
+            const soundText = document.getElementById('soundText');
+            if (isSoundEnabled) {
+                soundIcon.className = "fas fa-volume-up";
+                soundText.innerText = "Ses Efektleri Açık";
+                playSound('click');
+            } else {
+                soundIcon.className = "fas fa-volume-mute";
+                soundText.innerText = "Sesi Aç";
+                if (activeAudio) {
+                    activeAudio.pause();
+                }
+            }
+        }
+
+        function triggerConfetti() {
+            playSound('confetti');
+            confetti({
+                particleCount: 150,
+                spread: 80,
+                origin: { y: 0.6 },
+                colors: ['#ff007f', '#a855f7', '#06b6d4', '#eab308', '#22c55e', '#ff7b00']
+            });
+        }
+
+        // --- 📑 SEKME GEÇİŞLERİ VE KONTROLLER ---
+        function switchTab(tabId) {
+            playSound('click');
+            
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+                content.classList.remove('block');
+            });
+            const selectedTab = document.getElementById(tabId);
+            selectedTab.classList.remove('hidden');
+            selectedTab.classList.add('block');
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.className = btn.className.replace(/bg-\w+-400 text-white/g, 'bg-white text-gray-600');
+                btn.classList.add('bg-white');
+                btn.classList.remove('border-white');
+                btn.classList.add('border-transparent');
+            });
+
+            const activeBtn = document.getElementById('btn-' + tabId);
+            activeBtn.classList.remove('bg-white', 'text-gray-600', 'border-transparent');
+            activeBtn.classList.add('border-white');
+
+            if (tabId === 'tab-duvar') {
+                activeBtn.className += ' bg-pink-400 text-white';
+                playVoice('2.mp3');
+            }
+            if (tabId === 'tab-album') {
+                activeBtn.className += ' bg-sky-400 text-white';
+                playVoice('3.mp3');
+            }
+            if (tabId === 'tab-cizim') {
+                activeBtn.className += ' bg-teal-400 text-white';
+                playVoice('4.mp3');
+                setTimeout(resizeCanvas, 100);
+            }
+            if (tabId === 'tab-oyun') {
+                activeBtn.className += ' bg-yellow-400 text-white';
+                applyLoadedAssets(); 
+                playVoice('5.mp3');
+                startBalloonGame(); 
+            }
+
+            if (tabId !== 'tab-oyun') {
+                stopBalloonGame();
+            }
+        }
+
+        // --- 📌 1. DİLEK & NOT DUVARI MODÜLÜ ---
+        function renderNotes() {
+            const container = document.getElementById('notesContainer');
+            if(!container) return;
+            container.innerHTML = '';
+            
+            notes.forEach(note => {
+                const rot = (note.id % 2 === 0) ? 'rotate-1' : '-rotate-1';
+                const noteEl = document.createElement('div');
+                noteEl.style.backgroundColor = note.bg;
+                noteEl.className = `sticky-note ${rot} p-6 rounded-2xl shadow-lg border-2 border-white/50 relative flex flex-col justify-between min-h-[180px]`;
+                
+                let contentHTML = '';
+                if (note.audio) {
+                    contentHTML = `
+                        <div class="flex flex-col items-center justify-center p-3 bg-white/40 rounded-xl border border-black/5 mt-2">
+                            <button onclick="event.stopPropagation(); playVoice('${note.audio}')" class="audio-playing-pulse bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 border-2 border-white text-white rounded-full py-2 px-5 flex items-center gap-2 text-xs font-black shadow-md transform active:scale-95 transition-all">
+                                <i class="fas fa-volume-up text-sm"></i> Sesi Dinle 🔊
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    contentHTML = `<p class="text-gray-700 font-medium text-sm leading-relaxed">${note.text}</p>`;
+                }
+
+                noteEl.innerHTML = `
+                    <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 text-red-500 drop-shadow-md text-2xl">📍</div>
+                    <div class="flex-grow">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="text-2xl">${note.emoji}</span>
+                            <span class="font-extrabold text-gray-800 text-lg">${note.author}</span>
+                        </div>
+                        ${contentHTML}
+                    </div>
+                    <div class="flex justify-between items-center mt-4 pt-2 border-t border-black/10 text-xs text-gray-500 font-bold">
+                        <span>${note.date}</span>
+                        <button onclick="event.stopPropagation(); deleteNote('${note.id}')" class="text-red-400 hover:text-red-600 transition flex items-center gap-1" title="Notu Kaldır">
+                            <i class="fas fa-trash"></i> Sil
+                        </button>
+                    </div>
+                `;
+                container.appendChild(noteEl);
+            });
+        }
+
+        function openNoteModal() {
+            playSound('click');
+            document.getElementById('noteModal').classList.remove('hidden');
+        }
+        function closeNoteModal() {
+            document.getElementById('noteModal').classList.add('hidden');
+        }
+
+        function selectEmoji(e, emoji) {
+            playSound('click');
+            document.querySelectorAll('.emoji-opt').forEach(opt => opt.classList.remove('border-emerald-300', 'bg-emerald-100'));
+            e.currentTarget.classList.add('border-emerald-300', 'bg-emerald-100');
+            document.getElementById('selectedEmoji').value = emoji;
+        }
+
+        function selectNoteBg(e, colorHex) {
+            playSound('click');
+            document.querySelectorAll('.note-bg-opt').forEach(opt => opt.classList.remove('border-amber-400'));
+            e.currentTarget.classList.add('border-amber-400');
+            document.getElementById('selectedNoteBg').value = colorHex;
+        }
+
+        function saveNote() {
+            const author = document.getElementById('noteAuthor').value.trim();
+            const emoji = document.getElementById('selectedEmoji').value;
+            const bg = document.getElementById('selectedNoteBg').value;
+            const text = document.getElementById('noteContent').value.trim();
+
+            if (!author || !text) {
+                alertModal("Lütfen adınızı ve mesajınızı eksiksiz girin! 🥰");
+                return;
+            }
+
+            const newNote = {
+                id: Date.now(),
+                author,
+                text,
+                emoji,
+                bg,
+                date: "Haziran 2026"
+            };
+
+            notes.unshift(newNote);
+            localStorage.setItem('ani_duvari_notes', JSON.stringify(notes));
+            renderNotes();
+            closeNoteModal();
+            triggerConfetti();
+            document.getElementById('noteAuthor').value = '';
+            document.getElementById('noteContent').value = '';
+        }
+
+        // --- 🎙️ 2. SES KAYIT YÖNETİM MODÜLÜ ---
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let audioBlob = null;
+        let audioBase64 = "";
+        let isRecording = false;
+
+        function openVoiceNoteModal() {
+            playSound('click');
+            document.getElementById('voiceNoteModal').classList.remove('hidden');
+            document.getElementById('voiceNoteAuthor').value = "";
+            audioBase64 = "";
+            audioChunks = [];
+            isRecording = false;
+            updateRecordUI();
+        }
+
+        function closeVoiceNoteModal() {
+            document.getElementById('voiceNoteModal').classList.add('hidden');
+            stopAudioStream();
+        }
+
+        function selectVoiceEmoji(e, emoji) {
+            playSound('click');
+            document.querySelectorAll('.voice-emoji-opt').forEach(opt => opt.classList.remove('border-purple-300', 'bg-purple-100'));
+            e.currentTarget.classList.add('border-purple-300', 'bg-purple-100');
+            document.getElementById('selectedVoiceEmoji').value = emoji;
+        }
+
+        function selectVoiceNoteBg(e, colorHex) {
+            playSound('click');
+            document.querySelectorAll('.voice-note-bg-opt').forEach(opt => opt.classList.remove('border-amber-400'));
+            e.currentTarget.classList.add('border-amber-400');
+            document.getElementById('selectedVoiceNoteBg').value = colorHex;
+        }
+
+        function stopAudioStream() {
+            if (mediaRecorder && mediaRecorder.stream) {
+                mediaRecorder.stream.getTracks().forEach(track => track.stop());
+            }
+        }
+
+        async function toggleAudioRecording() {
+            if (!isRecording) {
+                audioChunks = [];
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorder = new MediaRecorder(stream);
+                    mediaRecorder.ondataavailable = e => {
+                        audioChunks.push(e.data);
+                    };
+                    mediaRecorder.onstop = () => {
+                        audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                        const reader = new FileReader();
+                        reader.readAsDataURL(audioBlob);
+                        reader.onloadend = () => {
+                            audioBase64 = reader.result;
+                            document.getElementById('btnPlayPreview').disabled = false;
+                            document.getElementById('btnPlayPreview').classList.remove('opacity-50', 'cursor-not-allowed');
+                            document.getElementById('btnSaveVoiceNote').disabled = false;
+                            document.getElementById('btnSaveVoiceNote').classList.remove('opacity-50', 'cursor-not-allowed');
+                            document.getElementById('recordStatus').innerText = "Kaydın Başarıyla Hazırlandı! 🌟";
+                        };
+                    };
+                    mediaRecorder.start();
+                    isRecording = true;
+                    updateRecordUI();
+                    playSound('click');
+                } catch (err) {
+                    console.error("Mikrofon erişim izni reddedildi:", err);
+                    document.getElementById('recordStatus').innerText = "Hata: Mikrofon iznini kontrol et. 🥺";
+                }
+            } else {
+                if (mediaRecorder && mediaRecorder.state !== "inactive") {
+                    mediaRecorder.stop();
+                    stopAudioStream();
+                }
+                isRecording = false;
+                updateRecordUI();
+                playSound('pop');
+            }
+        }
+
+        function updateRecordUI() {
+            const btnRecord = document.getElementById('btnRecord');
+            const recordIcon = document.getElementById('recordIcon');
+            const statusText = document.getElementById('recordStatus');
+
+            if (isRecording) {
+                btnRecord.classList.add('recording-pulse');
+                recordIcon.className = "fas fa-stop text-xl";
+                statusText.innerText = "Sesiniz kaydediliyor... Bitince butona tekrar dokun! 🎙️✨";
+            } else {
+                btnRecord.classList.remove('recording-pulse');
+                recordIcon.className = "fas fa-microphone text-xl";
+                if (!audioBase64) {
+                    statusText.innerText = "Kayıt Yapmak İçin Kırmızı Mikrofon Butonuna Dokun!";
+                    document.getElementById('btnPlayPreview').disabled = true;
+                    document.getElementById('btnPlayPreview').classList.add('opacity-50', 'cursor-not-allowed');
+                    document.getElementById('btnSaveVoiceNote').disabled = true;
+                    document.getElementById('btnSaveVoiceNote').classList.add('opacity-50', 'cursor-not-allowed');
+                }
+            }
+        }
+
+        function playRecordingPreview() {
+            if (audioBase64) {
+                playVoice(audioBase64);
+            }
+        }
+
+        function saveVoiceNote() {
+            const author = document.getElementById('voiceNoteAuthor').value.trim();
+            const emoji = document.getElementById('selectedVoiceEmoji').value;
+            const bg = document.getElementById('selectedVoiceNoteBg').value;
+
+            if (!author) {
+                alertModal("Lütfen adını yazmayı unutma! 🥰");
+                return;
+            }
+            if (!audioBase64) {
+                alertModal("Lütfen önce sesini kaydet! 🎙️");
+                return;
+            }
+
+            const newNote = {
+                id: Date.now(),
+                author,
+                text: "Ses Kaydı 🎙️",
+                audio: audioBase64,
+                emoji,
+                bg,
+                date: "Haziran 2026"
+            };
+
+            notes.unshift(newNote);
+            try {
+                localStorage.setItem('ani_duvari_notes', JSON.stringify(notes));
+            } catch (e) {
+                console.log("Tarayıcı yerel veri depolama sınırı aşıldı.", e);
+            }
+            renderNotes();
+            closeVoiceNoteModal();
+            triggerConfetti();
+        }
+
+        // --- 📸 3. SINIF ALBÜMÜ MODÜLÜ ---
+        function renderPhotos() {
+            const container = document.getElementById('photosContainer');
+            if(!container) return;
+            container.innerHTML = '';
+
+            photos.forEach(photo => {
+                const rot = (photo.id % 2 === 0) ? 'rotate-2' : '-rotate-2';
+                const polaroid = document.createElement('div');
+                polaroid.className = `bg-white p-4 pb-6 rounded-md shadow-2xl border border-gray-100 max-w-[280px] transform ${rot} hover:rotate-0 hover:scale-105 transition-all duration-300 flex flex-col items-center z-10`;
+                
+                polaroid.innerHTML = `
+                    <div class="w-full h-48 bg-gray-200 overflow-hidden rounded relative border border-gray-100">
+                        <img src="${photo.src}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/400x300/ff007f/ffffff?text=Okulda+Neşeli+Günler'">
+                    </div>
+                    <div class="mt-4 text-center w-full">
+                        <p class="font-bold text-gray-800 text-lg leading-tight">${photo.title}</p>
+                        <p class="text-xs text-sky-500 font-bold mt-1">${photo.date}</p>
+                        <button onclick="event.stopPropagation(); deletePhoto('${photo.id}')" class="text-xs text-red-400 hover:text-red-600 font-bold mt-3 transition block mx-auto flex items-center justify-center gap-1">
+                            <i class="fas fa-trash-alt"></i> Fotoğrafı Kaldır
+                        </button>
+                    </div>
+                `;
+                container.appendChild(polaroid);
+            });
+        }
+
+        function openPhotoModal() {
+            playSound('click');
+            document.getElementById('photoModal').classList.remove('hidden');
+        }
+        function closePhotoModal() {
+            document.getElementById('photoModal').classList.add('hidden');
+        }
+
+        let base64PhotoData = '';
+
+        function previewSelectedPhoto(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const tempImg = new Image();
+                    tempImg.onload = function() {
+                        const tempCanvas = document.createElement('canvas');
+                        const maxWidth = 400; 
+                        const scale = maxWidth / tempImg.width;
+                        tempCanvas.width = maxWidth;
+                        tempCanvas.height = tempImg.height * scale;
+
+                        const tempCtx = tempCanvas.getContext('2d');
+                        tempCtx.drawImage(tempImg, 0, 0, tempCanvas.width, tempCanvas.height);
+
+                        base64PhotoData = tempCanvas.toDataURL('image/jpeg', 0.70);
+
+                        document.getElementById('photoPlaceholder').classList.add('hidden');
+                        const img = document.getElementById('photoPreviewImg');
+                        img.src = base64PhotoData;
+                        img.classList.remove('hidden');
+                    };
+                    tempImg.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function savePhoto() {
+            const title = document.getElementById('photoTitle').value.trim();
+            if (!title) {
+                alertModal("Lütfen fotoğrafa harika bir başlık yaz! 🦄");
+                return;
+            }
+            if (!base64PhotoData) {
+                alertModal("Lütfen bir fotoğraf seçmeyi unutma! 📸");
+                return;
+            }
+
+            const newPhoto = {
+                id: Date.now(),
+                title,
+                date: "Haziran 2026",
+                src: base64PhotoData
+            };
+
+            try {
+                photos.unshift(newPhoto);
+                localStorage.setItem('ani_duvari_photos', JSON.stringify(photos));
+            } catch (error) {
+                console.error("Yerel depolama kotası hatası:", error);
+            }
+            
+            renderPhotos();
+            closePhotoModal();
+            triggerConfetti();
+
+            document.getElementById('photoTitle').value = '';
+            document.getElementById('photoInput').value = '';
+            document.getElementById('photoPreviewImg').classList.add('hidden');
+            document.getElementById('photoPlaceholder').classList.remove('hidden');
+            base64PhotoData = '';
+        }
+
+        function deletePhoto(id) {
+            playSound('click');
+            photos = photos.filter(p => String(p.id) !== String(id));
+            try {
+                localStorage.setItem('ani_duvari_photos', JSON.stringify(photos));
+            } catch (e) {}
+            renderPhotos();
+        }
+
+        // --- 🎨 4. İMZA VE TUVAL ÇİZİM MODÜLÜ ---
+        const canvas = document.getElementById('doodleCanvas');
+        const ctx = canvas ? canvas.getContext('2d') : null;
+        let drawing = false;
+        let brushColor = '#000000';
+        let brushSize = 8;
+        let selectedStamp = null;
+
+        function resizeCanvas() {
+            const parent = document.getElementById('canvasParent');
+            if (parent && canvas && ctx) {
+                canvas.width = parent.clientWidth;
+                canvas.height = parent.clientHeight;
+                
+                ctx.fillStyle = "#ffffff";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                setupCanvasBrush();
+            }
+        }
+
+        function setupCanvasBrush() {
+            if(!ctx) return;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.strokeStyle = brushColor;
+            ctx.lineWidth = brushSize;
+        }
+
+        function getEventCoords(e) {
+            const rect = canvas.getBoundingClientRect();
+            if (e.touches && e.touches[0]) {
+                return {
+                    x: e.touches[0].clientX - rect.left,
+                    y: e.touches[0].clientY - rect.top
+                };
+            }
+            return {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            };
+        }
+
+        function startDrawing(e) {
+            if(!ctx) return;
+            e.preventDefault();
+            const coords = getEventCoords(e);
+            
+            if (selectedStamp) {
+                playSound('click');
+                ctx.font = `${brushSize * 4}px Arial`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(selectedStamp, coords.x, coords.y);
+                return;
+            }
+            
+            drawing = true;
+            ctx.beginPath();
+            ctx.moveTo(coords.x, coords.y);
+            setupCanvasBrush();
+        }
+
+        function draw(e) {
+            if (!drawing || selectedStamp || !ctx) return;
+            e.preventDefault();
+            const coords = getEventCoords(e);
+            ctx.lineTo(coords.x, coords.y);
+            ctx.stroke();
+        }
+
+        function stopDrawing() {
+            drawing = false;
+        }
+
+        if (canvas) {
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            window.addEventListener('mouseup', stopDrawing);
+
+            canvas.addEventListener('touchstart', startDrawing, { passive: false });
+            canvas.addEventListener('touchmove', draw, { passive: false });
+            window.addEventListener('touchend', stopDrawing);
+        }
+
+        function setBrushColor(color) {
+            playSound('click');
+            selectedStamp = null;
+            brushColor = color;
+            document.getElementById('brushSize').value = 8;
+            brushSize = 8;
+            deactivateStamps();
+            document.getElementById('eraserBtn').classList.remove('bg-teal-200');
+        }
+
+        function selectStamp(e, emoji) {
+            playSound('click');
+            selectedStamp = emoji;
+            deactivateStamps();
+            e.currentTarget.classList.add('bg-teal-200', 'border-teal-400');
+        }
+
+        function deactivateStamps() {
+            document.querySelectorAll('.stamp-btn').forEach(btn => btn.classList.remove('bg-teal-200', 'border-teal-400'));
+        }
+
+        function useEraser() {
+            playSound('click');
+            selectedStamp = null;
+            brushColor = '#ffffff';
+            document.getElementById('eraserBtn').classList.add('bg-teal-200');
+            deactivateStamps();
+        }
+
+        function clearCanvas() {
+            if(!ctx) return;
+            playSound('click');
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // --- 🎈 5. BALON PATLATMA ETKİNLİK MOTORU ---
+        function startBalloonGame() {
+            if (isGameRunning) return;
+            isGameRunning = true;
+            poppedCount = 0;
+            updateScoreUI();
+            
+            document.getElementById('btnStartGame').classList.add('opacity-50', 'pointer-events-none');
+            const stage = document.getElementById('gameStage');
+            if(!stage) return;
+            stage.innerHTML = ''; 
+            
+            gameInterval = setInterval(() => {
+                if (poppedCount >= maxBalloons) {
+                    stopBalloonGame();
+                    return;
+                }
+
+                const balloon = document.createElement('div');
+                const colors = ['#f43f5e', '#ec4899', '#a855f7', '#06b6d4', '#eab308', '#10b981', '#f97316'];
+                const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                const isMagic = Math.random() < 0.50;
+                
+                balloon.id = `balloon-${balloonId++}`;
+                balloon.className = "flying-balloon flex flex-col items-center justify-center z-20";
+                
+                balloon.innerHTML = `
+                    <div class="relative w-12 h-16 sm:w-16 sm:h-20 rounded-full flex items-center justify-center shadow-lg transition transform active:scale-95 border-[3px] border-black" style="background-color: ${randomColor};">
+                        ${isMagic ? '<span class="text-white text-lg font-bold animate-pulse">⭐</span>' : ''}
+                        <div class="absolute bottom-[-5px] w-2.5 h-2.5 sm:w-3 sm:h-3 rotate-45 border-r-[3px] border-b-[3px] border-black" style="background-color: ${randomColor};"></div>
+                    </div>
+                    <div class="w-0.5 h-12 sm:h-16 bg-black opacity-90"></div>
+                `;
+
+                const leftPos = 5 + (Math.random() * 85); 
+                const speed = 4 + Math.random() * 4; 
+                
+                balloon.style.left = leftPos + '%';
+                balloon.style.setProperty('--speed', speed + 's');
+                
+                balloon.onclick = () => {
+                    handleBalloonClick(balloon, isMagic);
+                };
+
+                stage.appendChild(balloon);
+
+                setTimeout(() => {
+                    if (balloon && balloon.parentNode) {
+                        balloon.parentNode.removeChild(balloon);
+                    }
+                }, speed * 1000);
+
+            }, 900);
+        }
+
+        function stopBalloonGame() {
+            isGameRunning = false;
+            clearInterval(gameInterval);
+            document.querySelectorAll('.flying-balloon').forEach(b => b.remove());
+            const startBtn = document.getElementById('btnStartGame');
+            if(startBtn) startBtn.classList.remove('opacity-50', 'pointer-events-none');
+        }
+
+        function handleBalloonClick(balloonEl, isMagic) {
+            if (!isGameRunning) return;
+
+            if (isMagic) {
+                playSound('pop');
+                confetti({
+                    particleCount: 20,
+                    spread: 30,
+                    origin: { 
+                        x: balloonEl.offsetLeft / document.getElementById('gameStage').clientWidth, 
+                        y: 0.6
+                    }
+                });
+
+                const activeMessageAudio = magicAudios[poppedCount];
+                poppedCount++;
+                updateScoreUI();
+                balloonEl.remove();
+
+                playVoice(activeMessageAudio);
+
+                const replayBtn = document.getElementById('btnReplayMessage');
+                replayBtn.onclick = () => {
+                    playVoice(activeMessageAudio);
+                };
+
+                document.getElementById('messageModal').classList.remove('hidden');
+
+                if (poppedCount >= maxBalloons) {
+                    stopBalloonGame();
+                    setTimeout(() => {
+                        triggerConfetti();
+                        alertModal("🏆 <b>Tebrikler, Harika Bir Başarı!</b> <br><br> Süzülen tüm sihirli balonları patlatıp öğretmeninin sesli mektuplarının tamamını dinledin! 🎉⭐🎈");
+                    }, 1500);
+                }
+            } else {
+                playSound('bounce');
+                balloonEl.classList.add('wobble-anim');
+                setTimeout(() => {
+                    balloonEl.classList.remove('wobble-anim');
+                }, 300);
+            }
+        }
+
+        function updateScoreUI() {
+            const counter = document.getElementById('scoreCounter');
+            if(counter) counter.innerText = `${poppedCount} / ${maxBalloons}`;
+        }
+
+        function closeMessageModal() {
+            document.getElementById('messageModal').classList.add('hidden');
+            if (activeAudio) {
+                activeAudio.pause();
+            }
+        }
+
+        function alertModal(htmlContent) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = "fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in";
+            alertDiv.innerHTML = `
+                <div class="bg-white rounded-3xl p-6 max-w-sm w-full border-4 border-pink-400 shadow-2xl text-center transform scale-100 transition-all">
+                    <span class="text-4xl">🎉</span>
+                    <div class="my-4 text-slate-800 text-md font-bold leading-relaxed">${htmlContent}</div>
+                    <button onclick="this.closest('.fixed').remove(); playSound('click')" class="btn-kids bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-6 rounded-full text-sm">
+                        Harika! 👍
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(alertDiv);
+        }
+
+        function closeIntroOverlay() {
+            playSound('confetti');
+            triggerConfetti();
+            
+            const overlay = document.getElementById('introOverlay');
+            if (overlay) {
+                overlay.classList.add('opacity-0', 'pointer-events-none');
+                setTimeout(() => {
+                    overlay.remove();
+                }, 700);
+            }
+
+            document.body.classList.add('game-started');
+            
+            const local2 = localStorage.getItem('cached_asset_2');
+            if (local2) {
+                document.body.style.backgroundImage = `url('${local2}')`;
+            } else {
+                document.body.style.backgroundImage = "url('2.jpg')";
+            }
+
+            playVoice('2.mp3');
+        }
+
+        function applyLoadedAssets() {
+            const gameStage = document.getElementById('gameStage');
+            const introOverlay = document.getElementById('introOverlay');
+
+            const local1 = localStorage.getItem('cached_asset_1');
+            const local2 = localStorage.getItem('cached_asset_2');
+
+            if (introOverlay) {
+                introOverlay.style.backgroundImage = local1 ? `url('${local1}')` : "url('1.jpg')";
+            }
+            if (gameStage) {
+                gameStage.style.backgroundImage = local2 ? `url('${local2}')` : "url('2.jpg')";
+            }
+            
+            if (document.body.classList.contains('game-started')) {
+                if (local2) {
+                    document.body.style.backgroundImage = `url('${local2}')`;
+                } else {
+                    document.body.style.backgroundImage = "url('2.jpg')";
+                }
+            }
+        }
+
+        function deleteNote(id) {
+            playSound('click');
+            notes = notes.filter(n => String(n.id) !== String(id));
+            try {
+                localStorage.setItem('ani_duvari_notes', JSON.stringify(notes));
+            } catch (e) {
+                console.error("Not silinirken hata oluştu:", e);
+            }
+            renderNotes();
+        }
+
+        // --- 🏁 BAŞLANGIÇ TETİKLEYİCİLERİ ---
+        window.onload = function() {
+            renderNotes();
+            renderPhotos();
+            applyLoadedAssets(); 
+            
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+        };
+    </script>
+</body>
+</html>

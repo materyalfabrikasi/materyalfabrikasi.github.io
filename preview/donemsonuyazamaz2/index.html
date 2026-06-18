@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Görsel Zaman Kapsülü: Benim Renkli Dünyam</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for playful/kid-friendly Turkish styling -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Concert+One&family=Inter:wght@400;700&display=swap"
+        rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- html2canvas and jsPDF for PDF exporting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background: linear-gradient(135deg, #ffeedb 0%, #ffd8be 50%, #ffc297 100%);
+            min-height: 100vh;
+            user-select: none;
+        }
+
+        .title-font {
+            font-family: 'Concert One', sans-serif;
+        }
+
+        /* Cute cloud-like glassmorphism card */
+        .kid-card {
+            background: rgba(255, 255, 255, 0.92);
+            border: 6px solid #ffab73;
+            box-shadow: 0 16px 0px #e08346, 0 20px 30px rgba(0, 0, 0, 0.1);
+            border-radius: 32px;
+        }
+
+        /* Animated floating effect for cute icons */
+        @keyframes float {
+            0% {
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-8px) rotate(3deg);
+            }
+
+            100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+        }
+
+        .floating {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        /* Color Circle Active State */
+        .color-circle.active {
+            transform: scale(1.25);
+            border-color: #000 !important;
+            box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Draw Canvas Style */
+        #drawingCanvas {
+            background-color: #ffffff;
+            border: 4px dashed #ffab73;
+            cursor: crosshair;
+            touch-action: none;
+            /* Prevents scrolling when drawing on tablets */
+        }
+    </style>
+</head>
+
+<body class="flex flex-col min-h-screen text-slate-800 antialiased overflow-x-hidden">
+
+    <!-- Top Nav for Cute Headings -->
+    <header
+        class="w-full py-4 px-6 flex justify-between items-center bg-white/85 shadow-md border-b-4 border-amber-200 z-10">
+        <div class="flex items-center gap-3">
+            <span class="text-4xl animate-bounce">🎨</span>
+            <div>
+                <h1 class="font-bold text-orange-600 text-lg md:text-xl tracking-wide title-font">BENİM RENKLİ DÜNYAM
+                </h1>
+                <p class="text-xs text-amber-700 font-semibold">Türkçe ve Türk Kültürü Dersi Etkinliği</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-3">
+            <span class="bg-red-500 text-white font-bold text-xs px-3 py-2 rounded-full shadow-md">
+                🎈 Eğlence Zamanı!
+            </span>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="flex-grow container mx-auto px-4 py-6 max-w-4xl flex flex-col justify-center">
+
+        <!-- Pigeon Guide Guide Bubble (Super Visual) -->
+        <div id="guideBubble"
+            class="mb-6 flex items-center gap-4 bg-white/90 border-4 border-amber-300 rounded-3xl p-4 shadow-lg transition-all duration-500">
+            <div class="flex-shrink-0 relative">
+                <!-- Cute Pigeon Character -->
+                <div
+                    class="w-16 h-16 bg-sky-100 rounded-full flex items-center justify-center border-4 border-amber-400 shadow-md">
+                    <svg viewBox="0 0 64 64" class="w-12 h-12 transform -scale-x-100">
+                        <circle cx="32" cy="32" r="28" fill="#e0f2fe" />
+                        <path d="M42,22a8,8,0,1,0-8-8A8,8,0,0,0,42,22Z" fill="#93c5fd" />
+                        <path d="M26,38C26,26,46,24,46,38c0,10-12,14-20,14S26,44,26,38Z" fill="#60a5fa" />
+                        <path d="M22,34C24,28,34,26,34,36c0,8-6,10-12,10S20,38,22,34Z" fill="#3b82f6" />
+                        <polygon points="50,14 42,16 46,20" fill="#fbbf24" />
+                        <circle cx="41" cy="13" r="2.5" fill="#1e3a8a" />
+                    </svg>
+                </div>
+            </div>
+            <div>
+                <h3 class="font-bold text-amber-950 text-base md:text-lg flex items-center gap-2">
+                    <span>Güvercin Barış Diyor ki:</span>
+                </h3>
+                <p id="guideSpeech" class="text-amber-900 text-sm md:text-base font-semibold">
+                    Merhaba! Türkçe ve Türk Kültürü dersimizin son gününde harika bir boyama ve yapıştırma oyunu
+                    oynayalım mı? Haydi başla butonuna bas!
+                </p>
+            </div>
+        </div>
+
+        <!-- GAME STEPS SCREEN CONTAINER -->
+        <div id="gameWindow" class="kid-card p-6 md:p-8 relative overflow-hidden">
+
+            <!-- Step Indicators (Visual and simplified) -->
+            <div class="mb-6 flex justify-center items-center gap-2">
+                <div id="dot1" class="w-6 h-6 rounded-full bg-orange-500 border-2 border-white shadow-md"></div>
+                <div id="line1" class="w-10 h-1.5 bg-amber-200 rounded-full"></div>
+                <div id="dot2" class="w-6 h-6 rounded-full bg-amber-200 border-2 border-white shadow-md"></div>
+                <div id="line2" class="w-10 h-1.5 bg-amber-200 rounded-full"></div>
+                <div id="dot3" class="w-6 h-6 rounded-full bg-amber-200 border-2 border-white shadow-md"></div>
+                <div id="line3" class="w-10 h-1.5 bg-amber-200 rounded-full"></div>
+                <div id="dot4" class="w-6 h-6 rounded-full bg-amber-200 border-2 border-white shadow-md"></div>
+            </div>
+
+            <!-- STEP 1: WELCOME & NAME ENTRY -->
+            <div id="stepContent1" class="step-pane flex flex-col items-center text-center py-4">
+                <span class="text-7xl mb-4 floating">🎁</span>
+                <h2 class="title-font text-3xl md:text-4xl font-extrabold text-orange-600 mb-2">Benim Zaman Kapsülüm
+                </h2>
+                <p class="text-sm md:text-base text-amber-900 font-bold mb-6">Boyayacağız, çıkartma yapıştıracağız ve
+                    saklayacağız!</p>
+
+                <!-- Quick Name Box -->
+                <div
+                    class="bg-amber-100/60 border-4 border-dashed border-amber-300 rounded-3xl p-6 max-w-sm w-full mb-6">
+                    <label for="kidNameInput" class="block text-base font-extrabold text-amber-950 mb-2">🎈 Adını Buraya
+                        Yazar mısın? / Yazdıralım:</label>
+                    <input type="text" id="kidNameInput" placeholder="Senin Adın..."
+                        class="w-full bg-white text-center font-bold text-lg px-4 py-3 rounded-2xl border-4 border-amber-300 focus:outline-none focus:border-orange-500 text-orange-600 shadow-inner">
+                </div>
+
+                <button onclick="goToStep(2)"
+                    class="bg-gradient-to-r from-orange-500 to-yellow-500 hover:scale-105 hover:rotate-1 active:scale-95 text-white font-black text-xl px-12 py-4 rounded-3xl shadow-lg border-b-4 border-orange-700 transition-all flex items-center gap-2">
+                    Hadi Başlayalım! 🚀
+                </button>
+            </div>
+
+            <!-- STEP 2: CHOOSE EMOTION (DUYGU SEÇİMİ) -->
+            <div id="stepContent2" class="step-pane hidden text-center">
+                <h2 class="title-font text-2xl md:text-3xl font-bold text-orange-600 mb-6">Bu Yıl Türkçe ve Türk Kültürü
+                    Dersinde Nasıl Hissettin?</h2>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-2xl mx-auto mb-8">
+                    <!-- Emotion Option: Happy -->
+                    <button onclick="selectFeeling('mutlu')" id="feelBtn_mutlu"
+                        class="bg-white hover:bg-emerald-50 border-4 border-slate-200 p-5 rounded-3xl transition-all duration-300 hover:scale-105 active:scale-95 flex flex-col items-center shadow-md">
+                        <span class="text-6xl mb-2">😊</span>
+                        <span class="font-extrabold text-emerald-700 text-base">Çok Mutlu</span>
+                    </button>
+                    <!-- Emotion Option: Excited -->
+                    <button onclick="selectFeeling('heyecanli')" id="feelBtn_heyecanli"
+                        class="bg-white hover:bg-amber-50 border-4 border-slate-200 p-5 rounded-3xl transition-all duration-300 hover:scale-105 active:scale-95 flex flex-col items-center shadow-md">
+                        <span class="text-6xl mb-2">🤩</span>
+                        <span class="font-extrabold text-amber-700 text-base">Heyecanlı</span>
+                    </button>
+                    <!-- Emotion Option: Loving -->
+                    <button onclick="selectFeeling('sevgi')" id="feelBtn_sevgi"
+                        class="bg-white hover:bg-rose-50 border-4 border-slate-200 p-5 rounded-3xl transition-all duration-300 hover:scale-105 active:scale-95 flex flex-col items-center shadow-md">
+                        <span class="text-6xl mb-2">😍</span>
+                        <span class="font-extrabold text-rose-700 text-base">Sevgi Dolu</span>
+                    </button>
+                    <!-- Emotion Option: Curious -->
+                    <button onclick="selectFeeling('merakli')" id="feelBtn_merakli"
+                        class="bg-white hover:bg-sky-50 border-4 border-slate-200 p-5 rounded-3xl transition-all duration-300 hover:scale-105 active:scale-95 flex flex-col items-center shadow-md">
+                        <span class="text-6xl mb-2">🤔</span>
+                        <span class="font-extrabold text-sky-700 text-base">Meraklı</span>
+                    </button>
+                </div>
+
+                <div class="flex justify-between items-center mt-6">
+                    <button onclick="goToStep(1)"
+                        class="px-6 py-3 rounded-2xl border-4 border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-extrabold text-sm transition-all">
+                        🔙 Geri
+                    </button>
+                    <button onclick="goToStep(3)"
+                        class="px-8 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-2xl font-black text-base border-b-4 border-orange-700 shadow-md transition-all flex items-center gap-2">
+                        İleri Çıkartmalara! ➡️
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 3: SELECT STICKERS (KÜLTÜR ÇIKARTMALARI) -->
+            <div id="stepContent3" class="step-pane hidden text-center">
+                <h2 class="title-font text-2xl md:text-3xl font-bold text-orange-600 mb-2">Kapsülüne Çıkartmaları
+                    Yapıştır!</h2>
+                <p class="text-xs md:text-sm text-slate-500 mb-6">Sevdiğin çıkartmalara tıkla, kapsülün içine uçsunlar!
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch">
+                    <!-- Left: Stickers Catalog Selection Panel -->
+                    <div
+                        class="md:col-span-5 bg-amber-50/70 border-4 border-dashed border-amber-200 p-4 rounded-3xl flex flex-col justify-between">
+                        <div>
+                            <h4 class="font-black text-amber-950 text-sm mb-3">👇 Çıkartmalara Tıkla:</h4>
+                            <div class="grid grid-cols-3 gap-3">
+                                <button onclick="toggleSticker('🇹🇷')"
+                                    class="bg-white hover:bg-amber-100 p-3 rounded-2xl border-2 border-amber-300 text-3xl transition-all hover:scale-110 active:scale-90 shadow-sm"
+                                    title="Türk Bayrağı">🇹🇷</button>
+                                <button onclick="toggleSticker('🌷')"
+                                    class="bg-white hover:bg-amber-100 p-3 rounded-2xl border-2 border-amber-300 text-3xl transition-all hover:scale-110 active:scale-90 shadow-sm"
+                                    title="Lale">🌷</button>
+                                <button onclick="toggleSticker('🧿')"
+                                    class="bg-white hover:bg-amber-100 p-3 rounded-2xl border-2 border-amber-300 text-3xl transition-all hover:scale-110 active:scale-90 shadow-sm"
+                                    title="Nazar Boncuğu">🧿</button>
+                                <button onclick="toggleSticker('☕')"
+                                    class="bg-white hover:bg-amber-100 p-3 rounded-2xl border-2 border-amber-300 text-3xl transition-all hover:scale-110 active:scale-90 shadow-sm"
+                                    title="Türk Çayı">☕</button>
+                                <button onclick="toggleSticker('🕊️')"
+                                    class="bg-white hover:bg-amber-100 p-3 rounded-2xl border-2 border-amber-300 text-3xl transition-all hover:scale-110 active:scale-90 shadow-sm"
+                                    title="Güvercin">🕊️</button>
+                                <button onclick="toggleSticker('🎈')"
+                                    class="bg-white hover:bg-amber-100 p-3 rounded-2xl border-2 border-amber-300 text-3xl transition-all hover:scale-110 active:scale-90 shadow-sm"
+                                    title="Balon">🎈</button>
+                                <button onclick="toggleSticker('🍦')"
+                                    class="bg-white hover:bg-amber-100 p-3 rounded-2xl border-2 border-amber-300 text-3xl transition-all hover:scale-110 active:scale-90 shadow-sm"
+                                    title="Maraş Dondurması">🍦</button>
+                                <button onclick="toggleSticker('🐱')"
+                                    class="bg-white hover:bg-amber-100 p-3 rounded-2xl border-2 border-amber-300 text-3xl transition-all hover:scale-110 active:scale-90 shadow-sm"
+                                    title="Van Kedisi">🐱</button>
+                                <button onclick="toggleSticker('⭐')"
+                                    class="bg-white hover:bg-amber-100 p-3 rounded-2xl border-2 border-amber-300 text-3xl transition-all hover:scale-110 active:scale-90 shadow-sm"
+                                    title="Yıldız">⭐</button>
+                            </div>
+                        </div>
+                        <p class="text-[11px] font-semibold text-amber-800 bg-white/50 p-2 rounded-xl mt-4">İstediğin
+                            kadar simge seçebilirsin, hepsi kapsülünde kilitlenecek!</p>
+                    </div>
+
+                    <!-- Right: Capsule Treasure Chest Preview -->
+                    <div
+                        class="md:col-span-7 bg-white border-4 border-amber-300 rounded-3xl p-6 flex flex-col items-center justify-center relative overflow-hidden min-h-[250px] shadow-inner">
+                        <div
+                            class="absolute inset-0 bg-[radial-gradient(#fff5ec_20%,transparent_20%)] bg-[size:16px_16px] opacity-40">
+                        </div>
+
+                        <!-- Visual Treasure Chest / Capsule container -->
+                        <div class="relative z-10 flex flex-col items-center w-full">
+                            <span class="text-6xl mb-2 animate-bounce">📦</span>
+                            <span
+                                class="text-xs font-bold text-amber-900 bg-amber-100 px-3 py-1 rounded-full mb-4">Benim
+                                Zaman Kapsülümün İçi:</span>
+
+                            <!-- Displaying selected sticker emojis in a playful cloud pool -->
+                            <div id="selectedStickersContainer"
+                                class="flex flex-wrap justify-center gap-3 min-h-[60px] max-h-[120px] overflow-y-auto w-full px-4 py-2 bg-amber-50/50 rounded-2xl border-2 border-dashed border-amber-200">
+                                <span class="text-xs text-slate-400 italic self-center">Yukarıdan çıkartmalara
+                                    tıklayarak burayı doldur!</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center mt-6 pt-4 border-t border-slate-100">
+                    <button onclick="goToStep(2)"
+                        class="px-6 py-3 rounded-2xl border-4 border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-extrabold text-sm transition-all">
+                        🔙 Geri
+                    </button>
+                    <button onclick="goToStep(4)"
+                        class="px-8 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-2xl font-black text-base border-b-4 border-orange-700 shadow-md transition-all flex items-center gap-2">
+                        Resim Yapma Alanı! 🎨
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 4: INTERACTIVE CANVAS DRAWING (RESİM YAPMA ALANI) -->
+            <div id="stepContent4" class="step-pane hidden text-center">
+                <h2 class="title-font text-2xl md:text-3xl font-bold text-orange-600 mb-1">Gelecek Yıl İçin Hayalini
+                    Çiz! 🎨</h2>
+                <p class="text-xs md:text-sm text-slate-500 mb-4">Parmağınla veya farenle istediğin renkleri seçerek
+                    resmini çiz.</p>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
+                    <!-- Drawing Board Palette Controls -->
+                    <div
+                        class="lg:col-span-3 flex lg:flex-col justify-between bg-amber-50/60 p-4 rounded-2xl border-4 border-amber-200 gap-3">
+                        <!-- Color Palette selection -->
+                        <div class="flex lg:flex-col flex-wrap gap-2 justify-center">
+                            <h5 class="text-xs font-black text-amber-950 block w-full lg:text-left">Renk Seç:</h5>
+                            <button onclick="changeColor('#ff4d4d')"
+                                class="color-circle active w-8 h-8 rounded-full bg-[#ff4d4d] border-2 border-white"
+                                style="background-color: #ff4d4d;"></button>
+                            <button onclick="changeColor('#ff9f43')"
+                                class="color-circle w-8 h-8 rounded-full bg-[#ff9f43] border-2 border-white"
+                                style="background-color: #ff9f43;"></button>
+                            <button onclick="changeColor('#fecb2f')"
+                                class="color-circle w-8 h-8 rounded-full bg-[#fecb2f] border-2 border-white"
+                                style="background-color: #fecb2f;"></button>
+                            <button onclick="changeColor('#2ed573')"
+                                class="color-circle w-8 h-8 rounded-full bg-[#2ed573] border-2 border-white"
+                                style="background-color: #2ed573;"></button>
+                            <button onclick="changeColor('#1e90ff')"
+                                class="color-circle w-8 h-8 rounded-full bg-[#1e90ff] border-2 border-white"
+                                style="background-color: #1e90ff;"></button>
+                            <button onclick="changeColor('#a55eea')"
+                                class="color-circle w-8 h-8 rounded-full bg-[#a55eea] border-2 border-white"
+                                style="background-color: #a55eea;"></button>
+                            <button onclick="changeColor('#2f3542')"
+                                class="color-circle w-8 h-8 rounded-full bg-[#2f3542] border-2 border-white"
+                                style="background-color: #2f3542;"></button>
+                        </div>
+
+                        <!-- Canvas Actions -->
+                        <div class="flex lg:flex-col gap-2 justify-center">
+                            <button onclick="clearCanvas()"
+                                class="bg-red-100 hover:bg-red-200 text-red-700 font-extrabold text-xs px-3 py-2 rounded-xl transition-all flex items-center gap-1">
+                                <i class="fas fa-trash"></i> Sil
+                            </button>
+                            <button onclick="changeBrushWidth(6)"
+                                class="bg-amber-100 hover:bg-amber-200 text-amber-900 font-extrabold text-xs px-3 py-2 rounded-xl transition-all">
+                                ✏️ İnce
+                            </button>
+                            <button onclick="changeBrushWidth(12)"
+                                class="bg-amber-200 hover:bg-amber-300 text-amber-900 font-extrabold text-xs px-3 py-2 rounded-xl transition-all">
+                                🖌️ Kalın
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Canvas Board itself -->
+                    <div class="lg:col-span-9 flex flex-col">
+                        <div
+                            class="relative w-full aspect-[4/3] bg-white rounded-2xl overflow-hidden shadow-inner border-4 border-amber-300">
+                            <canvas id="drawingCanvas" class="w-full h-full block"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center mt-6 pt-4 border-t border-slate-100">
+                    <button onclick="goToStep(3)"
+                        class="px-6 py-3 rounded-2xl border-4 border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-extrabold text-sm transition-all">
+                        🔙 Geri
+                    </button>
+                    <button onclick="goToStep(5)"
+                        class="px-8 py-3 bg-red-500 hover:bg-red-600 text-white rounded-2xl font-black text-base border-b-4 border-red-700 shadow-md transition-all flex items-center gap-2">
+                        Mühürle & Sakla! 🔒
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 5: WAX SEALING AND SAVE (MÜHÜRLE & SAKLA) -->
+            <div id="stepContent5" class="step-pane hidden text-center">
+                <h2 class="title-font text-2xl md:text-3xl font-bold text-orange-600 mb-2">Zaman Kapsülünü Kilitleme
+                    Zamanı!</h2>
+                <p class="text-xs md:text-sm text-slate-600 max-w-md mx-auto mb-6">Kapsülünü kapatıp kilitliyoruz.
+                    Aşağıdaki kırmızı mühüre dokunarak mühürlenmesini izle!</p>
+
+                <div class="flex flex-col md:flex-row justify-center items-center gap-8 my-6">
+                    <!-- Interactive Seal Box -->
+                    <div
+                        class="relative bg-amber-100/40 p-6 rounded-3xl border-4 border-amber-300 w-72 h-48 flex flex-col justify-center items-center shadow-inner">
+                        <span class="text-xs font-bold text-amber-900 uppercase mb-3">🔒 Kapsül Güvenliği:</span>
+
+                        <div id="waxSealButton" onclick="triggerWaxSeal()"
+                            class="w-20 h-20 rounded-full bg-red-600 hover:scale-105 active:scale-95 transition-all cursor-pointer flex items-center justify-center text-white border-4 border-red-800 shadow-lg text-4xl">
+                            <span id="sealVisualState">🎨</span>
+                        </div>
+                        <span id="sealMessage" class="text-xs font-extrabold text-amber-900 mt-2">Mühürlemek için
+                            Dokun!</span>
+                    </div>
+
+                    <!-- PDF Ready Box -->
+                    <div id="exportActionSection"
+                        class="hidden max-w-sm bg-emerald-50 border-4 border-dashed border-emerald-300 p-6 rounded-3xl animate-bounce">
+                        <h4 class="font-extrabold text-emerald-900 text-base mb-1">🎉 Harika! Belgen Hazır!</h4>
+                        <p class="text-xs text-emerald-800 mb-4">Zaman kapsülün başarıyla kilitlendi. Şimdi bu özel
+                            hatıra belgesini bilgisayara kaydedelim!</p>
+
+                        <button onclick="exportToPDF()" id="pdfBtn"
+                            class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black text-base py-3 px-6 rounded-2xl shadow-md border-b-4 border-emerald-800 transition-all flex items-center justify-center gap-2">
+                            <i class="fas fa-file-pdf"></i> PDF Olarak Kaydet 📥
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center mt-8 pt-4 border-t border-slate-100">
+                    <button onclick="goToStep(4)"
+                        class="px-6 py-3 rounded-2xl border-4 border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-extrabold text-sm transition-all">
+                        🔙 Geri
+                    </button>
+                    <button onclick="restartGame()"
+                        class="px-6 py-3 rounded-2xl border-4 border-red-200 bg-red-50 hover:bg-red-100 text-red-700 font-extrabold text-sm transition-all">
+                        🔄 Yeniden Başla
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- HIDDEN VISUAL PDF EXPORT PAGE (Constructed to look like a beautiful Certificate / Poster) -->
+    <div style="position: absolute; left: -9999px; top: -9999px;">
+        <div id="pdfExportSource"
+            class="w-[794px] min-h-[1123px] bg-[#fdf6e2] p-12 flex flex-col justify-between relative"
+            style="font-family: 'Fredoka', sans-serif;">
+
+            <!-- Cultural Ornamental Borders -->
+            <div class="absolute inset-4 border-8 border-dashed border-amber-300 rounded-3xl pointer-events-none"></div>
+            <div class="absolute inset-8 border-2 border-orange-400/50 rounded-2xl pointer-events-none"></div>
+
+            <!-- PDF Header -->
+            <div class="text-center border-b-4 border-dashed border-amber-300 pb-6 relative z-10">
+                <span class="text-6xl block mb-2">🎁</span>
+                <h1 class="text-4xl font-extrabold text-orange-600 title-font tracking-wide uppercase">GELECEĞE ZAMAN
+                    KAPSÜLÜ BELGESİ</h1>
+                <p class="text-sm font-bold text-amber-800 mt-1 uppercase tracking-widest">Ülkem Yanımda ile Türkçe ve
+                    Türk Kültürü Dersi</p>
+            </div>
+
+            <!-- Student Identity info -->
+            <div
+                class="flex justify-between items-center bg-[#f6ecdc] px-8 py-4 rounded-2xl border-4 border-amber-300 relative z-10">
+                <div>
+                    <span class="text-xs font-bold text-amber-900/60 uppercase block">Kapsül Sahibi Öğrenci:</span>
+                    <span id="pdfKidName" class="text-3xl font-extrabold text-orange-600">Minik Ressam</span>
+                </div>
+                <div class="text-right">
+                    <span class="text-xs font-bold text-amber-900/60 uppercase block">Tarih:</span>
+                    <span id="pdfDate" class="text-lg font-bold text-amber-900 font-serif">05.06.2026</span>
+                </div>
+            </div>
+
+            <!-- Visual Content Display: Painting Box & Emotions -->
+            <div class="grid grid-cols-12 gap-6 my-6 relative z-10">
+
+                <!-- Left: Canvas Drawing Result Display -->
+                <div class="col-span-8 bg-white border-4 border-orange-400 p-4 rounded-3xl flex flex-col justify-between"
+                    style="min-height: 420px;">
+                    <div>
+                        <h4 class="text-base font-extrabold text-orange-600 mb-2">🎨 Gelecek Yıl İçin Hayalim (Çizimim):
+                        </h4>
+                        <div class="w-full aspect-[4/3] rounded-2xl overflow-hidden border-2 border-slate-200">
+                            <img id="pdfDrawingImg" class="w-full h-full object-contain" alt="Çizim">
+                        </div>
+                    </div>
+                    <p class="text-[11px] text-slate-500 italic text-center mt-2">Bu resmi kendi ellerimle boyadım!</p>
+                </div>
+
+                <!-- Right: Feelings and Stamps display -->
+                <div class="col-span-4 flex flex-col gap-4">
+                    <!-- Emotion box -->
+                    <div
+                        class="bg-[#fcf1e2] border-4 border-amber-300 p-4 rounded-3xl text-center flex-1 flex flex-col justify-center items-center">
+                        <span class="text-xs font-bold text-amber-950 uppercase mb-2">Duygularım:</span>
+                        <span id="pdfEmotionEmoji" class="text-6xl block mb-1">😊</span>
+                        <span id="pdfEmotionText" class="text-sm font-extrabold text-slate-700">Çok Mutlu</span>
+                    </div>
+
+                    <!-- Selected Stamps Collection -->
+                    <div
+                        class="bg-[#fcf1e2] border-4 border-amber-300 p-4 rounded-3xl flex-1 flex flex-col justify-start">
+                        <span class="text-xs font-bold text-amber-950 uppercase text-center mb-3">Çıkartmalarım:</span>
+                        <div id="pdfStickerGrid" class="flex flex-wrap gap-2 justify-center">
+                            <!-- Injected dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- PDF Footer: Verification stamps -->
+            <div class="border-t-4 border-dashed border-amber-300 pt-6 flex justify-between items-center relative z-10">
+                <div class="max-w-md">
+                    <p class="text-xs font-extrabold text-amber-900">🎓 Türkçe ve Türk Kültürü Dersi Hatırasıdır</p>
+                    <p class="text-[10px] text-slate-500 mt-1">Bu belge gelecek yıl açılıp incelenmek üzere mühürlenip
+                        kilitlenmiştir.</p>
+                </div>
+
+                <div class="flex items-center gap-3 bg-[#f6ecdc] px-4 py-2 rounded-2xl border-2 border-amber-300">
+                    <div
+                        class="w-12 h-12 rounded-full bg-red-800 border-2 border-red-950 flex items-center justify-center text-white text-xl shadow-md rotate-6">
+                        <span>🇹🇷</span>
+                    </div>
+                    <div class="text-left">
+                        <span class="text-xs font-black text-amber-950 block">Mühürlendi</span>
+                        <span class="text-[9px] text-slate-500">Zaman Kapsülü Kilitli</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Playful Footer -->
+    <footer class="w-full py-4 text-center bg-white/50 border-t-2 border-amber-200 text-amber-900/70 text-xs font-bold">
+        <span>🎈 Türkçem Benim Ses Bayrağım! - Ülkem Yanımda 🎈</span>
+    </footer>
+
+    <!-- GAME CODE AND CANVAS PAINTING LOGIC -->
+    <script>
+        // State variables
+        let currentStep = 1;
+        let selectedFeeling = 'mutlu';
+        let selectedFeelingEmoji = '😊';
+        let selectedFeelingText = 'Çok Mutlu';
+        let selectedStickers = [];
+        let isSealed = false;
+
+        // Custom Sound Synthesizer via Web Audio API (No asset failure risk)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        // Visual Canvas variables
+        const canvas = document.getElementById('drawingCanvas');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+        let brushColor = '#ff4d4d';
+        let brushWidth = 8;
+
+        // Responsive Canvas resizing helper
+        function setupCanvas() {
+            // Get parent width/height
+            const rect = canvas.getBoundingClientRect();
+            // Scale according to high-resolution devices
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+
+            // Set brush style parameters
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.strokeStyle = brushColor;
+            ctx.lineWidth = brushWidth;
+
+            // Clear background to white so images export properly
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // Canvas Drawing Interaction listeners (Supports Mouse & Touch!)
+        function startDrawing(e) {
+            isDrawing = true;
+            draw(e);
+            playSound('draw');
+        }
+
+        function stopDrawing() {
+            isDrawing = false;
+            ctx.beginPath(); // resets current path
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+
+            // Handle coordinate extraction depending on mouse/touch
+            let clientX, clientY;
+            if (e.touches && e.touches[0]) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+
+            const rect = canvas.getBoundingClientRect();
+            const x = clientX - rect.left;
+            const y = clientY - rect.top;
+
+            ctx.lineWidth = brushWidth;
+            ctx.strokeStyle = brushColor;
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+        }
+
+        // Brush modifications
+        function changeColor(color) {
+            playSound('click');
+            brushColor = color;
+
+            // Reset active states on HTML circles
+            document.querySelectorAll('.color-circle').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            // Mark chosen active
+            event.target.classList.add('active');
+        }
+
+        function changeBrushWidth(width) {
+            playSound('click');
+            brushWidth = width;
+        }
+
+        function clearCanvas() {
+            playSound('click');
+            if (confirm('Resmini silmek ve baştan çizmek ister misin?')) {
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+        }
+
+        // Audio synthesis helpers for fun feedback (Always On)
+        function playSound(type) {
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                const now = audioCtx.currentTime;
+
+                if (type === 'click') {
+                    // Simple pop button chime
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(520, now);
+                    osc.frequency.exponentialRampToValueAtTime(1040, now + 0.1);
+                    gain.gain.setValueAtTime(0.12, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+                    osc.start(now);
+                    osc.stop(now + 0.1);
+                } else if (type === 'sticker_drop') {
+                    // Quick springy splash
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(300, now);
+                    osc.frequency.linearRampToValueAtTime(600, now + 0.25);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+                } else if (type === 'draw') {
+                    // Soft brush sketch hum (extremely quiet)
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(100, now);
+                    gain.gain.setValueAtTime(0.02, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+                    osc.start(now);
+                    osc.stop(now + 0.05);
+                } else if (type === 'wax_seal') {
+                    // Deep sizzling stamp clamp
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(120, now);
+                    osc.frequency.linearRampToValueAtTime(30, now + 0.5);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                    osc.start(now);
+                    osc.stop(now + 0.5);
+                } else if (type === 'fanfare') {
+                    // Happy celebratory scale
+                    const scale = [523, 587, 659, 698, 783, 880, 987, 1046];
+                    scale.forEach((freq, i) => {
+                        const chordOsc = audioCtx.createOscillator();
+                        const chordGain = audioCtx.createGain();
+                        chordOsc.connect(chordGain);
+                        chordGain.connect(audioCtx.destination);
+                        chordOsc.type = 'sine';
+                        chordOsc.frequency.setValueAtTime(freq, now + (i * 0.07));
+                        chordGain.gain.setValueAtTime(0.05, now + (i * 0.07));
+                        chordGain.gain.exponentialRampToValueAtTime(0.001, now + (i * 0.07) + 0.3);
+                        chordOsc.start(now + (i * 0.07));
+                        chordOsc.stop(now + (i * 0.07) + 0.3);
+                    });
+                }
+            } catch (e) { }
+        }
+
+        // STEP WORKFLOW CONTROLLER
+        function goToStep(step) {
+            playSound('click');
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            // Hide previous active step container
+            document.querySelectorAll('.step-pane').forEach(el => el.classList.add('hidden'));
+
+            // Show newly requested step container
+            document.getElementById(`stepContent${step}`).classList.remove('hidden');
+
+            // Handle dots visual alignment
+            for (let i = 1; i <= 4; i++) {
+                const dot = document.getElementById(`dot${i}`);
+                const line = document.getElementById(`line${i}`);
+                if (dot) {
+                    if (i < step) {
+                        dot.className = "w-6 h-6 rounded-full bg-emerald-500 border-2 border-white shadow-md flex items-center justify-center text-[10px] text-white font-black";
+                        dot.innerHTML = "✓";
+                    } else if (i === step) {
+                        dot.className = "w-6 h-6 rounded-full bg-orange-500 border-4 border-white shadow-md ring-4 ring-orange-200";
+                        dot.innerHTML = "";
+                    } else {
+                        dot.className = "w-6 h-6 rounded-full bg-amber-200 border-2 border-white shadow-md";
+                        dot.innerHTML = "";
+                    }
+                }
+                if (line) {
+                    if (i < step) {
+                        line.className = "w-10 h-1.5 bg-emerald-500 rounded-full";
+                    } else {
+                        line.className = "w-10 h-1.5 bg-amber-200 rounded-full";
+                    }
+                }
+            }
+
+            currentStep = step;
+            updatePigeonSpeech(step);
+
+            // Special Canvas auto-setup triggers
+            if (step === 4) {
+                setTimeout(setupCanvas, 150);
+            }
+        }
+
+        // Animated Pigeon Speech updates
+        function updatePigeonSpeech(step) {
+            const speech = document.getElementById('guideSpeech');
+            const bubble = document.getElementById('guideBubble');
+
+            bubble.classList.add('scale-95', 'opacity-80');
+
+            setTimeout(() => {
+                switch (step) {
+                    case 1:
+                        speech.innerHTML = "Merhaba minik dostum! Türkçe ve Türk Kültürü dersimizin son gününde harika bir boyama ve yapıştırma oyunu oynayalım mı? Haydi adını yaz ve başla!";
+                        break;
+                    case 2:
+                        speech.innerHTML = "Süper! Şimdi söyle bakalım, bu yıl Türkçe ve Türk Kültürü dersinde kendini en çok nasıl hissettin? Sevimli emojilerden birine dokun!";
+                        break;
+                    case 3:
+                        speech.innerHTML = "Harika! Şimdi sol taraftaki sevimli Türk kültür simgelerinden (bayrak, lale, dondurma gibi) sevdiklerine tıklayarak kapsülünün içine yapıştır!";
+                        break;
+                    case 4:
+                        speech.innerHTML = "Geldik en sevdiğim yere! Gelecek yıl Türkçe ve Türk Kültürü sınıfında ne yapmak istersin, hayalin nedir? Parmağınla istediğin renkleri seçip buraya çiz!";
+                        break;
+                    case 5:
+                        speech.innerHTML = "Vay canına, çizimin harika görünüyor! Şimdi kırmızı yuvarlak mühre dokunarak zaman kapsülünü güvenle kilitleyelim!";
+                        break;
+                }
+                bubble.classList.remove('scale-95', 'opacity-80');
+            }, 250);
+        }
+
+        // Selection Handlers (Feelings)
+        function selectFeeling(type) {
+            selectedFeeling = type;
+            playSound('click');
+
+            // Reset borders of selection grid buttons
+            document.querySelectorAll('#stepContent2 button').forEach(el => {
+                el.className = "bg-white hover:bg-slate-50 border-4 border-slate-200 p-5 rounded-3xl transition-all duration-300 hover:scale-105 active:scale-95 flex flex-col items-center shadow-md";
+            });
+
+            // Set chosen feel active styles
+            const activeBtn = document.getElementById(`feelBtn_${type}`);
+            activeBtn.className = "bg-amber-100/50 border-4 border-amber-400 p-5 rounded-3xl transition-all duration-300 hover:scale-105 active:scale-95 flex flex-col items-center shadow-md scale-105 ring-4 ring-amber-100";
+
+            // Extract values
+            switch (type) {
+                case 'mutlu':
+                    selectedFeelingEmoji = '😊';
+                    selectedFeelingText = 'Çok Mutlu';
+                    break;
+                case 'heyecanli':
+                    selectedFeelingEmoji = '🤩';
+                    selectedFeelingText = 'Heyecanlı';
+                    break;
+                case 'sevgi':
+                    selectedFeelingEmoji = '😍';
+                    selectedFeelingText = 'Sevgi Dolu';
+                    break;
+                case 'merakli':
+                    selectedFeelingEmoji = '🤔';
+                    selectedFeelingText = 'Meraklı';
+                    break;
+            }
+        }
+
+        // Sticker additions helper
+        function toggleSticker(emoji) {
+            playSound('sticker_drop');
+
+            // Check if already in array (maximum duplicate size cap)
+            if (selectedStickers.length >= 8) {
+                alert('Zaman kapsülün çok doldu! 🎈');
+                return;
+            }
+
+            selectedStickers.push(emoji);
+            renderStickerPool();
+        }
+
+        function renderStickerPool() {
+            const container = document.getElementById('selectedStickersContainer');
+            if (selectedStickers.length === 0) {
+                container.innerHTML = `<span class="text-xs text-slate-400 italic self-center">Yukarıdan çıkartmalara tıklayarak burayı doldur!</span>`;
+                return;
+            }
+
+            container.innerHTML = '';
+            selectedStickers.forEach((st, idx) => {
+                const badge = document.createElement('span');
+                badge.className = "text-4xl p-2 bg-white rounded-2xl border-2 border-amber-200 shadow-sm relative cursor-pointer hover:bg-red-50 hover:border-red-300 hover:scale-95 transition-all";
+                badge.innerText = st;
+                badge.title = "Kaldırmak için tıkla";
+                badge.onclick = () => {
+                    playSound('click');
+                    selectedStickers.splice(idx, 1);
+                    renderStickerPool();
+                };
+                container.appendChild(badge);
+            });
+        }
+
+        // Interactive Wax Seal stamping animator sequence
+        function triggerWaxSeal() {
+            if (isSealed) return;
+
+            const sealBtn = document.getElementById('waxSealButton');
+            const sealMsg = document.getElementById('sealMessage');
+
+            playSound('wax_seal');
+            sealMsg.innerText = "Balmumu dökülüyor... ⏳";
+            sealBtn.className = "w-20 h-20 rounded-full bg-red-500 scale-110 duration-500 opacity-90 animate-pulse flex items-center justify-center text-white border-4 border-red-700 shadow-lg text-4xl";
+
+            setTimeout(() => {
+                playSound('click');
+                sealBtn.className = "w-20 h-20 rounded-full bg-red-800 rotate-12 flex items-center justify-center text-white border-4 border-red-950 shadow-inner scale-100 transition-all text-4xl";
+                document.getElementById('sealVisualState').innerText = "🔒";
+                sealMsg.innerText = "Mühür Kilitlendi! 🌟";
+                isSealed = true;
+
+                // Confetti blast
+                setTimeout(() => {
+                    playSound('fanfare');
+                    confetti({
+                        particleCount: 150,
+                        spread: 80,
+                        origin: { y: 0.6 }
+                    });
+
+                    // Unlock the PDF export button block
+                    document.getElementById('exportActionSection').classList.remove('hidden');
+                    document.getElementById('exportActionSection').scrollIntoView({ behavior: 'smooth' });
+                }, 500);
+
+            }, 800);
+        }
+
+        // Build and save high-resolution printable PDF
+        function exportToPDF() {
+            playSound('click');
+
+            // Map state into hidden template
+            const kidName = document.getElementById('kidNameInput').value || "Minik Ressam";
+            const systemDate = new Date().toLocaleDateString('tr-TR');
+
+            document.getElementById('pdfKidName').innerText = kidName;
+            document.getElementById('pdfDate').innerText = systemDate;
+            document.getElementById('pdfEmotionEmoji').innerText = selectedFeelingEmoji;
+            document.getElementById('pdfEmotionText').innerText = selectedFeelingText;
+
+            // Load Canvas Image source directly
+            const imgUrl = canvas.toDataURL('image/png');
+            document.getElementById('pdfDrawingImg').src = imgUrl;
+
+            // Generate selected stickers grid html element
+            const stickerGrid = document.getElementById('pdfStickerGrid');
+            stickerGrid.innerHTML = '';
+            if (selectedStickers.length === 0) {
+                stickerGrid.innerHTML = `<span class="text-xs text-slate-400">Çıkartma seçilmedi.</span>`;
+            } else {
+                selectedStickers.forEach(st => {
+                    const span = document.createElement('span');
+                    span.className = "text-3xl p-1 bg-white rounded-lg border border-amber-300 shadow-sm";
+                    span.innerText = st;
+                    stickerGrid.appendChild(span);
+                });
+            }
+
+            // Disable button during rendering
+            const pdfBtn = document.getElementById('pdfBtn');
+            pdfBtn.innerHTML = `<i class="fas fa-spinner animate-spin"></i> Kapsül Yapılıyor...`;
+            pdfBtn.disabled = true;
+
+            // Compile Page screenshot using html2canvas
+            setTimeout(() => {
+                const target = document.getElementById('pdfExportSource');
+                html2canvas(target, {
+                    scale: 2, // High resolution scale
+                    useCORS: true,
+                    allowTaint: true
+                }).then(canvasOutput => {
+                    const imgData = canvasOutput.toDataURL('image/png');
+                    const { jsPDF } = window.jspdf;
+
+                    const pdf = new jsPDF('p', 'mm', 'a4');
+                    const imgWidth = 210;
+                    const imgHeight = (canvasOutput.height * imgWidth) / canvasOutput.width;
+
+                    pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+
+                    const safeName = kidName.toLowerCase().replace(/[^a-z0-9]/g, '_');
+                    pdf.save(`zaman_kapsulum_${safeName}.pdf`);
+
+                    pdfBtn.innerHTML = `<i class="fas fa-file-pdf"></i> PDF Olarak Kaydet 📥`;
+                    pdfBtn.disabled = false;
+
+                    // Final confetti celebration
+                    confetti({
+                        particleCount: 100,
+                        spread: 60,
+                        colors: ['#f59e0b', '#ef4444', '#10b981']
+                    });
+
+                }).catch(err => {
+                    console.error("PDF Fail:", err);
+                    pdfBtn.innerHTML = `Tekrar Dene`;
+                    pdfBtn.disabled = false;
+                });
+            }, 600);
+        }
+
+        // Restart and refresh workspace variables
+        function restartGame() {
+            if (confirm('Zaman kapsülünü sıfırlamak ve baştan başlamak istediğine emin misin?')) {
+                isSealed = false;
+                selectedStickers = [];
+                document.getElementById('kidNameInput').value = '';
+                document.getElementById('exportActionSection').classList.add('hidden');
+
+                // Reset seal state
+                document.getElementById('sealVisualState').innerText = "🎨";
+                document.getElementById('sealMessage').innerText = "Mühürlemek için Dokun!";
+                document.getElementById('waxSealButton').className = "w-20 h-20 rounded-full bg-red-600 hover:scale-105 active:scale-95 transition-all cursor-pointer flex items-center justify-center text-white border-4 border-red-800 shadow-lg text-4xl";
+
+                renderStickerPool();
+                goToStep(1);
+            }
+        }
+
+        // Window load setups
+        window.onload = function () {
+            // Mouse/Touch drawing event wireups
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseleave', stopDrawing);
+
+            canvas.addEventListener('touchstart', startDrawing);
+            canvas.addEventListener('touchend', stopDrawing);
+            canvas.addEventListener('touchmove', draw);
+
+            // Canvas default setup
+            setupCanvas();
+        }
+
+        // Listen for browser window resize events to fix drawing board dimensions
+        window.addEventListener('resize', () => {
+            if (currentStep === 4) {
+                // Keep existing canvas sketch safe on resize
+                const tempCanvas = document.createElement('canvas');
+                const tempCtx = tempCanvas.getContext('2d');
+                tempCanvas.width = canvas.width;
+                tempCanvas.height = canvas.height;
+                tempCtx.drawImage(canvas, 0, 0);
+
+                setupCanvas();
+
+                ctx.drawImage(tempCanvas, 0, 0, canvas.width, canvas.height);
+            }
+        });
+    </script>
+</body>
+
+</html>
