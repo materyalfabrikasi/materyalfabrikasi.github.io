@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://ulkemyanimda.github.io/icons/factory.ico" type="image/x-icon">
+    <title>Materyal Fabrikası - Türkçe ve Türk Kültürü</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            background-image: radial-gradient(#cbd5e1 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
+            min-height: 100vh;
+            color: #1e293b;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+            padding: 4.5rem 0 6rem 0;
+            text-align: center;
+            border-bottom: none;
+            box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+
+
+        .header h1,
+        .header p {
+            position: relative;
+            z-index: 2;
+        }
+
+        .header h1 {
+            color: #ffffff;
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 0.8rem;
+            letter-spacing: -1.5px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header p {
+            color: #f3e8ff;
+            font-size: 1.25rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .search-section {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            padding: 2.5rem;
+            margin: -4rem 0 3rem 0;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.08), 0 10px 15px -5px rgba(0, 0, 0, 0.03);
+            position: relative;
+            z-index: 10;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 1.2rem 1.5rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            min-width: 250px;
+            background: #f8fafc;
+            color: #1e293b;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+        }
+
+        .search-input::placeholder {
+            color: #94a3b8;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+        }
+
+        .filter-section {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-group label {
+            color: #475569;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-select {
+            padding: 0.8rem 1rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 1rem;
+            background: #f8fafc;
+            color: #1e293b;
+            min-width: 140px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            appearance: none;
+            font-weight: 500;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+        }
+
+        .filter-select option {
+            background: #ffffff;
+            color: #1e293b;
+        }
+
+        .clear-filters {
+            padding: 0.8rem 1.5rem;
+            background: #fef2f2;
+            color: #ef4444;
+            border: 1px solid #fecaca;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .clear-filters:hover {
+            background: #fee2e2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(239, 68, 68, 0.1);
+        }
+
+        .materials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2.5rem;
+            margin-top: 3rem;
+            perspective: 1500px;
+        }
+
+        .material-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+            animation: cardAppear 0.6s ease-out forwards;
+            position: relative;
+        }
+
+        @keyframes cardAppear {
+            from {
+                opacity: 0;
+                transform: translateY(40px) rotateX(-5deg);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) rotateX(0);
+            }
+        }
+
+        .material-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border-color: #cbd5e1;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+        }
+
+        .card-title {
+            flex: 1;
+        }
+
+        .card-title h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 0.3rem;
+            line-height: 1.3;
+        }
+
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .tag {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .tag-konu {
+            background: #d1fae5;
+            color: #047857;
+        }
+
+        .tag-tema {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .tag-seviye {
+            background: #fef3c7;
+            color: #b45309;
+        }
+
+        .tag-yas {
+            background: #ede9fe;
+            color: #6d28d9;
+        }
+
+        .card-description {
+            color: #475569;
+            line-height: 1.6;
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            flex: 1;
+            min-width: 100px;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .download-btn {
+            background: #10b981;
+            color: white;
+            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);
+        }
+
+        .download-btn:hover {
+            background: #059669;
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 6px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .preview-btn {
+            background: #3b82f6;
+            color: white;
+            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2);
+        }
+
+        .preview-btn:hover {
+            background: #2563eb;
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 6px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .pdf-btn {
+            background: #ef4444;
+            color: white;
+            box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2);
+        }
+
+        .pdf-btn:hover {
+            background: #dc2626;
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 6px 15px rgba(239, 68, 68, 0.3);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 4rem;
+            color: #1e293b;
+            background: #ffffff;
+            border-radius: 24px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        .no-results h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .results-count {
+            color: #64748b;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.2rem;
+            }
+
+            .materials-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .search-box {
+                flex-direction: column;
+            }
+
+            .filter-section {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .card-actions {
+                flex-direction: column;
+            }
+
+            .action-btn {
+                width: 100%;
+            }
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+
+<body>
+    <div class="header">
+        <h1>🏭 Materyal Fabrikası</h1>
+        <p>Türkçe ve Türk Kültürü Dersi Eğitim Materyalleri</p>
+    </div>
+
+    <div class="container">
+        <div class="search-section">
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="Materyal adı veya açıklama ile arayın..."
+                    id="searchInput">
+            </div>
+
+            <div class="filter-section">
+                <div class="filter-group">
+                    <label>Konu:</label>
+                    <select class="filter-select" id="konuFilter">
+                        <option value="">Tüm Konular</option>
+                        <option value="Okuma">Okuma</option>
+                        <option value="Yazma">Yazma</option>
+                        <option value="Dinleme">Dinleme</option>
+                        <option value="Konuşma">Konuşma</option>
+
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Tema:</label>
+                    <select class="filter-select" id="temaFilter">
+                        <option value="">Tüm Temalar</option>
+                        <option value="BEN VE AİLEM">BEN VE AİLEM</option>
+                        <option value="BİRLİKTE YAŞAM">BİRLİKTE YAŞAM</option>
+                        <option value="MEMLEKETİMİ TANIYORUM">MEMLEKETİMİ TANIYORUM</option>
+                        <option value="GÜZEL MEMLEKETİM">GÜZEL MEMLEKETİM</option>
+                        <option value="DEĞERLERİMİZLE YAŞIYORUM">DEĞERLERİMİZLE YAŞIYORUM</option>
+                        <option value="BİZİ BİZ YAPANLAR">BİZİ BİZ YAPANLAR</option>
+                        <option value="GELENEKSEL TÜRK OYUNLARI">GELENEKSEL TÜRK OYUNLARI</option>
+                        <option value="SAĞLIĞIMIZI KORUYALIM">SAĞLIĞIMIZI KORUYALIM</option>
+                        <option value="SAĞLIKLI YAŞAM">SAĞLIKLI YAŞAM</option>
+                        <option value="KÖKLERDEN GELECEĞE">KÖKLERDEN GELECEĞE</option>
+                        <option value="BİR VARMIŞ, BİR YOKMUŞ">BİR VARMIŞ, BİR YOKMUŞ</option>
+                        <option value="SANAT DÜNYASI">SANAT DÜNYASI</option>
+                        <option value="BİZİ BİZ YAPANLAR">BİZİ BİZ YAPANLAR</option>
+                        <option value="SAĞLIKLI YAŞAM">SAĞLIKLI YAŞAM</option>
+                        <option value="BİLİM VE TEKNOLOJİDE YOLCULUK">BİLİM VE TEKNOLOJİDE YOLCULUK</option>
+                        <option value="İYİ Kİ DOĞDUN CUMHURİYET">İYİ Kİ DOĞDUN CUMHURİYET</option>
+                        <option value="ATATÜRK">ATATÜRK</option>
+                        <option value="15 Aralık Dünya Türk Dili Ailesi Günü">15 Aralık Dünya Türk Dili Ailesi Günü
+                        </option>
+                        <option value="Bayrak Sevgisi">Bayrak Sevgisi</option>
+                        <option value="RAMAZAN">RAMAZAN</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Seviye:</label>
+                    <select class="filter-select" id="seviyeFilter">
+                        <option value="">Tüm Seviyeler</option>
+                        <option value="Yazar">Yazar</option>
+                        <option value="Yazamaz">Yazamaz</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Yaş Grubu:</label>
+                    <select class="filter-select" id="yasFilter">
+                        <option value="">Tüm Yaşlar</option>
+                        <option value="5-10">5-10 Yaş</option>
+                        <option value="11-16">11-16 Yaş</option>
+
+                    </select>
+                </div>
+
+                <button class="clear-filters" onclick="clearFilters()">Filtreleri Temizle</button>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 2rem; display: flex; justify-content: center;">
+            <a href="https://2025MateryalFabrikasi.github.io" target="_blank" class="action-btn preview-btn"
+                style="flex: none; font-size: 1.1rem; padding: 1rem 2rem; border-radius: 14px; background: linear-gradient(135deg, #8b5cf6, #ec4899); box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3); color: white;">
+                ✨ 2025-2026 Materyal Fabrikası'na Git
+            </a>
+        </div>
+
+        <div class="results-count" id="resultsCount"></div>
+
+        <div class="materials-grid" id="materialsGrid"></div>
+        <div class="no-results" id="noResults" style="display: none;">
+            <h2>🔍 Sonuç Bulunamadı</h2>
+            <p>Arama kriterlerinize uygun materyal bulunmamaktadır.</p>
+        </div>
+    </div>
+
+    <script>
+        const materials = [
+            {
+                id: 1,
+                name: "🤝 Hep Bir Aradayız - Kalıp İfadeler - Eşleştir",
+                description: "Öğrenciler, günlük yaşamda kullanılan temel kalıp ifadelerin hangi durumda söylendiğini ayırt eder ve uygun resimlerle eşleştirir.",
+                icon: "materyal.png",
+                konu: "Okuma",
+                tema: "BİRLİKTE YAŞAM",
+                seviye: "Yazar",
+                yas: "11-16",
+                scormPath: "scorm/HepbiraradayizKalipifadeler_eslestir.zip",
+                previewUrl: "preview/HepbiraradayizKalipifadeler_eslestir/index.html",
+                pdfPath: "pdf/HepbiraradayizKalipifadeler_eslestir.pdf"
+            }
+        ];
+
+        let filteredMaterials = [...materials];
+
+        async function generateAndDownloadSCORM(name, previewUrl) {
+            try {
+                // Mevcut sayfanın ana URL'sini alır ve önizleme URL'sini mutlak URL'ye çeviririz
+                const baseUrl = window.location.href.split('/').slice(0, -1).join('/');
+                const absolutePreviewUrl = baseUrl + '/' + previewUrl;
+
+                // İframe kodunu oluşturuyoruz
+                const newContent = `<iframe width="100%" height="800" src="${absolutePreviewUrl}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="border:none;"></iframe>`;
+
+                const zip = new JSZip();
+
+                const response = await fetch('files/default.zip');
+                if (!response.ok) {
+                    throw new Error('ZIP dosyasına ulaşılamadı.');
+                }
+                const zipBuffer = await response.arrayBuffer();
+                const zipContent = await zip.loadAsync(zipBuffer);
+
+                if (!zipContent.files['index.html']) {
+                    throw new Error('ZIP dosyasında index.html bulunamadı.');
+                }
+
+                zip.file('index.html', newContent);
+
+                const updatedZip = await zip.generateAsync({ type: 'blob' });
+
+                const downloadLink = document.createElement('a');
+                downloadLink.href = URL.createObjectURL(updatedZip);
+
+                // Türkçe karakterleri de destekleyen güvenli dosya adı oluşturma
+                let safeName = name.replace(/[^a-zA-Z0-9çğıöşüÇĞİÖŞÜ ]/g, '').trim().replace(/\s+/g, '_');
+                downloadLink.download = safeName + '_SCORM.zip';
+                downloadLink.click();
+            } catch (error) {
+                console.error('Hata:', error);
+                alert('SCORM oluşturulurken bir hata oluştu: ' + error.message);
+            }
+        }
+
+        function renderMaterials(materialsToRender) {
+            const grid = document.getElementById('materialsGrid');
+            const resultsCount = document.getElementById('resultsCount');
+            const noResults = document.getElementById('noResults');
+
+            resultsCount.textContent = `${materialsToRender.length} materyal bulundu`;
+
+            if (materialsToRender.length === 0) {
+                grid.style.display = 'none';
+                noResults.style.display = 'block';
+                resultsCount.style.display = 'none';
+                return;
+            }
+
+            grid.style.display = 'grid';
+            noResults.style.display = 'none';
+            resultsCount.style.display = 'block';
+
+            const staticCard = `
+                <div class="material-card" style="border: 2px solid #bfdbfe; background: #f8fafc;">
+                    <div class="card-header">
+                        <div class="card-icon" style="background: #ffffff; border: 1px solid #e2e8f0; overflow: hidden; padding: 0;">
+                            <img src="icons/haftalik-etkinlikler-logo.png" alt="Haftalık Etkinlikler Logo"
+                                 style="width: 100%; height: 100%; object-fit: contain;">
+                        </div>
+                        <div class="card-title">
+                            <h3>Haftalık Etkinlik Planları</h3>
+                            <span style="font-size: 0.85rem; color: #64748b; font-weight: 600;">📌 Sabit İçerik</span>
+                        </div>
+                    </div>
+                    <div class="card-description">
+                        Türkçe ve Türk Kültürü dersine yönelik haftalık etkinlik planlarını bu bağlantıdan inceleyebilirsiniz. Planlar düzenli olarak güncellenmektedir.
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.6rem; margin-top: 0.5rem; padding: 0.9rem 1.2rem; background: #eff6ff; border-radius: 12px; transform: translateZ(10px);">
+                        <span style="font-size: 1.3rem;">🔗</span>
+                        <a href="https://ulkemyanimda.github.io/ogretmensandigi/HaftalikEtkinlikler/index.html"
+                           target="_blank"
+                           style="color: #2563eb; font-weight: 700; font-size: 1rem; text-decoration: none;">
+                            Haftalık Etkinliklere Git →
+                        </a>
+                    </div>
+                </div>
+            `;
+
+            grid.innerHTML = staticCard + materialsToRender.map(material => `
+                <div class="material-card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            ${material.icon.includes('.') ? `<img src="icons/${material.icon}" alt="Icon" style="width: 70%; height: 70%; object-fit: contain;">` : material.icon}
+                        </div>
+                        <div class="card-title">
+                            <h3>${material.name}</h3>
+                        </div>
+                    </div>
+                    
+                    <div class="card-tags">
+                        <span class="tag tag-konu">${material.konu}</span>
+                        <span class="tag tag-tema">${material.tema}</span>
+                        <span class="tag tag-seviye">${material.seviye}</span>
+                        <span class="tag tag-yas">${material.yas} Yaş</span>
+                    </div>
+                    
+                    <div class="card-description">
+                        ${material.description}
+                    </div>
+                    
+                    <div class="card-actions">
+                        <button onclick="generateAndDownloadSCORM('${material.name.replace(/'/g, "\\'")}', '${material.previewUrl}')" class="action-btn download-btn" style="font-family: inherit;">
+                            📥 SCORM
+                        </button>
+                        <a href="${material.previewUrl}" class="action-btn preview-btn" target="_blank">
+                            👁️ Önizle
+                        </a>
+                        <a href="${material.pdfPath}" class="action-btn pdf-btn" download>
+                            📄 PDF
+                        </a>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterMaterials() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const konuFilter = document.getElementById('konuFilter').value;
+            const temaFilter = document.getElementById('temaFilter').value;
+            const seviyeFilter = document.getElementById('seviyeFilter').value;
+            const yasFilter = document.getElementById('yasFilter').value;
+
+            filteredMaterials = materials.filter(material => {
+                const matchesSearch = material.name.toLowerCase().includes(searchTerm) ||
+                    material.description.toLowerCase().includes(searchTerm);
+                const matchesKonu = !konuFilter || material.konu === konuFilter;
+                const matchesTema = !temaFilter || material.tema === temaFilter;
+                const matchesSeviye = !seviyeFilter || material.seviye === seviyeFilter;
+                const matchesYas = !yasFilter || material.yas === yasFilter;
+
+                return matchesSearch && matchesKonu && matchesTema && matchesSeviye && matchesYas;
+            });
+
+            renderMaterials(filteredMaterials);
+        }
+
+        function clearFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('konuFilter').value = '';
+            document.getElementById('temaFilter').value = '';
+            document.getElementById('seviyeFilter').value = '';
+            document.getElementById('yasFilter').value = '';
+            filterMaterials();
+        }
+
+        document.getElementById('searchInput').addEventListener('input', filterMaterials);
+        document.getElementById('konuFilter').addEventListener('change', filterMaterials);
+        document.getElementById('temaFilter').addEventListener('change', filterMaterials);
+        document.getElementById('seviyeFilter').addEventListener('change', filterMaterials);
+        document.getElementById('yasFilter').addEventListener('change', filterMaterials);
+
+        renderMaterials(materials);
+    </script>
+
+
+
+    <footer
+        style="background: linear-gradient(to right, #f8fafc, #f1f5f9); border-top: 1px solid #e2e8f0; padding: 40px 10px 30px; text-align: center; font-family: 'Inter', sans-serif; margin-top: 5rem;">
+        <div style="margin-bottom: 15px;">
+            <div style="display: flex; justify-content: center; align-items: center; gap: 20px;">
+                <a href="https://yyegm.meb.gov.tr/" target="_blank">
+                    <img src="icons/logo2.png" alt="Logo 1" style="height: 50px; width: auto;">
+                </a>
+                <a href="https://ulkemyanimda.github.io/" target="_blank">
+                    <img src="icons/logo1.png" alt="Logo 2" style="height: 50px; width: auto;">
+                </a>
+            </div>
+        </div>
+
+        <!-- Sosyal Medya İkonları (CDN'den SVG) -->
+        <div style="margin: 15px 0; display: flex; justify-content: center; gap: 15px;">
+            <a href="https://www.instagram.com/ulkemyanimda" target="_blank">
+                <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/instagram.svg" alt="Instagram"
+                    style="height: 30px; width: 30px;">
+            </a>
+            <a href="https://twitter.com/ulkemyanimda" target="_blank">
+                <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/x.svg" alt="Twitter"
+                    style="height: 30px; width: 30px;">
+            </a>
+            <a href="https://www.facebook.com/ulkemyanimda" target="_blank">
+                <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/facebook.svg" alt="Facebook"
+                    style="height: 30px; width: 30px;">
+            </a>
+            <a href="https://www.youtube.com/@ulkem_yanimda" target="_blank">
+                <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/youtube.svg" alt="YouTube"
+                    style="height: 30px; width: 30px;">
+            </a>
+        </div>
+
+        <div>
+            <p style="margin: 0; font-size: 14px; color: #333;">&copy; 2025 ÜLKEM YANIMDA!</p>
+        </div>
+    </footer>
+
+
+
+
+
+
+
+</body>
+
+</html>
