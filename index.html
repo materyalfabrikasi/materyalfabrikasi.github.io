@@ -7,7 +7,7 @@
     <link rel="icon" href="https://ulkemyanimda.github.io/icons/factory.ico" type="image/x-icon">
     <title>Materyal Fabrikası - Türkçe ve Türk Kültürü</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@700;800;900&display=swap');
 
         * {
             margin: 0;
@@ -43,19 +43,22 @@
         }
 
         .header h1 {
+            font-family: 'Outfit', sans-serif;
             color: #ffffff;
-            font-size: 3.5rem;
+            font-size: 4.2rem;
             font-weight: 800;
-            margin-bottom: 0.8rem;
+            margin-bottom: 0.5rem;
             letter-spacing: -1.5px;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-shadow: 0 4px 25px rgba(0, 0, 0, 0.2);
         }
 
         .header p {
-            color: #f3e8ff;
-            font-size: 1.25rem;
+            font-family: 'Inter', sans-serif;
+            color: #e0e7ff;
+            font-size: 1.35rem;
             font-weight: 500;
             letter-spacing: 0.5px;
+            opacity: 0.9;
         }
 
         .container {
@@ -438,7 +441,7 @@
 
 <body>
     <div class="header">
-        <h1>🏭 Materyal Fabrikası</h1>
+        <h1>Materyal Fabrikası</h1>
         <p>Türkçe ve Türk Kültürü Dersi Eğitim Materyalleri</p>
     </div>
 
@@ -491,21 +494,13 @@
                 </div>
 
                 <div class="filter-group">
-                    <label>Seviye:</label>
-                    <select class="filter-select" id="seviyeFilter">
+                    <label>Seviye ve Yaş Grubu:</label>
+                    <select class="filter-select" id="seviyeFilter" style="max-width: 350px;">
                         <option value="">Tüm Seviyeler</option>
-                        <option value="Yazar">Yazar</option>
-                        <option value="Yazamaz">Yazamaz</option>
-                    </select>
-                </div>
-
-                <div class="filter-group">
-                    <label>Yaş Grubu:</label>
-                    <select class="filter-select" id="yasFilter">
-                        <option value="">Tüm Yaşlar</option>
-                        <option value="5-10">5-10 Yaş</option>
-                        <option value="11-16">11-16 Yaş</option>
-
+                        <option value="Tohum">Tohum (5-6 yaş)</option>
+                        <option value="Filiz">Filiz (7-9 yaş)</option>
+                        <option value="Fidan">Fidan (10-12 yaş)</option>
+                        <option value="Çınar">Çınar (13-16 yaş)</option>
                     </select>
                 </div>
 
@@ -624,7 +619,7 @@
                         </div>
                     </div>
                     <div class="card-description">
-                        2025-2026 Türkçe ve Türk Kültürü dersine yönelik haftalık etkinlik planlarını bu bağlantıdan inceleyebilirsiniz. Planlar düzenli olarak güncellenmektedir.
+                        2025-2026 Türkçe ve Türk Kültürü dersine yönelik haftalık etkinlik planlarını bu bağlantıdan inceleyebilirsiniz.
                     </div>
                     <div style="display: flex; align-items: center; gap: 0.6rem; margin-top: 0.5rem; padding: 0.9rem 1.2rem; background: #eff6ff; border-radius: 12px; transform: translateZ(10px);">
                         <span style="font-size: 1.3rem;">🔗</span>
@@ -679,7 +674,6 @@
             const konuFilter = document.getElementById('konuFilter').value;
             const temaFilter = document.getElementById('temaFilter').value;
             const seviyeFilter = document.getElementById('seviyeFilter').value;
-            const yasFilter = document.getElementById('yasFilter').value;
 
             filteredMaterials = materials.filter(material => {
                 const matchesSearch = material.name.toLowerCase().includes(searchTerm) ||
@@ -687,9 +681,8 @@
                 const matchesKonu = !konuFilter || material.konu === konuFilter;
                 const matchesTema = !temaFilter || material.tema === temaFilter;
                 const matchesSeviye = !seviyeFilter || material.seviye === seviyeFilter;
-                const matchesYas = !yasFilter || material.yas === yasFilter;
 
-                return matchesSearch && matchesKonu && matchesTema && matchesSeviye && matchesYas;
+                return matchesSearch && matchesKonu && matchesTema && matchesSeviye;
             });
 
             renderMaterials(filteredMaterials);
@@ -700,7 +693,6 @@
             document.getElementById('konuFilter').value = '';
             document.getElementById('temaFilter').value = '';
             document.getElementById('seviyeFilter').value = '';
-            document.getElementById('yasFilter').value = '';
             filterMaterials();
         }
 
@@ -708,7 +700,6 @@
         document.getElementById('konuFilter').addEventListener('change', filterMaterials);
         document.getElementById('temaFilter').addEventListener('change', filterMaterials);
         document.getElementById('seviyeFilter').addEventListener('change', filterMaterials);
-        document.getElementById('yasFilter').addEventListener('change', filterMaterials);
 
         renderMaterials(materials);
     </script>
