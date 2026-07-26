@@ -132,13 +132,13 @@
         }
 
         .filter-select {
-            padding: 0.8rem 1rem;
+            padding: 0.8rem 0.5rem;
             border: 1px solid #cbd5e1;
             border-radius: 10px;
-            font-size: 1rem;
+            font-size: 0.95rem;
             background: #f8fafc;
             color: #1e293b;
-            min-width: 140px;
+            min-width: 120px;
             cursor: pointer;
             transition: all 0.3s ease;
             appearance: none;
@@ -454,18 +454,6 @@
 
             <div class="filter-section">
                 <div class="filter-group">
-                    <label>Konu:</label>
-                    <select class="filter-select" id="konuFilter">
-                        <option value="">Tüm Konular</option>
-                        <option value="Okuma">Okuma</option>
-                        <option value="Yazma">Yazma</option>
-                        <option value="Dinleme">Dinleme</option>
-                        <option value="Konuşma">Konuşma</option>
-
-                    </select>
-                </div>
-
-                <div class="filter-group">
                     <label>Tema:</label>
                     <select class="filter-select" id="temaFilter">
                         <option value="">Tüm Temalar</option>
@@ -494,13 +482,35 @@
                 </div>
 
                 <div class="filter-group">
-                    <label>Seviye ve Yaş Grubu:</label>
-                    <select class="filter-select" id="seviyeFilter" style="max-width: 350px;">
-                        <option value="">Tüm Seviyeler</option>
+                    <label>Yaş Grubu:</label>
+                    <select class="filter-select" id="yasFilter" style="max-width: 350px;">
+                        <option value="">Tüm Yaş Grupları</option>
                         <option value="Tohum">Tohum (5-6 yaş)</option>
                         <option value="Filiz">Filiz (7-9 yaş)</option>
                         <option value="Fidan">Fidan (10-12 yaş)</option>
                         <option value="Çınar">Çınar (13-16 yaş)</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Seviye:</label>
+                    <select class="filter-select" id="seviyeFilter">
+                        <option value="">Tüm Seviyeler</option>
+                        <option value="Farkındalık">Farkındalık</option>
+                        <option value="Hazırlık">Hazırlık</option>
+                        <option value="Başlangıç">Başlangıç</option>
+                        <option value="Temel">Temel</option>
+                        <option value="Orta">Orta</option>
+                        <option value="İleri">İleri</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Beceri:</label>
+                    <select class="filter-select" id="beceriFilter">
+                        <option value="">Tüm Beceriler</option>
+                        <option value="Sözlü Beceriler">Sözlü Beceriler (Dinleme-Konuşma)</option>
+                        <option value="Yazılı Beceriler">Yazılı Beceriler (Okuma-Yazma)</option>
                     </select>
                 </div>
 
@@ -671,18 +681,20 @@
 
         function filterMaterials() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const konuFilter = document.getElementById('konuFilter').value;
             const temaFilter = document.getElementById('temaFilter').value;
             const seviyeFilter = document.getElementById('seviyeFilter').value;
+            const yasFilter = document.getElementById('yasFilter').value;
+            const beceriFilter = document.getElementById('beceriFilter').value;
 
             filteredMaterials = materials.filter(material => {
                 const matchesSearch = material.name.toLowerCase().includes(searchTerm) ||
                     material.description.toLowerCase().includes(searchTerm);
-                const matchesKonu = !konuFilter || material.konu === konuFilter;
                 const matchesTema = !temaFilter || material.tema === temaFilter;
                 const matchesSeviye = !seviyeFilter || material.seviye === seviyeFilter;
+                const matchesYas = !yasFilter || material.yasGrubu === yasFilter;
+                const matchesBeceri = !beceriFilter || material.beceri === beceriFilter;
 
-                return matchesSearch && matchesKonu && matchesTema && matchesSeviye;
+                return matchesSearch && matchesTema && matchesSeviye && matchesYas && matchesBeceri;
             });
 
             renderMaterials(filteredMaterials);
@@ -690,16 +702,18 @@
 
         function clearFilters() {
             document.getElementById('searchInput').value = '';
-            document.getElementById('konuFilter').value = '';
             document.getElementById('temaFilter').value = '';
             document.getElementById('seviyeFilter').value = '';
+            document.getElementById('yasFilter').value = '';
+            document.getElementById('beceriFilter').value = '';
             filterMaterials();
         }
 
         document.getElementById('searchInput').addEventListener('input', filterMaterials);
-        document.getElementById('konuFilter').addEventListener('change', filterMaterials);
         document.getElementById('temaFilter').addEventListener('change', filterMaterials);
         document.getElementById('seviyeFilter').addEventListener('change', filterMaterials);
+        document.getElementById('yasFilter').addEventListener('change', filterMaterials);
+        document.getElementById('beceriFilter').addEventListener('change', filterMaterials);
 
         renderMaterials(materials);
     </script>
