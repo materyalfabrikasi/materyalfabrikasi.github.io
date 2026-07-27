@@ -280,6 +280,11 @@
             color: #6d28d9;
         }
 
+        .tag-beceri {
+            background: #fce7f3;
+            color: #be185d;
+        }
+
         .card-description {
             color: #475569;
             line-height: 1.6;
@@ -542,12 +547,24 @@
                 name: "İlk Dersim, İlk Heyecanım",
                 description: "Öğrenciler, ilk dersin buz kırma etkinliğinde etkileşimli çark aracılığıyla Türk kültürüne ait birikimlerini paylaşarak kendini Türkçe ifade eder.",
                 icon: "materyal.png",
-                konu: "Konuşma",
-                tema: "İLK DERS-GİRİŞ",
+                tema: "Merhaba",
+                yas: "Tüm Yaş Grupları",
                 seviye: "Başlangıç",
-                yas: "5-16",
+                beceri: "Sözlü Beceriler (Dinleme-İzleme)",
                 scormPath: "scorm/buzkirma.zip",
                 previewUrl: "preview/buzkirma/index.html",
+                sunumPath: "pptx/1.pptx"
+            }, {
+                id: 2,
+                name: "Türklerde Selamlaşma",
+                description: "Öğrenci, Türk kültüründeki selamlaşma biçimlerini tanır ve farklı durumlarda uygun selamlaşma ifadelerini kullanır.",
+                icon: "materyal.png",
+                tema: "Merhaba",
+                yas: "Tüm Yaş Grupları",
+                seviye: "Başlangıç",
+                beceri: "Sözlü Beceriler (Dinleme-İzleme)",
+                scormPath: "scorm/1.haftaa1.zip",
+                previewUrl: "preview/1.haftaa1/index.html",
                 sunumPath: "pptx/1.pptx"
             }
         ];
@@ -654,10 +671,10 @@
                     </div>
                     
                     <div class="card-tags">
-                        <span class="tag tag-konu">${material.konu}</span>
                         <span class="tag tag-tema">${material.tema}</span>
+                        <span class="tag tag-yas">${material.yas}</span>
                         <span class="tag tag-seviye">${material.seviye}</span>
-                        <span class="tag tag-yas">${material.yas} Yaş</span>
+                        <span class="tag tag-beceri">${material.beceri}</span>
                     </div>
                     
                     <div class="card-description">
@@ -691,8 +708,8 @@
                     material.description.toLowerCase().includes(searchTerm);
                 const matchesTema = !temaFilter || material.tema === temaFilter;
                 const matchesSeviye = !seviyeFilter || material.seviye === seviyeFilter;
-                const matchesYas = !yasFilter || material.yasGrubu === yasFilter;
-                const matchesBeceri = !beceriFilter || material.beceri === beceriFilter;
+                const matchesYas = !yasFilter || material.yas === yasFilter || material.yas === 'Tüm Yaş Grupları';
+                const matchesBeceri = !beceriFilter || material.beceri.includes(beceriFilter);
 
                 return matchesSearch && matchesTema && matchesSeviye && matchesYas && matchesBeceri;
             });
