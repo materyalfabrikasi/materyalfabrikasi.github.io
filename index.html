@@ -112,15 +112,20 @@
 
         .filter-section {
             display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
+            gap: 0.75rem;
+            flex-wrap: nowrap;
             align-items: flex-end;
+            width: 100%;
+            overflow-x: auto;
+            padding-bottom: 4px;
         }
 
         .filter-group {
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
+            flex: 1 1 0px;
+            min-width: 0;
         }
 
         .filter-group label {
@@ -129,20 +134,25 @@
             font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            white-space: nowrap;
         }
 
         .filter-select {
             padding: 0.8rem 0.5rem;
             border: 1px solid #cbd5e1;
             border-radius: 10px;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             background: #f8fafc;
             color: #1e293b;
-            min-width: 120px;
+            width: 100%;
+            min-width: 0;
             cursor: pointer;
             transition: all 0.3s ease;
             appearance: none;
             font-weight: 500;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
         }
 
         .filter-select:focus {
@@ -158,15 +168,17 @@
         }
 
         .clear-filters {
-            padding: 0.8rem 1.5rem;
+            padding: 0.8rem 1rem;
             background: #fef2f2;
             color: #ef4444;
             border: 1px solid #fecaca;
             border-radius: 10px;
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 0.9rem;
             font-weight: 600;
             transition: all 0.3s ease;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .clear-filters:hover {
@@ -285,6 +297,11 @@
             color: #be185d;
         }
 
+        .tag-tarih {
+            background: #e0f2fe;
+            color: #0369a1;
+        }
+
         .card-description {
             color: #475569;
             line-height: 1.6;
@@ -390,8 +407,9 @@
             }
 
             .filter-section {
-                flex-direction: column;
-                align-items: stretch;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                padding-bottom: 8px;
             }
 
             .card-actions {
@@ -458,7 +476,7 @@
             </div>
 
             <div class="filter-section">
-			 
+
                 <div class="filter-group">
                     <label>Tema:</label>
                     <select class="filter-select" id="temaFilter">
@@ -466,14 +484,16 @@
                         <option value="MERHABA BEN! KENDİMİ KEŞFEDİYORUM">MERHABA BEN! KENDİMİ KEŞFEDİYORUM</option>
                         <option value="OKULUM BENİM İKİNCİ EVİM">OKULUM BENİM İKİNCİ EVİM</option>
                         <option value="AİLEM: KALBİMİN EN SICAK KÖŞESİ">AİLEM: KALBİMİN EN SICAK KÖŞESİ</option>
-                        <option value="SOKAĞIMDAN ŞEHRİME: ÇEVREMİ TANIYORUM">SOKAĞIMDAN ŞEHRİME: ÇEVREMİ TANIYORUM</option>
-                        <option value="ÜLKEM YANIMDA: KÖKLERİMİ KEŞFEDİYORUM">ÜLKEM YANIMDA: KÖKLERİMİ KEŞFEDİYORUM</option>
+                        <option value="SOKAĞIMDAN ŞEHRİME: ÇEVREMİ TANIYORUM">SOKAĞIMDAN ŞEHRİME: ÇEVREMİ TANIYORUM
+                        </option>
+                        <option value="ÜLKEM YANIMDA: KÖKLERİMİ KEŞFEDİYORUM">ÜLKEM YANIMDA: KÖKLERİMİ KEŞFEDİYORUM
+                        </option>
                     </select>
                 </div>
 
                 <div class="filter-group">
                     <label>Yaş Grubu:</label>
-                    <select class="filter-select" id="yasFilter" style="max-width: 350px;">
+                    <select class="filter-select" id="yasFilter">
                         <option value="">Tüm Yaş Grupları</option>
                         <option value="Tohum">Tohum (5-6 yaş)</option>
                         <option value="Filiz">Filiz (7-9 yaş)</option>
@@ -503,13 +523,14 @@
                         <option value="Yazılı Beceriler">Yazılı Beceriler (Okuma-Yazma)</option>
                     </select>
                 </div>
-<div class="filter-group">
+
+                <div class="filter-group">
                     <label>Planlanan Tarih:</label>
-                    <select class="filter-select" id="yasFilter" style="max-width: 350px;">
+                    <select class="filter-select" id="tarihFilter">
                         <option value="">Tüm Tarihler</option>
                         <option value="21-27 Eylül">21-27 Eylül</option>
                         <option value="28 Eylül - 4 Ekim">28 Eylül - 4 Ekim</option>
-                                            </select>
+                    </select>
                 </div>
                 <button class="clear-filters" onclick="clearFilters()">Filtreleri Temizle</button>
             </div>
@@ -543,6 +564,7 @@
                 yas: "Tüm Yaş Grupları",
                 seviye: "Başlangıç",
                 beceri: "Sözlü Beceriler (Dinleme-İzleme)",
+                planlanan_tarih: "21-27 Eylül",
                 scormPath: "scorm/buzkirma.zip",
                 previewUrl: "preview/buzkirma/index.html",
                 sunumPath: "pptx/1.pptx"
@@ -555,6 +577,7 @@
                 yas: "Tüm Yaş Grupları",
                 seviye: "Başlangıç",
                 beceri: "Sözlü Beceriler (Dinleme-İzleme)",
+                planlanan_tarih: "28 Eylül - 4 Ekim",
                 scormPath: "scorm/1.haftaa1.zip",
                 previewUrl: "preview/1.haftaa1/index.html",
                 sunumPath: "pptx/1.pptx"
@@ -666,6 +689,7 @@
                         <span class="tag tag-tema">${material.tema}</span>
                         <span class="tag tag-yas">${material.yas}</span>
                         <span class="tag tag-seviye">${material.seviye}</span>
+                        ${(material.planlanan_tarih || material.tarih) ? `<span class="tag tag-tarih">${material.planlanan_tarih || material.tarih}</span>` : ''}
                         <span class="tag tag-beceri">${material.beceri}</span>
                     </div>
                     
@@ -694,6 +718,7 @@
             const seviyeFilter = document.getElementById('seviyeFilter').value;
             const yasFilter = document.getElementById('yasFilter').value;
             const beceriFilter = document.getElementById('beceriFilter').value;
+            const tarihFilter = document.getElementById('tarihFilter') ? document.getElementById('tarihFilter').value : '';
 
             filteredMaterials = materials.filter(material => {
                 const matchesSearch = material.name.toLowerCase().includes(searchTerm) ||
@@ -702,8 +727,10 @@
                 const matchesSeviye = !seviyeFilter || material.seviye === seviyeFilter;
                 const matchesYas = !yasFilter || material.yas === yasFilter || material.yas === 'Tüm Yaş Grupları';
                 const matchesBeceri = !beceriFilter || material.beceri.includes(beceriFilter);
+                const matTarih = material.planlanan_tarih || material.tarih;
+                const matchesTarih = !tarihFilter || matTarih === tarihFilter;
 
-                return matchesSearch && matchesTema && matchesSeviye && matchesYas && matchesBeceri;
+                return matchesSearch && matchesTema && matchesSeviye && matchesYas && matchesBeceri && matchesTarih;
             });
 
             renderMaterials(filteredMaterials);
@@ -715,6 +742,7 @@
             document.getElementById('seviyeFilter').value = '';
             document.getElementById('yasFilter').value = '';
             document.getElementById('beceriFilter').value = '';
+            if (document.getElementById('tarihFilter')) document.getElementById('tarihFilter').value = '';
             filterMaterials();
         }
 
@@ -723,6 +751,7 @@
         document.getElementById('seviyeFilter').addEventListener('change', filterMaterials);
         document.getElementById('yasFilter').addEventListener('change', filterMaterials);
         document.getElementById('beceriFilter').addEventListener('change', filterMaterials);
+        if (document.getElementById('tarihFilter')) document.getElementById('tarihFilter').addEventListener('change', filterMaterials);
 
         renderMaterials(materials);
     </script>
