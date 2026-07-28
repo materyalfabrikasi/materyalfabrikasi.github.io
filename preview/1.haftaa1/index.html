@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" class="h-full">
 
 <head>
     <meta charset="UTF-8">
@@ -17,6 +17,12 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
+        html,
+        body {
+            height: 100%;
+            overflow: hidden;
+        }
+
         body {
             font-family: 'Quicksand', sans-serif;
             background-color: #F3F8FF;
@@ -31,19 +37,29 @@
         }
 
         .card-shadow {
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
-        }
-
-        .selected-item {
-            ring: 4px;
-            ring-color: #3B82F6;
-            transform: scale(1.03);
+            box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.06), 0 4px 8px -4px rgba(0, 0, 0, 0.04);
         }
 
         .matched-item {
             opacity: 0.6;
             pointer-events: none;
-            filter: grayscale(40%);
+            filter: grayscale(20%);
+        }
+
+        .drag-over-zone {
+            border-color: #3B82F6 !important;
+            background-color: #EFF6FF !important;
+            transform: scale(1.02);
+        }
+
+        .draggable-word {
+            cursor: grab;
+            transition: all 0.2s ease;
+        }
+
+        .draggable-word:active {
+            cursor: grabbing;
+            transform: scale(1.05);
         }
 
         @keyframes bounce-gentle {
@@ -54,49 +70,28 @@
             }
 
             50% {
-                transform: translateY(-8px);
+                transform: translateY(-5px);
             }
         }
 
         .animate-bounce-gentle {
             animation: bounce-gentle 2s infinite ease-in-out;
         }
-
-        @keyframes pulse-ring {
-            0% {
-                transform: scale(0.95);
-                opacity: 0.8;
-            }
-
-            50% {
-                transform: scale(1.05);
-                opacity: 1;
-            }
-
-            100% {
-                transform: scale(0.95);
-                opacity: 0.8;
-            }
-        }
-
-        .pulse-active {
-            animation: pulse-ring 1.5s infinite ease-in-out;
-        }
     </style>
 </head>
 
-<body class="min-h-screen flex flex-col justify-between text-slate-800">
+<body class="h-screen flex flex-col justify-between text-slate-800 overflow-hidden">
 
     <!-- Üst Bilgi / Header -->
-    <header class="bg-gradient-to-r from-red-600 via-red-500 to-amber-500 text-white shadow-lg sticky top-0 z-40">
-        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
-            <div class="flex items-center gap-3">
-                <div class="bg-white p-1.5 rounded-full shadow-inner flex items-center justify-center w-11 h-11">
-                    <i class="fa-solid font-bold text-red-600 text-2xl">🇹🇷</i>
+    <header class="bg-gradient-to-r from-red-600 via-red-500 to-amber-500 text-white shadow-md z-40 shrink-0 py-2">
+        <div class="max-w-7xl mx-auto px-4 flex justify-between items-center gap-3">
+            <div class="flex items-center gap-2.5">
+                <div class="bg-white p-1 rounded-full shadow-inner flex items-center justify-center w-9 h-9">
+                    <span class="text-xl">🇹🇷</span>
                 </div>
                 <div>
-                    <h1 class="text-xl md:text-2xl font-bold tracking-wide">Türkçe ve Türk Kültürü</h1>
-                    <p class="text-xs text-red-100 font-semibold flex items-center gap-1">
+                    <h1 class="text-lg md:text-xl font-bold tracking-wide leading-tight">Türkçe ve Türk Kültürü</h1>
+                    <p class="text-[11px] text-red-100 font-semibold flex items-center gap-1">
                         <i class="fa-solid fa-heart text-amber-300"></i> Kaynak: Ülkem Yanımda Projesi (MEB)
                     </p>
                 </div>
@@ -104,13 +99,13 @@
 
             <!-- Skor ve İlerleme Paneli -->
             <div
-                class="flex items-center gap-4 bg-white/20 backdrop-blur-md px-4 py-1.5 rounded-2xl border border-white/30">
-                <div class="flex items-center gap-1.5">
-                    <i class="fa-solid fa-star text-amber-300 text-xl animate-spin-slow"></i>
-                    <span id="scoreText" class="font-bold text-lg">Puan: 0</span>
+                class="flex items-center gap-3 bg-white/20 backdrop-blur-md px-3 py-1 rounded-xl border border-white/30 text-xs">
+                <div class="flex items-center gap-1.5 font-bold text-sm">
+                    <i class="fa-solid fa-star text-amber-300"></i>
+                    <span id="scoreText">Puan: 0</span>
                 </div>
-                <div class="h-6 w-px bg-white/40"></div>
-                <div class="text-xs font-semibold uppercase bg-red-700/60 px-2.5 py-1 rounded-xl">
+                <div class="h-4 w-px bg-white/40"></div>
+                <div class="font-semibold uppercase bg-red-700/60 px-2 py-0.5 rounded-lg text-[11px]">
                     Seviye: Başlangıç
                 </div>
             </div>
@@ -118,110 +113,118 @@
     </header>
 
     <!-- Adım Göstergesi (Progress Steps) -->
-    <div class="max-w-3xl mx-auto w-full px-4 pt-6">
+    <div class="max-w-3xl mx-auto w-full px-4 pt-2 pb-1 shrink-0">
         <div class="flex items-center justify-between relative">
-            <div class="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1.5 bg-slate-200 rounded-full -z-10"></div>
+            <div class="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-slate-200 rounded-full -z-10"></div>
             <div id="lineProgress"
-                class="absolute left-0 top-1/2 -translate-y-1/2 w-0 h-1.5 bg-green-500 transition-all duration-500 rounded-full -z-10">
+                class="absolute left-0 top-1/2 -translate-y-1/2 w-0 h-1 bg-green-500 transition-all duration-500 rounded-full -z-10">
             </div>
 
             <!-- Adım 1 -->
-            <div id="step1Indicator" class="flex flex-col items-center gap-1">
+            <div id="step1Indicator" class="flex flex-col items-center">
                 <div
-                    class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold shadow-md transition-all">
+                    class="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs shadow transition-all">
                     1</div>
-                <span class="text-xs font-bold text-blue-700">Eşleştirme</span>
+                <span class="text-[11px] font-bold text-blue-700 mt-0.5">Eşleştirme</span>
             </div>
 
             <!-- Adım 2 -->
-            <div id="step2Indicator" class="flex flex-col items-center gap-1">
+            <div id="step2Indicator" class="flex flex-col items-center">
                 <div
-                    class="w-10 h-10 rounded-full bg-slate-300 text-slate-600 flex items-center justify-center font-bold shadow-md transition-all">
+                    class="w-7 h-7 rounded-full bg-slate-300 text-slate-600 flex items-center justify-center font-bold text-xs shadow transition-all">
                     2</div>
-                <span class="text-xs font-bold text-slate-500">Video & Soru-Cevap</span>
+                <span class="text-[11px] font-bold text-slate-500 mt-0.5">Video & Soru-Cevap</span>
             </div>
 
             <!-- Adım 3 -->
-            <div id="step3Indicator" class="flex flex-col items-center gap-1">
+            <div id="step3Indicator" class="flex flex-col items-center">
                 <div
-                    class="w-10 h-10 rounded-full bg-slate-300 text-slate-600 flex items-center justify-center font-bold shadow-md transition-all">
+                    class="w-7 h-7 rounded-full bg-slate-300 text-slate-600 flex items-center justify-center font-bold text-xs shadow transition-all">
                     3</div>
-                <span class="text-xs font-bold text-slate-500">Tebrikler</span>
+                <span class="text-[11px] font-bold text-slate-500 mt-0.5">Tebrikler</span>
             </div>
         </div>
     </div>
 
     <!-- Ana Oyun Alanı -->
-    <main class="max-w-6xl mx-auto w-full px-4 py-6 flex-grow">
+    <main class="max-w-7xl mx-auto w-full px-3 py-1 flex-1 flex flex-col min-h-0 overflow-hidden">
 
         <!-- ================= BÖLÜM 1: EŞLEŞTİRME OYUNU ================= -->
-        <section id="stage1" class="block">
+        <section id="stage1" class="flex flex-col justify-between h-full min-h-0 gap-2">
             <!-- Yönerge Kutusu -->
-            <div class="bg-blue-50 border-2 border-blue-200 rounded-2xl p-4 mb-6 flex items-start gap-3 shadow-sm">
-                <div class="bg-blue-500 text-white p-3 rounded-xl flex items-center justify-center text-xl shrink-0">
+            <div
+                class="bg-blue-50 border border-blue-200 rounded-xl px-4 py-2 flex items-center gap-3 shadow-sm shrink-0">
+                <div class="bg-blue-500 text-white p-2 rounded-lg flex items-center justify-center text-base shrink-0">
                     <i class="fa-solid fa-hand-pointer"></i>
                 </div>
-                <div>
-                    <h2 class="text-lg font-bold text-blue-900">1. Aşama: Resim ve Kelime / Kelime Grubu Eşleştirme</h2>
-                    <p class="text-sm text-blue-800 font-medium mt-0.5">
-                        Resme tıkla, sonra doğru kelimeye tıkla! Büyüteç ile resimleri büyütebilirsin.
+                <div class="flex-1 min-w-0">
+                    <h2 class="text-sm md:text-base font-bold text-blue-900 leading-tight">1. Aşama: Görsel ve Kelime
+                        Eşleştirme</h2>
+                    <p class="text-xs md:text-sm text-blue-800 font-medium">
+                        Kelimeleri dinleyelim, sürükleyip doğru resmin üzerine bırakalım! Büyüteç ile resimleri
+                        büyütebiliriz.
                     </p>
                 </div>
             </div>
 
-            <div class="flex flex-col gap-8">
-                <!-- Üst Bölüm: Kelime Kartları -->
-                <div class="bg-white p-5 rounded-3xl card-shadow border border-slate-100">
-                    <h3 class="text-md font-bold text-slate-700 mb-4 flex items-center gap-2 border-b pb-2">
-                        <i class="fa-solid fa-font text-blue-500"></i> Kelime / Kelime Grubu (Tıkla)
-                    </h3>
-                    <div id="wordsContainer" class="flex flex-wrap justify-center gap-4">
-                        <!-- JavaScript ile dinamik dolacak -->
-                    </div>
+            <!-- Kelimeler Havuzu (Daha Büyük Draggable Word Bank) -->
+            <div class="bg-white px-4 py-2.5 rounded-2xl card-shadow border border-slate-100 shrink-0">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs md:text-sm font-bold text-slate-700 flex items-center gap-1.5">
+                        <i class="fa-solid fa-volume-high text-blue-500"></i> Kelimeler (Sürükleyelim veya Tıklayalım)
+                    </span>
+                    <span class="text-xs text-slate-400 font-semibold">🔊 Dinlemek için hoparlör butonuna
+                        basabiliriz</span>
                 </div>
+                <div id="wordsContainer" class="flex flex-wrap justify-center items-center gap-3 min-h-[48px]">
+                    <!-- JavaScript ile dinamik dolacak -->
+                </div>
+            </div>
 
-                <!-- Alt Bölüm: Resim Kartları -->
-                <div class="bg-white p-5 rounded-3xl card-shadow border border-slate-100 w-full">
-                    <h3 class="text-md font-bold text-slate-700 mb-4 flex items-center gap-2 border-b pb-2">
-                        <i class="fa-solid fa-image text-amber-500"></i> Resimler (Tıkla)
-                    </h3>
-                    <div id="imagesContainer" class="flex flex-wrap justify-center gap-6">
-                        <!-- JavaScript ile dinamik dolacak -->
-                    </div>
+            <!-- Resim Kartları Alanı (4 Büyük Resim Kartı - Tam Sığan Çerçeve) -->
+            <div
+                class="bg-white p-3 rounded-2xl card-shadow border border-slate-100 flex-1 flex flex-col min-h-0 justify-between">
+                <div id="imagesContainer"
+                    class="grid grid-cols-2 md:grid-cols-4 gap-4 h-full min-h-0 flex-1 items-stretch">
+                    <!-- JavaScript ile dinamik dolacak -->
                 </div>
             </div>
 
             <!-- Geri Bildirim ve İlerle Butonu -->
-            <div class="mt-8 text-center flex flex-col items-center">
-                <div id="stage1Feedback" class="hidden text-lg font-bold px-6 py-3 rounded-2xl mb-4 transition-all">
+            <div class="text-center shrink-0 pt-1 flex flex-col items-center">
+                <div id="stage1Feedback" class="hidden text-sm font-bold px-4 py-1.5 rounded-xl mb-1 transition-all">
                 </div>
                 <button id="btnNextStage1" onclick="goToStage2()"
-                    class="hidden bg-green-500 hover:bg-green-600 active:scale-95 text-white font-bold text-lg px-8 py-3.5 rounded-2xl shadow-lg transition-all animate-bounce-gentle">
-                    Harika! 2. Aşamaya Geç <i class="fa-solid fa-arrow-right ml-2"></i>
+                    class="hidden bg-green-500 hover:bg-green-600 active:scale-95 text-white font-bold text-base px-8 py-2.5 rounded-xl shadow-md transition-all animate-bounce-gentle">
+                    Harika! 2. Aşamaya Geçelim <i class="fa-solid fa-arrow-right ml-2"></i>
                 </button>
             </div>
         </section>
 
 
         <!-- ================= BÖLÜM 2: VİDEO İLE SORU-CEVAP ================= -->
-        <section id="stage2" class="hidden">
+        <section id="stage2" class="hidden flex-col justify-between h-full min-h-0">
             <!-- Yönerge Kutusu -->
-            <div class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-4 mb-6 flex items-start gap-3 shadow-sm">
-                <div class="bg-amber-500 text-white p-3 rounded-xl flex items-center justify-center text-xl shrink-0">
+            <div
+                class="bg-amber-50 border border-amber-200 rounded-xl px-3 py-2 flex items-center gap-2.5 shadow-sm shrink-0">
+                <div class="bg-amber-500 text-white p-2 rounded-lg flex items-center justify-center text-sm shrink-0">
                     <i class="fa-solid fa-circle-play"></i>
                 </div>
                 <div>
-                    <h2 class="text-lg font-bold text-amber-900">2. Aşama: Videoyu İzle ve Soruları Cevapla</h2>
-                    <p class="text-sm text-amber-800 font-medium mt-0.5">
-                        Videoyu oynat. Video durduğunda çıkan 3 soruyu cevapla.
+                    <h2 class="text-sm font-bold text-amber-900 leading-tight">2. Aşama: Videoyu İzleyelim ve Soruları
+                        Cevaplayalım</h2>
+                    <p class="text-xs text-amber-800 font-medium">
+                        Videoyu oynatalım. Video durduğunda çıkan 3 soruyu cevaplayalım.
                     </p>
                 </div>
             </div>
 
-            <div class="bg-white p-4 sm:p-6 rounded-3xl card-shadow border border-slate-100 max-w-4xl mx-auto">
+            <div
+                class="bg-white p-3 rounded-2xl card-shadow border border-slate-100 max-w-4xl mx-auto flex-1 flex flex-col justify-between min-h-0 w-full">
                 <!-- Video Oyuncu Alanı -->
-                <div class="relative w-full aspect-video rounded-2xl overflow-hidden shadow-md bg-black">
-                    <video id="localVideo" class="w-full h-full object-contain" controls
+                <div
+                    class="relative w-full flex-1 min-h-0 rounded-xl overflow-hidden shadow-md bg-black flex items-center justify-center">
+                    <video id="localVideo" class="w-full h-full max-h-[60vh] object-contain" controls
                         controlsList="nodownload nofullscreen" disablePictureInPicture>
                         <source src="1.mp4" type="video/mp4">
                         Tarayıcınız video etiketini desteklemiyor.
@@ -231,94 +234,93 @@
                     <div id="questionOverlay"
                         class="absolute inset-0 bg-slate-900/90 backdrop-blur-md flex items-center justify-center p-4 hidden z-30 transition-all">
                         <div
-                            class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl text-center border-4 border-amber-400">
+                            class="bg-white rounded-2xl p-5 max-w-md w-full shadow-2xl text-center border-4 border-amber-400">
                             <span
-                                class="inline-block bg-amber-100 text-amber-800 font-bold text-xs px-3 py-1 rounded-full mb-3 uppercase tracking-wider">
+                                class="inline-block bg-amber-100 text-amber-800 font-bold text-xs px-3 py-0.5 rounded-full mb-2 uppercase tracking-wider">
                                 Video Sorusu
                             </span>
-                            <h3 id="questionText" class="text-xl font-bold text-slate-800 mb-6">
+                            <h3 id="questionText" class="text-lg font-bold text-slate-800 mb-4">
                                 Soru Yükleniyor...
                             </h3>
-                            <div id="questionOptionsContainer" class="flex flex-col gap-3 mb-4">
+                            <div id="questionOptionsContainer" class="flex flex-col gap-2 mb-3">
                                 <!-- Seçenekler buraya eklenecek -->
                             </div>
-                            <div id="questionFeedback" class="text-sm font-bold min-h-[24px]"></div>
+                            <div id="questionFeedback" class="text-xs font-bold min-h-[20px]"></div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Manuel Soru Butonları -->
-                <div class="mt-4 flex flex-wrap justify-between items-center gap-3 border-t pt-4">
+                <div class="mt-2 flex flex-wrap justify-between items-center gap-2 border-t pt-2 shrink-0">
                     <div class="text-xs text-slate-500 flex items-center gap-1 font-semibold">
-                        <i class="fa-solid fa-circle-info text-blue-500"></i> Video belirli saniyelerde otomatik
-                        duracaktır.
+                        <i class="fa-solid fa-circle-info text-blue-500"></i> Video belirli saniyelerde (1.26, 1.41,
+                        1.50) otomatik duracaktır.
                     </div>
                     <div class="flex gap-2">
                         <button onclick="triggerQuestionManually(0)"
-                            class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg font-semibold transition">
-                            <i class="fa-solid fa-question text-amber-500"></i> Soru 1
+                            class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1 rounded-lg font-semibold transition">
+                            <i class="fa-solid fa-question text-amber-500"></i> Soru 1 (1.26)
                         </button>
                         <button onclick="triggerQuestionManually(1)"
-                            class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg font-semibold transition">
-                            <i class="fa-solid fa-question text-amber-500"></i> Soru 2
+                            class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1 rounded-lg font-semibold transition">
+                            <i class="fa-solid fa-question text-amber-500"></i> Soru 2 (1.41)
                         </button>
                         <button onclick="triggerQuestionManually(2)"
-                            class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg font-semibold transition">
-                            <i class="fa-solid fa-question text-amber-500"></i> Soru 3
+                            class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1 rounded-lg font-semibold transition">
+                            <i class="fa-solid fa-question text-amber-500"></i> Soru 3 (1.50)
                         </button>
                     </div>
                 </div>
             </div>
 
             <!-- Tamamlama Butonu -->
-            <div class="mt-8 text-center">
+            <div class="shrink-0 pt-2 text-center">
                 <button id="btnFinishStage2" onclick="goToStage3()"
-                    class="hidden bg-green-500 hover:bg-green-600 text-white font-bold text-lg px-8 py-3.5 rounded-2xl shadow-lg transition-all animate-bounce-gentle">
-                    Tebrikler! Oyunu Bitir <i class="fa-solid fa-trophy ml-2"></i>
+                    class="hidden bg-green-500 hover:bg-green-600 text-white font-bold text-sm px-6 py-2.5 rounded-xl shadow-md transition-all animate-bounce-gentle">
+                    Tebrikler! Oyunu Bitirelim <i class="fa-solid fa-trophy ml-1.5"></i>
                 </button>
             </div>
         </section>
 
 
         <!-- ================= BÖLÜM 3: TEBRİKLER VE SERTİFİKA ================= -->
-        <section id="stage3" class="hidden">
+        <section id="stage3" class="hidden flex-col justify-center items-center h-full min-h-0">
             <div
-                class="bg-white rounded-3xl p-8 card-shadow max-w-2xl mx-auto text-center border-4 border-amber-300 relative overflow-hidden">
-                <!-- Arka plan konfeti stili -->
-                <div class="absolute -right-10 -top-10 text-9xl opacity-10 text-amber-500 pointer-events-none">🏆</div>
-                <div class="absolute -left-10 -bottom-10 text-9xl opacity-10 text-red-500 pointer-events-none">⭐</div>
+                class="bg-white rounded-3xl p-6 card-shadow max-w-xl w-full text-center border-4 border-amber-300 relative overflow-hidden">
+                <div class="absolute -right-8 -top-8 text-8xl opacity-10 text-amber-500 pointer-events-none">🏆</div>
+                <div class="absolute -left-8 -bottom-8 text-8xl opacity-10 text-red-500 pointer-events-none">⭐</div>
 
                 <div
-                    class="w-20 h-20 bg-amber-100 text-amber-500 rounded-full flex items-center justify-center mx-auto text-4xl mb-4 shadow-inner">
+                    class="w-16 h-16 bg-amber-100 text-amber-500 rounded-full flex items-center justify-center mx-auto text-3xl mb-3 shadow-inner">
                     <i class="fa-solid fa-award"></i>
                 </div>
 
-                <h2 class="text-3xl font-bold text-slate-800 mb-2">Aferin! Başardın!</h2>
-                <p class="text-slate-600 font-semibold mb-6">Türkçe ve Türk Kültürü Etkinliğini Başarıyla Tamamladın.
-                </p>
+                <h2 class="text-2xl font-bold text-slate-800 mb-1">Aferin! Başardık!</h2>
+                <p class="text-slate-600 text-sm font-semibold mb-4">Türkçe ve Türk Kültürü Etkinliğini Başarıyla
+                    Tamamladık.</p>
 
                 <!-- Başarı Özeti -->
-                <div class="bg-amber-50/80 rounded-2xl p-5 mb-6 border border-amber-200 grid grid-cols-2 gap-4">
+                <div class="bg-amber-50/80 rounded-2xl p-4 mb-4 border border-amber-200 grid grid-cols-2 gap-3">
                     <div class="text-center">
                         <span class="text-xs font-bold text-amber-700 uppercase tracking-wider block">Toplam Puan</span>
                         <span id="finalScore" class="text-3xl font-extrabold text-amber-600">0</span>
                     </div>
                     <div class="text-center border-l border-amber-200">
                         <span class="text-xs font-bold text-amber-700 uppercase tracking-wider block">Rozet</span>
-                        <span class="text-lg font-bold text-slate-700 block mt-1">
+                        <span class="text-base font-bold text-slate-700 block mt-1">
                             <i class="fa-solid fa-medal text-amber-500"></i> Kültür Elçisi
                         </span>
                     </div>
                 </div>
 
-                <div class="p-4 bg-red-50 rounded-2xl border border-red-100 mb-6 text-xs text-red-800 font-bold">
+                <div class="p-3 bg-red-50 rounded-xl border border-red-100 mb-4 text-xs text-red-800 font-bold">
                     T.C. Millî Eğitim Bakanlığı - <a href="https://ulkemyanimda.eba.gov.tr/web/index.html"
                         target="_blank" class="underline hover:text-red-900">Ülkem Yanımda Projesi</a>
                 </div>
 
                 <button onclick="restartGame()"
-                    class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-md px-6 py-3 rounded-xl shadow-md transition-all">
-                    <i class="fa-solid fa-rotate-right mr-2"></i> Yeniden Oyna
+                    class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm px-6 py-2.5 rounded-xl shadow-md transition-all">
+                    <i class="fa-solid fa-rotate-right mr-1.5"></i> Yeniden Oynayalım
                 </button>
             </div>
         </section>
@@ -330,23 +332,23 @@
         class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl p-4 max-w-xl w-full relative shadow-2xl flex flex-col items-center">
             <button onclick="closeZoomModal()"
-                class="absolute -top-3 -right-3 bg-red-500 hover:bg-red-600 text-white w-10 h-10 rounded-full shadow-lg flex items-center justify-center font-bold text-lg border-2 border-white transition-all">
+                class="absolute -top-3 -right-3 bg-red-500 hover:bg-red-600 text-white w-9 h-9 rounded-full shadow-lg flex items-center justify-center font-bold text-base border-2 border-white transition-all">
                 <i class="fa-solid fa-xmark"></i>
             </button>
             <div
-                class="w-full max-h-[70vh] rounded-2xl overflow-hidden mb-3 bg-slate-100 flex items-center justify-center">
+                class="w-full max-h-[75vh] rounded-2xl overflow-hidden mb-1 bg-slate-100 flex items-center justify-center">
                 <img id="zoomedImage" src="" alt="Büyütülmüş Görsel" class="w-full h-full object-contain">
             </div>
         </div>
     </div>
 
     <!-- Alt Bilgi / Footer -->
-    <footer class="bg-slate-800 text-slate-300 py-4 px-4 text-center text-xs border-t border-slate-700">
-        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
+    <footer class="bg-slate-800 text-slate-300 py-2 px-4 text-center text-xs border-t border-slate-700 shrink-0">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-1">
             <div>
                 <span class="font-bold text-white">T.C. Millî Eğitim Bakanlığı</span>
             </div>
-            <div class="text-slate-400">
+            <div class="text-slate-400 text-[11px]">
                 Kaynak: <a href="https://ulkemyanimda.eba.gov.tr/web/index.html" target="_blank"
                     class="text-amber-300 font-semibold underline hover:text-amber-200">Ülkem Yanımda Projesi</a> | MEB
                 Eğitsel Oyun Standartlarına Uygundur.
@@ -358,43 +360,41 @@
     <script>
         // ================= VERİ SETLERİ VE SİSTEM DEĞİŞKENLERİ ================= //
 
-        // 1. Eşleştirme Verileri (5 Adet Görsel ve Kelime/Kelime Grubu)
+        // 1. Eşleştirme Verileri (4 Adet Görsel ve Kelime)
         const MATCHING_DATA = [
-            { id: 1, image: 'gunaydin.png', word: 'Günaydın!', desc: 'Sabah söylenir.' },
-            { id: 2, image: 'hayirliisler.png', word: 'Hayırlı işler!', desc: 'Esnafa/çalışana söylenir.' },
-            { id: 3, image: 'hoscakal.png', word: 'Hoşça kal!', desc: 'Ayrılırken söylenir.' },
-            { id: 4, image: 'hosgeldin.png', word: 'Hoş geldin!', desc: 'Gelen kişiye söylenir.' },
-            { id: 5, image: 'merhaba.png', word: 'Merhaba!', desc: 'Karşılaşınca söylenir.' }
+            { id: 1, image: 'gunaydin.png', word: 'Günaydın!', audio: 'gunaydin.mp3' },
+            { id: 2, image: 'hoscakal.png', word: 'Hoşça kal!', audio: 'hoscakal.mp3' },
+            { id: 3, image: 'hosgeldin.png', word: 'Hoş geldin!', audio: 'hosgeldin.mp3' },
+            { id: 4, image: 'merhaba.png', word: 'Merhaba!', audio: 'merhaba.mp3' }
         ];
 
-        // 2. Video İçi Soru-Cevap Verileri (3 Adet Soru)
+        // 2. Video İçi Soru-Cevap Verileri (Zamanlar: 1.26 = 86s, 1.41 = 101s, 1.50 = 110s)
         const VIDEO_QUESTIONS = [
             {
-                time: 85, // 85. saniye
+                time: 86, // 1.26 (1 dk 26 sn)
                 question: "Sabah arkadaşlarımıza veya ailemize ne deriz?",
                 options: ["İyi geceler!", "Günaydın!", "Hoşça kal!"],
                 answer: 1,
                 hint: "Sabah saatlerinde 'Günaydın!' deriz."
             },
             {
-                time: 109, // 1.49 = 109. saniye
-                question: "Birbirimizden ayrılırken ne deriz?",
-                options: ["Günaydın!", "Merhaba!", "Hoşça kal!"],
-                answer: 2,
-                hint: "Birbirimizden ayrılırken 'Hoşça kal!' deriz."
-            },
-            {
-                time: 101, // 101. saniye
+                time: 101, // 1.41 (1 dk 41 sn)
                 question: "Çalışan birini görünce ona ne deriz?",
                 options: ["Güle güle!", "Kolay gelsin!", "Günaydın!"],
                 answer: 1,
                 hint: "İş yapan kişilere 'Kolay gelsin!' deriz."
+            },
+            {
+                time: 110, // 1.50 (1 dk 50 sn)
+                question: "Birbirimizden ayrılırken ne deriz?",
+                options: ["Günaydın!", "Merhaba!", "Hoşça kal!"],
+                answer: 2,
+                hint: "Birbirimizden ayrılırken 'Hoşça kal!' deriz."
             }
         ];
 
         // Oyun Durumu (State)
         let totalScore = 0;
-        let selectedImageId = null;
         let selectedWordId = null;
         let matchedCount = 0;
         let activeStage = 1;
@@ -404,7 +404,7 @@
         let answeredQuestions = [false, false, false];
         let currentQuestionIndex = null;
 
-        // Web Audio API (Ses Efektleri)
+        // Web Audio API (Efekt Sesleri)
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
         function playSound(type) {
@@ -448,8 +448,32 @@
             }
         }
 
+        // Kelime Sesini Oynatma (MP3 + TTS Fallback)
+        function playWordAudio(wordText, audioFileName, event) {
+            if (event) {
+                event.stopPropagation();
+            }
 
-        // ================= AŞAMA 1: EŞLEŞTİRME OYUNU MANTIĞI ================= //
+            const audioPath = audioFileName || (wordText.toLowerCase().replace(/[^a-z0-9]/g, '') + '.mp3');
+            const audio = new Audio(audioPath);
+
+            audio.play().then(() => {
+                // MP3 oynatıldı
+            }).catch(() => {
+                // MP3 bulunamazsa Türkçe Ses Sentezleme (SpeechSynthesis API) kullan
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                    const cleanText = wordText.replace(/[!.,?]/g, '');
+                    const utterance = new SpeechSynthesisUtterance(cleanText);
+                    utterance.lang = 'tr-TR';
+                    utterance.rate = 0.9;
+                    window.speechSynthesis.speak(utterance);
+                }
+            });
+        }
+
+
+        // ================= AŞAMA 1: EŞLEŞTİRME VE DRAG & DROP MANTIĞI ================= //
 
         function initMatchingGame() {
             const imagesContainer = document.getElementById('imagesContainer');
@@ -458,141 +482,202 @@
             imagesContainer.innerHTML = '';
             wordsContainer.innerHTML = '';
 
-            // Kartları karıştır (Shuffling)
+            // Kartları karıştır
             const shuffledImages = [...MATCHING_DATA].sort(() => Math.random() - 0.5);
             const shuffledWords = [...MATCHING_DATA].sort(() => Math.random() - 0.5);
 
-            // Resim kartlarını oluştur
-            shuffledImages.forEach(item => {
-                const imgCard = document.createElement('div');
-                imgCard.id = `img-card-${item.id}`;
-                imgCard.className = "bg-slate-50 border-2 border-slate-200 rounded-2xl p-4 cursor-pointer hover:border-blue-400 hover:shadow-lg transition-all flex flex-col items-center justify-center text-center group min-h-[250px] relative w-full sm:w-[300px]";
-
-                // Tıklama olayı
-                imgCard.onclick = (e) => {
-                    // Büyüteçe tıklandıysa seçimi çalıştırma
-                    if (e.target.closest('.zoom-btn')) return;
-                    selectImage(item.id);
-                };
-
-                imgCard.innerHTML = `
-                    <div class="w-full h-48 bg-slate-200 rounded-xl overflow-hidden mb-3 flex items-center justify-center relative">
-                        <img src="${item.image}" alt="${item.word}" class="w-full h-full object-cover" 
-                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="hidden absolute inset-0 bg-gradient-to-br from-blue-100 to-indigo-100 items-center justify-center text-blue-600 font-bold text-xs p-1">
-                            <span>🖼️ ${item.word}</span>
-                        </div>
-                        <!-- Büyüteç Butonu -->
-                        <button onclick="openZoomModal('${item.image}', '${item.word}')" title="Büyüt" class="zoom-btn absolute top-2 right-2 bg-white/90 hover:bg-white text-slate-800 w-10 h-10 rounded-full shadow-md flex items-center justify-center text-sm transition hover:scale-110">
-                            <i class="fa-solid fa-magnifying-glass-plus text-blue-600 text-lg"></i>
-                        </button>
-                    </div>
-                    <span class="text-sm font-bold text-slate-500 group-hover:text-blue-600">Resim ${item.id}</span>
-                `;
-                imagesContainer.appendChild(imgCard);
-            });
-
-            // Kelime kartlarını oluştur
+            // Kelime kartlarını oluştur (Sürüklenebilir & Büyük)
             shuffledWords.forEach(item => {
                 const wordCard = document.createElement('div');
                 wordCard.id = `word-card-${item.id}`;
-                wordCard.className = "bg-slate-50 border-2 border-slate-200 rounded-2xl px-6 py-4 cursor-pointer hover:border-blue-400 hover:shadow-md transition-all flex items-center justify-center gap-2 text-slate-700 font-bold text-lg group min-w-[140px]";
+                wordCard.draggable = true;
+                wordCard.className = "draggable-word bg-white hover:bg-blue-50 border-2 border-slate-200 hover:border-blue-400 rounded-2xl px-4 py-2 flex items-center gap-3 shadow-md font-bold text-base md:text-lg text-slate-800 transition-all select-none cursor-grab";
+
+                // Drag Events
+                wordCard.ondragstart = (e) => handleDragStart(e, item.id);
+                wordCard.ondragend = (e) => handleDragEnd(e);
+
+                // Click Selection (Dokunmatik / Tıklama Desteği)
                 wordCard.onclick = () => selectWord(item.id);
 
                 wordCard.innerHTML = `
-                    <span class="group-hover:text-blue-600 text-center">${item.word}</span>
-                    <i class="fa-solid fa-circle-check hidden"></i>
+                    <button onclick="playWordAudio('${item.word}', '${item.audio}', event)" title="Dinleyelim" 
+                        class="w-8 h-8 rounded-full bg-blue-100 hover:bg-blue-200 text-blue-600 flex items-center justify-center transition active:scale-90 shrink-0 text-sm shadow-sm">
+                        <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                    <span class="word-label pointer-events-none">${item.word}</span>
+                    <i class="fa-solid fa-grip-vertical text-slate-300 text-sm ml-1"></i>
                 `;
                 wordsContainer.appendChild(wordCard);
             });
+
+            // Resim kartlarını oluştur (4 Büyük Resim + Çerçeveye Tam Sığan Tasarım + Drop Zone)
+            shuffledImages.forEach(item => {
+                const imgCard = document.createElement('div');
+                imgCard.id = `img-card-${item.id}`;
+                imgCard.className = "bg-white border-2 border-slate-200 hover:border-blue-300 rounded-2xl p-3 flex flex-col justify-between items-center text-center shadow-md relative group h-full min-h-0 transition-all";
+
+                // Drop Events
+                imgCard.ondragover = (e) => handleDragOver(e, item.id);
+                imgCard.ondragleave = (e) => handleDragLeave(e, item.id);
+                imgCard.ondrop = (e) => handleDrop(e, item.id);
+
+                // Click to drop (Alternatif tıklama desteği)
+                imgCard.onclick = (e) => {
+                    if (e.target.closest('.zoom-btn')) return;
+                    if (selectedWordId) {
+                        attemptMatch(selectedWordId, item.id);
+                    }
+                };
+
+                imgCard.innerHTML = `
+                    <!-- Büyüteç Butonu -->
+                    <button onclick="openZoomModal('${item.image}', '${item.word}')" title="Büyütelim" 
+                        class="zoom-btn absolute top-4 right-4 bg-white/90 hover:bg-white text-slate-800 w-9 h-9 rounded-full shadow-md flex items-center justify-center text-sm z-10 transition hover:scale-110 border border-slate-200">
+                        <i class="fa-solid fa-magnifying-glass-plus text-blue-600 text-base"></i>
+                    </button>
+
+                    <!-- Görsel Alanı (Maksimum Yükseklik ve Çerçeveye Tam Sığma) -->
+                    <div class="w-full flex-1 min-h-0 bg-slate-50 rounded-xl overflow-hidden mb-3 flex items-center justify-center relative p-2 border border-slate-100">
+                        <img src="${item.image}" alt="${item.word}" class="w-full h-full object-contain rounded-lg" 
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="hidden absolute inset-0 bg-gradient-to-br from-blue-100 to-indigo-100 items-center justify-center text-blue-600 font-bold text-sm p-2 text-center">
+                            <span>🖼️ ${item.word}</span>
+                        </div>
+                    </div>
+
+                    <!-- Bırakma / Yanıt Alanı (Drop Zone - Daha Geniş) -->
+                    <div id="drop-zone-${item.id}" class="w-full py-2 px-3 border-2 border-dashed border-slate-300 rounded-xl bg-slate-50 flex items-center justify-center text-xs md:text-sm font-bold text-slate-500 min-h-[44px] transition-all">
+                        <span>Sürükleyip Bırakalım</span>
+                    </div>
+                `;
+                imagesContainer.appendChild(imgCard);
+            });
+        }
+
+        // DRAG & DROP HANDLERS
+        let draggedWordId = null;
+
+        function handleDragStart(e, id) {
+            draggedWordId = id;
+            e.dataTransfer.setData('text/plain', id);
+            e.target.classList.add('opacity-50');
+        }
+
+        function handleDragEnd(e) {
+            e.target.classList.remove('opacity-50');
+        }
+
+        function handleDragOver(e, targetImgId) {
+            e.preventDefault();
+            const dropZone = document.getElementById(`drop-zone-${targetImgId}`);
+            if (dropZone && !document.getElementById(`img-card-${targetImgId}`).classList.contains('matched-item')) {
+                dropZone.classList.add('drag-over-zone');
+            }
+        }
+
+        function handleDragLeave(e, targetImgId) {
+            const dropZone = document.getElementById(`drop-zone-${targetImgId}`);
+            if (dropZone) {
+                dropZone.classList.remove('drag-over-zone');
+            }
+        }
+
+        function handleDrop(e, targetImgId) {
+            e.preventDefault();
+            const dropZone = document.getElementById(`drop-zone-${targetImgId}`);
+            if (dropZone) {
+                dropZone.classList.remove('drag-over-zone');
+            }
+
+            const wordId = draggedWordId || parseInt(e.dataTransfer.getData('text/plain'));
+            if (wordId) {
+                attemptMatch(wordId, targetImgId);
+            }
+        }
+
+        // Tıklama ile seçme desteği
+        function selectWord(id) {
+            if (document.getElementById(`word-card-${id}`).classList.contains('matched-item')) return;
+
+            if (selectedWordId && selectedWordId !== id) {
+                document.getElementById(`word-card-${selectedWordId}`).classList.remove('ring-4', 'ring-blue-500', 'bg-blue-100');
+            }
+
+            selectedWordId = id;
+            document.getElementById(`word-card-${id}`).classList.add('ring-4', 'ring-blue-500', 'bg-blue-100');
+        }
+
+        // Eşleştirme Kontrolü
+        function attemptMatch(wordId, imgId) {
+            const imgCard = document.getElementById(`img-card-${imgId}`);
+            if (imgCard.classList.contains('matched-item')) return;
+
+            const wordCard = document.getElementById(`word-card-${wordId}`);
+            const dropZone = document.getElementById(`drop-zone-${imgId}`);
+
+            if (wordId === imgId) {
+                // DOĞRU EŞLEŞTİRME
+                playSound('correct');
+                totalScore += 10;
+                updateScoreDisplay();
+
+                const wordObj = MATCHING_DATA.find(m => m.id === wordId);
+
+                // Kelimenin sesini otomatik çal
+                playWordAudio(wordObj.word, wordObj.audio);
+
+                imgCard.classList.add('matched-item', 'border-green-500', 'bg-green-50/50');
+                wordCard.classList.add('matched-item', 'hidden');
+
+                dropZone.className = "w-full py-2 px-3 border-2 border-green-500 rounded-xl bg-green-100 flex items-center justify-between text-sm md:text-base font-bold text-green-800 min-h-[44px]";
+                dropZone.innerHTML = `
+                    <button onclick="playWordAudio('${wordObj.word}', '${wordObj.audio}', event)" class="w-7 h-7 rounded-full bg-green-200 text-green-700 flex items-center justify-center shrink-0 shadow-sm">
+                        <i class="fa-solid fa-volume-high text-xs"></i>
+                    </button>
+                    <span>${wordObj.word}</span>
+                    <i class="fa-solid fa-circle-check text-green-600 text-base"></i>
+                `;
+
+                matchedCount++;
+                selectedWordId = null;
+                draggedWordId = null;
+
+                if (matchedCount === MATCHING_DATA.length) {
+                    playSound('win');
+                    const feedbackEl = document.getElementById('stage1Feedback');
+                    feedbackEl.className = "text-base font-bold px-5 py-2 rounded-xl mb-1 transition-all bg-green-100 text-green-800 border border-green-300 block";
+                    feedbackEl.innerHTML = "🎉 Harika! Tüm resimleri ve kelimeleri doğru eşleştirdik!";
+                    document.getElementById('btnNextStage1').classList.remove('hidden');
+                }
+            } else {
+                // YANLIŞ EŞLEŞTİRME
+                playSound('wrong');
+
+                dropZone.classList.add('border-red-400', 'bg-red-50');
+                if (wordCard) wordCard.classList.add('border-red-400', 'bg-red-50');
+
+                setTimeout(() => {
+                    dropZone.classList.remove('border-red-400', 'bg-red-50');
+                    if (wordCard) {
+                        wordCard.classList.remove('ring-4', 'ring-blue-500', 'bg-blue-100', 'border-red-400', 'bg-red-50');
+                    }
+                    selectedWordId = null;
+                    draggedWordId = null;
+                }, 600);
+            }
         }
 
         // Görsel Büyütme Modal Fonksiyonları
         function openZoomModal(imageSrc, title) {
             const modal = document.getElementById('imageZoomModal');
             const img = document.getElementById('zoomedImage');
-
             img.src = imageSrc;
             modal.classList.remove('hidden');
         }
 
         function closeZoomModal() {
             document.getElementById('imageZoomModal').classList.add('hidden');
-        }
-
-        function selectImage(id) {
-            if (document.getElementById(`img-card-${id}`).classList.contains('matched-item')) return;
-
-            if (selectedImageId) {
-                document.getElementById(`img-card-${selectedImageId}`).classList.remove('ring-4', 'ring-blue-500', 'bg-blue-50');
-            }
-
-            selectedImageId = id;
-            document.getElementById(`img-card-${id}`).classList.add('ring-4', 'ring-blue-500', 'bg-blue-50');
-
-            checkMatch();
-        }
-
-        function selectWord(id) {
-            if (document.getElementById(`word-card-${id}`).classList.contains('matched-item')) return;
-
-            if (selectedWordId) {
-                document.getElementById(`word-card-${selectedWordId}`).classList.remove('ring-4', 'ring-blue-500', 'bg-blue-50');
-            }
-
-            selectedWordId = id;
-            document.getElementById(`word-card-${id}`).classList.add('ring-4', 'ring-blue-500', 'bg-blue-50');
-
-            checkMatch();
-        }
-
-        function checkMatch() {
-            if (selectedImageId && selectedWordId) {
-                const feedbackEl = document.getElementById('stage1Feedback');
-
-                if (selectedImageId === selectedWordId) {
-                    // DOĞRU EŞLEŞTİRME
-                    playSound('correct');
-                    totalScore += 10;
-                    updateScoreDisplay();
-
-                    const imgCard = document.getElementById(`img-card-${selectedImageId}`);
-                    const wordCard = document.getElementById(`word-card-${selectedWordId}`);
-
-                    imgCard.classList.add('matched-item', 'border-green-500', 'bg-green-50');
-                    wordCard.classList.add('matched-item', 'border-green-500', 'bg-green-50');
-
-                    wordCard.querySelector('i').className = "fa-solid fa-circle-check text-green-500 text-lg";
-
-                    matchedCount++;
-
-                    selectedImageId = null;
-                    selectedWordId = null;
-
-                    if (matchedCount === MATCHING_DATA.length) {
-                        playSound('win');
-                        feedbackEl.className = "text-lg font-bold px-6 py-3 rounded-2xl mb-4 transition-all bg-green-100 text-green-800 border border-green-300 block";
-                        feedbackEl.innerHTML = "🎉 Harika! Tüm resimleri ve kelimeleri doğru eşleştirdin!";
-                        document.getElementById('btnNextStage1').classList.remove('hidden');
-                    }
-                } else {
-                    // YANLIŞ EŞLEŞTİRME
-                    playSound('wrong');
-
-                    const imgCard = document.getElementById(`img-card-${selectedImageId}`);
-                    const wordCard = document.getElementById(`word-card-${selectedWordId}`);
-
-                    imgCard.classList.add('border-red-400', 'bg-red-50');
-                    wordCard.classList.add('border-red-400', 'bg-red-50');
-
-                    setTimeout(() => {
-                        imgCard.classList.remove('ring-4', 'ring-blue-500', 'bg-blue-50', 'border-red-400', 'bg-red-50');
-                        wordCard.classList.remove('ring-4', 'ring-blue-500', 'bg-blue-50', 'border-red-400', 'bg-red-50');
-                        selectedImageId = null;
-                        selectedWordId = null;
-                    }, 600);
-                }
-            }
         }
 
 
@@ -632,7 +717,7 @@
 
             q.options.forEach((opt, optIdx) => {
                 const btn = document.createElement('button');
-                btn.className = "w-full bg-slate-100 hover:bg-amber-100 active:scale-98 text-slate-800 font-bold py-3.5 px-4 rounded-xl border-2 border-slate-200 hover:border-amber-400 transition-all text-center text-md";
+                btn.className = "w-full bg-slate-100 hover:bg-amber-100 active:scale-98 text-slate-800 font-bold py-2.5 px-3 rounded-xl border-2 border-slate-200 hover:border-amber-400 transition-all text-center text-sm";
                 btn.innerText = opt;
                 btn.onclick = () => answerQuestion(optIdx);
                 optionsContainer.appendChild(btn);
@@ -653,7 +738,7 @@
 
                 answeredQuestions[currentQuestionIndex] = true;
 
-                feedbackEl.className = "text-sm font-bold text-green-600 mt-2";
+                feedbackEl.className = "text-xs font-bold text-green-600 mt-1";
                 feedbackEl.innerHTML = `Doğru! ${q.hint}`;
 
                 setTimeout(() => {
@@ -666,19 +751,20 @@
                     if (answeredQuestions.every(val => val === true)) {
                         document.getElementById('btnFinishStage2').classList.remove('hidden');
                     }
-                }, 1800);
+                }, 1600);
 
             } else {
                 // YANLIŞ CEVAP
                 playSound('wrong');
-                feedbackEl.className = "text-sm font-bold text-red-500 mt-2";
-                feedbackEl.innerText = "Tekrar dene! Doğru cevabı bul.";
+                feedbackEl.className = "text-xs font-bold text-red-500 mt-1";
+                feedbackEl.innerText = "Tekrar deneyelim! Doğru cevabı bulalım.";
             }
         }
 
         function triggerQuestionManually(index) {
             if (videoElement) {
                 videoElement.pause();
+                videoElement.currentTime = VIDEO_QUESTIONS[index].time - 0.5;
             }
             showQuestion(index);
         }
@@ -694,26 +780,27 @@
             activeStage = 2;
             document.getElementById('stage1').classList.add('hidden');
             document.getElementById('stage2').classList.remove('hidden');
+            document.getElementById('stage2').classList.add('flex');
 
             document.getElementById('lineProgress').style.width = '50%';
 
             const step2 = document.getElementById('step2Indicator').children[0];
-            step2.className = "w-10 h-10 rounded-full bg-amber-500 text-white flex items-center justify-center font-bold shadow-md transition-all";
-            document.getElementById('step2Indicator').children[1].className = "text-xs font-bold text-amber-700";
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            step2.className = "w-7 h-7 rounded-full bg-amber-500 text-white flex items-center justify-center font-bold text-xs shadow transition-all";
+            document.getElementById('step2Indicator').children[1].className = "text-[11px] font-bold text-amber-700 mt-0.5";
         }
 
         function goToStage3() {
             activeStage = 3;
+            document.getElementById('stage2').classList.remove('flex');
             document.getElementById('stage2').classList.add('hidden');
             document.getElementById('stage3').classList.remove('hidden');
+            document.getElementById('stage3').classList.add('flex');
 
             document.getElementById('lineProgress').style.width = '100%';
 
             const step3 = document.getElementById('step3Indicator').children[0];
-            step3.className = "w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center font-bold shadow-md transition-all";
-            document.getElementById('step3Indicator').children[1].className = "text-xs font-bold text-green-700";
+            step3.className = "w-7 h-7 rounded-full bg-green-500 text-white flex items-center justify-center font-bold text-xs shadow transition-all";
+            document.getElementById('step3Indicator').children[1].className = "text-[11px] font-bold text-green-700 mt-0.5";
 
             document.getElementById('finalScore').innerText = totalScore;
             playSound('win');
@@ -726,20 +813,21 @@
                     origin: { y: 0.6 }
                 });
             }
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function restartGame() {
             totalScore = 0;
-            selectedImageId = null;
             selectedWordId = null;
+            draggedWordId = null;
             matchedCount = 0;
             answeredQuestions = [false, false, false];
 
             updateScoreDisplay();
 
+            document.getElementById('stage3').classList.remove('flex');
             document.getElementById('stage3').classList.add('hidden');
+            document.getElementById('stage2').classList.remove('flex');
+            document.getElementById('stage2').classList.add('hidden');
             document.getElementById('stage1').classList.remove('hidden');
 
             document.getElementById('stage1Feedback').className = "hidden";
