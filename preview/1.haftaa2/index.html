@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Türkçe ve Türk Kültürü - Selamlaşma Oyunu (10 Yaş)</title>
+    <title>Türkçe ve Türk Kültürü - Selamlaşma Oyunu</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icon Library -->
@@ -15,6 +15,8 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;600;700;800;900&display=swap"
         rel="stylesheet">
+    <!-- Canvas Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
     <script>
         tailwind.config = {
@@ -272,8 +274,8 @@
                 <div
                     class="lg:col-span-2 bg-slate-900 rounded-3xl overflow-hidden shadow-xl border-4 border-white relative group">
                     <video id="cultureVideo" class="w-full aspect-video object-cover" controls
-                        ontimeupdate="checkVideoTime()">
-                        <source src="1haftaa1/1.mp4" type="video/mp4">
+                        ontimeupdate="checkVideoTime()" onended="handleVideoEnd()">
+                        <source src="../1.haftaa1/1.mp4" type="video/mp4">
                         Tarayıcınız video oynatmayı desteklemiyor.
                     </video>
 
@@ -293,7 +295,7 @@
                                 class="w-16 h-16 rounded-full bg-indigo-50 text-indigo-400 mx-auto flex items-center justify-center text-3xl">
                                 <i class="fa-solid fa-play ml-1"></i>
                             </div>
-                            <p class="text-sm font-semibold text-slate-500">Videoyu başlattığımızda sorular bu alanda
+                            <p class="text-sm font-semibold text-slate-500">Video durduğunda sorular bu alanda
                                 görünecektir ✨</p>
                         </div>
                     </div>
@@ -310,7 +312,7 @@
             class="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 font-semibold">
             <div class="flex items-center gap-2">
                 <i class="fa-solid fa-graduation-cap text-brand-600 text-base"></i>
-                <span>T.C. Millî Eğitim Bakanlığı - Temel Düzey Türkçe Öğretim Oyunu</span>
+                <span>T.C. Millî Eğitim Bakanlığı - Temel Düzey Türkçe ve Türk Kültürü Öğretim Materyali</span>
             </div>
 
             <!-- Ülkem Yanımda GitHub Yönlendirme Linki -->
@@ -347,13 +349,80 @@
         </div>
     </div>
 
+    <!-- TEBRİK VE KUTLAMA MODALI (TÜM ETKİNLİKLER BİTİNCE) -->
+    <div id="completionModal"
+        class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 hidden animate-fadeIn"
+        onclick="closeCompletionModal()">
+        <div class="relative max-w-lg w-full bg-white rounded-3xl p-6 sm:p-8 shadow-2xl text-center border-4 border-amber-300 transform transition-all overflow-hidden"
+            onclick="event.stopPropagation()">
+            <!-- Arka Plan Işıltı Dekorasyonu -->
+            <div class="absolute -top-12 -right-12 w-36 h-36 bg-amber-300/40 rounded-full blur-2xl pointer-events-none">
+            </div>
+            <div
+                class="absolute -bottom-12 -left-12 w-36 h-36 bg-emerald-300/40 rounded-full blur-2xl pointer-events-none">
+            </div>
+
+            <!-- Kapatma Butonu -->
+            <button type="button" onclick="closeCompletionModal()"
+                class="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition-colors font-bold z-10">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <!-- İkon / Madalya -->
+            <div
+                class="w-24 h-24 bg-gradient-to-tr from-amber-400 via-yellow-400 to-amber-300 rounded-full mx-auto flex items-center justify-center shadow-xl shadow-amber-400/40 border-4 border-white mb-4 animate-bounce">
+                <i class="fa-solid fa-trophy text-amber-950 text-5xl drop-shadow"></i>
+            </div>
+
+            <!-- Başlıklar -->
+            <h2 class="font-heading font-extrabold text-indigo-950 text-2xl sm:text-3xl mb-2">
+                Tebrikler! 🎉
+            </h2>
+            <p class="text-slate-600 font-bold text-sm sm:text-base mb-6">
+                Tüm etkinlikleri harika bir şekilde tamamladın!
+            </p>
+
+            <!-- Skor Kartı -->
+            <div class="bg-indigo-50/80 rounded-2xl p-4 mb-6 border border-indigo-100 flex items-center justify-around">
+                <div class="text-center">
+                    <span class="text-xs font-bold text-indigo-500 block uppercase tracking-wider">Toplam Puan</span>
+                    <span class="font-heading font-black text-3xl text-indigo-900" id="modalFinalScore">0</span>
+                    <span class="text-xs text-indigo-400 font-semibold">/ 175</span>
+                </div>
+                <div class="h-10 w-0.5 bg-indigo-200 rounded-full"></div>
+                <div class="text-center">
+                    <span class="text-xs font-bold text-indigo-500 block uppercase tracking-wider">Başarı Rozeti</span>
+                    <span
+                        class="inline-flex items-center gap-1 font-heading font-extrabold text-sm text-emerald-700 bg-emerald-100 px-3 py-1 rounded-full mt-1 border border-emerald-200">
+                        <i class="fa-solid fa-star text-amber-500 animate-spin" style="animation-duration: 6s;"></i>
+                        Kültür Uzmanı
+                    </span>
+                </div>
+            </div>
+
+            <!-- Butonlar -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+                <button type="button" onclick="triggerConfetti()"
+                    class="w-full sm:w-auto px-6 py-3 rounded-2xl bg-amber-400 hover:bg-amber-500 text-amber-950 font-heading font-extrabold text-sm transition-all shadow-md shadow-amber-400/30 flex items-center justify-center gap-2 hover:scale-105 active:scale-95">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Tekrar Konfeti Patlat! ✨
+                </button>
+                <button type="button" onclick="location.reload()"
+                    class="w-full sm:w-auto px-6 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-heading font-extrabold text-sm transition-all shadow-md shadow-indigo-600/30 flex items-center justify-center gap-2 hover:scale-105 active:scale-95">
+                    <i class="fa-solid fa-rotate-right"></i> Baştan Oyna
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- SCRIPT DESTEĞİ VE OYUN MANTIĞI -->
     <script>
         // GLOBAL DURUM DEĞİŞKENLERİ
         let globalScore = 0;
         let stage1Answers = {};
+        let stage2Answers = {};
         let currentVideoQuestionIndex = -1;
         let askedQuestions = new Set();
+        let isCompletionModalShown = false;
 
         // 1. AŞAMA DİL VERİLERİ
         const stage1Data = [
@@ -418,30 +487,30 @@
         // 2. AŞAMA VİDEO DURAĞI SORULARI
         const videoQuestions = [
             {
-                time: 82, // 01:22 saniye
-                question: "Videoda sabah vakti karşılaştığımız kişilere ne söylenebileceği belirtildi?",
+                time: 86, // 01:26 saniye
+                question: "Videoda sabah karşılaştığımız kişilere ne söylenebileceği belirtildi?",
                 correct: "Hayırlı sabahlar.",
                 options: [
-                    { text: "İyi akşamlar.", sound: "1haftaa1/iyi_aksamlar.mp3" },
-                    { text: "Hayırlı sabahlar.", sound: "1haftaa1/hayirli_sabahlar.mp3" }
+                    { text: "İyi akşamlar.", sound: "iyiaksamlar.mp3" },
+                    { text: "Hayırlı sabahlar.", sound: "hayirlisabahlar.mp3" }
                 ]
             },
             {
-                time: 89, // 01:29 saniye
+                time: 90, // 01:30 saniye
                 question: "Bir dükkâna girdiğimizde söylenmesi gereken doğru ifade nedir?",
                 correct: "Hayırlı işler.",
                 options: [
-                    { text: "Hayırlı işler.", sound: "1haftaa1/hayirli_isler.mp3" },
-                    { text: "Kolay gelsin.", sound: "1haftaa1/kolay_gelsin.mp3" }
+                    { text: "Hayırlı işler.", sound: "hayirliisler.mp3" },
+                    { text: "Güle güle.", sound: "gulegule.mp3" }
                 ]
             },
             {
-                time: 105, // 01:45 saniye
+                time: 110, // 01:50saniye
                 question: "Birbirimizden ayrılırken kullanılan kalıp hangisidir?",
                 correct: "Allah'a ısmarladık.",
                 options: [
-                    { text: "Hayırlı işler.", sound: "1haftaa1/hayirli_isler.mp3" },
-                    { text: "Allah'a ısmarladık.", sound: "1haftaa1/allah_a_ismarladik.mp3" }
+                    { text: "Hayırlı işler.", sound: "hayirliisler.mp3" },
+                    { text: "Allah'a ısmarladık.", sound: "allahaismarladik.mp3" }
                 ]
             }
         ];
@@ -648,7 +717,11 @@
             if (isCorrect) globalScore += 25;
             updateGlobalScore();
 
+            stage2Answers[currentVideoQuestionIndex] = selectedText;
+
             if (badge) badge.classList.add('hidden');
+
+            const allDone = checkAllActivitiesCompleted();
 
             container.innerHTML = `
                 <div class="text-center py-6 space-y-3 animate-fadeIn">
@@ -658,10 +731,16 @@
                     <h4 class="font-heading font-extrabold text-indigo-950 text-lg">${isCorrect ? 'Tebrikler, Harika Cevap! 🎉' : 'Üzgünüm, Yanlış Cevap 😅'}</h4>
                     <p class="text-xs text-slate-600 leading-relaxed font-semibold">Doğru İfade: <strong class="text-emerald-700">${qData.correct}</strong></p>
                     <button type="button" onclick="resumeVideo()" class="mt-3 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl text-xs font-extrabold font-heading transition-all shadow-md shadow-indigo-600/30 hover:scale-105 active:scale-95">
-                        Videoya Devam Edelim <i class="fa-solid fa-play ml-1"></i>
+                        ${allDone ? 'Sonuçları Gör ve Kutla 🏆' : 'Videoya Devam Edelim <i class="fa-solid fa-play ml-1"></i>'}
                     </button>
                 </div>
             `;
+
+            if (allDone && !isCompletionModalShown) {
+                setTimeout(() => {
+                    showCompletionModal();
+                }, 1000);
+            }
         }
 
         function resumeVideo() {
@@ -674,9 +753,76 @@
                     <div class="w-16 h-16 rounded-full bg-indigo-50 text-indigo-400 mx-auto flex items-center justify-center text-3xl">
                         <i class="fa-solid fa-play ml-1"></i>
                     </div>
-                    <p class="text-sm font-semibold text-slate-500">Videoyu izlemeye devam edelim. Sonraki sorularda bu alan güncellenecektir ✨</p>
+                    <p class="text-sm font-semibold text-slate-500">Videoyu izlemeye devam edelim. Sonraki soru bu alanda görünecektir. ✨</p>
                 </div>
             `;
+
+            if (checkAllActivitiesCompleted() && !isCompletionModalShown) {
+                showCompletionModal();
+            }
+        }
+
+        // TÜM ETKİNLİK KONTROL VE KUTLAMA / KONFETİ FONKSİYONLARI
+        function checkAllActivitiesCompleted() {
+            const s1Done = Object.keys(stage1Answers).length >= stage1Data.length;
+            const s2Done = Object.keys(stage2Answers).length >= videoQuestions.length;
+            return s1Done && s2Done;
+        }
+
+        function triggerConfetti() {
+            if (typeof confetti === 'function') {
+                const duration = 3.5 * 1000;
+                const animationEnd = Date.now() + duration;
+                const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
+
+                function randomInRange(min, max) {
+                    return Math.random() * (max - min) + min;
+                }
+
+                const interval = setInterval(function () {
+                    const timeLeft = animationEnd - Date.now();
+
+                    if (timeLeft <= 0) {
+                        return clearInterval(interval);
+                    }
+
+                    const particleCount = 60 * (timeLeft / duration);
+
+                    confetti({
+                        ...defaults,
+                        particleCount,
+                        origin: { x: randomInRange(0.1, 0.4), y: Math.random() - 0.2 }
+                    });
+                    confetti({
+                        ...defaults,
+                        particleCount,
+                        origin: { x: randomInRange(0.6, 0.9), y: Math.random() - 0.2 }
+                    });
+                }, 250);
+            }
+        }
+
+        function showCompletionModal() {
+            if (isCompletionModalShown) return;
+            isCompletionModalShown = true;
+            const modal = document.getElementById('completionModal');
+            const scoreEl = document.getElementById('modalFinalScore');
+            if (scoreEl) scoreEl.innerText = globalScore;
+            if (modal) {
+                modal.classList.remove('hidden');
+            }
+            triggerConfetti();
+        }
+
+        function closeCompletionModal() {
+            const modal = document.getElementById('completionModal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function handleVideoEnd() {
+            if (checkAllActivitiesCompleted() && !isCompletionModalShown) {
+                showCompletionModal();
+            }
         }
 
         // AŞAMA SEKMELERİ ARASINDA GEÇİŞ
