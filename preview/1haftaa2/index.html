@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Türkçe ve Türk Kültürü - Selamlaşma Oyunu (10 Yaş)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icon Library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Nunito & Fredoka (Çocuklara uygun eğlenceli yazı tipleri) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Nunito', 'sans-serif'],
+                        heading: ['Fredoka', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            900: '#14532d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Renkli Noktacıklı Arka Plan */
+        body {
+            background-color: #f0f4ff;
+            background-image:
+                radial-gradient(circle at 50% 50%, #a5b4fc 1.6px, transparent 1.6px),
+                radial-gradient(circle at 0% 0%, #38bdf8 1.6px, #f0f4ff 1.6px);
+            background-size: 28px 28px;
+            background-position: 0 0, 14px 14px;
+        }
+
+        /* Yüzen Renkli Baloncuk Süslemeleri */
+        .bg-blob {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(40px);
+            opacity: 0.25;
+            pointer-events: none;
+            z-index: 0;
+            animation: floatBlob 10s ease-in-out infinite alternate;
+        }
+
+        .bg-blob-1 {
+            top: -50px;
+            left: -50px;
+            width: 280px;
+            height: 280px;
+            background: #6366f1;
+        }
+
+        .bg-blob-2 {
+            top: 20%;
+            right: -60px;
+            width: 320px;
+            height: 320px;
+            background: #ec4899;
+        }
+
+        .bg-blob-3 {
+            bottom: -60px;
+            left: 15%;
+            width: 300px;
+            height: 300px;
+            background: #10b981;
+        }
+
+        .bg-blob-4 {
+            bottom: 10%;
+            right: 10%;
+            width: 260px;
+            height: 260px;
+            background: #f59e0b;
+        }
+
+        @keyframes floatBlob {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            100% {
+                transform: translate(25px, -20px) scale(1.08);
+            }
+        }
+
+        .animate-fadeIn {
+            animation: fadeIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px) scale(0.98);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* 10 Yaş Çocuklara Uygun Canlı Kart Efekti */
+        .kid-card {
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .kid-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px -6px rgba(99, 102, 241, 0.15);
+        }
+    </style>
+</head>
+
+<body
+    class="text-slate-800 font-sans min-h-screen flex flex-col justify-between selection:bg-brand-500 selection:text-white relative overflow-x-hidden">
+
+    <!-- ARKA PLAN DEKORATİF RENKLİ BALONCUKLAR -->
+    <div class="bg-blob bg-blob-1"></div>
+    <div class="bg-blob bg-blob-2"></div>
+    <div class="bg-blob bg-blob-3"></div>
+    <div class="bg-blob bg-blob-4"></div>
+
+    <!-- ÜST BİLGİ & BAŞLIK SEKMELERİ -->
+    <header class="bg-white/90 backdrop-blur-md border-b-2 border-indigo-100 sticky top-0 z-40 shadow-sm">
+        <div
+            class="max-w-5xl mx-auto px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-3 relative z-10">
+
+            <!-- SOL LOGO VE BAŞLIK ALANI -->
+            <div class="flex items-center gap-3">
+                <!-- YEŞİL TEMEL DÜZEY ROZETİ (Yazı düzeltildi, genişletildi, simge eklendi) -->
+                <div
+                    class="px-3.5 py-2 rounded-2xl bg-gradient-to-r from-emerald-500 via-brand-600 to-green-600 flex items-center gap-2 text-white font-bold font-heading text-sm sm:text-base shadow-md shadow-emerald-500/25 shrink-0 border border-emerald-300/40 transform hover:scale-105 transition-transform">
+                    <i class="fa-solid fa-seedling text-amber-300 text-lg animate-bounce"></i>
+                    <span class="tracking-wide">Temel Düzey</span>
+                </div>
+
+                <div>
+                    <h1
+                        class="font-heading font-extrabold text-indigo-950 text-lg sm:text-xl leading-tight flex items-center gap-2">
+                        Türkçe Selamlaşma Kültürü
+                        <span class="text-amber-400 text-sm">⭐</span>
+                    </h1>
+                    <p class="text-xs text-slate-500 font-semibold">Millî Eğitim Bakanlığı Ülkem Yanımda Projesi
+                        Etkileşimli Öğrenme Oyunu</p>
+                </div>
+            </div>
+
+            <!-- Aşama Geçiş Butonları (Çocuklara uygun renkli sekmeler) -->
+            <div
+                class="flex bg-indigo-50 p-1.5 rounded-2xl border border-indigo-100 text-xs sm:text-sm font-bold shadow-inner">
+                <button type="button" id="tabStage1" onclick="switchStage(1)"
+                    class="px-4 py-2 rounded-xl bg-white text-indigo-700 shadow-md shadow-indigo-100 transition-all flex items-center gap-2 border border-indigo-100 hover:scale-[1.02]">
+                    <i class="fa-solid fa-shapes text-amber-500"></i> 1. Aşama: Durum & İfade
+                </button>
+                <button type="button" id="tabStage2" onclick="switchStage(2)" disabled
+                    class="px-4 py-2 rounded-xl text-slate-400 opacity-60 cursor-not-allowed transition-all flex items-center gap-2"
+                    title="2. Aşamaya geçmek için 1. aşama sorularını tamamlayalım">
+                    <i class="fa-solid fa-lock text-slate-400" id="tabStage2Icon"></i> 2. Aşama: Etkileşimli Video
+                </button>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- ANA İÇERİK ALANI -->
+    <main class="max-w-5xl mx-auto px-4 py-6 w-full flex-grow relative z-10">
+
+        <!-- ==========================================
+             1. AŞAMA: DURUM & İFADE EŞLEŞTİRME
+             ========================================== -->
+        <section id="stage1" class="space-y-6 animate-fadeIn">
+
+            <!-- Yönerge & İlerleme Kartı -->
+            <div
+                class="bg-white/95 backdrop-blur-sm rounded-3xl border-2 border-indigo-100 p-5 shadow-lg shadow-indigo-100/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="space-y-1">
+                    <div
+                        class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-bold font-heading">
+                        <i class="fa-solid fa-gamepad text-amber-600"></i> Eğlenceli Eşleştirme
+                    </div>
+                    <h2 class="font-heading font-extrabold text-indigo-950 text-lg sm:text-xl flex items-center gap-2">
+                        Doğru İfadeyi Dinleyelim ve Seçelim 🎧
+                    </h2>
+                    <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                        Aşağıdaki günlük durumları inceleyelim. İfadeleri sesli dinlemek için <span
+                            class="inline-flex items-center gap-1 bg-amber-100 text-amber-800 px-2 py-0.5 rounded-lg text-xs font-bold"><i
+                                class="fa-solid fa-volume-high text-amber-600"></i> Hoparlör</span> butonuna basalım ve
+                        doğru cevabı seçelim. Görselleri büyütmek için <span
+                            class="inline-flex items-center gap-1 bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded-lg text-xs font-bold"><i
+                                class="fa-solid fa-magnifying-glass-plus text-indigo-600"></i> Büyüteç</span> simgesine
+                        tıklayalım!
+                    </p>
+                </div>
+
+                <!-- Puan Durumu Rozeti -->
+                <div
+                    class="shrink-0 bg-gradient-to-br from-amber-400 via-amber-500 to-orange-500 p-4 rounded-2xl text-white text-center shadow-lg shadow-amber-500/25 min-w-[150px] border-2 border-amber-300/50 transform hover:scale-105 transition-transform">
+                    <span
+                        class="text-xs font-bold uppercase tracking-wider block opacity-90 flex items-center justify-center gap-1">
+                        <i class="fa-solid fa-star text-yellow-200 animate-spin" style="animation-duration: 8s;"></i>
+                        Toplam Puan
+                    </span>
+                    <div class="font-heading font-black text-3xl my-0.5 drop-shadow-md">
+                        <span id="globalScore">0</span> <span class="text-sm font-semibold opacity-80">/ 100</span>
+                    </div>
+                    <span class="text-[11px] font-bold bg-white/20 px-2 py-0.5 rounded-full inline-block">Süper
+                        Başlangıç! 🚀</span>
+                </div>
+            </div>
+
+            <!-- Kart Izgarası -->
+            <div id="s1CardGrid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- JS Tarafından Dinamik Doldurulur -->
+            </div>
+
+            <!-- 2. Aşamaya Geçiş Butonu (Sorular tamamlanınca aktifleşir) -->
+            <div class="mt-8 flex flex-col items-center justify-center gap-3">
+                <button type="button" id="nextStageBtn" onclick="switchStage(2)" disabled
+                    class="px-8 py-4 rounded-2xl font-heading font-extrabold text-base sm:text-lg transition-all duration-300 flex items-center gap-3 shadow-md border-2 bg-slate-200 text-slate-400 border-slate-300 cursor-not-allowed">
+                    <span>2. Aşamaya Geçelim</span>
+                    <i class="fa-solid fa-lock text-slate-400" id="nextStageIcon"></i>
+                </button>
+                <p id="nextStageHint" class="text-xs sm:text-sm font-semibold text-slate-500">
+                    2. aşamaya geçebilmek için tüm soruları cevaplayalım (<span id="answeredCount">0</span>/4)
+                </p>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             2. AŞAMA: ETKİLEŞİMLİ VİDEO SORU-CEVAP
+             ========================================== -->
+        <section id="stage2" class="space-y-6 hidden animate-fadeIn">
+            <div
+                class="bg-white/95 backdrop-blur-sm rounded-3xl border-2 border-indigo-100 p-5 shadow-lg shadow-indigo-100/50">
+                <div
+                    class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-100 text-rose-800 text-xs font-bold font-heading mb-2">
+                    <i class="fa-solid fa-clapperboard text-rose-600"></i> Etkileşimli Video
+                </div>
+                <h2 class="font-heading font-extrabold text-indigo-950 text-lg sm:text-xl mb-1 flex items-center gap-2">
+                    Videoyu İzleyelim ve Doğru Zamanda Soruları Cevaplayalım 🎬
+                </h2>
+                <p class="text-xs sm:text-sm text-slate-600">
+                    Video otomatik olarak belirli duraklarda duracaktır. Ekrana gelen soruları dikkatle dinleyip doğru
+                    şıkkı işaretleyelim!
+                </p>
+            </div>
+
+            <!-- Video ve Soru Paneli Layout -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+
+                <!-- Video Oynatıcı Kolonu -->
+                <div
+                    class="lg:col-span-2 bg-slate-900 rounded-3xl overflow-hidden shadow-xl border-4 border-white relative group">
+                    <video id="cultureVideo" class="w-full aspect-video object-cover" controls
+                        ontimeupdate="checkVideoTime()">
+                        <source src="1haftaa1/1.mp4" type="video/mp4">
+                        Tarayıcınız video oynatmayı desteklemiyor.
+                    </video>
+
+                    <!-- Duraklatma Bilgilendirme Rozeti -->
+                    <div id="videoBadge"
+                        class="absolute top-4 left-4 bg-amber-500/90 text-white backdrop-blur-md px-4 py-2 rounded-2xl text-xs font-bold font-heading flex items-center gap-2 hidden animate-fadeIn shadow-lg border border-amber-300">
+                        <i class="fa-solid fa-pause text-base animate-pulse"></i> Video Soru İçin Duraklatıldı!
+                    </div>
+                </div>
+
+                <!-- Soru Paneli Kolonu -->
+                <div
+                    class="bg-white/95 backdrop-blur-sm rounded-3xl border-2 border-indigo-100 p-5 shadow-lg shadow-indigo-100/50 min-h-[320px] flex flex-col justify-between">
+                    <div id="videoQuestionContainer">
+                        <div class="text-center py-12 text-slate-400 space-y-3">
+                            <div
+                                class="w-16 h-16 rounded-full bg-indigo-50 text-indigo-400 mx-auto flex items-center justify-center text-3xl">
+                                <i class="fa-solid fa-play ml-1"></i>
+                            </div>
+                            <p class="text-sm font-semibold text-slate-500">Videoyu başlattığımızda sorular bu alanda
+                                görünecektir ✨</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ALT BİLGİ (FOOTER) - MEB / ÜLKEM YANIMDA -->
+    <footer class="bg-white/90 backdrop-blur-md border-t-2 border-indigo-100 py-4 mt-auto relative z-10">
+        <div
+            class="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 font-semibold">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-graduation-cap text-brand-600 text-base"></i>
+                <span>T.C. Millî Eğitim Bakanlığı - Temel Düzey Türkçe Öğretim Oyunu</span>
+            </div>
+
+            <!-- Ülkem Yanımda GitHub Yönlendirme Linki -->
+            <a href="https://ulkemyanimda.github.io/" target="_blank" rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 bg-rose-50 hover:bg-rose-100 text-rose-700 px-4 py-2 rounded-2xl border border-rose-200 font-heading font-bold text-xs transition-all shadow-sm hover:scale-105 group">
+                <i class="fa-solid fa-heart text-rose-500 group-hover:scale-125 transition-transform"></i>
+                <span>Ülkem Yanımda Portalına Git</span>
+                <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-rose-400"></i>
+            </a>
+        </div>
+    </footer>
+
+    <!-- GÖRSEL BÜYÜTME MODAL (LIGHTBOX) -->
+    <div id="imageModal"
+        class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 hidden animate-fadeIn"
+        onclick="closeImageModal(event)">
+        <div class="relative max-w-3xl w-full bg-white rounded-3xl p-5 shadow-2xl overflow-hidden flex flex-col items-center border-4 border-indigo-100"
+            onclick="event.stopPropagation()">
+            <div class="w-full flex justify-between items-center mb-3 pb-3 border-b-2 border-slate-100">
+                <h3 id="imageModalTitle"
+                    class="font-heading font-extrabold text-indigo-950 text-lg flex items-center gap-2">
+                    🔍 Görsel İnceleme
+                </h3>
+                <button type="button" onclick="closeImageModal()"
+                    class="w-9 h-9 rounded-full bg-slate-100 hover:bg-rose-100 hover:text-rose-600 text-slate-600 flex items-center justify-center transition-colors font-bold">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <div
+                class="max-h-[75vh] w-full flex items-center justify-center overflow-auto rounded-2xl bg-indigo-50/50 p-3">
+                <img id="imageModalImg" src="" alt="Büyütülmüş Görsel"
+                    class="max-w-full max-h-[70vh] object-contain rounded-xl shadow-md border-2 border-white">
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT DESTEĞİ VE OYUN MANTIĞI -->
+    <script>
+        // GLOBAL DURUM DEĞİŞKENLERİ
+        let globalScore = 0;
+        let stage1Answers = {};
+        let currentVideoQuestionIndex = -1;
+        let askedQuestions = new Set();
+
+        // 1. AŞAMA DİL VERİLERİ
+        const stage1Data = [
+            {
+                id: 1,
+                title: "1. Dükkân Ziyareti 🛍️",
+                description: "Bir dükkâna girdiğimizde veya alışveriş yaparken çalışanlara ne söyleriz?",
+                image: "1.png",
+                icon: "fa-store text-emerald-600",
+                fallbackBg: "bg-emerald-100",
+                correct: "Hayırlı işler.",
+                options: [
+                    { text: "Hayırlı işler.", sound: "hayirliisler.mp3" },
+                    { text: "Allah'a ısmarladık.", sound: "allahaismarladik.mp3" },
+                    { text: "Güle güle.", sound: "gulegule.mp3" }
+                ]
+            },
+            {
+                id: 2,
+                title: "2. Sokakta Çalışan Biri 🚜",
+                description: "Yolda veya sokakta çalışan birini gördüğümüzde hangi iyi dilek ifadesini kullanırız?",
+                image: "2.png",
+                icon: "fa-person-digging text-amber-600",
+                fallbackBg: "bg-amber-100",
+                correct: "Kolay gelsin.",
+                options: [
+                    { text: "Kolay gelsin.", sound: "kolaygelsin.mp3" },
+                    { text: "Allah'a ısmarladık.", sound: "allahaismarladik.mp3" },
+                    { text: "Hoşça kal.", sound: "hoscakal.mp3" }
+                ]
+            },
+            {
+                id: 3,
+                title: "3. Vedalaşma / Ayrılış 👋",
+                description: "Bir arkadaşımızın yanından veya bir mekândan ayrılırken ne söyleriz?",
+                image: "3.png",
+                icon: "fa-hand-wave text-indigo-600",
+                fallbackBg: "bg-indigo-100",
+                correct: "Allah'a ısmarladık.",
+                options: [
+                    { text: "Allah'a ısmarladık.", sound: "allahaismarladik.mp3" },
+                    { text: "Günaydin.", sound: "gunaydin.mp3" },
+                    { text: "İyi çalışmalar.", sound: "iyicalismalar.mp3" }
+                ]
+            },
+            {
+                id: 4,
+                title: "4. Sabah Karşılaşması ☀️",
+                description: "Sabah bir aile bireyimizle veya komşumuzla karşılaştığımızda ne söyleriz?",
+                image: "4.png",
+                icon: "fa-sun text-orange-600",
+                fallbackBg: "bg-orange-100",
+                correct: "Hayırlı sabahlar.",
+                options: [
+                    { text: "Hayırlı sabahlar.", sound: "hayirlisabahlar.mp3" },
+                    { text: "İyi akşamlar.", sound: "iyiaksamlar.mp3" },
+                    { text: "İyi çalışmalar.", sound: "iyicalismalar.mp3" }
+                ]
+            }
+        ];
+
+        // 2. AŞAMA VİDEO DURAĞI SORULARI
+        const videoQuestions = [
+            {
+                time: 82, // 01:22 saniye
+                question: "Videoda sabah vakti karşılaştığımız kişilere ne söylenebileceği belirtildi?",
+                correct: "Hayırlı sabahlar.",
+                options: [
+                    { text: "Hayırlı sabahlar.", sound: "1haftaa1/hayirli_sabahlar.mp3" },
+                    { text: "İyi akşamlar.", sound: "1haftaa1/iyi_aksamlar.mp3" }
+                ]
+            },
+            {
+                time: 89, // 01:29 saniye
+                question: "Bir dükkâna girdiğimizde söylenmesi gereken doğru ifade nedir?",
+                correct: "Hayırlı işler.",
+                options: [
+                    { text: "Hayırlı işler.", sound: "1haftaa1/hayirli_isler.mp3" },
+                    { text: "Kolay gelsin.", sound: "1haftaa1/kolay_gelsin.mp3" }
+                ]
+            },
+            {
+                time: 105, // 01:45 saniye
+                question: "Birbirimizden ayrılırken kullanılan kalıp hangisidir?",
+                correct: "Allah'a ısmarladık.",
+                options: [
+                    { text: "Allah'a ısmarladık.", sound: "1haftaa1/allah_a_ismarladik.mp3" },
+                    { text: "Hayırlı işler.", sound: "1haftaa1/hayirli_isler.mp3" }
+                ]
+            }
+        ];
+
+        // SAYFA YÜKLENDİĞİNDE ÇALIŞTIR
+        window.addEventListener('load', () => {
+            renderStage1();
+        });
+
+        // SES OYNATMA FONKSİYONU (YEDEK OLARAK TARAYICI TTS DESTEĞİ)
+        function playAudio(soundPath, fallbackText) {
+            const audio = new Audio(soundPath);
+            audio.play().catch(() => {
+                // Eğer ses dosyası bulunamazsa SpeechSynthesis devreye girer
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                    const cleanText = fallbackText.replace(/\./g, '');
+                    const utterance = new SpeechSynthesisUtterance(cleanText);
+                    utterance.lang = 'tr-TR';
+                    utterance.rate = 0.95;
+                    window.speechSynthesis.speak(utterance);
+                }
+            });
+        }
+
+        // 1. AŞAMA KARTLARINI OLUŞTURMA (10 Yaşa Uygun Canlı Tasarım)
+        function renderStage1() {
+            const container = document.getElementById('s1CardGrid');
+            if (!container) return;
+            container.innerHTML = '';
+
+            stage1Data.forEach(item => {
+                const isAnswered = stage1Answers[item.id] !== undefined;
+                const isCorrect = stage1Answers[item.id] === item.correct;
+
+                const card = document.createElement('div');
+                card.className = `kid-card bg-white/95 backdrop-blur-sm rounded-3xl border-2 p-5 shadow-md flex flex-col justify-between transition-all duration-200 ${isAnswered
+                    ? (isCorrect ? 'border-emerald-400 bg-emerald-50/40 shadow-emerald-100' : 'border-rose-400 bg-rose-50/40 shadow-rose-100')
+                    : 'border-indigo-100 hover:border-indigo-300'
+                    }`;
+
+                let optionsHtml = item.options.map(opt => {
+                    const isSelected = stage1Answers[item.id] === opt.text;
+                    let btnStyle = "border-2 border-slate-200 hover:border-indigo-400 hover:bg-indigo-50/50 text-slate-700 bg-white shadow-sm";
+
+                    if (isAnswered) {
+                        if (opt.text === item.correct) {
+                            btnStyle = "border-2 border-emerald-500 bg-emerald-100 text-emerald-950 font-bold shadow-md shadow-emerald-100";
+                        } else if (isSelected && !isCorrect) {
+                            btnStyle = "border-2 border-rose-500 bg-rose-100 text-rose-950 font-bold shadow-md shadow-rose-100";
+                        } else {
+                            btnStyle = "border-2 border-slate-200 opacity-50 text-slate-400 cursor-not-allowed bg-slate-50";
+                        }
+                    }
+
+                    // Güvenli string kaçışı
+                    const safeSound = opt.sound.replace(/'/g, "\\'");
+                    const safeText = opt.text.replace(/'/g, "\\'");
+
+                    return `
+                        <div class="flex items-center gap-2">
+                            <!-- Ses Dinleme Butonu (Çocuklar için belirgin hoparlör) -->
+                            <button type="button" 
+                                onclick="playAudio('${safeSound}', '${safeText}')"
+                                class="w-11 h-11 rounded-2xl bg-amber-400 hover:bg-amber-500 active:scale-95 text-amber-950 flex items-center justify-center shrink-0 transition-all shadow-md shadow-amber-400/30 border-2 border-amber-300"
+                                title="İfadeyi Dinleyelim">
+                                <i class="fa-solid fa-volume-high text-base"></i>
+                            </button>
+                            
+                            <!-- Cevap Seçeneği Butonu -->
+                            <button type="button"
+                                ${isAnswered ? 'disabled' : ''}
+                                onclick="handleStage1Answer(${item.id}, '${safeText}')"
+                                class="w-full text-left p-3 rounded-2xl text-xs sm:text-sm font-bold transition-all flex items-center justify-between ${btnStyle}">
+                                <span>${opt.text}</span>
+                                ${isSelected ? (isCorrect ? '<i class="fa-solid fa-circle-check text-emerald-600 text-lg"></i>' : '<i class="fa-solid fa-circle-xmark text-rose-600 text-lg"></i>') : ''}
+                            </button>
+                        </div>
+                    `;
+                }).join('');
+
+                card.innerHTML = `
+                    <div>
+                        <!-- Görsel Alanı ve Büyüteç Butonu -->
+                        <div class="relative h-44 rounded-2xl overflow-hidden mb-4 ${item.fallbackBg} flex items-center justify-center group border-2 border-slate-100">
+                            <img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover absolute inset-0 transition-transform duration-300 group-hover:scale-105" onerror="this.style.display='none'">
+                            
+                            <!-- Büyüteç Butonu -->
+                            <button type="button" 
+                                onclick="openImageModal('${item.image}', '${item.title.replace(/'/g, "\\'")}')" 
+                                class="absolute top-3 right-3 w-9 h-9 bg-indigo-950/80 hover:bg-indigo-600 text-white rounded-xl flex items-center justify-center transition-all shadow-lg backdrop-blur-md hover:scale-110 z-10 border border-white/30"
+                                title="Görseli Büyütelim">
+                                <i class="fa-solid fa-magnifying-glass-plus text-sm"></i>
+                            </button>
+                        </div>
+
+                        <h3 class="font-heading font-extrabold text-indigo-950 text-base sm:text-lg mb-1">${item.title}</h3>
+                        <p class="text-xs sm:text-sm text-slate-600 mb-4 leading-relaxed font-medium">${item.description}</p>
+                    </div>
+
+                    <div class="space-y-2.5 mt-2">
+                        ${optionsHtml}
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+
+            updateNextStageButton();
+        }
+
+        // 1. AŞAMA CEVAP KONTROLÜ
+        function handleStage1Answer(cardId, selectedText) {
+            const item = stage1Data.find(d => d.id === cardId);
+            if (!item) return;
+
+            stage1Answers[cardId] = selectedText;
+            if (selectedText === item.correct) {
+                globalScore += 25;
+            }
+            updateGlobalScore();
+            renderStage1();
+        }
+
+        // GÖRSEL BÜYÜTME MODAL (LIGHTBOX) İŞLEMLERİ
+        function openImageModal(imgSrc, titleText) {
+            const modal = document.getElementById('imageModal');
+            const img = document.getElementById('imageModalImg');
+            const title = document.getElementById('imageModalTitle');
+            if (modal && img) {
+                img.src = imgSrc;
+                if (title) title.innerText = titleText || '🔍 Görsel İnceleme';
+                modal.classList.remove('hidden');
+            }
+        }
+
+        function closeImageModal(e) {
+            const modal = document.getElementById('imageModal');
+            if (modal) {
+                modal.classList.add('hidden');
+            }
+        }
+
+        // 2. AŞAMA VİDEO OYNATICI VE KONTROL MANTIĞI
+        function checkVideoTime() {
+            const video = document.getElementById('cultureVideo');
+            if (!video) return;
+
+            const currentTime = Math.floor(video.currentTime);
+
+            videoQuestions.forEach((q, index) => {
+                if (currentTime === q.time && !askedQuestions.has(index)) {
+                    video.pause();
+                    askedQuestions.add(index);
+                    currentVideoQuestionIndex = index;
+                    showVideoQuestion(q);
+                }
+            });
+        }
+
+        function showVideoQuestion(qData) {
+            const container = document.getElementById('videoQuestionContainer');
+            const badge = document.getElementById('videoBadge');
+            if (badge) badge.classList.remove('hidden');
+
+            let optionsHtml = qData.options.map(opt => {
+                const safeSound = opt.sound.replace(/'/g, "\\'");
+                const safeText = opt.text.replace(/'/g, "\\'");
+                return `
+                    <div class="flex items-center gap-2">
+                        <button type="button" 
+                            onclick="playAudio('${safeSound}', '${safeText}')"
+                            class="w-11 h-11 rounded-2xl bg-amber-400 hover:bg-amber-500 active:scale-95 text-amber-950 flex items-center justify-center shrink-0 transition-all shadow-md shadow-amber-400/30 border-2 border-amber-300">
+                            <i class="fa-solid fa-volume-high text-base"></i>
+                        </button>
+                        <button type="button" 
+                            onclick="answerVideoQuestion('${safeText}')"
+                            class="w-full text-left p-3 rounded-2xl border-2 border-indigo-100 hover:border-indigo-400 hover:bg-indigo-50/50 text-slate-800 text-xs sm:text-sm font-bold transition-all bg-white">
+                            ${opt.text}
+                        </button>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = `
+                <div class="space-y-4 animate-fadeIn">
+                    <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-100 text-indigo-900 text-xs font-extrabold font-heading">
+                        <i class="fa-solid fa-circle-question text-indigo-600"></i> Video Sorusu
+                    </div>
+                    <h3 class="font-heading font-extrabold text-indigo-950 text-base sm:text-lg leading-snug">${qData.question}</h3>
+                    <div class="space-y-3 pt-2">
+                        ${optionsHtml}
+                    </div>
+                </div>
+            `;
+        }
+
+        function answerVideoQuestion(selectedText) {
+            const qData = videoQuestions[currentVideoQuestionIndex];
+            const container = document.getElementById('videoQuestionContainer');
+            const badge = document.getElementById('videoBadge');
+
+            const isCorrect = selectedText === qData.correct;
+            if (isCorrect) globalScore += 25;
+            updateGlobalScore();
+
+            if (badge) badge.classList.add('hidden');
+
+            container.innerHTML = `
+                <div class="text-center py-6 space-y-3 animate-fadeIn">
+                    <div class="w-14 h-14 rounded-full ${isCorrect ? 'bg-emerald-100 text-emerald-600 border-2 border-emerald-300' : 'bg-rose-100 text-rose-600 border-2 border-rose-300'} mx-auto flex items-center justify-center text-2xl shadow-md">
+                        <i class="fa-solid ${isCorrect ? 'fa-check' : 'fa-xmark'}"></i>
+                    </div>
+                    <h4 class="font-heading font-extrabold text-indigo-950 text-lg">${isCorrect ? 'Tebrikler, Harika Cevap! 🎉' : 'Üzgünüm, Yanlış Cevap 😅'}</h4>
+                    <p class="text-xs text-slate-600 leading-relaxed font-semibold">Doğru İfade: <strong class="text-emerald-700">${qData.correct}</strong></p>
+                    <button type="button" onclick="resumeVideo()" class="mt-3 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl text-xs font-extrabold font-heading transition-all shadow-md shadow-indigo-600/30 hover:scale-105 active:scale-95">
+                        Videoya Devam Edelim <i class="fa-solid fa-play ml-1"></i>
+                    </button>
+                </div>
+            `;
+        }
+
+        function resumeVideo() {
+            const video = document.getElementById('cultureVideo');
+            const container = document.getElementById('videoQuestionContainer');
+            if (video) video.play();
+
+            container.innerHTML = `
+                <div class="text-center py-12 text-slate-400 space-y-3">
+                    <div class="w-16 h-16 rounded-full bg-indigo-50 text-indigo-400 mx-auto flex items-center justify-center text-3xl">
+                        <i class="fa-solid fa-play ml-1"></i>
+                    </div>
+                    <p class="text-sm font-semibold text-slate-500">Videoyu izlemeye devam edelim. Sonraki sorularda bu alan güncellenecektir ✨</p>
+                </div>
+            `;
+        }
+
+        // AŞAMA SEKMELERİ ARASINDA GEÇİŞ
+        function switchStage(stageNum) {
+            const answeredCount = Object.keys(stage1Answers).length;
+            if (stageNum === 2 && answeredCount < stage1Data.length) {
+                return; // Henüz tüm sorular cevaplanmadı
+            }
+
+            const s1 = document.getElementById('stage1');
+            const s2 = document.getElementById('stage2');
+            const tab1 = document.getElementById('tabStage1');
+            const tab2 = document.getElementById('tabStage2');
+            const video = document.getElementById('cultureVideo');
+
+            if (stageNum === 1) {
+                s1.classList.remove('hidden');
+                s2.classList.add('hidden');
+                tab1.className = "px-4 py-2 rounded-xl bg-white text-indigo-700 shadow-md shadow-indigo-100 transition-all flex items-center gap-2 border border-indigo-100 hover:scale-[1.02]";
+                if (answeredCount >= stage1Data.length) {
+                    tab2.className = "px-4 py-2 rounded-xl text-slate-600 hover:text-indigo-700 hover:bg-white/60 transition-all flex items-center gap-2";
+                } else {
+                    tab2.className = "px-4 py-2 rounded-xl text-slate-400 opacity-60 cursor-not-allowed transition-all flex items-center gap-2";
+                }
+                if (video) video.pause();
+            } else {
+                s2.classList.remove('hidden');
+                s1.classList.add('hidden');
+                tab2.className = "px-4 py-2 rounded-xl bg-white text-indigo-700 shadow-md shadow-indigo-100 transition-all flex items-center gap-2 border border-indigo-100 hover:scale-[1.02]";
+                tab1.className = "px-4 py-2 rounded-xl text-slate-600 hover:text-indigo-700 hover:bg-white/60 transition-all flex items-center gap-2";
+            }
+        }
+
+        // 2. AŞAMAYA GEÇİŞ BUTONU DURUM GÜNCELLEMESİ
+        function updateNextStageButton() {
+            const answeredCount = Object.keys(stage1Answers).length;
+            const totalCount = stage1Data.length;
+            const isAllAnswered = answeredCount === totalCount;
+
+            const answeredCountEl = document.getElementById('answeredCount');
+            if (answeredCountEl) answeredCountEl.innerText = answeredCount;
+
+            const btn = document.getElementById('nextStageBtn');
+            const hint = document.getElementById('nextStageHint');
+            const tab2 = document.getElementById('tabStage2');
+            const tab2Icon = document.getElementById('tabStage2Icon');
+
+            if (isAllAnswered) {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.className = "px-8 py-4 rounded-2xl font-heading font-extrabold text-base sm:text-lg transition-all duration-300 flex items-center gap-3 shadow-xl border-2 bg-gradient-to-r from-emerald-500 via-brand-600 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white border-emerald-300 cursor-pointer shadow-emerald-500/30 transform hover:scale-105 active:scale-95 animate-bounce";
+                    btn.innerHTML = `<span>2. Aşamaya Geçelim</span> <i class="fa-solid fa-circle-arrow-right text-amber-300 text-xl"></i>`;
+                }
+                if (hint) {
+                    hint.className = "text-xs sm:text-sm font-bold text-emerald-700 bg-emerald-100/80 px-4 py-1.5 rounded-full border border-emerald-200 shadow-sm";
+                    hint.innerHTML = `🎉 Tebrikler! Tüm soruları cevapladık. 2. Aşamaya geçelim!`;
+                }
+                if (tab2) {
+                    tab2.disabled = false;
+                    tab2.classList.remove('opacity-60', 'cursor-not-allowed', 'text-slate-400');
+                    tab2.classList.add('text-slate-600', 'hover:text-indigo-700', 'hover:bg-white/60');
+                    tab2.title = "2. Aşama: Etkileşimli Video";
+                }
+                if (tab2Icon) {
+                    tab2Icon.className = "fa-solid fa-circle-play text-rose-500";
+                }
+            } else {
+                if (btn) {
+                    btn.disabled = true;
+                    btn.className = "px-8 py-4 rounded-2xl font-heading font-extrabold text-base sm:text-lg transition-all duration-300 flex items-center gap-3 shadow-md border-2 bg-slate-200 text-slate-400 border-slate-300 cursor-not-allowed";
+                    btn.innerHTML = `<span>2. Aşamaya Geçelim</span> <i class="fa-solid fa-lock text-slate-400"></i>`;
+                }
+                if (hint) {
+                    hint.className = "text-xs sm:text-sm font-semibold text-slate-500";
+                    hint.innerHTML = `2. aşamaya geçebilmek için tüm soruları cevaplayalım (<span id="answeredCount">${answeredCount}</span>/${totalCount})`;
+                }
+                if (tab2) {
+                    tab2.disabled = true;
+                    tab2.className = "px-4 py-2 rounded-xl text-slate-400 opacity-60 cursor-not-allowed transition-all flex items-center gap-2";
+                    tab2.title = "2. Aşamaya geçmek için 1. aşama sorularını tamamlayalım";
+                }
+                if (tab2Icon) {
+                    tab2Icon.className = "fa-solid fa-lock text-slate-400";
+                }
+            }
+        }
+
+        function updateGlobalScore() {
+            const el = document.getElementById('globalScore');
+            if (el) el.innerText = globalScore;
+        }
+    </script>
+</body>
+
+</html>
