@@ -285,6 +285,56 @@
         .tag-seviye {
             background: #fef3c7;
             color: #b45309;
+            animation: seviyePulseBlink 1.4s infinite ease-in-out;
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 0 6px rgba(245, 158, 11, 0.4);
+            border: 1px solid #fcd34d;
+        }
+
+        @keyframes seviyePulseBlink {
+
+            0%,
+            100% {
+                background-color: #fef3c7;
+                color: #b45309;
+                border-color: #fcd34d;
+                box-shadow: 0 0 4px rgba(245, 158, 11, 0.3);
+                transform: scale(1);
+            }
+
+            50% {
+                background-color: #f59e0b;
+                color: #ffffff;
+                border-color: #d97706;
+                box-shadow: 0 0 14px rgba(245, 158, 11, 0.9), 0 0 22px rgba(245, 158, 11, 0.5);
+                transform: scale(1.08);
+            }
+        }
+
+        .seviye-label-blink {
+            animation: seviyeTextBlink 1.4s infinite ease-in-out;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        @keyframes seviyeTextBlink {
+
+            0%,
+            100% {
+                color: #475569;
+                text-shadow: none;
+                transform: scale(1);
+            }
+
+            50% {
+                color: #d97706;
+                text-shadow: 0 0 8px rgba(245, 158, 11, 0.7);
+                transform: scale(1.04);
+            }
         }
 
         .tag-yas {
@@ -503,7 +553,7 @@
                 </div>
 
                 <div class="filter-group">
-                    <label>Seviye:</label>
+                    <label class="seviye-label-blink">⚡ Seviye:</label>
                     <select class="filter-select" id="seviyeFilter">
                         <option value="">Tüm Seviyeler</option>
                         <option value="Farkındalık">Farkındalık</option>
@@ -593,6 +643,20 @@
                 planlanan_tarih: "28 Eylül - 4 Ekim",
                 scormPath: "scorm/1.haftaa2.zip",
                 previewUrl: "preview/1.haftaa2/index.html",
+                sunumPath: "pptx/1.pptx"
+            },
+            {
+                id: 4,
+                name: "Türklerde Selamlaşma",
+                description: "Öğrenci, Türk kültüründeki selamlaşma biçimlerini tanır ve farklı durumlarda uygun selamlaşma ifadelerini kullanır.",
+                icon: "materyal.png",
+                tema: "Merhaba Ben! Kendimi Keşfediyorum",
+                yas: "Filiz,Fidan,Çınar",
+                seviye: "ORTA",
+                beceri: "Sözlü Beceriler (Dinleme-İzleme)",
+                planlanan_tarih: "28 Eylül - 4 Ekim",
+                scormPath: "scorm/1.haftab1.zip",
+                previewUrl: "preview/1.haftab1/index.html",
                 sunumPath: "pptx/1.pptx"
             }
         ];
@@ -701,7 +765,7 @@
                     <div class="card-tags">
                         <span class="tag tag-tema">${material.tema}</span>
                         <span class="tag tag-yas">${material.yas}</span>
-                        <span class="tag tag-seviye">${material.seviye}</span>
+                        <span class="tag tag-seviye">⚡ ${material.seviye}</span>
                         ${(material.planlanan_tarih || material.tarih) ? `<span class="tag tag-tarih">${material.planlanan_tarih || material.tarih}</span>` : ''}
                         <span class="tag tag-beceri">${material.beceri}</span>
                     </div>
