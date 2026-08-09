@@ -110,7 +110,8 @@
                             class="font-game text-xl sm:text-2xl tracking-wide font-extrabold bg-gradient-to-r from-lime-300 via-emerald-400 to-cyan-300 bg-clip-text text-transparent">TÜRKLERDE
                             SELAMLAŞMA</span>
                         <span
-                            class="bg-amber-400 text-amber-950 border-2 border-amber-300 text-[11px] px-2.5 py-0.5 rounded-full font-game font-extrabold animate-pulse shadow-lg shadow-amber-400/50 flex items-center gap-1">⚡ Orta
+                            class="bg-amber-400 text-amber-950 border-2 border-amber-300 text-[11px] px-2.5 py-0.5 rounded-full font-game font-extrabold animate-pulse shadow-lg shadow-amber-400/50 flex items-center gap-1">⚡
+                            Orta
                             Seviye</span>
                     </div>
                     <p class="text-[11px] text-slate-400">Türkçe ve Türk Kültürü Dersi Eğitsel Dijital Materyal</p>
@@ -322,7 +323,7 @@
 
         </section>
 
-        <!-- STAGE 2: INTERACTIVE VIDEO (0:27, 0:43, 1:53) -->
+        <!-- STAGE 2: INTERACTIVE VIDEO (0:37, 0:43, 1:17) -->
         <section id="stage2" class="hidden flex-1 flex-col gap-5">
 
             <div
@@ -342,7 +343,7 @@
                 <div
                     class="bg-slate-800/90 px-3.5 py-1.5 rounded-xl text-xs border border-slate-700 font-mono text-slate-300 flex items-center gap-2">
                     <i class="fa-solid fa-file-video text-pink-400"></i>
-                    <span>1haftaa1/1.mp4</span>
+                    <span>1.haftaa1/1.mp4</span>
                 </div>
             </div>
 
@@ -351,7 +352,7 @@
                 class="relative bg-black rounded-2xl overflow-hidden shadow-2xl border-2 border-purple-500/30 aspect-video max-w-4xl mx-auto w-full">
 
                 <video id="interactiveVideo" class="w-full h-full object-contain" controls preload="metadata">
-                    <source src="1haftaa1/1.mp4" type="video/mp4">
+                    <source src="../1.haftaa1/1.mp4" type="video/mp4">
                     Tarayıcınız video oynatmayı desteklemiyor.
                 </video>
 
@@ -381,9 +382,6 @@
                                     class="font-game font-bold text-white text-sm sm:text-base leading-snug">
                                     Soru metni yükleniyor...
                                 </h4>
-                                <p id="overlayTranscriptExcerpt" class="text-[11px] text-amber-200 italic">
-                                    "Videodaki ipucu cümlesi..."
-                                </p>
                             </div>
                         </div>
 
@@ -431,7 +429,7 @@
                         class="p-3 rounded-xl border border-slate-700 bg-slate-800/60 flex items-center space-x-3">
                         <div
                             class="w-9 h-9 rounded-xl bg-purple-500/20 text-purple-300 font-mono font-bold flex items-center justify-center text-xs border border-purple-500/30">
-                            0:27</div>
+                            0:37</div>
                         <div>
                             <div class="text-xs font-game font-bold text-slate-200">1. Durak: Selamın Anlamı</div>
                             <div class="text-[11px] text-slate-400" id="stopStatus1">Bekliyor</div>
@@ -453,7 +451,7 @@
                         class="p-3 rounded-xl border border-slate-700 bg-slate-800/60 flex items-center space-x-3">
                         <div
                             class="w-9 h-9 rounded-xl bg-purple-500/20 text-purple-300 font-mono font-bold flex items-center justify-center text-xs border border-purple-500/30">
-                            1:53</div>
+                            1:57</div>
                         <div>
                             <div class="text-xs font-game font-bold text-slate-200">3. Durak: En Temel Kural</div>
                             <div class="text-[11px] text-slate-400" id="stopStatus3">Bekliyor</div>
@@ -624,14 +622,14 @@
         const videoStops = [
             {
                 id: 1,
-                time: 27,
-                badge: "1. Durak: 0:27",
+                time: 37,
+                badge: "1. Durak: 0:37",
                 icon: "🤝",
                 question: "Videodaki açıklamaya göre selam verdiğimiz kimseye neyi ifade etmiş oluruz?",
                 transcript: "Selam verdiğimiz kimseye onun için iyi dileklerde bulunduğumuzu, dost olduğumuzu, ona güzel duygular beslediğimizi ifade etmiş oluruz.",
                 options: [
                     { text: "A) Onunla acele bir işimiz olduğunu", correct: false },
-                    { text: "B) Sadece kurallara uymak zorunda olduğumuzu", correct: false },
+                    { text: "B) Ona sadece bir görev olduğu için selam verdiğimizi", correct: false },
                     { text: "C) Ona dost olduğumuzu ve iyi dilekler beslediğimizi", correct: true }
                 ],
                 explanation: "Selam vermek, karşımızdaki insana dostça yaklaştığımızı ve onun için iyilik dilediğimizi gösterir."
@@ -641,26 +639,26 @@
                 time: 43,
                 badge: "2. Durak: 0:43",
                 icon: "❤️",
-                question: "Videoya göre günlük hayatta selamlaşmak karşımızdaki insana ne hissettirir?",
+                question: "Günlük hayatta selamlaşmak karşımızdaki insana ne hissettirir?",
                 transcript: "Aynı zamanda ona ilgi gösterdiğimizi, değer verdiğimizi de belirtiriz.",
                 options: [
                     { text: "A) Onu denetlediğimizi ve uyardığımızı gösterir.", correct: false },
                     { text: "B) Ona ilgi gösterdiğimizi ve değer verdiğimizi belirtir.", correct: true },
-                    { text: "C) Ondan bir şey talep ettiğimizi ifade eder.", correct: false }
+                    { text: "C) Ondan bir şey talep ettiğimizi gösterir.", correct: false }
                 ],
                 explanation: "Selam vermek, karşımızdaki kişiyi fark ettiğimizi ve ona insan olarak değer verdiğimizi ifade eder."
             },
             {
                 id: 3,
-                time: 153,
-                badge: "3. Durak: 1:53",
+                time: 117,
+                badge: "3. Durak: 1:57",
                 icon: "🌟",
                 question: "Videoda vurgulanan 'Selamlaşmada asıl önemli olan kural' hangisidir?",
                 transcript: "Selamlaşmada asıl önemli olan iyi niyetli olmak, karşıdakine güzel duyguları beslemektir.",
                 options: [
                     { text: "A) Sadece resmi kelimeler kullanmak", correct: false },
                     { text: "B) İyi niyetli olmak ve güzel duygular beslemek", correct: true },
-                    { text: "C) Sadece tanıdık kişilere selam vermek", correct: false }
+                    { text: "C) Selamlaşırken önce karşıdakinin selam vermesini beklemek", correct: false }
                 ],
                 explanation: "Selamlaşmanın özü, içten gelen iyi niyet ve samimiyettir."
             }
@@ -1294,7 +1292,6 @@
             document.getElementById('overlayTimeCode').innerText = `00:${stopData.time < 10 ? '0' : ''}${stopData.time}`;
             document.getElementById('overlayVisualIcon').innerText = stopData.icon;
             document.getElementById('overlayQuestionTitle').innerText = stopData.question;
-            document.getElementById('overlayTranscriptExcerpt').innerText = `"${stopData.transcript}"`;
 
             const container = document.getElementById('overlayOptionsContainer');
             container.innerHTML = '';
