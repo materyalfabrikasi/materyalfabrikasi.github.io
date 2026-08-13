@@ -8,8 +8,10 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,400..800;1,400..800&display=swap"
         rel="stylesheet">
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -33,8 +35,8 @@
                         }
                     },
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        game: ['Fredoka', 'cursive', 'sans-serif']
+                        sans: ['"Nunito"', '"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+                        game: ['"Nunito"', '"Plus Jakarta Sans"', '"Fredoka"', 'sans-serif']
                     }
                 }
             }
@@ -42,8 +44,12 @@
     </script>
 
     <style>
+        body {
+            font-family: 'Nunito', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+        }
+
         .font-game {
-            font-family: 'Fredoka', cursive, sans-serif;
+            font-family: 'Nunito', 'Plus Jakarta Sans', 'Fredoka', sans-serif;
         }
 
         .glass-card {
@@ -191,8 +197,8 @@
                         </div>
                         <h2 class="font-game text-xl sm:text-2xl font-bold text-white">Tırtılı Evine Ulaştır!
                         </h2>
-                        <p class="text-xs sm:text-sm text-slate-300">Haritadaki duraklara tıkla, soruları çöz ve tırtılı
-                            adım adım evine ulaştır!</p>
+                        <p class="text-xs sm:text-sm text-slate-300">Haritadaki duraklara tıkla, 🔊 ses butonları ile
+                            soruları ve şıkları dinle, tırtılı adım adım evine ulaştır!</p>
                     </div>
                 </div>
 
@@ -219,8 +225,8 @@
                     class="w-full bg-slate-900/80 px-4 py-2 rounded-xl mb-2 flex items-center justify-between border border-lime-500/20 text-xs font-game">
                     <div class="flex items-center space-x-2 text-lime-300">
                         <span class="text-base animate-bounce">👇</span>
-                        <span>Haritadaki <strong>parlayan yeşil durağa</strong> tıkla, soruları çöz ve tırtılı evine
-                            ulaştır!</span>
+                        <span>Haritadaki <strong>parlayan yeşil durağa</strong> tıkla, 🔊 <strong>ses butonları</strong>
+                            ile soru ve şıkları dinleyip doğru cevabı ver!</span>
                     </div>
                     <span id="currentStationPrompt" onclick="openCurrentCaterpillarModal()"
                         class="text-amber-400 font-bold bg-amber-950/60 px-2.5 py-0.5 rounded-md border border-amber-500/30 cursor-pointer hover:bg-amber-900/80 transition-all"
@@ -252,7 +258,7 @@
                                 XP Ödül</span>
                         </div>
 
-                        <!-- Question Banner with Clean Station Icon -->
+                        <!-- Question Banner with Clean Station Icon & Audio Button -->
                         <div id="modalHeaderBanner"
                             class="bg-gradient-to-r from-amber-500/20 via-orange-500/10 to-amber-900/30 p-4 rounded-xl border border-slate-700/80 flex items-center space-x-4 shadow-lg">
                             <div
@@ -261,10 +267,18 @@
                                     class="w-full h-full object-contain transform hover:scale-110 transition-all duration-300" />
                             </div>
                             <div class="space-y-1.5 flex-1">
-                                <h3 id="modalQuestionText"
-                                    class="font-game font-bold text-white text-sm sm:text-base leading-snug">
-                                    Soru metni yükleniyor...
-                                </h3>
+                                <div class="flex items-start justify-between gap-2">
+                                    <h3 id="modalQuestionText"
+                                        class="font-game font-bold text-white text-sm sm:text-base leading-snug flex-1">
+                                        Soru metni yükleniyor...
+                                    </h3>
+                                    <button id="modalQuestionAudioBtn" type="button"
+                                        class="audio-play-btn shrink-0 bg-amber-500/20 hover:bg-amber-400 hover:text-slate-950 text-amber-300 border border-amber-400/40 px-3 py-2 rounded-xl font-game font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer shadow-md"
+                                        title="Soruyu Dinle">
+                                        <i class="fa-solid fa-volume-high text-sm"></i>
+                                        <span class="hidden sm:inline">Soruyu Dinle</span>
+                                    </button>
+                                </div>
                                 <p id="modalQuestionHint"
                                     class="text-[11px] text-amber-200/90 italic flex items-center gap-1">
                                     <i class="fa-regular fa-lightbulb text-amber-400"></i>
@@ -273,8 +287,17 @@
                             </div>
                         </div>
 
+                        <!-- Audio Instruction Banner -->
+                        <div
+                            class="bg-slate-900/90 px-3.5 py-2 rounded-xl border border-amber-500/30 flex items-center gap-2 text-xs font-game text-amber-300 shadow-inner">
+                            <i class="fa-solid fa-volume-high text-amber-400 text-sm shrink-0 animate-pulse"></i>
+                            <span><strong>Yönerge:</strong> Şıkkı işaretlemeden önce <span
+                                    class="text-amber-200 font-bold">🔊 ses butonlarına</span> basarak
+                                dinleyiniz!</span>
+                        </div>
+
                         <!-- Options Container -->
-                        <div id="modalOptionsContainer" class="space-y-2">
+                        <div id="modalOptionsContainer" class="space-y-2.5">
                             <!-- Options added dynamically -->
                         </div>
 
@@ -302,7 +325,7 @@
                     class="w-full flex flex-col sm:flex-row justify-between items-center mt-3 pt-2 border-t border-slate-800 gap-2 text-xs font-game">
                     <div class="text-slate-400 flex items-center gap-2">
                         <span class="w-2.5 h-2.5 rounded-full bg-lime-400 animate-pulse"></span>
-                        <span>Haritadaki parlayan duraklara tıklayarak Tırtıl'a yardım et!</span>
+                        <span>Haritadaki parlayan duraklara tıkla, 🔊 sesleri dinle ve Tırtıl'a yardım et!</span>
                     </div>
                     <div id="stage1StatusBadge"
                         class="bg-slate-800 px-3 py-1 rounded-lg text-amber-300 font-bold border border-slate-700">
@@ -583,7 +606,7 @@
                 options: [
                     { text: "A) 'Günaydın, hayırlı sabahlar!'", correct: false },
                     { text: "B) 'Hoşça kal, kendine iyi bak!'", correct: true },
-                    { text: "C) 'Hoş geldiniz!'", correct: false }
+                    { text: "C) 'Hoş geldin!'", correct: false }
                 ],
                 explanation: "Ayrılırken 'Hoşça kal', 'İyi günler' veya 'Allah'a ısmarladık' deriz."
             },
@@ -596,7 +619,7 @@
                 badgeColor: "bg-lime-400/20 text-lime-300 border-lime-400/40",
                 themeGradient: "from-lime-400 to-emerald-500",
                 illustration: "🏡 🌈",
-                question: "Cümleyi tamamlayınız: 'Sabah okula girerken arkadaşlarıma neşeyle 'Günaydın' dedim; [ ___ ] gürültüden beni duymadılar.'",
+                question: "Cümleyi tamamlayınız: 'Sabah okula girerken arkadaşlarıma neşeyle 'Günaydın' dedim[ ___ ] gürültüden beni duymadılar.'",
                 options: [
                     { text: "A) bu yüzden", correct: false },
                     { text: "B) örneğin", correct: false },
@@ -677,6 +700,78 @@
         let logicalWidth = 800;
         let logicalHeight = 450;
         let activeVideoStopIndex = -1;
+
+        // Global Question Audio Manager
+        let currentQuestionAudio = null;
+        let currentAudioBtnElement = null;
+
+        function playQuestionAudio(audioSrc, btnElement, event) {
+            if (event) {
+                event.stopPropagation();
+                event.preventDefault();
+            }
+
+            // Toggle pause if clicking currently playing audio button
+            if (currentQuestionAudio && !currentQuestionAudio.paused && currentQuestionAudio.src.endsWith(audioSrc)) {
+                currentQuestionAudio.pause();
+                resetAudioButtonsUI();
+                return;
+            }
+
+            stopAllQuestionAudio();
+
+            currentQuestionAudio = new Audio(audioSrc);
+            currentAudioBtnElement = btnElement;
+
+            if (btnElement) {
+                setAudioBtnPlayingUI(btnElement, true);
+            }
+
+            currentQuestionAudio.play().catch(err => {
+                console.log("Audio play error:", err);
+                resetAudioButtonsUI();
+            });
+
+            currentQuestionAudio.onended = () => {
+                resetAudioButtonsUI();
+            };
+            currentQuestionAudio.onerror = () => {
+                resetAudioButtonsUI();
+            };
+        }
+
+        function stopAllQuestionAudio() {
+            if (currentQuestionAudio) {
+                currentQuestionAudio.pause();
+                currentQuestionAudio.currentTime = 0;
+                currentQuestionAudio = null;
+            }
+            resetAudioButtonsUI();
+        }
+
+        function setAudioBtnPlayingUI(btn, isPlaying) {
+            if (!btn) return;
+            const icon = btn.querySelector('i');
+            if (isPlaying) {
+                btn.classList.add('bg-amber-400', 'text-slate-950', 'ring-2', 'ring-amber-300', 'animate-pulse');
+                btn.classList.remove('bg-slate-800', 'bg-amber-500/20', 'text-amber-300', 'text-amber-400');
+                if (icon) icon.className = "fa-solid fa-volume-xmark text-sm";
+            } else {
+                btn.classList.remove('bg-amber-400', 'text-slate-950', 'ring-2', 'ring-amber-300', 'animate-pulse');
+                if (btn && btn.id === 'modalQuestionAudioBtn') {
+                    btn.classList.add('bg-amber-500/20', 'text-amber-300');
+                } else {
+                    btn.classList.add('bg-slate-800', 'text-amber-400');
+                }
+                if (icon) icon.className = "fa-solid fa-volume-high text-sm";
+            }
+        }
+
+        function resetAudioButtonsUI() {
+            document.querySelectorAll('.audio-play-btn').forEach(btn => {
+                setAudioBtnPlayingUI(btn, false);
+            });
+        }
 
         // Web Audio Synthesizer for Sound Effects
         function playSound(type) {
@@ -925,7 +1020,7 @@
                     ctx.lineWidth = 1.5;
                     ctx.stroke();
 
-                    ctx.font = 'bold 10px Fredoka, sans-serif';
+                    ctx.font = 'bold 10px Nunito, "Plus Jakarta Sans", sans-serif';
                     ctx.fillStyle = '#ffffff';
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
@@ -933,7 +1028,7 @@
                 }
 
                 // Station Label Pill Badge below pin
-                ctx.font = 'bold 11px Fredoka, Inter, sans-serif';
+                ctx.font = 'bold 11px Nunito, "Plus Jakarta Sans", sans-serif';
                 const labelText = node.name;
                 const textWidth = ctx.measureText(labelText).width;
                 const pillW = textWidth + 18;
@@ -1135,11 +1230,19 @@
             const qData = caterpillarQuestions[index];
             if (!qData) return;
 
+            stopAllQuestionAudio();
+
+            const qNum = index + 1;
             gameState.modalState = 'answering';
             document.getElementById('modalStationName').innerText = qData.stationName;
             const iconEl = document.getElementById('modalStationIcon');
             if (iconEl) iconEl.innerText = qData.icon;
             document.getElementById('modalQuestionText').innerText = qData.question;
+
+            const stemAudioBtn = document.getElementById('modalQuestionAudioBtn');
+            if (stemAudioBtn) {
+                stemAudioBtn.onclick = (e) => playQuestionAudio(`s${qNum}.mp3`, stemAudioBtn, e);
+            }
 
             const modalImg = document.getElementById('modalStationImg');
             if (modalImg && qData.image) {
@@ -1154,13 +1257,29 @@
             container.innerHTML = '';
             gameState.selectedModalOpt = null;
 
+            const optAudioFiles = [`a${qNum}.mp3`, `b${qNum}.mp3`, `c${qNum}.mp3`];
+
             qData.options.forEach((opt, idx) => {
-                const btn = document.createElement('button');
-                btn.onclick = () => selectCaterpillarOption(idx);
-                btn.id = `modalOptBtn-${idx}`;
-                btn.className = "w-full text-left p-3.5 rounded-xl border border-slate-700 bg-slate-800/90 hover:bg-lime-950/40 hover:border-lime-500/50 transition-all text-xs sm:text-sm font-game text-slate-200 flex items-center justify-between cursor-pointer shadow-sm";
-                btn.innerHTML = `<span class="font-bold">${opt.text}</span> <i class="fa-regular fa-circle text-slate-500"></i>`;
-                container.appendChild(btn);
+                const wrapper = document.createElement('div');
+                wrapper.className = "flex items-center gap-2.5 w-full";
+
+                const optBtn = document.createElement('button');
+                optBtn.onclick = () => selectCaterpillarOption(idx);
+                optBtn.id = `modalOptBtn-${idx}`;
+                optBtn.className = "flex-1 text-left p-3.5 rounded-xl border border-slate-700 bg-slate-800/90 hover:bg-lime-950/40 hover:border-lime-500/50 transition-all text-xs sm:text-sm font-game text-slate-200 flex items-center justify-between cursor-pointer shadow-sm";
+                optBtn.innerHTML = `<span class="font-bold">${opt.text}</span> <i class="fa-regular fa-circle text-slate-500 shrink-0 ml-2"></i>`;
+
+                const audioBtn = document.createElement('button');
+                audioBtn.type = "button";
+                audioBtn.id = `modalOptAudioBtn-${idx}`;
+                audioBtn.title = "Şıkkı Dinle";
+                audioBtn.className = "audio-play-btn w-11 h-11 rounded-xl bg-slate-800 border border-slate-700 text-amber-400 hover:bg-amber-500 hover:text-slate-950 hover:border-amber-400 transition-all flex items-center justify-center cursor-pointer shrink-0 shadow-md";
+                audioBtn.innerHTML = `<i class="fa-solid fa-volume-high text-sm"></i>`;
+                audioBtn.onclick = (e) => playQuestionAudio(optAudioFiles[idx], audioBtn, e);
+
+                wrapper.appendChild(optBtn);
+                wrapper.appendChild(audioBtn);
+                container.appendChild(wrapper);
             });
 
             document.getElementById('modalFeedbackBox').className = "hidden p-3 rounded-xl text-xs font-game flex items-start space-x-2 border";
@@ -1179,12 +1298,13 @@
 
             caterpillarQuestions[gameState.caterpillarIndex].options.forEach((_, i) => {
                 const btn = document.getElementById(`modalOptBtn-${i}`);
+                if (!btn) return;
                 if (i === idx) {
-                    btn.className = "w-full text-left p-3.5 rounded-xl border-2 border-lime-400 bg-lime-500/20 transition-all text-xs sm:text-sm font-game text-lime-200 flex items-center justify-between cursor-pointer";
-                    btn.querySelector('i').className = "fa-solid fa-circle-dot text-lime-400";
+                    btn.className = "flex-1 text-left p-3.5 rounded-xl border-2 border-lime-400 bg-lime-500/20 transition-all text-xs sm:text-sm font-game text-lime-200 flex items-center justify-between cursor-pointer";
+                    btn.querySelector('i').className = "fa-solid fa-circle-dot text-lime-400 shrink-0 ml-2";
                 } else {
-                    btn.className = "w-full text-left p-3.5 rounded-xl border border-slate-700 bg-slate-800/90 transition-all text-xs sm:text-sm font-game text-slate-400 flex items-center justify-between cursor-pointer";
-                    btn.querySelector('i').className = "fa-regular fa-circle text-slate-600";
+                    btn.className = "flex-1 text-left p-3.5 rounded-xl border border-slate-700 bg-slate-800/90 transition-all text-xs sm:text-sm font-game text-slate-400 flex items-center justify-between cursor-pointer";
+                    btn.querySelector('i').className = "fa-regular fa-circle text-slate-600 shrink-0 ml-2";
                 }
             });
 
@@ -1194,6 +1314,8 @@
         }
 
         function submitCaterpillarAnswer() {
+            stopAllQuestionAudio();
+
             if (gameState.modalState === 'readyToAdvance') {
                 // User manually clicked "Sonraki Durağa Geç"
                 document.getElementById('caterpillarModal').classList.add('hidden');
@@ -1388,6 +1510,7 @@
         }
 
         function switchStage(stageNum) {
+            stopAllQuestionAudio();
             document.getElementById('stage1').classList.add('hidden');
             document.getElementById('stage2').classList.add('hidden');
             document.getElementById('stage3').classList.add('hidden');
