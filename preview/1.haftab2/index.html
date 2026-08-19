@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="tr" class="h-full bg-slate-950 text-slate-100">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Türklerde Selamlaşma - İnteraktif Diyalog Oyunu</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        game: {
+                            cyan: '#06b6d4',
+                            amber: '#f59e0b',
+                            rose: '#f43f5e',
+                            emerald: '#10b981',
+                            purple: '#8b5cf6',
+                            orange: '#f97316'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Plus Jakarta Sans', 'sans-serif'],
+                        game: ['Fredoka', 'cursive', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .font-game {
+            font-family: 'Fredoka', cursive, sans-serif;
+        }
+
+        .font-display {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.92);
+            backdrop-filter: blur(16px);
+            border: 2px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .glass-card {
+            background: rgba(30, 41, 59, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1.5px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .glow-amber {
+            box-shadow: 0 0 25px rgba(245, 158, 11, 0.4);
+        }
+
+        .glow-purple {
+            box-shadow: 0 0 25px rgba(139, 92, 246, 0.4);
+        }
+
+        .glow-cyan {
+            box-shadow: 0 0 25px rgba(6, 182, 212, 0.4);
+        }
+
+        .bounce-gentle {
+            animation: bounceGentle 2s infinite;
+        }
+
+        @keyframes bounceGentle {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-6px);
+            }
+        }
+
+        .pulse-mic {
+            animation: pulseMic 1.5s infinite;
+        }
+
+        @keyframes pulseMic {
+            0% {
+                box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 15px rgba(244, 63, 94, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(244, 63, 94, 0);
+            }
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #090d16;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body
+    class="h-full flex flex-col font-sans bg-slate-950 text-slate-100 antialiased selection:bg-amber-400 selection:text-slate-950 custom-scrollbar">
+
+    <!-- HEADER -->
+    <header class="bg-slate-900/90 border-b border-amber-500/30 sticky top-0 z-40 backdrop-blur-md">
+        <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+
+            <div class="flex items-center space-x-3">
+                <div
+                    class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-500 to-orange-500 flex items-center justify-center text-slate-950 shadow-lg shadow-amber-500/30 font-bold text-xl">
+                    🎙️
+                </div>
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <span
+                            class="font-game font-bold text-lg sm:text-xl tracking-wide bg-gradient-to-r from-amber-300 via-orange-300 to-yellow-200 bg-clip-text text-transparent">
+                            TÜRKLERDE SELAMLAŞMA
+                        </span>
+                        <span
+                            class="bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[10px] px-2.5 py-0.5 rounded-full font-game font-bold">
+                            İLERİ SEVİYE
+                        </span>
+                    </div>
+                    <p class="text-[11px] text-slate-400">İnteraktif Diyalog Sürdürme Oyunu</p>
+                </div>
+            </div>
+
+            <!-- MANDATORY SOURCE BADGE LINK -->
+            <div
+                class="hidden sm:flex items-center space-x-2 bg-slate-800/90 px-3.5 py-1.5 rounded-full border border-slate-700 text-xs">
+                <i class="fa-solid fa-link text-amber-400"></i>
+                <span class="text-slate-300">Kaynak: <a href="https://ulkemyanimda.eba.gov.tr" target="_blank"
+                        rel="noopener noreferrer" class="text-amber-300 hover:underline font-bold">Ülkem
+                        Yanımda</a></span>
+            </div>
+
+            <!-- XP Points & Sound Controls -->
+            <div class="flex items-center space-x-3">
+                <div
+                    class="flex items-center space-x-2 bg-slate-800/90 px-3.5 py-1.5 rounded-xl border border-amber-500/40">
+                    <i class="fa-solid fa-star text-amber-400 text-base animate-pulse"></i>
+                    <div>
+                        <div class="text-[9px] text-slate-400 font-bold uppercase">KÜLTÜR PUANI</div>
+                        <div id="globalScore" class="font-game text-sm sm:text-base font-bold text-amber-400">0 XP</div>
+                    </div>
+                </div>
+
+                <button id="soundToggleBtn" onclick="toggleAudio()"
+                    class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center border border-slate-700 transition-all cursor-pointer">
+                    <i id="soundIcon" class="fa-solid fa-volume-high text-xs"></i>
+                </button>
+            </div>
+
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-6xl w-full mx-auto px-4 py-5 flex flex-col gap-5">
+
+        <!-- STAGE NAVIGATION TABS -->
+        <div class="glass-panel rounded-2xl p-2 flex justify-between items-center gap-2 border border-slate-800">
+
+            <button id="tabBtn1" onclick="switchStage(1)"
+                class="flex-1 py-3 px-3 rounded-xl font-game font-bold text-xs sm:text-sm transition-all duration-300 bg-amber-500 text-slate-950 glow-amber flex items-center justify-center space-x-2 cursor-pointer">
+                <span class="w-6 h-6 rounded-full bg-slate-950/20 flex items-center justify-center text-xs">1</span>
+                <span>1. AŞAMA: Videolu Diyalog Sürdürme</span>
+            </button>
+
+            <div class="text-slate-700 hidden sm:block"><i class="fa-solid fa-chevron-right text-xs"></i></div>
+
+            <button id="tabBtn2" onclick="switchStage(2)"
+                class="flex-1 py-3 px-3 rounded-xl font-game font-bold text-xs sm:text-sm transition-all duration-300 bg-slate-800/80 text-slate-400 hover:bg-slate-700 flex items-center justify-center space-x-2 cursor-pointer">
+                <span
+                    class="w-6 h-6 rounded-full bg-slate-700 text-slate-300 flex items-center justify-center text-xs">2</span>
+                <span>2. AŞAMA: İnteraktif Videolu İzleme</span>
+            </button>
+
+        </div>
+
+        <!-- STAGE 1 CONTENT: 3 DIALOGUE CONTINUATION SCENARIOS -->
+        <section id="stage1" class="flex-1 flex flex-col gap-5">
+
+            <!-- Intro Banner -->
+            <div
+                class="bg-gradient-to-r from-slate-900 via-amber-950/40 to-slate-900 rounded-2xl p-5 border border-amber-500/30 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 shadow-xl">
+                <div class="flex items-start space-x-4">
+                    <div
+                        class="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-400/40 text-amber-300 flex items-center justify-center text-3xl shrink-0 glow-amber">
+                        🗣️
+                    </div>
+                    <div class="space-y-1">
+                        <div
+                            class="inline-flex items-center space-x-2 bg-amber-500/20 text-amber-300 text-[11px] px-3 py-0.5 rounded-full font-game font-bold border border-amber-500/30">
+                            <span>Videoyu İzle ve Konuşmayı Sürdür</span>
+                        </div>
+                        <h2 class="font-game font-bold text-lg sm:text-xl text-white">3 Farklı Durumda Kültürümüze Uygun
+                            Yanıt Ver</h2>
+                        <p class="text-xs text-slate-300">Videodaki karakterin sözünü dinleyin. Mikrofonla konuşarak
+                            veya yazarak diyalogu kültürümüze uygun kalıplarla sürdürün!</p>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-slate-800/90 border border-slate-700 px-4 py-2.5 rounded-2xl text-xs text-amber-300 font-game flex items-center gap-3 shrink-0">
+                    <div class="text-right">
+                        <div class="text-[10px] text-slate-400 uppercase font-bold">Tamamlanan Diyalog</div>
+                        <div id="dialogueProgressText" class="font-bold text-base text-amber-400">0 / 3</div>
+                    </div>
+                    <div
+                        class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center justify-center text-xl">
+                        💬
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3 DIALOGUE SCENARIOS GRID -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+                <!-- SCENARIO 1: Misafir Karşılama -->
+                <div id="diagCard-0"
+                    class="glass-card rounded-2xl p-4 border-2 border-amber-400/60 bg-slate-900/90 space-y-3 flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span
+                                class="bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[11px] px-2.5 py-0.5 rounded-full font-game font-bold">
+                                1. Senaryo: Misafir Karşılama
+                            </span>
+                            <span id="dBadge-0" class="text-xs font-game text-slate-400">Bekliyor</span>
+                        </div>
+
+                        <!-- Video Player with Fallback -->
+                        <div
+                            class="relative bg-black rounded-xl overflow-hidden aspect-video border border-slate-700 flex items-center justify-center">
+                            <video id="diagVid-0" class="w-full h-full object-contain bg-black" controls
+                                preload="metadata">
+                                <source src="rutin1.mp4" type="video/mp4">
+                                Video oynatılamadı.
+                            </video>
+                            <div id="fallbackImg-0"
+                                class="absolute inset-0 bg-gradient-to-br from-amber-950/80 to-slate-900 hidden items-center justify-center p-4 text-center">
+                                <div class="space-y-1">
+                                    <div class="text-3xl">🏡</div>
+                                    <div class="text-xs font-game font-bold text-amber-300">Misafir Karşılama</div>
+                                    <div class="text-[10px] text-slate-400">Video: rutin1.mp4</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/80 space-y-1">
+                            <div class="text-[10px] text-amber-400 font-bold uppercase tracking-wider">Ev Sahibi Diyor
+                                ki:</div>
+                            <p class="text-xs text-white font-game italic">"Aaa, hoş geldiniz! Buyurun, içeri geçin
+                                lütfen!"</p>
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <label class="text-[11px] font-game text-slate-300 font-bold">Senin Yanıtın (Misafir
+                                Rolündesin):</label>
+
+                            <div class="flex gap-2">
+                                <input type="text" id="diagInput-0" placeholder="Örn: Hoş bulduk! Nasılsınız?"
+                                    class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs font-game text-white focus:outline-none focus:border-amber-400 transition-all">
+
+                                <button id="micBtn-0" onclick="toggleSpeechRecognition(0)"
+                                    class="w-9 h-9 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 flex items-center justify-center transition-all cursor-pointer shrink-0"
+                                    title="Mikrofonla Konuş">
+                                    <i class="fa-solid fa-microphone text-xs"></i>
+                                </button>
+                            </div>
+                            <p class="text-[10px] text-slate-400 italic">İpucu: "Hoş bulduk", "Nasılsınız" kelimelerini
+                                kullan.</p>
+                        </div>
+                    </div>
+
+                    <!-- Submit & Feedback -->
+                    <div class="space-y-2 pt-2 border-t border-slate-800">
+                        <button id="submitDiagBtn-0" onclick="submitDialogueResponse(0)"
+                            class="w-full bg-orange-500 hover:bg-orange-400 text-slate-950 py-2.5 rounded-xl font-game font-bold text-xs transition-all flex items-center justify-center space-x-1.5 shadow-md cursor-pointer">
+                            <span>Cevabı Kaydet</span>
+                            <i class="fa-solid fa-floppy-disk text-xs"></i>
+                        </button>
+                        <div id="dFb-0" class="hidden p-2.5 rounded-xl text-xs font-game"></div>
+                    </div>
+                </div>
+
+                <!-- SCENARIO 2: Büyüğe Saygı -->
+                <div id="diagCard-1"
+                    class="glass-card rounded-2xl p-4 border border-slate-800 bg-slate-900/90 space-y-3 flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span
+                                class="bg-purple-500/20 text-purple-300 border border-purple-500/30 text-[11px] px-2.5 py-0.5 rounded-full font-game font-bold">
+                                2. Senaryo: Büyüğe Saygı
+                            </span>
+                            <span id="dBadge-1" class="text-xs font-game text-slate-400">Bekliyor</span>
+                        </div>
+
+                        <!-- Video Player with Fallback -->
+                        <div
+                            class="relative bg-black rounded-xl overflow-hidden aspect-video border border-slate-700 flex items-center justify-center">
+                            <video id="diagVid-1" class="w-full h-full object-contain bg-black" controls
+                                preload="metadata">
+                                <source src="rutin2.mp4" type="video/mp4">
+                                Video oynatılamadı.
+                            </video>
+                            <div id="fallbackImg-1"
+                                class="absolute inset-0 bg-gradient-to-br from-purple-950/80 to-slate-900 hidden items-center justify-center p-4 text-center">
+                                <div class="space-y-1">
+                                    <div class="text-3xl">👵</div>
+                                    <div class="text-xs font-game font-bold text-purple-300">Aile Büyüğüyle Karşılaşma
+                                    </div>
+                                    <div class="text-[10px] text-slate-400">Video: rutin2.mp4</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/80 space-y-1">
+                            <div class="text-[10px] text-purple-400 font-bold uppercase tracking-wider">Aile Büyüğü
+                                Diyor ki:</div>
+                            <p class="text-xs text-white font-game italic">"Gel bakalım evladım, hoş geldin! Nasılsın?"
+                            </p>
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <label class="text-[11px] font-game text-slate-300 font-bold">Senin Yanıtın (Torun
+                                Rolündesin):</label>
+
+                            <div class="flex gap-2">
+                                <input type="text" id="diagInput-1"
+                                    placeholder="Örn: Ellerinizden öperim babaanneciğim..."
+                                    class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs font-game text-white focus:outline-none focus:border-purple-400 transition-all">
+
+                                <button id="micBtn-1" onclick="toggleSpeechRecognition(1)"
+                                    class="w-9 h-9 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 flex items-center justify-center transition-all cursor-pointer shrink-0"
+                                    title="Mikrofonla Konuş">
+                                    <i class="fa-solid fa-microphone text-xs"></i>
+                                </button>
+                            </div>
+                            <p class="text-[10px] text-slate-400 italic">İpucu: "Ellerinizden öperim", "Siz nasılsınız"
+                                kalıbını kullan.</p>
+                        </div>
+                    </div>
+
+                    <!-- Submit & Feedback -->
+                    <div class="space-y-2 pt-2 border-t border-slate-800">
+                        <button id="submitDiagBtn-1" onclick="submitDialogueResponse(1)"
+                            class="w-full bg-orange-500 hover:bg-orange-400 text-slate-950 py-2.5 rounded-xl font-game font-bold text-xs transition-all flex items-center justify-center space-x-1.5 shadow-md cursor-pointer">
+                            <span>Cevabı Kaydet</span>
+                            <i class="fa-solid fa-floppy-disk text-xs"></i>
+                        </button>
+                        <div id="dFb-1" class="hidden p-2.5 rounded-xl text-xs font-game"></div>
+                    </div>
+                </div>
+
+                <!-- SCENARIO 3: Çalışana Kolay Gelsin -->
+                <div id="diagCard-2"
+                    class="glass-card rounded-2xl p-4 border border-slate-800 bg-slate-900/90 space-y-3 flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span
+                                class="bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-[11px] px-2.5 py-0.5 rounded-full font-game font-bold">
+                                3. Senaryo: Çalışan Emekçi
+                            </span>
+                            <span id="dBadge-2" class="text-xs font-game text-slate-400">Bekliyor</span>
+                        </div>
+
+                        <!-- Video Player with Fallback -->
+                        <div
+                            class="relative bg-black rounded-xl overflow-hidden aspect-video border border-slate-700 flex items-center justify-center">
+                            <video id="diagVid-2" class="w-full h-full object-contain bg-black" controls
+                                preload="metadata">
+                                <source src="rutin3.mp4" type="video/mp4">
+                                Video oynatılamadı.
+                            </video>
+                            <div id="fallbackImg-2"
+                                class="absolute inset-0 bg-gradient-to-br from-cyan-950/80 to-slate-900 hidden items-center justify-center p-4 text-center">
+                                <div class="space-y-1">
+                                    <div class="text-3xl">👷‍♂️</div>
+                                    <div class="text-xs font-game font-bold text-cyan-300">Çalışan Birini Görünce</div>
+                                    <div class="text-[10px] text-slate-400">Video: rutin3.mp4</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/80 space-y-1">
+                            <div class="text-[10px] text-cyan-400 font-bold uppercase tracking-wider">Usta / Çalışan
+                                Diyor ki:</div>
+                            <p class="text-xs text-white font-game italic">"Hayırlı günler evladım! Bir şey mi
+                                bakmıştın?"</p>
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <label class="text-[11px] font-game text-slate-300 font-bold">Senin Yanıtın (Yoldan Geçen
+                                Rolündesin):</label>
+
+                            <div class="flex gap-2">
+                                <input type="text" id="diagInput-2"
+                                    placeholder="Örn: Kolay gelsin ustam! Hayırlı işler..."
+                                    class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs font-game text-white focus:outline-none focus:border-cyan-400 transition-all">
+
+                                <button id="micBtn-2" onclick="toggleSpeechRecognition(2)"
+                                    class="w-9 h-9 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 flex items-center justify-center transition-all cursor-pointer shrink-0"
+                                    title="Mikrofonla Konuş">
+                                    <i class="fa-solid fa-microphone text-xs"></i>
+                                </button>
+                            </div>
+                            <p class="text-[10px] text-slate-400 italic">İpucu: "Kolay gelsin", "Hayırlı işler" kalıbını
+                                kullan.</p>
+                        </div>
+                    </div>
+
+                    <!-- Submit & Feedback -->
+                    <div class="space-y-2 pt-2 border-t border-slate-800">
+                        <button id="submitDiagBtn-2" onclick="submitDialogueResponse(2)"
+                            class="w-full bg-orange-500 hover:bg-orange-400 text-slate-950 py-2.5 rounded-xl font-game font-bold text-xs transition-all flex items-center justify-center space-x-1.5 shadow-md cursor-pointer">
+                            <span>Cevabı Kaydet</span>
+                            <i class="fa-solid fa-floppy-disk text-xs"></i>
+                        </button>
+                        <div id="dFb-2" class="hidden p-2.5 rounded-xl text-xs font-game"></div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Proceed to Stage 2 Button -->
+            <div class="flex justify-end pt-2">
+                <button id="btnProceedToStage2" onclick="switchStage(2)" disabled
+                    class="bg-slate-800 text-slate-500 cursor-not-allowed px-6 py-3 rounded-2xl font-game font-bold text-xs sm:text-sm transition-all flex items-center space-x-2 border border-slate-700">
+                    <span>2. Aşama: İnteraktif Videolu İzlemeye Geç</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+
+        </section>
+
+        <!-- STAGE 2 CONTENT: MAIN INTERACTIVE VIDEO WITH TIME-STAMPED STOPS -->
+        <section id="stage2" class="hidden flex-1 flex-col gap-5">
+
+            <div
+                class="bg-gradient-to-r from-slate-900 via-purple-950/40 to-slate-900 rounded-2xl p-4 border border-purple-500/30 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                <div class="flex items-center space-x-3">
+                    <div
+                        class="w-10 h-10 rounded-xl bg-purple-500/20 border border-purple-500/40 text-purple-300 flex items-center justify-center text-xl shrink-0">
+                        🎬
+                    </div>
+                    <div>
+                        <h2 class="font-game text-base sm:text-lg font-bold text-white">İnteraktif Videolu İzleme
+                            Etkinliği</h2>
+                        <p class="text-xs text-slate-300">Video 1:56 zaman kodunda duracak. Selamlaşma diyaloğundaki
+                            boşlukları tamamlayın.</p>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-slate-800/90 px-3.5 py-1.5 rounded-xl text-xs border border-slate-700 font-mono text-slate-300 flex items-center gap-2">
+                    <i class="fa-solid fa-file-video text-purple-400"></i>
+                    <span>1.mp4</span>
+                </div>
+            </div>
+
+            <!-- Main Interactive Video Player & Overlay Modal -->
+            <div
+                class="relative bg-black rounded-2xl overflow-hidden shadow-2xl border-2 border-purple-500/30 aspect-video max-w-4xl mx-auto w-full">
+
+                <video id="interactiveVideo" class="w-full h-full object-contain" controls preload="metadata">
+                    <source src="1.mp4" type="video/mp4">
+                    Tarayıcınız video oynatmayı desteklemiyor.
+                </video>
+
+                <!-- Video Interactive Dialogue Continuation Overlay Modal -->
+                <div id="videoQuestionOverlay"
+                    class="absolute inset-0 bg-slate-950/95 backdrop-blur-md hidden flex items-center justify-center p-3 sm:p-4 z-30 transition-all">
+                    <div
+                        class="glass-panel rounded-2xl max-w-lg w-full max-h-[95%] overflow-y-auto p-4 sm:p-5 space-y-3 border-2 border-purple-400/50 shadow-2xl custom-scrollbar flex flex-col justify-between">
+
+                        <!-- TOP COMPLETION BANNER (PROMINENT AT TOP) -->
+                        <div id="overlayCompletionBanner"
+                            class="hidden w-full bg-emerald-500/20 border-2 border-emerald-400 text-emerald-300 p-2.5 rounded-xl font-game text-xs sm:text-sm font-bold text-center shadow-lg">
+                            🎉 TEBRİKLER! DİYALOG BAŞARIYLA TAMAMLANDI! (+30 XP)
+                        </div>
+
+                        <div class="flex justify-between items-center border-b border-slate-700/80 pb-2">
+                            <span id="overlayStopBadge"
+                                class="bg-purple-400/20 text-purple-300 font-game font-bold text-xs px-3 py-1 rounded-full border border-purple-400/30 flex items-center gap-1.5">
+                                <i class="fa-solid fa-pause text-purple-400"></i>
+                                <span>Durak Noktası</span>
+                            </span>
+                            <span id="overlayTimeCode"
+                                class="text-xs font-mono font-bold text-cyan-300 bg-cyan-950/60 px-2.5 py-0.5 rounded-md border border-cyan-500/30">01:56</span>
+                        </div>
+
+                        <div
+                            class="flex items-center space-x-3 bg-slate-900/90 p-2.5 rounded-xl border border-slate-800">
+                            <div
+                                class="w-10 h-10 rounded-xl bg-purple-900/40 border border-purple-500/30 flex items-center justify-center text-xl shrink-0">
+                                💬
+                            </div>
+                            <div class="space-y-0.5">
+                                <h4 id="overlayQuestionTitle"
+                                    class="font-game font-bold text-white text-xs sm:text-sm leading-snug">
+                                    Diyalogdaki Boşlukları Tamamla
+                                </h4>
+                                <p class="text-[10px] sm:text-[11px] text-slate-300">
+                                    Aşağıdaki diyalogda boş bırakılan yerleri kültürümüze uygun cümlelerle doldurun veya
+                                    mikrofonla konuşun.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Dialogue Blanks Container -->
+                        <div id="overlayBlanksContainer" class="space-y-2">
+                            <!-- Multi-blank input fields rendered dynamically -->
+                        </div>
+
+                        <!-- Feedback -->
+                        <div id="overlayFeedback"
+                            class="hidden p-2.5 rounded-xl text-xs font-game flex items-start space-x-2">
+                            <i id="overlayFeedbackIcon" class="fa-solid text-sm mt-0.5"></i>
+                            <div id="overlayFeedbackText"></div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="flex justify-between items-center pt-1">
+                            <button id="overlaySubmitBtn" onclick="submitOverlayDialogue()"
+                                class="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-xl font-game font-bold text-xs sm:text-sm transition-all flex items-center space-x-2 glow-purple cursor-pointer">
+                                <span>Diyalogu Gönder</span>
+                                <i class="fa-solid fa-paper-plane"></i>
+                            </button>
+
+                            <button id="overlayContinueBtn" onclick="resumeVideoFromOverlay()" disabled
+                                class="bg-slate-700 text-slate-400 cursor-not-allowed px-4 py-2 rounded-xl font-game font-bold text-xs sm:text-sm transition-all flex items-center space-x-2">
+                                <span>Videoya Devam Et</span>
+                                <i class="fa-solid fa-play"></i>
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Source Badge Link -->
+                <div
+                    class="absolute top-3 right-3 bg-slate-900/90 backdrop-blur-md px-3 py-1 rounded-full text-[11px] font-game text-amber-300 border border-slate-700 z-10 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                    <span>Kaynak: <a href="https://ulkemyanimda.eba.gov.tr" target="_blank" rel="noopener noreferrer"
+                            class="hover:underline font-bold">Ülkem Yanımda</a></span>
+                </div>
+
+            </div>
+
+            <!-- Video Stops Timeline Card -->
+            <div class="glass-panel rounded-2xl p-4 max-w-4xl mx-auto w-full">
+                <div class="text-xs font-game font-bold text-slate-400 uppercase tracking-wider mb-2.5">Videodaki Durak
+                    Noktaları</div>
+                <div class="grid grid-cols-1 max-w-xs mx-auto gap-3">
+
+                    <div id="stopCard1"
+                        class="p-3 rounded-xl border border-slate-700 bg-slate-800/60 flex items-center space-x-3">
+                        <div
+                            class="w-9 h-9 rounded-xl bg-purple-500/20 text-purple-300 font-mono font-bold flex items-center justify-center text-xs border border-purple-500/30">
+                            1:56</div>
+                        <div>
+                            <div class="text-xs font-game font-bold text-slate-200">Durak Noktası: Selamlaşma Diyaloğu
+                            </div>
+                            <div class="text-[11px] text-slate-400" id="stopStatus1">Bekliyor</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </section>
+
+        <!-- STAGE 3 SUMMARY -->
+        <section id="stage3" class="hidden flex-1 flex-col gap-5">
+
+            <div
+                class="glass-panel rounded-2xl p-6 sm:p-8 space-y-6 border border-amber-500/40 text-center max-w-3xl mx-auto w-full">
+
+                <div
+                    class="w-20 h-20 bg-gradient-to-tr from-amber-400 via-orange-500 to-yellow-300 text-slate-950 rounded-3xl border-2 border-amber-200 flex items-center justify-center mx-auto text-4xl glow-amber shadow-2xl bounce-gentle">
+                    🏆
+                </div>
+
+                <div class="space-y-2 max-w-xl mx-auto">
+                    <h2 class="font-game text-2xl sm:text-3xl font-bold text-white">Tebrikler Kültür Elçisi!</h2>
+                    <p class="text-xs sm:text-sm text-slate-300">Tüm selamlaşma senaryolarındaki diyalogları ve videolu
+                        etkileşimi başarıyla tamamladınız.</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="bg-slate-800/90 p-4 rounded-2xl border border-slate-700 space-y-1">
+                        <div class="text-xs text-slate-400 font-game">Toplam Puanınız</div>
+                        <div id="finalScore" class="font-game text-3xl font-bold text-amber-400">0 XP</div>
+                    </div>
+                    <div class="bg-slate-800/90 p-4 rounded-2xl border border-slate-700 space-y-1">
+                        <div class="text-xs text-slate-400 font-game">Tamamlanan Diyalog</div>
+                        <div id="finalStopsCount" class="font-game text-3xl font-bold text-cyan-400">0 / 4</div>
+                    </div>
+                    <div class="bg-slate-800/90 p-4 rounded-2xl border border-slate-700 space-y-1">
+                        <div class="text-xs text-slate-400 font-game">Kültür Unvanınız</div>
+                        <div class="font-game text-base sm:text-lg font-bold text-emerald-400">Usta Konuşmacı 🌟</div>
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <button onclick="restartApp()"
+                        class="bg-amber-500 hover:bg-amber-400 text-slate-950 px-8 py-3.5 rounded-2xl font-game font-bold text-sm sm:text-base transition-all shadow-xl glow-amber cursor-pointer">
+                        Oyunu Yeniden Başlat
+                    </button>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-950 border-t border-slate-800 py-4 mt-auto">
+        <div class="max-w-6xl mx-auto px-4 text-center text-xs text-slate-500 space-y-1">
+            <p class="font-semibold text-slate-400">Türklerde Selamlaşma - İnteraktif Diyalog Oyunu</p>
+            <p>Kaynak: <a href="https://ulkemyanimda.eba.gov.tr" target="_blank" rel="noopener noreferrer"
+                    class="text-amber-300 hover:underline font-bold">Ülkem Yanımda</a></p>
+        </div>
+    </footer>
+
+    <!-- CONGRATULATIONS CELEBRATION MODAL -->
+    <div id="congratulationsModal"
+        class="fixed inset-0 bg-slate-950/90 backdrop-blur-xl hidden flex items-center justify-center p-4 z-50 transition-all duration-500">
+        <div
+            class="glass-panel rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-6 border-2 border-amber-400/80 shadow-2xl text-center relative overflow-hidden transform scale-95 transition-transform duration-300">
+
+            <!-- Background ambient glow -->
+            <div class="absolute -top-24 -left-24 w-48 h-48 bg-amber-500/20 rounded-full blur-3xl pointer-events-none">
+            </div>
+            <div
+                class="absolute -bottom-24 -right-24 w-48 h-48 bg-orange-500/20 rounded-full blur-3xl pointer-events-none">
+            </div>
+
+            <!-- Trophy Icon -->
+            <div class="relative w-24 h-24 mx-auto">
+                <div class="absolute inset-0 bg-amber-500/30 rounded-3xl blur-xl animate-pulse"></div>
+                <div
+                    class="relative w-full h-full bg-gradient-to-tr from-amber-400 via-orange-500 to-yellow-300 text-slate-950 rounded-3xl border-2 border-amber-200 flex items-center justify-center text-5xl shadow-2xl bounce-gentle">
+                    🏆
+                </div>
+            </div>
+
+            <!-- Text Header -->
+            <div class="space-y-2">
+                <span
+                    class="inline-flex items-center space-x-1.5 bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs px-3.5 py-1 rounded-full font-game font-bold">
+                    <i class="fa-solid fa-crown text-amber-400"></i>
+                    <span>TÜM GÖREVLER TAMAMLANDI</span>
+                </span>
+                <h3 class="font-game text-2xl sm:text-3xl font-bold text-white tracking-wide">
+                    🎉 TEBRİKLER! 🎉
+                </h3>
+                <p class="text-xs sm:text-sm text-slate-300 font-game leading-relaxed">
+                    Harika bir iş çıkardın! Oyundaki tüm selamlaşma ve diyalog sürdürme görevlerini başarıyla
+                    tamamladın!
+                </p>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-3 gap-3 bg-slate-900/80 p-4 rounded-2xl border border-slate-800">
+                <div class="space-y-1">
+                    <div class="text-[10px] text-slate-400 font-bold uppercase">Toplam Puan</div>
+                    <div id="modalScore" class="font-game text-xl sm:text-2xl font-bold text-amber-400">180 XP</div>
+                </div>
+                <div class="space-y-1 border-x border-slate-800 px-2">
+                    <div class="text-[10px] text-slate-400 font-bold uppercase">Görevler</div>
+                    <div class="font-game text-xl sm:text-2xl font-bold text-emerald-400">4 / 4</div>
+                </div>
+                <div class="space-y-1">
+                    <div class="text-[10px] text-slate-400 font-bold uppercase">Unvan</div>
+                    <div class="font-game text-xs sm:text-sm font-bold text-cyan-300">Kültür Elçisi 🌟</div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex flex-col sm:flex-row gap-3 pt-2">
+                <button onclick="closeCongratulationModal()"
+                    class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 py-3 rounded-2xl font-game font-bold text-xs sm:text-sm transition-all border border-slate-700 cursor-pointer">
+                    Sonuçları İncele
+                </button>
+                <button onclick="restartApp()"
+                    class="flex-1 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 py-3 rounded-2xl font-game font-bold text-xs sm:text-sm transition-all shadow-lg glow-amber cursor-pointer">
+                    Yeniden Başlat 🔄
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        /* GLOBAL GAME STATE */
+        const gameState = {
+            score: 0,
+            soundEnabled: true,
+            completedRoutines: new Set(),
+            completedVideoStops: new Set(),
+            speechRecognitionActive: false
+        };
+
+        /* STAGE 1: DIALOGUE SCENARIOS DATA */
+        const dialogueScenarios = [
+            {
+                id: 0,
+                title: "Misafir Karşılama Senaryosu",
+                videoSrc: "rutin1.mp4",
+                speakerRole: "Ev Sahibi",
+                speakerText: "Aaa, hoş geldiniz! Buyurun, içeri geçin lütfen!",
+                userRole: "Misafir Rolündesin",
+                keywords: ["hoş bulduk", "nasılsınız", "teşekkür", "sağ ol", "merhaba", "iyi akşamlar", "hayırlı"],
+                characterResponse: "Hoş bulduk! Geçin lütfen, şöyle buyurun...",
+                explanation: "Misafirlikte ev sahibi 'Hoş geldiniz' dediğinde 'Hoş bulduk' denir ve hal hatır sorulur."
+            },
+            {
+                id: 1,
+                title: "Büyüğe Saygı Senaryosu",
+                videoSrc: "rutin2.mp4",
+                speakerRole: "Aile Büyüğü",
+                speakerText: "Gel bakalım evladım, hoş geldin! Nasılsın?",
+                userRole: "Torun Rolündesin",
+                keywords: ["ellerinizden öperim", "öperim", "iyiyim", "siz nasılsınız", "babaanne", "dede", "sağ olun"],
+                characterResponse: "Sağ ol evladım, Allah razı olsun! Ömrün uzun olsun.",
+                explanation: "Büyüğümüzle karşılaştığımızda elleri öpülüp 'Nasılsınız?' denir."
+            },
+            {
+                id: 2,
+                title: "Çalışana Kolay Gelsin Senaryosu",
+                videoSrc: "rutin3.mp4",
+                speakerRole: "Usta / Çalışan",
+                speakerText: "Hayırlı günler evladım! Bir şey mi bakmıştın?",
+                userRole: "Yoldan Geçen Rolündesin",
+                keywords: ["kolay gelsin", "hayırlı işler", "bereketli", "usta", "teşekkürler", "sağ olun"],
+                characterResponse: "Eyvallah evladım, çok teşekkür ederim! Sana da hayırlı günler.",
+                explanation: "Çalışan birini gördüğümüzde iyi dilek olarak 'Kolay gelsin' veya 'Hayırlı işler' deriz."
+            }
+        ];
+
+        /* STAGE 2: MAIN INTERACTIVE VIDEO DIALOGUE STOPS */
+        const videoStops = [
+            {
+                id: 1,
+                time: 116,
+                badge: "Durak Noktası: 1:56 - Selamlaşma Diyaloğu",
+                question: "Diyalogdaki Boşlukları Tamamla",
+                blanks: [
+                    {
+                        id: 1,
+                        characterLine: "— Merhaba!",
+                        userRole: "1. Boşluk (Selamlaşma Yanıtı):",
+                        placeholder: "Örn: Merhaba! / Selam",
+                        keywords: ["merhaba", "selam", "günaydın", "iyi günler"]
+                    },
+                    {
+                        id: 2,
+                        characterLine: "— Nasılsınız?",
+                        userRole: "2. Boşluk (Hal Hatır Yanıtı):",
+                        placeholder: "Örn: İyiyim, teşekkürler! Siz nasılsınız?",
+                        keywords: ["iyiyim", "teşekkür", "sağ ol", "nasılsınız"]
+                    },
+                    {
+                        id: 3,
+                        characterLine: "— Ben de iyiyim, çok teşekkür ederim. Hayırlı günler!",
+                        userRole: "3. Boşluk (Uğurlama / Dilek Yanıtı):",
+                        placeholder: "Örn: Hayırlı günler! / Görüşmek üzere",
+                        keywords: ["hayırlı", "iyi günler", "görüşmek", "hoşça kal", "sağ olun", "kendinize"]
+                    }
+                ],
+                explanation: "Selamlaşma diyaloğunda karşılıklı 'Merhaba', 'İyiyim, teşekkürler' ve iyi dilekler ile konuşma eksiksiz sürdürülür."
+            }
+        ];
+
+        let activeVideoStopIndex = -1;
+
+        function playSound(type) {
+            if (!gameState.soundEnabled) return;
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtx) return;
+                const ctx = new AudioCtx();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                if (type === 'correct') {
+                    osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.3);
+                    gain.gain.setValueAtTime(0.12, ctx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.3);
+                } else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, ctx.currentTime);
+                    osc.frequency.linearRampToValueAtTime(130, ctx.currentTime + 0.3);
+                    gain.gain.setValueAtTime(0.12, ctx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.3);
+                }
+            } catch (e) { }
+        }
+
+        /* SPEECH SYNTHESIS SPOKEN RESPONSE */
+        function speakText(text) {
+            if (!gameState.soundEnabled || !('speechSynthesis' in window)) return;
+            try {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'tr-TR';
+                utterance.rate = 0.95;
+                window.speechSynthesis.speak(utterance);
+            } catch (e) { }
+        }
+
+        function toggleAudio() {
+            gameState.soundEnabled = !gameState.soundEnabled;
+            const icon = document.getElementById('soundIcon');
+            if (gameState.soundEnabled) {
+                icon.className = "fa-solid fa-volume-high text-xs";
+            } else {
+                icon.className = "fa-solid fa-volume-xmark text-xs text-rose-400";
+                if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+            }
+        }
+
+        function toggleSpeechRecognition(index) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert("Tarayıcınız ses tanıma özelliğini desteklemiyor. Lütfen cevabınızı klavyeyle yazın.");
+                return;
+            }
+
+            const micBtn = document.getElementById(`micBtn-${index}`);
+            const inputEl = document.getElementById(`diagInput-${index}`);
+
+            if (gameState.speechRecognitionActive) {
+                gameState.speechRecognitionActive = false;
+                micBtn.classList.remove('pulse-mic', 'bg-rose-600');
+                return;
+            }
+
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'tr-TR';
+            recognition.interimResults = false;
+
+            recognition.onstart = () => {
+                gameState.speechRecognitionActive = true;
+                micBtn.classList.add('pulse-mic', 'bg-rose-600');
+            };
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                inputEl.value = transcript;
+                micBtn.classList.remove('pulse-mic', 'bg-rose-600');
+                gameState.speechRecognitionActive = false;
+            };
+
+            recognition.onerror = () => {
+                micBtn.classList.remove('pulse-mic', 'bg-rose-600');
+                gameState.speechRecognitionActive = false;
+            };
+
+            recognition.onend = () => {
+                micBtn.classList.remove('pulse-mic', 'bg-rose-600');
+                gameState.speechRecognitionActive = false;
+            };
+
+            recognition.start();
+        }
+
+        function submitDialogueResponse(scenarioIdx) {
+            const scenario = dialogueScenarios[scenarioIdx];
+            const inputEl = document.getElementById(`diagInput-${scenarioIdx}`);
+            const userText = inputEl.value.trim().toLowerCase();
+            const fb = document.getElementById(`dFb-${scenarioIdx}`);
+            const badge = document.getElementById(`dBadge-${scenarioIdx}`);
+            const card = document.getElementById(`diagCard-${scenarioIdx}`);
+            const submitBtn = document.getElementById(`submitDiagBtn-${scenarioIdx}`);
+            const micBtn = document.getElementById(`micBtn-${scenarioIdx}`);
+
+            if (!userText) {
+                fb.classList.remove('hidden');
+                fb.className = "p-2.5 rounded-xl text-xs font-game bg-amber-500/20 text-amber-300 border border-amber-500/40";
+                fb.innerText = "Lütfen diyalog için bir yanıt yazın veya mikrofonla konuşun.";
+                return;
+            }
+
+            // Lock input, mic button & submit button so task ends there ("görev orada bitsin")
+            inputEl.disabled = true;
+            if (micBtn) micBtn.disabled = true;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span>Cevap Kaydedildi</span> <i class="fa-solid fa-circle-check text-xs"></i>';
+            submitBtn.className = "w-full bg-emerald-600/30 text-emerald-300 py-2.5 rounded-xl font-game font-bold text-xs cursor-default border border-emerald-500/40";
+
+            // Check if input contains any cultural keywords
+            const hasKeyword = scenario.keywords.some(kw => userText.includes(kw));
+            fb.classList.remove('hidden');
+
+            if (hasKeyword || userText.length >= 6) {
+                playSound('correct');
+                fb.className = "p-2.5 rounded-xl text-xs font-game bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 space-y-1";
+                fb.innerHTML = `<div><strong>Harika Diyalog!</strong> (+30 XP)</div>`;
+
+                badge.className = "text-xs font-game font-bold text-emerald-400";
+                badge.innerText = "✓ Tamamlandı";
+
+                card.className = "glass-card rounded-2xl p-4 border-2 border-emerald-500 bg-slate-900/90 space-y-3 flex flex-col justify-between";
+
+                // NOTE: Automatic text-to-speech reading disabled as requested
+
+                if (!gameState.completedRoutines.has(scenarioIdx)) {
+                    updateGlobalScore(30);
+                    gameState.completedRoutines.add(scenarioIdx);
+                }
+
+                updateStage1Progress();
+
+            } else {
+                playSound('wrong');
+                fb.className = "p-2.5 rounded-xl text-xs font-game bg-amber-500/20 text-amber-300 border border-amber-500/40 space-y-1";
+                fb.innerHTML = `<div><strong>İpucu:</strong> Kültürümüze uygun selamlaşma kalıbı kullanmalısın.</div><div class="text-[11px]">${scenario.explanation}</div>`;
+
+                badge.className = "text-xs font-game font-bold text-amber-400";
+                badge.innerText = "İncelendi";
+
+                gameState.completedRoutines.add(scenarioIdx);
+                updateStage1Progress();
+            }
+
+            checkAllTasksComplete();
+        }
+
+        function updateStage1Progress() {
+            const total = dialogueScenarios.length;
+            const done = gameState.completedRoutines.size;
+            document.getElementById('dialogueProgressText').innerText = `${done} / ${total}`;
+
+            if (done === total) {
+                const btn = document.getElementById('btnProceedToStage2');
+                btn.disabled = false;
+                btn.className = "bg-amber-500 hover:bg-amber-400 text-slate-950 px-6 py-3 rounded-2xl font-game font-bold text-xs sm:text-sm transition-all flex items-center space-x-2 glow-amber cursor-pointer";
+                triggerConfetti();
+            }
+        }
+
+        function setupVideoLogic() {
+            const video = document.getElementById('interactiveVideo');
+            if (!video) return;
+
+            video.addEventListener('timeupdate', () => {
+                const currentTime = Math.floor(video.currentTime);
+                videoStops.forEach((stop, index) => {
+                    if (currentTime === stop.time && !gameState.completedVideoStops.has(stop.id)) {
+                        video.pause();
+                        openVideoOverlay(index);
+                    }
+                });
+            });
+
+            video.addEventListener('ended', () => {
+                if (gameState.completedVideoStops.size === videoStops.length) {
+                    switchStage(3);
+                }
+            });
+        }
+
+        function openVideoOverlay(stopIndex) {
+            activeVideoStopIndex = stopIndex;
+            const stopData = videoStops[stopIndex];
+
+            const mins = Math.floor(stopData.time / 60);
+            const secs = stopData.time % 60;
+            const formattedTime = `${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
+
+            document.getElementById('overlayStopBadge').innerText = stopData.badge;
+            document.getElementById('overlayTimeCode').innerText = formattedTime;
+            document.getElementById('overlayQuestionTitle').innerText = stopData.question;
+
+            const banner = document.getElementById('overlayCompletionBanner');
+            if (banner) banner.classList.add('hidden');
+
+            const blanksContainer = document.getElementById('overlayBlanksContainer');
+            blanksContainer.innerHTML = '';
+
+            stopData.blanks.forEach((b, idx) => {
+                const blankBlock = document.createElement('div');
+                blankBlock.className = 'bg-slate-900/90 p-2.5 rounded-xl border border-slate-800 space-y-1.5';
+                blankBlock.innerHTML = `
+                    <div class="text-xs text-amber-300 font-game font-bold">${b.characterLine}</div>
+                    <div class="space-y-1">
+                        <label class="text-[10px] sm:text-[11px] font-game text-slate-300 font-bold">${b.userRole}</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="overlayBlankInput-${idx}"
+                                placeholder="${b.placeholder}"
+                                class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-2.5 py-1.5 text-xs font-game text-white focus:outline-none focus:border-purple-400 transition-all">
+                            <button id="overlayBlankMicBtn-${idx}" onclick="toggleOverlayBlankSpeech(${idx})"
+                                class="w-8 h-8 rounded-xl bg-rose-500/20 text-rose-300 border border-rose-500/40 flex items-center justify-center hover:bg-rose-500/30 transition-all cursor-pointer shrink-0"
+                                title="Mikrofonla Konuş">
+                                <i class="fa-solid fa-microphone text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                blanksContainer.appendChild(blankBlock);
+            });
+
+            document.getElementById('overlayFeedback').classList.add('hidden');
+
+            const submitBtn = document.getElementById('overlaySubmitBtn');
+            submitBtn.disabled = false;
+            submitBtn.className = "bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-xl font-game font-bold text-xs sm:text-sm transition-all flex items-center space-x-2 glow-purple cursor-pointer";
+
+            const contBtn = document.getElementById('overlayContinueBtn');
+            contBtn.disabled = true;
+            contBtn.className = "bg-slate-700 text-slate-400 cursor-not-allowed px-4 py-2 rounded-xl font-game font-bold text-xs sm:text-sm transition-all flex items-center space-x-2";
+
+            document.getElementById('videoQuestionOverlay').classList.remove('hidden');
+        }
+
+        function toggleOverlayBlankSpeech(blankIdx) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert("Tarayıcınız ses tanıma özelliğini desteklemiyor. Lütfen cevabınızı klavyeyle yazın.");
+                return;
+            }
+
+            const micBtn = document.getElementById(`overlayBlankMicBtn-${blankIdx}`);
+            const inputEl = document.getElementById(`overlayBlankInput-${blankIdx}`);
+
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'tr-TR';
+            recognition.start();
+
+            micBtn.classList.add('pulse-mic', 'bg-rose-600');
+
+            recognition.onresult = (event) => {
+                inputEl.value = event.results[0][0].transcript;
+                micBtn.classList.remove('pulse-mic', 'bg-rose-600');
+            };
+
+            recognition.onerror = () => {
+                micBtn.classList.remove('pulse-mic', 'bg-rose-600');
+            };
+
+            recognition.onend = () => {
+                micBtn.classList.remove('pulse-mic', 'bg-rose-600');
+            };
+        }
+
+        function submitOverlayDialogue() {
+            const stopData = videoStops[activeVideoStopIndex];
+            const banner = document.getElementById('overlayCompletionBanner');
+            const fb = document.getElementById('overlayFeedback');
+            const fbIcon = document.getElementById('overlayFeedbackIcon');
+            const fbText = document.getElementById('overlayFeedbackText');
+            const submitBtn = document.getElementById('overlaySubmitBtn');
+            const contBtn = document.getElementById('overlayContinueBtn');
+
+            let allFilled = true;
+            let totalCorrect = 0;
+
+            stopData.blanks.forEach((b, idx) => {
+                const inputEl = document.getElementById(`overlayBlankInput-${idx}`);
+                const val = inputEl ? inputEl.value.trim().toLowerCase() : '';
+                if (!val) {
+                    allFilled = false;
+                } else {
+                    const matchesKeyword = b.keywords.some(kw => val.includes(kw));
+                    if (matchesKeyword || val.length >= 4) {
+                        totalCorrect++;
+                    }
+                }
+            });
+
+            if (!allFilled) {
+                fb.classList.remove('hidden');
+                fb.className = "p-2.5 rounded-xl text-xs font-game bg-amber-500/20 text-amber-300 border border-amber-500/40";
+                fbText.innerText = "Lütfen tüm diyalog boşluklarını doldurun veya mikrofonla konuşun.";
+                return;
+            }
+
+            // Lock input fields and mic buttons after submit
+            stopData.blanks.forEach((b, idx) => {
+                const inputEl = document.getElementById(`overlayBlankInput-${idx}`);
+                const micBtn = document.getElementById(`overlayBlankMicBtn-${idx}`);
+                if (inputEl) inputEl.disabled = true;
+                if (micBtn) micBtn.disabled = true;
+            });
+
+            fb.classList.remove('hidden');
+            submitBtn.disabled = true;
+            submitBtn.className = "bg-slate-800 text-slate-500 px-4 py-2 rounded-xl font-game font-bold text-xs cursor-not-allowed";
+
+            if (totalCorrect >= Math.ceil(stopData.blanks.length / 2)) {
+                playSound('correct');
+                triggerConfetti();
+
+                if (banner) {
+                    banner.classList.remove('hidden');
+                    banner.className = "w-full bg-emerald-500/20 border-2 border-emerald-400 text-emerald-300 p-2.5 rounded-xl font-game text-xs sm:text-sm font-bold text-center shadow-lg animate-pulse";
+                    banner.innerHTML = "🎉 TEBRİKLER! DİYALOG BAŞARIYLA TAMAMLANDI! (+30 XP)";
+                }
+
+                fb.className = "p-2.5 rounded-xl text-xs font-game flex items-start space-x-2 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40";
+                fbIcon.className = "fa-solid fa-circle-check text-emerald-400 text-base mt-0.5";
+                fbText.innerHTML = `<div><strong>🎉 TEBRİKLER! DİYALOG BAŞARIYLA TAMAMLANDI!</strong> (+30 XP)</div><div class="text-[11px] mt-1">${stopData.explanation}</div>`;
+
+                if (!gameState.completedVideoStops.has(stopData.id)) {
+                    updateGlobalScore(30);
+                    gameState.completedVideoStops.add(stopData.id);
+                    updateStopCard(stopData.id, true);
+                }
+            } else {
+                playSound('wrong');
+
+                if (banner) {
+                    banner.classList.remove('hidden');
+                    banner.className = "w-full bg-amber-500/20 border-2 border-amber-400 text-amber-300 p-2.5 rounded-xl font-game text-xs sm:text-sm font-bold text-center shadow-lg";
+                    banner.innerHTML = "✓ DİYALOG TAMAMLANDI!";
+                }
+
+                fb.className = "p-2.5 rounded-xl text-xs font-game flex items-start space-x-2 bg-amber-500/20 text-amber-300 border border-amber-500/40";
+                fbIcon.className = "fa-solid fa-circle-info text-amber-400 text-base mt-0.5";
+                fbText.innerHTML = `<div><strong>DİYALOG TAMAMLANDI!</strong></div><div class="text-[11px] mt-1">${stopData.explanation}</div>`;
+                gameState.completedVideoStops.add(stopData.id);
+                updateStopCard(stopData.id, false);
+            }
+
+            contBtn.disabled = false;
+            contBtn.className = "bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-4 py-2 rounded-xl font-game font-bold text-xs sm:text-sm transition-all flex items-center space-x-2 shadow-lg glow-amber cursor-pointer";
+
+            // Automatically close modal and resume video after 2.5 seconds
+            setTimeout(() => {
+                resumeVideoFromOverlay();
+            }, 2500);
+        }
+
+        function updateStopCard(stopId, isSuccess) {
+            const card = document.getElementById(`stopCard${stopId}`);
+            const status = document.getElementById(`stopStatus${stopId}`);
+            if (isSuccess) {
+                card.className = "p-3 rounded-xl border border-emerald-500/50 bg-emerald-500/10 flex items-center space-x-3";
+                status.className = "text-[11px] font-game font-bold text-emerald-400";
+                status.innerText = "✓ Tamamlandı";
+            } else {
+                card.className = "p-3 rounded-xl border border-amber-500/50 bg-amber-500/10 flex items-center space-x-3";
+                status.className = "text-[11px] font-game font-bold text-amber-400";
+                status.innerText = "✓ Tamamlandı";
+            }
+        }
+
+        function resumeVideoFromOverlay() {
+            const overlay = document.getElementById('videoQuestionOverlay');
+            if (overlay) overlay.classList.add('hidden');
+            const video = document.getElementById('interactiveVideo');
+            if (video && video.paused) {
+                video.play();
+            }
+        }
+
+        function switchStage(stageNum) {
+            document.getElementById('stage1').classList.add('hidden');
+            document.getElementById('stage2').classList.add('hidden');
+            document.getElementById('stage3').classList.add('hidden');
+
+            for (let i = 1; i <= 2; i++) {
+                const btn = document.getElementById(`tabBtn${i}`);
+                if (btn) btn.className = "flex-1 py-3 px-3 rounded-xl font-game font-bold text-xs sm:text-sm transition-all duration-300 bg-slate-800/80 text-slate-400 hover:bg-slate-700 flex items-center justify-center space-x-2 cursor-pointer";
+            }
+
+            if (stageNum <= 2) {
+                const activeBtn = document.getElementById(`tabBtn${stageNum}`);
+                if (activeBtn) activeBtn.className = "flex-1 py-3 px-3 rounded-xl font-game font-bold text-xs sm:text-sm transition-all duration-300 bg-amber-500 text-slate-950 glow-amber flex items-center justify-center space-x-2 cursor-pointer";
+            }
+
+            document.getElementById(`stage${stageNum}`).classList.remove('hidden');
+
+            if (stageNum === 2) {
+                document.getElementById('stage2').classList.add('flex');
+            } else if (stageNum === 3) {
+                document.getElementById('stage3').classList.add('flex');
+                updateFinalSummary();
+                triggerFullCelebration();
+            }
+        }
+
+        function updateGlobalScore(points) {
+            gameState.score += points;
+            document.getElementById('globalScore').innerText = `${gameState.score} XP`;
+        }
+
+        function updateFinalSummary() {
+            document.getElementById('finalScore').innerText = `${gameState.score} XP`;
+            const totalDone = gameState.completedRoutines.size + gameState.completedVideoStops.size;
+            document.getElementById('finalStopsCount').innerText = `${totalDone} / 4`;
+        }
+
+        function checkAllTasksComplete() {
+            const stage1Done = gameState.completedRoutines.size === dialogueScenarios.length;
+            const stage2Done = gameState.completedVideoStops.size === videoStops.length;
+            if (stage1Done && stage2Done) {
+                setTimeout(() => {
+                    triggerFullCelebration();
+                }, 600);
+            }
+        }
+
+        function triggerFullCelebration() {
+            triggerConfetti();
+            playFanfareSound();
+
+            const modal = document.getElementById('congratulationsModal');
+            if (modal) {
+                document.getElementById('modalScore').innerText = `${gameState.score} XP`;
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    const inner = modal.firstElementChild;
+                    if (inner) {
+                        inner.classList.remove('scale-95');
+                        inner.classList.add('scale-100');
+                    }
+                }, 50);
+            }
+        }
+
+        function playFanfareSound() {
+            if (!gameState.soundEnabled) return;
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtx) return;
+                const ctx = new AudioCtx();
+
+                const notes = [523.25, 659.25, 783.99, 1046.50];
+                notes.forEach((freq, i) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.12);
+                    gain.gain.setValueAtTime(0.15, ctx.currentTime + i * 0.12);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.12 + 0.4);
+                    osc.start(ctx.currentTime + i * 0.12);
+                    osc.stop(ctx.currentTime + i * 0.12 + 0.4);
+                });
+            } catch (e) { }
+        }
+
+        function closeCongratulationModal() {
+            const modal = document.getElementById('congratulationsModal');
+            if (modal) {
+                modal.classList.add('hidden');
+            }
+        }
+
+        function triggerConfetti() {
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 150,
+                    spread: 90,
+                    origin: { y: 0.6 }
+                });
+            }
+        }
+
+        function restartApp() {
+            location.reload();
+        }
+
+        // Initialize application on DOM ready
+        document.addEventListener('DOMContentLoaded', () => {
+            setupVideoLogic();
+        });
+    </script>
+
+</body>
+
+</html>
