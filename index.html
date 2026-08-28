@@ -608,6 +608,20 @@
             {
                 id: 1,
                 name: "İlk Dersim, İlk Heyecanım",
+                description: "Öğrenciler, selamlaşma ifadelerini kullanır, kavanozdan rastgele seçtikleri sorular üzerinden kendilerini tanıtır.",
+                icon: "materyal.png",
+                tema: "Merhaba",
+                yas: "Tüm Yaş Grupları",
+                seviye: "Başlangıç",
+                beceri: "Sözlü Beceriler (Dinleme-Konuşma)",
+                planlanan_tarih: "21-27 Eylül",
+                scormPath: "scorm/buzkirma2.zip",
+                previewUrl: "preview/buzkirma2/index.html",
+                sunumPath: "pptx/1.pptx"
+            },
+            {
+                id: 2,
+                name: "İlk Dersim, İlk Heyecanım",
                 description: "Öğrenciler, ilk dersin buz kırma etkinliğinde etkileşimli çark aracılığıyla Türk kültürüne ait birikimlerini paylaşarak kendini Türkçe ifade eder.",
                 icon: "materyal.png",
                 tema: "Merhaba",
@@ -619,7 +633,7 @@
                 previewUrl: "preview/buzkirma/index.html",
                 sunumPath: "pptx/1.pptx"
             }, {
-                id: 2,
+                id: 3,
                 name: "Her Buluşma Bir Selamla Başlar",
                 description: "Öğrenci, Türk kültüründeki selamlaşma biçimlerini tanır ve farklı durumlarda uygun selamlaşma ifadelerini kullanır.",
                 icon: "materyal.png",
@@ -632,7 +646,7 @@
                 previewUrl: "preview/1.haftaa1/index.html",
                 sunumPath: "pptx/1.pptx"
             }, {
-                id: 3,
+                id: 4,
                 name: "Her Buluşma Bir Selamla Başlar",
                 description: "Öğrenci, Türk kültüründeki selamlaşma biçimlerini tanır ve farklı durumlarda uygun selamlaşma ifadelerini kullanır.",
                 icon: "materyal.png",
@@ -646,7 +660,7 @@
                 sunumPath: "pptx/1.pptx"
             },
             {
-                id: 4,
+                id: 5,
                 name: "Her Buluşma Bir Selamla Başlar",
                 description: "Öğrenci, Türk kültüründeki selamlaşma biçimlerini tanır ve farklı durumlarda uygun selamlaşma ifadelerini kullanır.",
                 icon: "materyal.png",
@@ -659,7 +673,7 @@
                 previewUrl: "preview/1.haftab1/index.html",
                 sunumPath: "pptx/1.pptx"
             }, {
-                id: 5,
+                id: 6,
                 name: "Her Buluşma Bir Selamla Başlar",
                 description: "Öğrenci, Türk kültüründeki selamlaşma biçimlerini tanır ve farklı durumlarda uygun selamlaşma ifadelerini kullanır.",
                 icon: "materyal.png",
@@ -672,7 +686,7 @@
                 previewUrl: "preview/1.haftab2/index.html",
                 sunumPath: "pptx/1.pptx"
             }, {
-                id: 6,
+                id: 7,
                 name: "Her Buluşma Bir Selamla Başlar",
                 description: "Öğrenci, Türk kültüründeki selamlaşma biçimlerini tanır ve farklı durumlarda uygun selamlaşma ifadelerini kullanır.",
                 icon: "materyal.png",
@@ -816,21 +830,21 @@
         }
 
         function filterMaterials() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const temaFilter = document.getElementById('temaFilter').value;
-            const seviyeFilter = document.getElementById('seviyeFilter').value;
-            const yasFilter = document.getElementById('yasFilter').value;
-            const beceriFilter = document.getElementById('beceriFilter').value;
-            const tarihFilter = document.getElementById('tarihFilter') ? document.getElementById('tarihFilter').value : '';
+            const searchTerm = document.getElementById('searchInput').value.toLocaleLowerCase('tr');
+            const temaFilter = document.getElementById('temaFilter').value.toLocaleLowerCase('tr');
+            const seviyeFilter = document.getElementById('seviyeFilter').value.toLocaleLowerCase('tr');
+            const yasFilter = document.getElementById('yasFilter').value.toLocaleLowerCase('tr');
+            const beceriFilter = document.getElementById('beceriFilter').value.toLocaleLowerCase('tr');
+            const tarihFilter = document.getElementById('tarihFilter') ? document.getElementById('tarihFilter').value.toLocaleLowerCase('tr') : '';
 
             filteredMaterials = materials.filter(material => {
-                const matchesSearch = material.name.toLowerCase().includes(searchTerm) ||
-                    material.description.toLowerCase().includes(searchTerm);
-                const matchesTema = !temaFilter || material.tema === temaFilter;
-                const matchesSeviye = !seviyeFilter || material.seviye === seviyeFilter;
-                const matchesYas = !yasFilter || material.yas === yasFilter || material.yas === 'Tüm Yaş Grupları';
-                const matchesBeceri = !beceriFilter || material.beceri.includes(beceriFilter);
-                const matTarih = material.planlanan_tarih || material.tarih;
+                const matchesSearch = material.name.toLocaleLowerCase('tr').includes(searchTerm) ||
+                    material.description.toLocaleLowerCase('tr').includes(searchTerm);
+                const matchesTema = !temaFilter || (material.tema && material.tema.toLocaleLowerCase('tr') === temaFilter);
+                const matchesSeviye = !seviyeFilter || (material.seviye && material.seviye.toLocaleLowerCase('tr') === seviyeFilter);
+                const matchesYas = !yasFilter || (material.yas && (material.yas.toLocaleLowerCase('tr').includes(yasFilter) || material.yas === 'Tüm Yaş Grupları'));
+                const matchesBeceri = !beceriFilter || (material.beceri && material.beceri.toLocaleLowerCase('tr').includes(beceriFilter));
+                const matTarih = (material.planlanan_tarih || material.tarih || '').toLocaleLowerCase('tr');
                 const matchesTarih = !tarihFilter || matTarih === tarihFilter;
 
                 return matchesSearch && matchesTema && matchesSeviye && matchesYas && matchesBeceri && matchesTarih;
