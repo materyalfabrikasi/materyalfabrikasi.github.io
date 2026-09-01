@@ -1,0 +1,671 @@
+<!doctype html>
+<html lang="tr">
+
+<head>
+  <script>window["__codeletBootstrap__"] = JSON.parse('{"A":"A","B":"20260828-05-5fe3063","C":{"Abril Fatface":"YACgEZbkUVE,0","Alfa Slab One":"YACgEYS9sJU,0","Anton":"YACgEcYqQ-A,0","Archivo":"YAHO2-t-jNE,0","Arial":"YAGyDvJ_4Ts,0","Bebas Neue":"YACgESME5ew,0","Bricolage Grotesque":"YAFyMcdwzpc,0","Canva Sans":"YAFLd8sKbwc,2","Caveat":"YALBs2ploWQ,0","Comic Sans MS":"YAHO2VMiyZo,0","Cormorant Garamond":"YAFdJhX-538,0","Courier New":"YAGzXiGs0_8,0","DM Sans":"YAD1aU3sLnI,0","DM Serif Display":"YAD1aYG82rc,0","Forum":"YACgEcnnqB4,0","Fraunces":"YAEul-FRQw4,0","Georgia":"YAGzXkO0pEM,0","Helvetica Neue":"YAFcf6CtJfI,0","Impact":"YAFcfnjI7Vk,0","Inter":"YAFdJvSyp_k,3","Iowan Old Style":"YAGNIFa8j9o,0","Jacques Francois":"YAHO2a5g66Q,0","JetBrains Mono":"YAFdJksXcAk,0","Libre Baskerville":"YACgEUFdPdA,0","Manrope":"YAHO2b2feC4,0","Merriweather":"YACgEXvHxxs,0","Montserrat":"YADLjI9qxTA,0","Nunito":"YACgEX8C5Gg,0","Oleo Script":"YACgEQQ14jI,0","Phantom Sans":"YAHO2E8Pb88,0","Playfair Display":"YACgEYmuCJE,0","Poppins":"YAFdJjbTu24,1","Press Start 2P":"YAFyGr-8pmQ,0","Quicksand":"YADWjpfPmdk,0","Raleway":"YACgEVg3xZg,0","Segoe UI":"YAHNdRD1Klw,0","Source Sans 3":"YAG4lO1Mj10,0","Spectral":"YAHO2rVUHIM,0","Times New Roman":"YAGzXW3gftg,0","Times":"YAGzXW3gftg,0","Ubuntu":"YACgERDU--Q,0","Work Sans":"YAGXhLOKv44,0","Yellowtail":"YACgEYG4kG4,0","ui-monospace":"YADlN8CFZ8Q,0","ui-sans-serif":"YACkoN-xg4g,0"}}');</script>
+  <script src="/_sdk/50d846425a1e5082.telemetry_sdk.js"
+    integrity="sha512-Otbex+ztlVbcEGql0rXGd/3E3ee/hqAntg6DeuUEMG6pIPbXGOSvZbFZVzknAXi1tH/itQ+ijEhOTr2aWj6CXg=="></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>İlk Dersim, İlk Heyecanım</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Fredoka:wght@500;600;700&amp;display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --ink: #17324d;
+      --blue: #1479ad;
+      --yellow: #f9be2e;
+      --pink: #e71d73;
+      --green: #397f53;
+      --paper: #fffdf7;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      width: 100%;
+      min-height: 100%;
+      color: var(--ink);
+      font-family: "DM Sans", sans-serif;
+      background: #eaf6fb;
+    }
+
+    .game-root {
+      width: 100%;
+      min-height: calc(100 * min(var(--vh, 1vh), 1vh));
+      overflow: hidden;
+      position: relative;
+      background:
+        radial-gradient(circle at 7% 8%, rgba(249, 190, 46, .24) 0 100px, transparent 101px),
+        radial-gradient(circle at 94% 88%, rgba(231, 29, 115, .13) 0 160px, transparent 161px),
+        linear-gradient(135deg, #eaf7fb 0%, #fdfcf6 56%, #fff2c9 100%);
+    }
+
+    .game-root::before,
+    .game-root::after {
+      content: "";
+      position: absolute;
+      pointer-events: none;
+      opacity: .5;
+    }
+
+    .game-root::before {
+      width: 190px;
+      height: 190px;
+      top: 17%;
+      left: -80px;
+      border: 20px solid rgba(20, 121, 173, .12);
+      transform: rotate(25deg);
+    }
+
+    .game-root::after {
+      width: 145px;
+      height: 145px;
+      top: 10%;
+      right: -50px;
+      background: rgba(249, 190, 46, .18);
+      transform: rotate(32deg);
+    }
+
+    .title-font {
+      font-family: "Fredoka", sans-serif;
+    }
+
+    .main-frame {
+      width: 100%;
+      min-height: calc(100 * min(var(--vh, 1vh), 1vh));
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      z-index: 1;
+    }
+
+    .game-view {
+      display: none;
+      flex: 1;
+      align-items: center;
+      justify-content: center;
+      animation: pageEnter .35s ease both;
+    }
+
+    .game-view.active {
+      display: flex;
+    }
+
+    .game-panel {
+      width: min(100%, 1050px);
+      border: 1px solid rgba(23, 50, 77, .12);
+      border-radius: 30px;
+      background: rgba(255, 253, 247, .96);
+      box-shadow: 0 20px 55px rgba(31, 74, 103, .16);
+    }
+
+    .step-dot {
+      width: 14px;
+      height: 14px;
+      border: 2px solid #a9c2d1;
+      border-radius: 999px;
+      background: #fff;
+      transition: all .25s ease;
+    }
+
+    .step-dot.active {
+      width: 36px;
+      border-color: var(--blue);
+      background: var(--blue);
+    }
+
+    .step-dot.done {
+      border-color: var(--green);
+      background: var(--green);
+    }
+
+    .choice-card {
+      height: 160px;
+      overflow: hidden;
+      position: relative;
+      border: 3px solid transparent;
+      transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    }
+
+    .culture-option {
+      height: 200px;
+    }
+
+    .choice-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 26px rgba(23, 50, 77, .17);
+    }
+
+    .choice-card.selected {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 4px rgba(20, 121, 173, .17), 0 15px 26px rgba(23, 50, 77, .15);
+    }
+
+    .choice-card.selected .selected-mark {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .card-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .culture-image {
+      height: 100%;
+    }
+
+    .photo-overlay {
+      position: absolute;
+      inset: auto 0 0;
+      height: 54%;
+      pointer-events: none;
+      background: linear-gradient(transparent, rgba(11, 35, 54, .84));
+    }
+
+    .selected-mark {
+      display: grid;
+      place-items: center;
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      z-index: 2;
+      width: 38px;
+      height: 38px;
+      color: #fff;
+      border-radius: 50%;
+      background: var(--blue);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, .22);
+      opacity: 0;
+      transform: scale(.7);
+      transition: .18s ease;
+    }
+
+    .feedback-box {
+      min-height: 58px;
+      opacity: 0;
+      transform: translateY(5px);
+      transition: .2s ease;
+      pointer-events: none;
+    }
+
+    .feedback-box.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .continue-button {
+      transition: transform .18s ease, opacity .18s ease, box-shadow .18s ease;
+    }
+
+    .continue-button:not(:disabled):hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 18px rgba(23, 50, 77, .2);
+    }
+
+    .continue-button:disabled {
+      cursor: not-allowed;
+      opacity: .45;
+    }
+
+    button:focus-visible {
+      outline: 4px solid var(--ink);
+      outline-offset: 4px;
+    }
+
+    @keyframes pageEnter {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .game-root {
+        overflow-y: auto;
+      }
+
+      .main-frame {
+        min-height: auto;
+      }
+
+      .game-view {
+        align-items: flex-start;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: .001ms !important;
+        transition-duration: .001ms !important;
+      }
+    }
+  </style>
+  <script src="/_sdk/b3bf9e8ac58e6ad6.data_sdk.js" type="text/javascript"
+    integrity="sha512-otc1u9NYq9Ms5Jt//7vmhrrqR5CLPr8Jdgs6741gqniClfLMcfmC+jK/cKuQdhLv6G0esJ/FzaMS9tv0T/vj/Q=="></script>
+  <script src="/_sdk/a6de989e8af05ea5.resizing_sdk.js" type="text/javascript"
+    integrity="sha512-cceAQMIleYr/3eg7o5WzN46w0HpgI1sxi+5kDUb7CmTjHEpgBtINDxtOpnNeUtujjui8NG0OSDgUMl0/E2lT2A=="></script>
+</head>
+
+<body data-template-id="__page-root">
+  <div class="game-root">
+    <div class="main-frame px-4 py-4 sm:px-7 sm:py-6">
+      <header class="mx-auto flex w-full max-w-6xl items-center justify-between gap-4">
+        <div>
+          <p data-template-id="game-kicker"
+            class="canva-text text-sm font-bold uppercase tracking-[0.16em] text-[#1479ad]">Türkçe ve Türk kültürü dersi
+          </p>
+          <h1 data-template-id="game-title"
+            class="canva-text title-font mt-1 text-3xl font-bold leading-tight text-[#17324d] sm:text-4xl">İlk Dersim,
+            İlk Heyecanım</h1>
+        </div>
+        <div class="flex items-center gap-2" aria-label="Oyun ilerlemesi"><span class="step-dot active"
+            data-step-dot="1"></span> <span class="step-dot" data-step-dot="2"></span> <span class="step-dot"
+            data-step-dot="3"></span>
+        </div>
+      </header>
+      <main class="flex flex-1 flex-col justify-center py-4 sm:py-6">
+        <section id="intro-view" class="game-view active" aria-labelledby="intro-title">
+          <div data-template-id="intro-panel" class="canva-panel game-panel overflow-hidden">
+            <div class="grid md:grid-cols-[1fr_.9fr]">
+              <div class="flex flex-col justify-center p-7 sm:p-10">
+                <div class="mb-5 grid h-14 w-14 place-items-center rounded-2xl bg-[#f9be2e] text-[#17324d]"><i
+                    data-lucide="sparkles" aria-hidden="true"></i>
+                </div>
+                <p data-template-id="intro-kicker"
+                  class="canva-text text-sm font-bold uppercase tracking-[0.12em] text-[#1479ad]">Ülkem Yanımda</p>
+                <h2 id="intro-title" data-template-id="intro-title-text"
+                  class="canva-text title-font mt-2 text-3xl font-bold text-[#17324d]">Ülkem Yanımda’ya Hoş Geldin!</h2>
+                <p data-template-id="intro-text" class="canva-text mt-4 text-lg leading-relaxed text-[#49667a]">Birlikte
+                  Türkçe öğreneceğiz. Türk kültürünü tanıyacağız.</p>
+                <div data-template-id="intro-note" class="canva-banner mt-5 rounded-2xl bg-[#e4f4eb] px-4 py-4">
+                  <p data-template-id="intro-note-text" class="canva-text font-semibold leading-relaxed text-[#225d3a]">
+                    Önce tanıtım videosunu izle. Sonra duygunu söyle. Seçimlerini yap. Yeni Türkçe kelimeler öğren.</p>
+                </div><button id="start-game-button" data-template-id="start-game-button"
+                  class="canva-button continue-button mt-7 inline-flex w-fit items-center gap-2 rounded-xl bg-[#1479ad] px-6 py-3 font-bold text-white"
+                  type="button"> <span>Oyuna Başla</span> <i data-lucide="arrow-right" aria-hidden="true"></i> </button>
+              </div>
+              <div class="min-h-[280px] bg-[#17324d] flex items-center justify-center">
+                <video data-template-id="intro-video" class="h-full min-h-[280px] w-full object-contain" controls
+                  preload="metadata">
+                  <source src="tanitim.mp4" type="video/mp4">
+                  Tarayıcınız video etiketini desteklemiyor.
+                </video>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section id="feeling-view" class="game-view" aria-labelledby="feeling-title">
+          <div data-template-id="feeling-panel" class="canva-panel game-panel p-5 sm:p-8">
+            <div class="mb-6 flex items-start gap-4">
+              <div class="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-[#f9be2e] text-[#17324d]"><i
+                  data-lucide="heart-handshake" aria-hidden="true"></i>
+              </div>
+              <div>
+                <p data-template-id="feeling-stage"
+                  class="canva-text text-sm font-bold uppercase tracking-[0.12em] text-[#a06a00]">1. adım</p>
+                <h2 id="feeling-title" data-template-id="feeling-title-text"
+                  class="canva-text title-font mt-1 text-3xl font-bold text-[#17324d]">Nasıl hissediyorum?</h2>
+                <p data-template-id="feeling-help"
+                  class="canva-text mt-2 max-w-2xl text-lg leading-relaxed text-[#49667a]">Bugün nasıl
+                  hissediyorsun? Bir fotoğraf seç. Duygunu Türkçe söyle.</p>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-3 sm:grid-cols-5"><button type="button"
+                class="choice-card feeling-option rounded-2xl bg-white text-left shadow-sm" data-feeling="mutlu"
+                aria-pressed="false"> <img class="card-image" loading="lazy"
+                  src="https://images.pexels.com/photos/1912868/pexels-photo-1912868.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800"
+                  alt="Gülümseyen mutlu çocuk">
+                <div class="photo-overlay"></div><span class="selected-mark"><i data-lucide="check"
+                    aria-hidden="true"></i></span> <span
+                  class="absolute bottom-3 left-3 z-10 font-bold text-white">Mutlu</span>
+              </button> <button type="button"
+                class="choice-card feeling-option rounded-2xl bg-white text-left shadow-sm" data-feeling="uzgun"
+                aria-pressed="false"> <img class="card-image" loading="lazy"
+                  src="https://images.pexels.com/photos/7743433/pexels-photo-7743433.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800"
+                  alt="Üzgün görünen çocuk">
+                <div class="photo-overlay"></div><span class="selected-mark"><i data-lucide="check"
+                    aria-hidden="true"></i></span> <span
+                  class="absolute bottom-3 left-3 z-10 font-bold text-white">Üzgün</span>
+              </button> <button type="button"
+                class="choice-card feeling-option rounded-2xl bg-white text-left shadow-sm" data-feeling="kizgin"
+                aria-pressed="false"> <img class="card-image" loading="lazy"
+                  src="file:///Users/esmatokcantekin/.gemini/antigravity/brain/d3fc1e08-3597-4e54-9391-5f01b2a8c14a/kizgin_cocuk_1788248441678.png"
+                  alt="Kollarını kavuşturmuş kızgın Türk çocuğu">
+                <div class="photo-overlay"></div><span class="selected-mark"><i data-lucide="check"
+                    aria-hidden="true"></i></span> <span
+                  class="absolute bottom-3 left-3 z-10 font-bold text-white">Kızgın</span>
+              </button> <button type="button"
+                class="choice-card feeling-option rounded-2xl bg-white text-left shadow-sm" data-feeling="saskin"
+                aria-pressed="false"> <img class="card-image" loading="lazy"
+                  src="https://images.pexels.com/photos/764340/pexels-photo-764340.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800"
+                  alt="Şaşırmış çocuk portresi">
+                <div class="photo-overlay"></div><span class="selected-mark"><i data-lucide="check"
+                    aria-hidden="true"></i></span> <span
+                  class="absolute bottom-3 left-3 z-10 font-bold text-white">Şaşkın</span>
+              </button> <button type="button"
+                class="choice-card feeling-option col-span-2 rounded-2xl bg-white text-left shadow-sm sm:col-span-1"
+                data-feeling="korkmus" aria-pressed="false"> <img class="card-image" loading="lazy"
+                  src="https://images.pexels.com/photos/4681361/pexels-photo-4681361.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800"
+                  alt="Ellerini yüzüne götürmüş endişeli çocuk">
+                <div class="photo-overlay"></div><span class="selected-mark"><i data-lucide="check"
+                    aria-hidden="true"></i></span> <span
+                  class="absolute bottom-3 left-3 z-10 font-bold text-white">Korkmuş</span>
+              </button>
+            </div>
+            <div class="mt-6 flex flex-col items-center justify-between gap-3 sm:flex-row">
+              <p id="feeling-feedback"
+                class="feedback-box rounded-xl bg-[#e3f4ec] px-4 py-3 font-semibold text-[#225d3a]" aria-live="polite">
+              </p><button id="feeling-next" data-template-id="feeling-next-button"
+                class="canva-button continue-button inline-flex items-center gap-2 rounded-xl bg-[#1479ad] px-6 py-3 font-bold text-white"
+                type="button" disabled> İleri <i data-lucide="arrow-right" aria-hidden="true"></i> </button>
+            </div>
+          </div>
+        </section>
+        <section id="choice-view" class="game-view" aria-labelledby="choice-title">
+          <div data-template-id="choice-panel" class="canva-panel game-panel p-5 sm:p-8">
+            <div class="mb-6 flex items-start justify-between gap-4">
+              <div class="flex items-start gap-4">
+                <div class="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-[#e71d73] text-white"><i
+                    data-lucide="mouse-pointer-click" aria-hidden="true"></i>
+                </div>
+                <div>
+                  <p data-template-id="choice-stage"
+                    class="canva-text text-sm font-bold uppercase tracking-[0.12em] text-[#c21861]">2. adım</p>
+                  <h2 id="choice-title" data-template-id="choice-title-text"
+                    class="canva-text title-font mt-1 text-3xl font-bold text-[#17324d]">Bu mu, şu mu?</h2>
+                  <p data-template-id="choice-help" class="canva-text mt-2 text-lg leading-relaxed text-[#49667a]">İki
+                    seçenekten birini seç. Seçimini yüksek sesle söyle.</p>
+                </div>
+              </div><span id="round-counter"
+                class="rounded-full bg-[#edf6fa] px-3 py-2 text-sm font-bold text-[#17324d]" aria-live="polite">1 /
+                4</span>
+            </div>
+            <div class="mb-5 flex items-center gap-3">
+              <div class="h-2 flex-1 overflow-hidden rounded-full bg-[#e1ebf0]">
+                <div id="choice-progress" class="h-full rounded-full bg-[#1479ad] transition-all duration-300"
+                  style="width: 25%"></div>
+              </div>
+            </div>
+            <div id="round-1" class="choice-round">
+              <h3 class="title-font mb-4 text-center text-2xl font-bold text-[#17324d]">Hangisini seçersin?</h3>
+              <div class="grid gap-5 sm:grid-cols-2"><button type="button"
+                  class="choice-card culture-option rounded-3xl bg-white text-left shadow-sm" data-round="1"
+                  data-choice="baklava" aria-pressed="false"> <img class="card-image culture-image" loading="lazy"
+                    src="https://images.pexels.com/photos/37347581/pexels-photo-37347581.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800"
+                    alt="Gaziantep pastanesinde geleneksel Türk baklavaları">
+                  <div class="photo-overlay"></div><span class="selected-mark"><i data-lucide="check"
+                      aria-hidden="true"></i></span> <span
+                    class="absolute bottom-4 left-5 z-10 text-xl font-bold text-white">Baklava</span>
+                </button> <button type="button"
+                  class="choice-card culture-option rounded-3xl bg-white text-left shadow-sm" data-round="1"
+                  data-choice="lokum" aria-pressed="false"> <img class="card-image culture-image" loading="lazy"
+                    src="https://images.pexels.com/photos/9923741/pexels-photo-9923741.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800"
+                    alt="Renkli Türk lokumları">
+                  <div class="photo-overlay"></div><span class="selected-mark"><i data-lucide="check"
+                      aria-hidden="true"></i></span> <span
+                    class="absolute bottom-4 left-5 z-10 text-xl font-bold text-white">Lokum</span>
+                </button>
+              </div>
+            </div>
+            <div id="round-2" class="choice-round hidden">
+              <h3 class="title-font mb-4 text-center text-2xl font-bold text-[#17324d]">Hangisini içmek istersin?</h3>
+              <div class="grid gap-5 sm:grid-cols-2"><button type="button"
+                  class="choice-card culture-option rounded-3xl bg-white text-left shadow-sm" data-round="2"
+                  data-choice="cay" aria-pressed="false"> <img class="card-image culture-image" loading="lazy"
+                    src="file:///Users/esmatokcantekin/.gemini/antigravity/brain/d3fc1e08-3597-4e54-9391-5f01b2a8c14a/cay_bardagi_1788248652530.png"
+                    alt="İnce belli bardakta Türk çayı">
+                  <div class="photo-overlay"></div><span class="selected-mark"><i data-lucide="check"
+                      aria-hidden="true"></i></span> <span
+                    class="absolute bottom-4 left-5 z-10 text-xl font-bold text-white">Çay</span>
+                </button> <button type="button"
+                  class="choice-card culture-option rounded-3xl bg-white text-left shadow-sm" data-round="2"
+                  data-choice="ayran" aria-pressed="false"> <img class="card-image culture-image" loading="lazy"
+                    src="file:///Users/esmatokcantekin/.gemini/antigravity/brain/d3fc1e08-3597-4e54-9391-5f01b2a8c14a/ayran_bardagi_1788248674505.png"
+                    alt="Köpüklü ayran bardağı">
+                  <div class="photo-overlay"></div><span class="selected-mark"><i data-lucide="check"
+                      aria-hidden="true"></i></span> <span
+                    class="absolute bottom-4 left-5 z-10 text-xl font-bold text-white">Ayran</span>
+                </button>
+              </div>
+            </div>
+            <div id="round-3" class="choice-round hidden">
+              <h3 class="title-font mb-4 text-center text-2xl font-bold text-[#17324d]">Hangisini görmek istersin?</h3>
+              <div class="grid gap-5 sm:grid-cols-2"><button type="button"
+                  class="choice-card culture-option rounded-3xl bg-white text-left shadow-sm" data-round="3"
+                  data-choice="vankedisi" aria-pressed="false"> <img class="card-image culture-image" loading="lazy"
+                    src="https://images.pexels.com/photos/31596558/pexels-photo-31596558.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800"
+                    alt="Farklı renk gözlü Türk Van kedisi">
+                  <div class="photo-overlay"></div><span class="selected-mark"><i data-lucide="check"
+                      aria-hidden="true"></i></span> <span
+                    class="absolute bottom-4 left-5 z-10 text-xl font-bold text-white">Van kedisi</span>
+                </button> <button type="button"
+                  class="choice-card culture-option rounded-3xl bg-white text-left shadow-sm" data-round="3"
+                  data-choice="kangal" aria-pressed="false"> <img class="card-image culture-image" loading="lazy"
+                    src="https://images.pexels.com/photos/13895939/pexels-photo-13895939.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800"
+                    alt="Açık alanda uzanan Kangal köpeği">
+                  <div class="photo-overlay"></div><span class="selected-mark"><i data-lucide="check"
+                      aria-hidden="true"></i></span> <span
+                    class="absolute bottom-4 left-5 z-10 text-xl font-bold text-white">Kangal</span>
+                </button>
+              </div>
+            </div>
+            <div id="round-4" class="choice-round hidden">
+              <h3 class="title-font mb-4 text-center text-2xl font-bold text-[#17324d]">Hangisini yemek istersin?</h3>
+              <div class="grid gap-5 sm:grid-cols-2"><button type="button"
+                  class="choice-card culture-option rounded-3xl bg-white text-left shadow-sm" data-round="4"
+                  data-choice="simit" aria-pressed="false"> <img class="card-image culture-image" loading="lazy"
+                    src="file:///Users/esmatokcantekin/.gemini/antigravity/brain/d3fc1e08-3597-4e54-9391-5f01b2a8c14a/simit_1788248256991.png"
+                    alt="Çıtır çıtır taze Türk simidi">
+                  <div class="photo-overlay"></div><span class="selected-mark"><i data-lucide="check"
+                      aria-hidden="true"></i></span> <span
+                    class="absolute bottom-4 left-5 z-10 text-xl font-bold text-white">Simit</span>
+                </button> <button type="button"
+                  class="choice-card culture-option rounded-3xl bg-white text-left shadow-sm" data-round="4"
+                  data-choice="lahmacun" aria-pressed="false"> <img class="card-image culture-image" loading="lazy"
+                    src="file:///Users/esmatokcantekin/.gemini/antigravity/brain/d3fc1e08-3597-4e54-9391-5f01b2a8c14a/lahmacun_1788248278529.png"
+                    alt="Çıtır çıtır sıcak lahmacun">
+                  <div class="photo-overlay"></div><span class="selected-mark"><i data-lucide="check"
+                      aria-hidden="true"></i></span> <span
+                    class="absolute bottom-4 left-5 z-10 text-xl font-bold text-white">Lahmacun</span>
+                </button>
+              </div>
+            </div>
+            <div class="mt-5 flex flex-col items-center justify-between gap-3 sm:flex-row">
+              <p id="choice-feedback"
+                class="feedback-box rounded-xl bg-[#fff1c8] px-4 py-3 font-semibold text-[#714b00]" aria-live="polite">
+              </p><button id="choice-next" data-template-id="choice-next-button"
+                class="canva-button continue-button inline-flex items-center gap-2 rounded-xl bg-[#e71d73] px-6 py-3 font-bold text-white"
+                type="button" disabled> İleri <i data-lucide="arrow-right" aria-hidden="true"></i> </button>
+            </div>
+          </div>
+        </section>
+        <section id="congrats-view" class="game-view" aria-labelledby="congrats-title">
+          <div data-template-id="congrats-panel" class="canva-panel game-panel overflow-hidden">
+            <div class="grid md:grid-cols-[1.05fr_.95fr]">
+              <div class="relative min-h-[280px]"><img class="absolute inset-0 h-full w-full object-cover"
+                  loading="lazy"
+                  src="file:///Users/esmatokcantekin/.gemini/antigravity/brain/d3fc1e08-3597-4e54-9391-5f01b2a8c14a/modern_sevinen_cocuklar_1788248629510.png"
+                  alt="Açık alanda sevinen modern Türk çocukları">
+              </div>
+              <div class="flex flex-col justify-center p-7 sm:p-10">
+                <div class="mb-4 grid h-14 w-14 place-items-center rounded-2xl bg-[#f9be2e] text-[#17324d]"><i
+                    data-lucide="award" aria-hidden="true"></i>
+                </div>
+                <p data-template-id="congrats-stage"
+                  class="canva-text text-sm font-bold uppercase tracking-[0.12em] text-[#a06a00]">3. adım</p>
+                <h2 id="congrats-title" data-template-id="congrats-title-text"
+                  class="canva-text title-font mt-2 text-3xl font-bold text-[#17324d]">Tebrikler!</h2>
+                <p data-template-id="congrats-text" class="canva-text mt-4 text-lg leading-relaxed text-[#49667a]">
+                  Duygunu söyledin. Seçimlerini yaptın. Yeni Türkçe kelimeler öğrendin.</p>
+                <div data-template-id="congrats-note" class="canva-banner mt-6 rounded-2xl bg-[#e4f4eb] px-4 py-4">
+                  <p class="font-semibold leading-relaxed text-[#225d3a]">Seçimlerin çok güzeldi. Bol bol Türkçe
+                    konuş. Yeni kelimeler öğren.Çevrim içi Türkçe ve Türk Kültürü derslerini kaçırma.</p>
+                </div><button id="restart-button" data-template-id="restart-button"
+                  class="canva-button continue-button mt-6 inline-flex w-fit items-center gap-2 rounded-xl bg-[#17324d] px-6 py-3 font-bold text-white"
+                  type="button"> <i data-lucide="rotate-ccw" aria-hidden="true"></i> Yeniden oyna </button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+      <footer class="mx-auto w-full max-w-6xl pt-2 text-center">
+        <p data-template-id="instruction-text" class="canva-text text-sm font-medium text-[#49667a]">Önce tanıtım
+          videosunu izle. Sonra seçimini yap. İleri düğmesine bas.</p>
+      </footer>
+    </div>
+  </div>
+  <script src="/_sdk/c6bcadf20ce5820f.editing_sdk.js"
+    integrity="sha512-LVukVCTKnKSxy98w+wCVzDAxVXBG2vy32XblXlmJD9CPFnF2/FVc75CFngl41IdXcX3sVHJc9olw64zrPM/FIA=="></script>
+  <script>
+    const state = {
+      feeling: null,
+      round: 1,
+      choices: {}
+    };
+
+    const feelingMessages = {
+      mutlu: "Mutlusun. Bu çok güzel. Şöyle söyle: Ben mutluyum.",
+      uzgun: "Bazen üzülürüz. Bu normaldir. Şöyle söyle: Ben üzgünüm.",
+      kizgin: "Bazen kızarız. Bunu saklama. Şöyle söyle: Ben kızgınım.",
+      saskin: "Bazen şaşırırız. Şöyle söyle: Ben şaşkınım.",
+      korkmus: "Bazen korkarız. Bunu ailene söyle. Şöyle de: Ben korktum."
+    };
+
+    const choiceMessages = {
+      baklava: "Baklava bir tatlıdır. Bu tatlı çok meşhurdur. Gaziantep şehri baklavası ile bilinir.",
+      lokum: "Lokum eski bir tatlıdır. Biz misafirlere lokum ikram ederiz.",
+      cay: "Biz çayı ince belli bardakta içeriz. Çay içerken sohbet ederiz.",
+      ayran: "Ayran yoğurt ile yapılır. Ayran soğuk bir içecektir. Biz yemekte ayran içeriz.",
+      vankedisi: "Van kedisi çok özeldir. Onun iki gözü farklı renktedir.",
+      kangal: "Kangal bir köpek türüdür. Kangal çok büyük ve çok güçlüdür.",
+      simit: "Simit yuvarlaktır. Simitte susam vardır. Biz sokakta simit yeriz.",
+      lahmacun: "Lahmacun çok güzel bir yemektir. Hamuru incedir. Biz lahmacunu çok severiz."
+    };
+
+    function showView(viewId, step) {
+      document.querySelectorAll(".game-view").forEach((view) => view.classList.remove("active"));
+      document.getElementById(viewId).classList.add("active");
+
+      document.querySelectorAll("[data-step-dot]").forEach((dot) => {
+        const dotStep = Number(dot.dataset.stepDot);
+        dot.classList.toggle("active", dotStep === step);
+        dot.classList.toggle("done", dotStep < step);
+      });
+    }
+
+    function setFeedback(element, message) {
+      element.textContent = message;
+      element.classList.add("show");
+    }
+
+    document.getElementById("start-game-button").addEventListener("click", () => {
+      const introVideo = document.querySelector("#intro-view video");
+      if (introVideo) introVideo.pause();
+      showView("feeling-view", 1);
+    });
+
+    document.querySelectorAll(".feeling-option").forEach((button) => {
+      button.addEventListener("click", () => {
+        document.querySelectorAll(".feeling-option").forEach((item) => {
+          item.classList.remove("selected");
+          item.setAttribute("aria-pressed", "false");
+        });
+
+        state.feeling = button.dataset.feeling;
+        button.classList.add("selected");
+        button.setAttribute("aria-pressed", "true");
+
+        setFeedback(document.getElementById("feeling-feedback"), feelingMessages[state.feeling]);
+        document.getElementById("feeling-next").disabled = false;
+      });
+    });
+
+    document.getElementById("feeling-next").addEventListener("click", () => {
+      if (state.feeling) showView("choice-view", 2);
+    });
+
+    document.querySelectorAll(".culture-option").forEach((button) => {
+      button.addEventListener("click", () => {
+        const round = Number(button.dataset.round);
+
+        document.querySelectorAll('.culture-option[data-round="' + round + '"]').forEach((item) => {
+          item.classList.remove("selected");
+          item.setAttribute("aria-pressed", "false");
+        });
+
+        state.choices[round] = button.dataset.choice;
+        button.classList.add("selected");
+        button.setAttribute("aria-pressed", "true");
+
+        setFeedback(document.getElementById("choice-feedback"), choiceMessages[button.dataset.choice]);
+        document.getElementById("choice-next").disabled = false;
+      });
+    });
+
+    document.getElementById("choice-next").addEventListener("click", () => {
+      if (!state.choices[state.round]) return;
+
+      if (state.round < 4) {
+        document.getElementById("round-" + state.round).classList.add("hidden");
+        state.round += 1;
+        document.getElementById("round-" + state.round).classList.remove("hidden");
+
+        document.getElementById("round-counter").textContent = state.round + " / 4";
+        document.getElementById("choice-progress").style.width = (state.round * 25) + "%";
+        document.getElementById("choice-feedback").classList.remove("show");
+        document.getElementById("choice-next").disabled = true;
+      } else {
+        showView("congrats-view", 3);
+      }
+    });
+
+    document.getElementById("restart-button").addEventListener("click", () => {
+      state.feeling = null;
+      state.round = 1;
+      state.choices = {};
+
+      document.querySelectorAll(".choice-card").forEach((card) => {
+        card.classList.remove("selected");
+        card.setAttribute("aria-pressed", "false");
+      });
+
+      document.querySelectorAll(".feedback-box").forEach((box) => {
+        box.textContent = "";
+        box.classList.remove("show");
+      });
+
+      document.getElementById("feeling-next").disabled = true;
+      document.getElementById("choice-next").disabled = true;
+      document.querySelectorAll(".choice-round").forEach((round) => round.classList.add("hidden"));
+      document.getElementById("round-1").classList.remove("hidden");
+      document.getElementById("round-counter").textContent = "1 / 4";
+      document.getElementById("choice-progress").style.width = "25%";
+
+      showView("intro-view", 1);
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      if (window.lucide) lucide.createIcons();
+    });
+  </script>
+</body>
+
+</html>
