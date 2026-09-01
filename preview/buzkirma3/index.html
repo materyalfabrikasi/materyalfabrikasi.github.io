@@ -134,6 +134,10 @@
       transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
     }
 
+    .feeling-option {
+      height: 220px;
+    }
+
     .culture-option {
       height: 200px;
     }
@@ -328,7 +332,7 @@
                   hissediyorsun? Bir fotoğraf seç. Duygunu Türkçe söyle.</p>
               </div>
             </div>
-            <div class="grid grid-cols-2 gap-3 sm:grid-cols-5"><button type="button"
+            <div class="grid grid-cols-2 gap-4 sm:grid-cols-4"><button type="button"
                 class="choice-card feeling-option rounded-2xl bg-white text-left shadow-sm" data-feeling="mutlu"
                 aria-pressed="false"> <img class="card-image" loading="lazy"
                   src="https://images.pexels.com/photos/1912868/pexels-photo-1912868.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800"
@@ -337,20 +341,17 @@
                     aria-hidden="true"></i></span> <span
                   class="absolute bottom-3 left-3 z-10 font-bold text-white">Mutlu</span>
               </button> <button type="button"
-                class="choice-card feeling-option rounded-2xl bg-white text-left shadow-sm" data-feeling="uzgun"
-                aria-pressed="false"> <img class="card-image" loading="lazy"
-                  src="https://images.pexels.com/photos/7743433/pexels-photo-7743433.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800"
-                  alt="Üzgün görünen çocuk">
+                class="choice-card feeling-option rounded-2xl bg-white text-left shadow-sm" data-feeling="heyecanli"
+                aria-pressed="false"> <img class="card-image" loading="lazy" src="2.png" alt="Heyecanlı çocuk">
                 <div class="photo-overlay"></div><span class="selected-mark"><i data-lucide="check"
                     aria-hidden="true"></i></span> <span
-                  class="absolute bottom-3 left-3 z-10 font-bold text-white">Üzgün</span>
+                  class="absolute bottom-3 left-3 z-10 font-bold text-white">Heyecanlı</span>
               </button> <button type="button"
-                class="choice-card feeling-option rounded-2xl bg-white text-left shadow-sm" data-feeling="kizgin"
-                aria-pressed="false"> <img class="card-image" loading="lazy" src="1.png"
-                  alt="Kollarını kavuşturmuş kızgın çocuk">
+                class="choice-card feeling-option rounded-2xl bg-white text-left shadow-sm" data-feeling="merakli"
+                aria-pressed="false"> <img class="card-image" loading="lazy" src="1.png" alt="Meraklı çocuk">
                 <div class="photo-overlay"></div><span class="selected-mark"><i data-lucide="check"
                     aria-hidden="true"></i></span> <span
-                  class="absolute bottom-3 left-3 z-10 font-bold text-white">Kızgın</span>
+                  class="absolute bottom-3 left-3 z-10 font-bold text-white">Meraklı</span>
               </button> <button type="button"
                 class="choice-card feeling-option rounded-2xl bg-white text-left shadow-sm" data-feeling="saskin"
                 aria-pressed="false"> <img class="card-image" loading="lazy"
@@ -359,14 +360,6 @@
                 <div class="photo-overlay"></div><span class="selected-mark"><i data-lucide="check"
                     aria-hidden="true"></i></span> <span
                   class="absolute bottom-3 left-3 z-10 font-bold text-white">Şaşkın</span>
-              </button> <button type="button"
-                class="choice-card feeling-option col-span-2 rounded-2xl bg-white text-left shadow-sm sm:col-span-1"
-                data-feeling="korkmus" aria-pressed="false"> <img class="card-image" loading="lazy"
-                  src="https://images.pexels.com/photos/4681361/pexels-photo-4681361.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800"
-                  alt="Ellerini yüzüne götürmüş endişeli çocuk">
-                <div class="photo-overlay"></div><span class="selected-mark"><i data-lucide="check"
-                    aria-hidden="true"></i></span> <span
-                  class="absolute bottom-3 left-3 z-10 font-bold text-white">Korkmuş</span>
               </button>
             </div>
             <div class="mt-6 flex flex-col items-center justify-between gap-3 sm:flex-row">
@@ -542,10 +535,9 @@
 
     const feelingMessages = {
       mutlu: "Mutlusun. Bu çok güzel. Şöyle söyle: Ben mutluyum.",
-      uzgun: "Bazen üzülürüz. Bu normaldir. Şöyle söyle: Ben üzgünüm.",
-      kizgin: "Bazen kızarız. Bunu saklama. Şöyle söyle: Ben kızgınım.",
-      saskin: "Bazen şaşırırız. Şöyle söyle: Ben şaşkınım.",
-      korkmus: "Bazen korkarız. Bunu ailene söyle. Şöyle de: Ben korktum."
+      heyecanli: "Heyecanlısın. Bu çok güzel. Şöyle söyle: Ben heyecanlıyım.",
+      merakli: "Meraklısın. Bu çok güzel. Şöyle söyle: Ben meraklıyım.",
+      saskin: "Bazen şaşırırız. Şöyle söyle: Ben şaşkınım."
     };
 
     const choiceMessages = {
