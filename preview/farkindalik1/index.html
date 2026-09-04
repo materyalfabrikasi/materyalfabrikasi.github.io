@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ülkem Yanımda ile Türkçe ve Türk Kültürü Derslerine Hoş Geldiniz!</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100svh; padding: 28px 20px; display: grid; place-items: center; background: radial-gradient(circle, #fffdf7, #f5ecd8); color: #594437; font-family: "Trebuchet MS", Arial, sans-serif; }
+    main { width: 100%; max-width: 1050px; text-align: center; }
+    [hidden] { display: none !important; }
+    .cover { display: block; width: auto; max-width: 100%; height: auto; max-height: max(200px, calc(100svh - 290px)); margin: 0 auto 25px; border-radius: 24px; box-shadow: 0 18px 55px #8f6c2920; }
+    #intro h1 { max-width: 960px; margin: 0 auto 24px; font-size: clamp(25px, 3.5vw, 40px); line-height: 1.25; text-wrap: balance; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+    #play { min-width: 72px; width: 72px; padding: 14px; border-radius: 50%; }
+    .eyebrow { color: #718561; font-size: 13px; font-weight: bold; letter-spacing: 3px; }
+    h1 { margin: 15px 0; font-size: clamp(32px, 7vw, 54px); line-height: 1.15; }
+    h1 span { color: #d56442; }
+    .subtitle { color: #796956; }
+    .portrait { width: min(82vw, 65svh, 520px); margin: 0 auto 28px; position: relative; }
+    .portrait img { display: block; width: 100%; border-radius: 50%; box-shadow: 0 18px 55px #8f6c2920; }
+    .bubble { position: absolute; right: -5px; top: -12px; padding: 13px 20px; border-radius: 22px 22px 22px 4px; background: white; font-size: 20px; font-weight: bold; transform: rotate(6deg); }
+    .talking img { animation: sway .7s ease-in-out infinite alternate; }
+    button { min-width: 210px; min-height: 66px; padding: 16px 30px; border: 0; border-radius: 22px; background: #cb5b39; color: white; box-shadow: 0 6px 0 #9b4028; font: bold 25px "Trebuchet MS", Arial, sans-serif; cursor: pointer; touch-action: manipulation; }
+    button:hover { background: #b64e30; }
+    button:active { transform: translateY(4px); box-shadow: 0 2px 0 #9b4028; }
+    button:focus-visible { outline: 4px solid #75956e; outline-offset: 7px; }
+    button:disabled { cursor: wait; opacity: .7; }
+    #status { min-height: 24px; margin-top: 23px; color: #796956; font-size: 15px; }
+    footer { margin-top: 30px; color: #877760; font-size: 12px; }
+    @keyframes sway { from { transform: rotate(-2deg); } to { transform: rotate(2deg) translateY(-5px); } }
+    @media (prefers-reduced-motion: reduce) { .talking img { animation: none; } }
+    /* Açılış tasarımı; Leylo ekranının stilleri değişmez. */
+    #intro { position: relative; isolation: isolate; padding: 22px clamp(18px, 4vw, 48px) 32px; border: 1px solid #fff; border-radius: 36px; background: radial-gradient(ellipse at 5% 40%, #dff4ee 0, transparent 45%), radial-gradient(ellipse at 98% 75%, #ffedd1 0, transparent 40%), #fffdf8; box-shadow: 0 24px 80px #4a716b18; }
+    .logo-band { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding-bottom: 18px; margin-bottom: 22px; border-bottom: 1px solid #d9e8e1; }
+    .meb-logo { display: block; width: 78px; height: 78px; object-fit: contain; }
+    .dildash-logo { display: block; width: 110px; height: 94px; object-fit: contain; }
+    .ulkem-logo { display: grid; place-items: center; padding: 14px 19px; background: #173f3e; border-radius: 18px; box-shadow: 0 6px 18px #173f3e14; }
+    .ulkem-logo img { display: block; width: clamp(135px, 20vw, 205px); height: auto; }
+    #intro h1 { position: relative; z-index: 1; max-width: 850px; font-size: clamp(25px, 3.3vw, 38px); color: #254f4c; font-weight: 800; letter-spacing: -.8px; margin: 0 auto 24px; line-height: 1.22; }
+    #intro h1 .title-brand { color: #bd3440; }
+    #intro h1 .welcome-line { color: #254f4c; font-size: .83em; display: block; margin-top: 8px; }
+    .photo-frame { position: relative; z-index: 1; display: table; max-width: 100%; margin: 0 auto 26px; padding: 9px; border-radius: 27px; background: #fff; box-shadow: 0 15px 40px #28524b20, 0 0 0 1px #e1eae0; transform: rotate(-.7deg); }
+    .photo-frame::before { content: ''; position: absolute; z-index: 2; width: 92px; height: 24px; top: -9px; left: 36px; transform: rotate(-12deg); background: #e9e4e3; border-radius: 2px; }
+    #intro .cover { margin: 0; border-radius: 19px; max-height: max(210px, calc(100svh - 420px)); box-shadow: none; }
+    .decoration { position: absolute; z-index: 0; pointer-events: none; user-select: none; }
+    .sparkle-one { left: 4%; top: 43%; font-size: 49px; color: #0c0d0e; transform: rotate(12deg); }
+    .sparkle-two { right: 4%; top: 66%; font-size: 35px; color: #66b8a8; transform: rotate(-12deg); }
+    .cloud-decor { right: 3%; top: 34%; width: 88px; height: 24px; background: #fff; border-radius: 30px; }
+    .cloud-decor::before { content: ''; position: absolute; left: 25px; bottom: 9px; width: 38px; height: 38px; background: #fff; border-radius: 50%; }
+    .dot-decor { left: 5%; bottom: 15%; width: 42px; height: 42px; border: 3px dotted #a4c7b5; border-radius: 50%; }
+    #start { position: relative; z-index: 1; display: inline-flex; align-items: center; justify-content: center; gap: 16px; min-width: 230px; background: #c93845; border-radius: 22px; box-shadow: 0 6px 0 #962632, 0 12px 23px #c9384524; transition: background .18s, transform .18s; }
+    #start .play-symbol { display: grid; place-items: center; width: 32px; height: 32px; padding-left: 2px; border-radius: 50%; background: #ffffff24; font-size: 16px; }
+    #start:hover { background: #b72c3a; transform: translateY(-2px); }
+    #start:active { transform: translateY(4px); box-shadow: 0 2px 0 #962632; }
+    @media (max-width: 540px) {
+      #intro { padding: 18px 14px 27px; border-radius: 25px; }
+      .logo-band { gap: 10px; margin-bottom: 20px; }
+      .meb-logo { width: 53px; height: 53px; }
+      .dildash-logo { width: 58px; height: 67px; }
+      .ulkem-logo { padding: 10px; border-radius: 12px; }
+      .ulkem-logo img { width: clamp(95px, 28vw, 140px); }
+      #intro h1 { font-size: 25px; letter-spacing: -.4px; }
+      .photo-frame { padding: 6px; border-radius: 20px; }
+      #intro .cover { border-radius: 15px; }
+      .sparkle-one, .sparkle-two, .cloud-decor { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) { #start { transition: none; } }
+    /* Referansın yeşil, siyah, sarı ve mor okul panosu tasarımı. */
+    body:has(#intro:not([hidden])) { background: #7ed64e; padding: 32px 30px 44px; }
+    #intro {
+      padding: 20px clamp(20px, 5vw, 62px) 32px;
+      border: 16px solid #e9e4e3;
+      border-radius: 0;
+      background: #fff3d6;
+      box-shadow: -12px 12px 0 #0c0d0e;
+    }
+    #intro::before { content: ''; position: absolute; inset: -16px; z-index: 0; pointer-events: none; background: linear-gradient(#0c0d0e, #0c0d0e) left top / 28px 16px no-repeat, linear-gradient(#0c0d0e, #0c0d0e) right top / 28px 16px no-repeat, linear-gradient(#0c0d0e, #0c0d0e) left bottom / 28px 16px no-repeat, linear-gradient(#0c0d0e, #0c0d0e) right bottom / 28px 16px no-repeat; }
+    .logo-band { border-bottom: 2px solid #e9e4e3; padding-bottom: 12px; margin-bottom: 20px; }
+    .ulkem-logo { background: #0c0d0e; border-radius: 5px; box-shadow: none; }
+    #intro h1 { color: #0c0d0e; font-family: "Arial Black", "Trebuchet MS", Arial, sans-serif; font-size: clamp(25px, 3.3vw, 39px); font-weight: 900; letter-spacing: -1px; line-height: 1.18; }
+    #intro h1 .title-brand { color: #0c0d0e; }
+    #intro h1 .welcome-line { color: #0c0d0e; font-size: .83em; margin-top: 10px; }
+    .photo-frame { padding: 7px; background: #e9e4e3; border: 2px solid #0c0d0e; border-radius: 0; box-shadow: 6px 6px 0 #0c0d0e; transform: none; margin-bottom: 25px; }
+    .photo-frame::before { display: none; }
+    #intro .cover { border-radius: 0; max-height: max(210px, calc(100svh - 450px)); }
+    .sparkle-one { left: auto; right: 3%; top: auto; bottom: 8%; color: #ffcc42; font-size: 58px; transform: rotate(13deg); }
+    .sparkle-two { display: none; }
+    .cloud-decor { right: 4%; top: auto; bottom: 23%; width: 43px; height: 43px; border-radius: 50%; background: #ffcc42; }
+    .cloud-decor::before { display: none; }
+    .dot-decor { display: none; }
+    .pencil-decor { left: -30px; bottom: 12%; width: 142px; height: 36px; border: 3px solid #0c0d0e; border-radius: 4px 0 0 4px; background: linear-gradient(to bottom, #ffdc71 0 25%, #ffcc42 25% 78%, #eeb431 78%); box-shadow: -4px 6px 0 #0c0d0e; transform: rotate(-36deg); }
+    .pencil-decor::before { content: ''; position: absolute; left: -24px; top: -3px; width: 26px; height: 36px; background: #0c0d0e; border: 3px solid #0c0d0e; border-radius: 9px 0 0 9px; }
+    .pencil-decor::after { content: ''; position: absolute; left: 100%; top: -3px; width: 46px; height: 36px; background: #0c0d0e; clip-path: polygon(0 0, 100% 50%, 0 100%); }
+    .pencil-wood { position: absolute; z-index: 1; left: 100%; top: 0; width: 32px; height: 30px; background: #d6a268; clip-path: polygon(0 0, 100% 50%, 0 100%); }
+    #start { background: #ffcc42; color: #0c0d0e; border: 3px solid #0c0d0e; border-radius: 8px; box-shadow: 5px 6px 0 #0c0d0e; }
+    #start .play-symbol { background: #0c0d0e; color: #fff3d6; }
+    #start:hover { background: #ffda70; transform: translateY(-2px); }
+    #start:active { transform: translate(3px, 4px); box-shadow: 2px 2px 0 #0c0d0e; }
+    #start:focus-visible { outline-color: #0c0d0e; }
+    @media (max-width: 540px) {
+      body:has(#intro:not([hidden])) { padding: 20px 16px 30px; }
+      #intro { border-width: 9px; padding: 14px 12px 26px; box-shadow: -6px 7px 0 #0c0d0e; }
+      #intro::before { inset: -9px; background-size: 20px 9px; }
+      .logo-band { gap: 8px; }
+      .ulkem-logo { padding: 8px; }
+      #intro h1 { font-size: clamp(22px, 6vw, 28px); letter-spacing: -.7px; }
+      .photo-frame { padding: 4px; box-shadow: 4px 4px 0 #0c0d0e; }
+      .pencil-decor, .cloud-decor, .sparkle-one { display: none; }
+      #start { min-width: 190px; }
+    }
+    /* Tek ekran: görsel, başlık ve logolardan kalan yüksekliği kullanır. */
+    body:has(#intro:not([hidden])) { height: 100dvh; min-height: 0; padding: 12px 18px 20px; }
+    body:has(#intro:not([hidden])) main { max-width: 1440px; height: 100%; min-height: 0; }
+    #intro { height: 100%; min-height: 0; display: grid; grid-template-rows: auto auto minmax(0, 1fr) auto; gap: 10px; padding: 10px 22px 12px; border-width: 10px; box-shadow: -7px 7px 0 #0c0d0e; }
+    #intro::before { inset: -10px; background-size: 24px 10px; }
+    #intro .logo-band { margin: 0; padding-bottom: 6px; min-height: 0; }
+    #intro .meb-logo { width: 52px; height: 52px; }
+    #intro .dildash-logo { width: 70px; height: 58px; }
+    #intro .ulkem-logo { padding: 7px 12px; }
+    #intro .ulkem-logo img { width: clamp(115px, 16vw, 170px); }
+    #intro h1 { max-width: 1150px; margin: 0; justify-self: center; font-size: clamp(21px, 2.5vw, 32px); line-height: 1.12; }
+    #intro h1 .welcome-line { display: inline; margin: 0; font-size: 1em; }
+    #intro .photo-frame { display: grid; place-items: center; container-type: size; width: 100%; height: 100%; min-height: 0; min-width: 0; margin: 0; padding: 0; border: 0; background: transparent; box-shadow: none; }
+    #intro .cover { display: block; width: min(100cqw, calc(100cqh * 1.421296)); height: min(100cqh, calc(100cqw / 1.421296)); max-height: 100%; max-width: 100%; object-fit: contain; margin: 0; border: 3px solid #0c0d0e; background: white; }
+    #intro #start { justify-self: center; min-height: 50px; min-width: 200px; padding: 7px 24px; font-size: 22px; box-shadow: 3px 4px 0 #0c0d0e; }
+    #intro .pencil-decor { left: 18px; bottom: 15%; width: 95px; transform: rotate(-36deg) scale(.9); transform-origin: left center; }
+    #intro .cloud-decor { right: 2%; width: 30px; height: 30px; }
+    #intro .sparkle-one { right: 2%; font-size: 42px; }
+    @media (max-width: 540px) {
+      body:has(#intro:not([hidden])) { padding: 8px 10px 14px; }
+      #intro { border-width: 6px; padding: 8px; gap: 8px; box-shadow: -4px 4px 0 #0c0d0e; }
+      #intro::before { inset: -6px; background-size: 18px 6px; }
+      #intro .meb-logo { width: 40px; height: 40px; }
+      #intro .dildash-logo { width: 48px; height: 44px; }
+      #intro .ulkem-logo { padding: 6px 8px; }
+      #intro .ulkem-logo img { width: 105px; }
+      #intro h1 { font-size: clamp(17px, 4.8vw, 24px); line-height: 1.14; }
+      #intro #start { min-height: 48px; font-size: 20px; }
+    }
+    @media (max-height: 500px) {
+      body:has(#intro:not([hidden])) { padding: 6px 12px 12px; }
+      #intro { padding: 5px 12px 8px; gap: 5px; border-width: 6px; }
+      #intro::before { inset: -6px; background-size: 18px 6px; }
+      #intro .meb-logo { width: 30px; height: 30px; }
+      #intro .dildash-logo { width: 38px; height: 32px; }
+      #intro .ulkem-logo { padding: 3px 8px; }
+      #intro .ulkem-logo img { width: 92px; }
+      #intro h1 { font-size: 18px; }
+      #intro #start { min-height: 44px; padding: 3px 20px; font-size: 18px; }
+      #intro #start .play-symbol { width: 26px; height: 26px; }
+      #intro .decoration { display: none; }
+    }
+    #intro { grid-template-rows: auto auto minmax(0, 1fr) auto auto; }
+    #intro .ulkem-logo { background: transparent; box-shadow: none; border: 0; border-radius: 0; }
+    #intro .welcome-bottom { position: relative; z-index: 1; justify-self: center; margin: 0; padding: 3px 12px; color: #0c0d0e; font-size: clamp(21px, 2.4vw, 30px); line-height: 1.15; font-weight: 900; transform-origin: center; animation: welcome-sway 2.2s ease-in-out infinite; }
+    @keyframes welcome-sway { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(2deg); } }
+    @media (max-height: 500px) { #intro .welcome-bottom { font-size: 18px; padding: 1px 8px; } }
+    @media (prefers-reduced-motion: reduce) { #intro .welcome-bottom { animation: none; } }
+    #intro .cover { transform-origin: center; animation: photo-sway 3.2s ease-in-out infinite; }
+    @keyframes photo-sway {
+      0%, 100% { transform: scale(.97) rotate(-.8deg); }
+      50% { transform: scale(.97) rotate(.8deg); }
+    }
+    @media (prefers-reduced-motion: reduce) { #intro .cover { animation: none; } }
+    /* Leylo ortada, dört hayvan yeri ana yönlerde. */
+    body:has(#leylo-screen:not([hidden])) { height: 100dvh; min-height: 0; padding: 16px; }
+    body:has(#leylo-screen:not([hidden])) main { max-width: none; min-height: 0; }
+    #leylo-screen { display: grid; place-items: center; }
+    .animal-board { width: min(94vw, calc(100dvh - 110px), 840px); aspect-ratio: 1; display: grid; grid-template-columns: 1fr 1.2fr 1fr; grid-template-rows: 1fr 1.2fr 1fr; grid-template-areas: '. top .' 'left center right' '. bottom .'; gap: clamp(6px, 1.4vmin, 14px); align-items: center; justify-items: center; }
+    #leylo-screen .portrait { grid-area: center; width: 100%; margin: 0; min-width: 0; }
+    #leylo-screen .portrait img { width: 100%; aspect-ratio: 1; object-fit: contain; border: 4px solid #ffcc42; box-shadow: 0 8px 24px #8f6c2920; }
+    #leylo-screen #play { position: absolute; right: 0; bottom: 0; min-width: 44px; min-height: 44px; width: clamp(44px, 7vmin, 60px); height: clamp(44px, 7vmin, 60px); padding: 4px; display: grid; place-items: center; font-size: 20px; background: #ffcc42; color: #0c0d0e; border: 2px solid #0c0d0e; box-shadow: 2px 3px 0 #0c0d0e; }
+    .animal-slot { width: 88%; aspect-ratio: 1; border: 3px dashed #b7bf9f; border-radius: 50%; background: #f2f2df; display: grid; place-items: center; color: #92997f; }
+    .animal-slot span { font: 300 clamp(28px, 5vmin, 45px) Arial, sans-serif; }
+    .slot-top { grid-area: top; }
+    .slot-left { grid-area: left; }
+    .slot-right { grid-area: right; }
+    .slot-bottom { grid-area: bottom; }
+    :is(#robot, #bird, #bear, #rabbit) { position: relative; width: 88%; height: 100%; min-width: 0; min-height: 0; padding: 0; border: 3px solid #b7bf9f; border-radius: 18px; background: #f2f2df; box-shadow: 0 5px 14px #59443718; }
+    :is(#robot, #bird, #bear, #rabbit) img { width: 100%; height: 100%; object-fit: contain; display: block; border-radius: 14px; }
+    .animal-board > * { transition: transform .3s ease, opacity .3s ease; }
+    .animal-board.has-focus > :not(.focused) { transform: scale(.9); opacity: .55; }
+    .animal-board > .focused { transform: scale(1.8); z-index: 3; }
+    .animal-board > .slot-top { transform-origin: center top; }
+    .animal-board > .slot-bottom { transform-origin: center bottom; }
+    .animal-board > .slot-right { transform-origin: right center; }
+    .animal-board > .slot-left { transform-origin: left center; }
+    #leylo-image { cursor: pointer; }
+    #leylo-image:focus-visible { outline: 3px solid #0c0d0e; outline-offset: 4px; }
+    :is(#robot, #bird, #bear, #rabbit).focused { border-color: #ffcc42; box-shadow: 0 0 22px #61c9dd55; }
+    :is(#robot, #bird, #bear, #rabbit)::after, #portrait::after { content: '★'; position: absolute; top: 0; right: 0; z-index: 5; pointer-events: none; color: #ffcc42; text-shadow: 0 2px 0 #594437; font-size: clamp(30px, 6vmin, 54px); opacity: 0; }
+    :is(#robot, #bird, #bear, #rabbit).rewarding::after, #portrait.rewarding::after { animation: reward-star 1s ease-out; }
+    :is(#robot, #bird, #bear, #rabbit).rewarding img, #portrait.rewarding img { animation: reward-hop .6s ease; }
+    @keyframes reward-star { 0% { opacity: 0; transform: scale(.4) rotate(-20deg); } 30%, 70% { opacity: 1; transform: scale(1.1) translateY(-8px) rotate(12deg); } 100% { opacity: 0; transform: scale(1.2) translateY(-15px); } }
+    @keyframes reward-hop { 0%, 100% { transform: translateY(0); } 40% { transform: translateY(-9px); } }
+    @media (prefers-reduced-motion: reduce) {
+      .animal-board > * { transition: none; }
+      :is(#robot, #bird, #bear, #rabbit).rewarding img, #portrait.rewarding img { animation: none; }
+      :is(#robot, #bird, #bear, #rabbit).rewarding::after, #portrait.rewarding::after { animation: none; opacity: 1; }
+    }
+    body:has(:is(#video-screen, #next-video-screen):not([hidden])) { height: 100dvh; min-height: 0; padding: 16px; }
+    body:has(#video-screen:not([hidden])) main { height: 100%; max-width: none; min-height: 0; }
+    #video-screen, #next-video-screen { display: grid; place-items: center; height: 100%; min-height: 0; grid-template-rows: minmax(0, 1fr) auto auto; gap: 10px; }
+    #merhaba-video, #next-video { display: block; width: 85%; height: 85%; min-height: 0; object-fit: contain; background: #fff4d8; border-radius: 12px; }
+    .video-actions { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+    .video-actions button { min-width: 0; min-height: 44px; padding: 10px 18px; font-size: 18px; background: #ffcc42; color: #0c0d0e; }
+    #video-status { margin: 0; font-size: 15px; }
+    /* Son video: düğmelerden kalan alanı kullan, görüntüyü kırpma. */
+    body:has(#next-video-screen:not([hidden])) { height: 100dvh; min-height: 0; padding: 12px; }
+    body:has(#next-video-screen:not([hidden])) main { height: calc(100dvh - 24px); min-height: 0; min-width: 0; max-width: none; }
+    #next-video-screen { width: 100%; height: 100%; min-width: 0; min-height: 0; grid-template-rows: minmax(0, 1fr) auto; gap: 10px; }
+    #next-video-screen:has(#next-status:not([hidden])) { grid-template-rows: minmax(0, 1fr) auto auto; }
+    #next-video { width: 100%; height: 100%; max-width: 100%; max-height: 100%; min-width: 0; min-height: 0; object-fit: contain; }
+    #next-video-screen .video-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: min(100%, 420px); gap: 10px; padding-bottom: 6px; }
+    #next-video-screen .video-actions button { padding: 8px 10px; font-size: clamp(14px, 3.8vw, 18px); }
+    #next-status { margin: 0; font-size: 14px; }
+    /* Yalnızca karakter ekranına ait sakin orman açıklığı. */
+    body:has(#leylo-screen:not([hidden])) {
+      background:
+        radial-gradient(ellipse at 50% 35%, #fff7e3 0 26%, transparent 68%),
+        radial-gradient(ellipse at 0% 5%, #c6d8ae 0 17%, transparent 17.5%),
+        radial-gradient(ellipse at 100% 14%, #bfd2a9 0 19%, transparent 19.5%),
+        radial-gradient(ellipse at 8% 105%, #a9c393 0 27%, transparent 27.5%),
+        radial-gradient(ellipse at 95% 110%, #bdd1a5 0 32%, transparent 32.5%),
+        linear-gradient(#e8eddb, #f9efd9 72%, #d4dfb9);
+    }
+    #leylo-screen { position: relative; isolation: isolate; }
+    #leylo-screen::before, #leylo-screen::after {
+      content: ''; position: absolute; z-index: -1; pointer-events: none;
+      width: clamp(28px, 5vw, 65px); height: 65%; bottom: 5%;
+      border-radius: 70% 40% 20% 30%; background: #98aa7950;
+    }
+    #leylo-screen::before { left: 3%; transform: rotate(-6deg); }
+    #leylo-screen::after { right: 3%; transform: rotate(5deg); }
+    #leylo-screen .animal-board { position: relative; isolation: isolate; max-width: 100%; }
+    #leylo-screen .animal-board::before {
+      content: ''; position: absolute; inset: 3%; z-index: -1; pointer-events: none;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle, #fff8e8eb 0 47%, transparent 48%),
+        repeating-conic-gradient(from 0deg, #8eaa70 0 18deg, #dce8bd 18deg 36deg, #f3c95d 36deg 54deg, #fff1c9 54deg 72deg);
+      border: 5px solid #fffaf0;
+      box-shadow: 0 16px 65px #6b815230;
+      animation: round-background-spin 22s linear infinite;
+    }
+    @keyframes round-background-spin { to { transform: rotate(360deg); } }
+    #leylo-screen :is(#robot, #bird, #bear, #rabbit) { background: #fff4dd; border-color: #c7d3ad; box-shadow: 0 7px 18px #40552c24; }
+    #leylo-screen :is(#robot, #bird, #bear, #rabbit).focused { border-color: #ffcc42; box-shadow: 0 10px 30px #40552c40; }
+    #leylo-screen #continue-next { border-radius: 24px; border: 2px solid #647b4f; box-shadow: 0 4px 0 #647b4f; background: #fff1c9; color: #34472b; }
+    #leylo-screen > .video-actions { position: fixed; right: clamp(16px, 3vw, 34px); bottom: clamp(16px, 3vh, 30px); z-index: 30; margin: 0 !important; }
+    #leylo-screen #continue-next { min-width: clamp(190px, 24vw, 260px); min-height: 58px; font-size: clamp(18px, 2.2vw, 24px); font-weight: 900; }
+    #bear .bear-crop { display: block; position: relative; height: 100%; width: auto; max-width: 100%; aspect-ratio: 158 / 226; margin: auto; overflow: hidden; border-radius: 14px; }
+    #bear .bear-crop img { position: absolute; width: 122.16%; height: 110.62%; max-width: none; left: -12.03%; top: -3.98%; object-fit: fill; border-radius: 0; }
+    #bear.rewarding img { animation: none; }
+    #bear.rewarding .bear-crop { animation: reward-hop .6s ease; }
+    @media (prefers-reduced-motion: reduce) { #bear.rewarding .bear-crop { animation: none; } }
+    @media (prefers-reduced-motion: reduce) { #leylo-screen .animal-board::before { animation: none; } }
+    body:has(#name-game:not([hidden])) { height: 100dvh; min-height: 0; padding: 12px; background: radial-gradient(ellipse at top, #fff8e8, #e0e9ca); }
+    body:has(#name-game:not([hidden])) main { height: calc(100dvh - 24px); min-height: 0; max-width: 1080px; }
+    #name-game { height: 100%; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 12px; padding: clamp(12px, 3vw, 26px); background: linear-gradient(145deg, #f8f4df, #edf3dc); border: 3px solid #91aa72; border-radius: 28px; color: #34472b; box-shadow: inset 0 0 0 6px #ffffff70; }
+    #name-game h2 { margin: 0; font-size: clamp(28px, 4.4vw, 48px); line-height: 1.12; font-weight: 900; color: #405f32; text-wrap: balance; }
+    #name-game .game-step { margin: 7px 0 0; font-size: 15px; color: #61754c; }
+    #name-game .game-panel { min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: clamp(8px, 2vh, 18px); }
+    #name-game p { margin: 0; }
+    #name-game .game-student { width: min(48vw, 32dvh, 280px); height: min(40vw, 28dvh, 240px); object-fit: contain; border-radius: 18px; border: 3px solid #91aa72; background: #f8f4df; box-shadow: 0 8px 22px #40552c2b; }
+    #name-game #kerem-video { width: min(58vw, 38dvh, 340px); height: min(48vw, 34dvh, 300px); }
+    #name-game .say-name { font-size: clamp(28px, 5vw, 48px); font-weight: 900; color: #34472b; }
+    #name-game .game-hint { font-size: clamp(14px, 2vw, 19px); max-width: 620px; text-wrap: balance; }
+    #name-game button { min-width: 0; min-height: 44px; padding: 10px 18px; font-size: clamp(15px, 2vw, 20px); color: #263d20; background: #dceabf; border: 2px solid #78945d; box-shadow: 0 4px 0 #78945d; border-radius: 16px; }
+    #name-game button:hover { background: #eaf3d6; }
+    #name-game .move-options { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; width: min(100%, 760px); }
+    #name-game .move-option { display: grid; justify-items: center; gap: 6px; padding: 12px 6px; border: 2px solid #d2ddbb; background: #edf2e2; box-shadow: 0 3px 0 #c4d0af; }
+    #name-game .move-option[aria-pressed="true"] { border-color: #658748; background: #dceabf; box-shadow: 0 0 0 2px #658748; }
+    #name-game .move-icon { font-size: clamp(32px, 6vmin, 62px); line-height: 1.1; }
+    #name-game .move-option[aria-pressed="true"] .move-icon { animation: game-wiggle 1s ease-in-out 2; }
+    #name-game #move-instruction { min-height: 2.5em; font-size: clamp(16px, 2.5vw, 22px); font-weight: bold; }
+    #name-game button:disabled { opacity: .5; cursor: not-allowed; }
+    #name-game .game-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    #name-game .game-footer p { font-size: 12px; color: #68745c; text-align: right; max-width: 290px; }
+    #name-game .celebration-mark { font-size: clamp(50px, 12vmin, 100px); color: #d79f25; animation: game-wiggle 1s ease-in-out 2; }
+    #name-game .remember-student { display: block; width: min(62vw, 34dvh, 330px); max-height: 34dvh; aspect-ratio: 1; object-fit: contain; border-radius: 24px; border: 3px solid #c7d3ad; box-shadow: 0 8px 20px #40552c24; }
+    @keyframes game-wiggle { 0%,100% { transform: rotate(0); } 30% { transform: rotate(-12deg); } 70% { transform: rotate(12deg); } }
+    #next-video-screen .video-actions { width: min(100%, 700px); grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    @media (max-width: 600px) {
+      #name-game .move-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      #name-game .game-footer p { max-width: 150px; }
+      #next-video-screen .video-actions { gap: 6px; }
+      #next-video-screen .video-actions button { font-size: 13px; padding: 8px 5px; }
+    }
+    @media (max-height: 500px) {
+      #name-game { padding: 8px 12px; gap: 6px; }
+      #name-game h2 { font-size: 21px; }
+      #name-game .game-student { width: 110px; height: 85px; }
+      #name-game .move-options { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      #name-game .move-option { padding: 6px; font-size: 13px; }
+      #name-game .move-icon { font-size: 28px; }
+      #name-game .game-panel { gap: 7px; }
+      #name-game .game-step { margin-top: 3px; font-size: 12px; }
+    }
+    @media (prefers-reduced-motion: reduce) { #name-game .move-option[aria-pressed="true"] .move-icon, #name-game .celebration-mark { animation: none; } }
+    /* Hareket fotoğrafları: kartın tamamı seçilebilir, görseller kırpılmaz. */
+    #name-game #game-move-panel { display: grid; width: 100%; grid-template-rows: auto minmax(0, 1fr) auto auto; justify-items: center; gap: 10px; }
+    #name-game #game-move-panel > .game-hint:first-child { max-width: 940px; font-size: clamp(22px, 2.8vw, 32px); line-height: 1.3; font-weight: 600; color: #091a32; text-wrap: balance; }
+    @media (max-height: 500px) { #name-game #game-move-panel > .game-hint:first-child { font-size: 20px; } }
+    #name-game .move-options { width: 100%; max-width: 980px; height: 100%; min-height: 0; grid-auto-rows: minmax(0, 1fr); }
+    #name-game .move-option { position: relative; min-height: 0; min-width: 0; width: 100%; height: 100%; padding: 6px; gap: 4px; grid-template-rows: minmax(0, 1fr) auto; border: 3px solid #ccd9b5; border-radius: 18px; background: #fffaf0; box-shadow: 0 4px 0 #c4d0af; }
+    #name-game .move-photo { display: block; width: 100%; height: 100%; min-height: 0; min-width: 0; object-fit: contain; border-radius: 11px; }
+    #name-game .move-label { padding: 5px 2px; font-size: clamp(14px, 1.8vw, 20px); line-height: 1.15; }
+    #name-game .move-option[aria-pressed="true"] { border-color: #547937; background: #e6efcf; box-shadow: 0 0 0 2px #547937; }
+    #name-game .move-option[aria-pressed="true"]::after { content: '✓'; position: absolute; right: 8px; top: 8px; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: #547937; color: white; font-size: 20px; border: 2px solid #fffaf0; }
+    #name-game #did-move { justify-self: center; }
+    #name-game #move-instruction { min-height: 0; }
+    @media (max-height: 500px) { #name-game #game-move-panel { gap: 5px; } #name-game .move-label { padding: 2px 0; font-size: 13px; } }
+    #name-game .move-option { transform-origin: center; animation: move-card-sway 2.4s ease-in-out infinite; }
+    #name-game .move-option:nth-child(2) { animation-delay: -.6s; }
+    #name-game .move-option:nth-child(3) { animation-delay: -1.2s; }
+    #name-game .move-option:nth-child(4) { animation-delay: -1.8s; }
+    #name-game .move-option[aria-pressed="true"] { z-index: 1; }
+    @keyframes move-card-sway {
+      0%, 100% { transform: rotate(0); }
+      25% { transform: rotate(-2deg); }
+      75% { transform: rotate(2deg); }
+    }
+    #name-game .move-photo.move-acting { position: relative; z-index: 4; }
+    #name-game #move-wave .move-photo.move-acting { animation: wave-effect 1.5s ease-in-out 2 !important; }
+    #name-game #move-clap .move-photo.move-acting { animation: clap-effect 1.25s ease-in-out 2 !important; }
+    #name-game #move-arms .move-photo.move-acting { animation: arms-open-effect 1.6s ease-in-out 2 !important; }
+    #name-game #move-jump .move-photo.move-acting { animation: jump-effect 1.25s cubic-bezier(.3,.8,.4,1) 2 !important; }
+    @keyframes wave-effect {
+      0%, 100% { transform: scale(1) rotate(0); }
+      25% { transform: scale(1.24) rotate(-7deg); }
+      50% { transform: scale(1.34) rotate(7deg); filter: brightness(1.16) drop-shadow(0 0 13px #ffcc42); }
+      75% { transform: scale(1.24) rotate(-5deg); }
+    }
+    @keyframes clap-effect {
+      0%, 100% { transform: scale(1); }
+      28% { transform: scale(.90); }
+      50% { transform: scale(1.36); filter: brightness(1.2) drop-shadow(0 0 16px #ffcc42); }
+      64% { transform: scale(1.16) translateX(-5px); }
+      78% { transform: scale(1.16) translateX(5px); }
+    }
+    @keyframes arms-open-effect {
+      0%, 100% { transform: scale(1); }
+      18% { transform: scale(.88); filter: brightness(1); }
+      48% { transform: scaleX(1.30) scaleY(1.12); filter: brightness(1.22) drop-shadow(0 0 14px #ffcc42); }
+      72% { transform: scaleX(1.14) scaleY(1.06); filter: brightness(1.10); }
+    }
+    @keyframes jump-effect {
+      0%, 100% { transform: translateY(0) scale(1); }
+      20% { transform: translateY(8%) scale(.92,1.06); }
+      48% { transform: translateY(-18%) scale(1.34); filter: brightness(1.18) drop-shadow(0 12px 12px #7c9c5866); }
+      72% { transform: translateY(3%) scale(1.12,.94); }
+    }
+    @media (prefers-reduced-motion: reduce) { #name-game .move-option { animation: none; } }
+    #name-game .narration-controls { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+    #name-game .narration-controls button { min-height: 36px; padding: 5px 12px; font-size: 14px; }
+    #name-game #narration-status { font-size: 12px; max-width: 360px; color: #68745c; }
+    body:has(#final-screen:not([hidden])) { height: 100dvh; min-height: 0; padding: 16px; overflow: hidden; background: radial-gradient(circle at 50% 35%, #fff9e9 0 24%, #e7efcf 68%, #cbdca6 100%); }
+    body:has(#final-screen:not([hidden])) main { height: calc(100dvh - 32px); min-height: 0; max-width: 1050px; }
+    #final-screen { position: relative; isolation: isolate; height: 100%; overflow: hidden; display: grid; place-items: center; padding: clamp(18px, 5vw, 50px); border: 3px solid #b9c99d; border-radius: 34px; background: #fff7e6; text-align: center; }
+    .final-card { position: relative; z-index: 3; display: grid; justify-items: center; gap: clamp(12px, 2.5vh, 24px); }
+    .final-star { font-size: clamp(74px, 15vmin, 150px); line-height: 1; animation: final-star-pop 1.2s ease-in-out infinite alternate; }
+    #final-title { margin: 0; color: #405f32; font-size: clamp(38px, 7vw, 78px); line-height: 1.08; font-weight: 900; text-wrap: balance; }
+    .final-message { margin: 0; color: #34472b; font-size: clamp(20px, 3vw, 34px); font-weight: 700; }
+    .final-actions { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+    .final-actions button { color: #263d20; background: #dceabf; border: 2px solid #78945d; box-shadow: 0 5px 0 #78945d; }
+    .final-actions button:hover { background: #eaf3d6; }
+    .confetti-layer { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 2; }
+    .confetti-piece { position: absolute; left: var(--x); top: -12%; width: var(--w); height: calc(var(--w) * 1.8); border-radius: 3px; background: var(--color); opacity: 0; transform: rotate(var(--r)); animation: confetti-fall var(--d) cubic-bezier(.2,.65,.35,1) var(--delay) forwards; }
+    @keyframes confetti-fall { 0% { opacity: 1; transform: translate3d(0,-8vh,0) rotate(var(--r)); } 55% { opacity: 1; transform: translate3d(var(--drift),55vh,0) rotate(calc(var(--r) + 420deg)); } 100% { opacity: 0; transform: translate3d(calc(var(--drift) * -0.5),115vh,0) rotate(calc(var(--r) + 850deg)); } }
+    @keyframes final-star-pop { from { transform: scale(.92) rotate(-5deg); } to { transform: scale(1.08) rotate(5deg); } }
+    @media (prefers-reduced-motion: reduce) { .confetti-piece, .final-star { animation: none; } }
+    @media (max-height: 500px) { #name-game .narration-controls { margin-top: 4px; } #name-game .game-student { height: 60px; width: 80px; } }
+  </style>
+</head>
+<body>
+  <main>
+    <section id="intro" aria-label="Açılış">
+      <div class="logo-band" aria-label="Logolar">
+        <img class="meb-logo" src="logo-meb.svg" alt="Millî Eğitim Bakanlığı">
+        <div class="ulkem-logo"><img src="logo-ulkem-siyah-yazi.svg" alt="Ülkem Yanımda"></div>
+      </div>
+      <span class="decoration sparkle-one" aria-hidden="true">✦</span>
+      <span class="decoration sparkle-two" aria-hidden="true">✦</span>
+      <span class="decoration cloud-decor" aria-hidden="true"></span>
+      <span class="decoration dot-decor" aria-hidden="true"></span>
+      <span class="decoration pencil-decor" aria-hidden="true"><span class="pencil-wood"></span></span>
+      <h1><span class="title-brand">Ülkem Yanımda</span> ile Türkçe ve Türk Kültürü Derslerine</h1>
+      <div class="photo-frame"><img class="cover" src="acilis-afissiz.png" alt="Dijital Atölyem ekranını kullanan çocuk"></div>
+      <p class="welcome-bottom">Hoş Geldiniz!</p>
+      <button id="start" type="button"><span class="play-symbol" aria-hidden="true">▶</span> Başlat</button>
+    </section>
+    <section id="video-screen" aria-label="Merhaba videosu" hidden>
+      <video id="merhaba-video" src="merhaba.mp4" controls playsinline preload="metadata" aria-label="Merhaba videosu">
+        Tarayıcın video oynatmayı desteklemiyor.
+      </video>
+      <div class="video-actions">
+        <button id="back-home" type="button">← Ana sayfa</button>
+        <button id="replay-video" type="button">▶ Tekrar izle</button>
+        <button id="continue-leylo" type="button">Devam et →</button>
+      </div>
+      <p id="video-status" role="status" hidden></p>
+    </section>
+    <section id="leylo-screen" aria-label="Leylo" hidden>
+      <div class="animal-board" aria-label="Ortada Leylo, solda tavşan, üstte robot, sağda kuş ve altta ayı">
+        <button id="robot" class="slot-top" type="button" aria-label="Robotun merhaba sesini dinle" aria-pressed="false"><img src="robot.png" alt="Mavi gözlü robot"></button>
+        <button id="rabbit" class="slot-left" type="button" aria-label="Tavşanın merhaba sesini dinle" aria-pressed="false"><img src="tavsan.png" alt="Havuç tutan tavşan"></button>
+        <div class="portrait" id="portrait">
+          <img id="leylo-image" src="leylo.png" alt="Kırmızı atkılı, gülümseyen Leylo" role="button" tabindex="0" aria-label="Leylo: merhaba sesini dinle">
+          <button id="play" type="button" aria-label="Leylo'nun sesini oynat">▶</button>
+        </div>
+        <button id="bird" class="slot-right" type="button" aria-label="Kuşun merhaba sesini dinle" aria-pressed="false"><img src="kus.png" alt="Çiçekli dalda duran kuş"></button>
+        <button id="bear" class="slot-bottom" type="button" aria-label="Ayının merhaba sesini dinle" aria-pressed="false"><span class="bear-crop"><img src="ayi.png" alt="Ateşin yanında oturan ayı"></span></button>
+      </div>
+      <div class="video-actions" style="margin-top: 12px"><button id="continue-next" type="button">Devam →</button></div>
+      <p id="status" class="sr-only" role="status"></p>
+    </section>
+    <section id="next-video-screen" aria-label="Sonraki Merhaba videosu" hidden>
+      <video id="next-video" src="merhabaaa.mp4" controls playsinline preload="metadata" aria-label="Sonraki Merhaba videosu"></video>
+      <div class="video-actions">
+        <button id="back-leylo" type="button">← Leylo'ya dön</button>
+        <button id="replay-next" type="button">▶ Tekrar izle</button>
+        <button id="open-name-game" type="button">Etkinliğe geç →</button>
+      </div>
+      <p id="next-status" role="status" hidden></p>
+    </section>
+    <section id="name-game" aria-labelledby="name-game-title" hidden>
+      <header>
+        <h2 id="name-game-title" tabindex="-1">ADINI SÖYLE, HAREKETİNİ YAP!</h2>
+        <p class="game-step" id="game-step" role="status" hidden></p>
+        <div class="narration-controls" hidden>
+          <p id="narration-status" role="status"></p>
+        </div>
+      </header>
+      <div class="game-panel" id="game-name-panel">
+        <video id="kerem-video" class="game-student" src="ben-kerem.mp4" playsinline preload="metadata" aria-label="Merhaba, ben Kerem videosu"></video>
+        <p class="say-name">Merhaba, ben…</p>
+        <p class="game-hint">Adını söyle. Şimdi seni tanıyalım!</p>
+        <button id="replay-kerem" type="button" aria-label="Kerem'in sesini tekrar dinle">▶ Kerem'i tekrar dinle</button>
+        <button id="said-name" type="button">Adımı söyledim →</button>
+      </div>
+      <div class="game-panel" id="game-move-panel" hidden>
+        <p class="game-hint">Öğrenci adını söyler ve bir hareket yapar. Sonra bütün sınıf onun adını söyleyip aynı hareketi tekrar eder!</p>
+        <div class="move-options" role="group" aria-label="Hareket seç">
+          <button class="move-option" id="move-wave" type="button" aria-pressed="false" aria-label="El salla"><img class="move-photo" src="hareket-el-sallama.png" alt="" draggable="false"><span class="move-label">El salla</span></button>
+          <button class="move-option" id="move-clap" type="button" aria-pressed="false" aria-label="Alkışla"><img class="move-photo" src="hareket-alkis.png" alt="" draggable="false"><span class="move-label">Alkışla</span></button>
+          <button class="move-option" id="move-arms" type="button" aria-pressed="false" aria-label="Kollarını aç"><img class="move-photo" src="hareket-kollari-acma.png" alt="" draggable="false"><span class="move-label">Kollarını aç</span></button>
+          <button class="move-option" id="move-jump" type="button" aria-pressed="false" aria-label="Zıpla"><img class="move-photo" src="hareket-ziplama.png" alt="" draggable="false"><span class="move-label">Zıpla</span></button>
+        </div>
+        <p id="move-instruction" role="status">Hangi hareketi yapmak istersin?</p>
+        <button id="did-move" type="button" disabled>Hareketimi yaptım →</button>
+      </div>
+      <div class="game-panel" id="game-together-panel" hidden>
+        <img class="remember-student" src="hatirliyor-musun.png" alt="El sallama, alkışlama, kollarını açma ve zıplama hareketlerini düşünen öğrenci">
+        <p class="say-name">Hatırlıyor musun?</p>
+        <p class="game-hint" id="together-instruction">Öğretmen bir arkadaşının hareketini tekrar eder. Bu hareket kimindi? Adını söyle!</p>
+        <button id="next-friend" type="button">Sıradaki arkadaş →</button>
+      </div>
+      <footer class="game-footer" style="margin: 0">
+        <button id="back-to-last-video" type="button">← Leylo'ya dön</button>
+      </footer>
+    </section>
+    <section id="final-screen" aria-labelledby="final-title" hidden>
+      <div class="confetti-layer" id="confetti-layer" aria-hidden="true"></div>
+      <div class="final-card">
+        <div class="final-star" aria-hidden="true">🌟</div>
+        <h2 id="final-title" tabindex="-1">Etkinlik tamamlandı!</h2>
+        <p class="final-message">Harika iş çıkardın!</p>
+        <div class="final-actions">
+          <button id="final-back-leylo" type="button">← Leylo'ya dön</button>
+          <button id="restart-game" type="button">Baştan başla ↻</button>
+        </div>
+      </div>
+    </section>
+    <audio id="voice" src="merhaba-ben-leylo.wav" preload="auto"></audio>
+    <audio id="robot-voice" src="robot.mp3" preload="auto"></audio>
+    <audio id="bird-voice" src="kus.wav" preload="auto"></audio>
+    <audio id="bear-voice" src="ayi-ses.wav" preload="auto"></audio>
+    <audio id="rabbit-voice" src="tavsan.mp3" preload="auto"></audio>
+    <noscript>Başlat düğmesinin çalışması için JavaScript açık olmalı.</noscript>
+  </main>
+  <script>
+    const intro = document.getElementById('intro');
+    const screen = document.getElementById('video-screen');
+    const video = document.getElementById('merhaba-video');
+    const message = document.getElementById('video-status');
+    const finalScreen = document.getElementById('final-screen');
+    const confettiLayer = document.getElementById('confetti-layer');
+    function burstConfetti() {
+      const colors = ['#e21b1b', '#ffcc42', '#5b8f3b', '#36a9c4', '#f28ba8', '#ff8a34'];
+      confettiLayer.replaceChildren();
+      for (let i = 0; i < 80; i += 1) {
+        const piece = document.createElement('span');
+        piece.className = 'confetti-piece';
+        piece.style.setProperty('--x', `${Math.random() * 100}%`);
+        piece.style.setProperty('--w', `${7 + Math.random() * 8}px`);
+        piece.style.setProperty('--r', `${Math.random() * 360}deg`);
+        piece.style.setProperty('--d', `${2.4 + Math.random() * 2}s`);
+        piece.style.setProperty('--delay', `${Math.random() * .8}s`);
+        piece.style.setProperty('--drift', `${-90 + Math.random() * 180}px`);
+        piece.style.setProperty('--color', colors[i % colors.length]);
+        confettiLayer.appendChild(piece);
+      }
+    }
+    async function startVideo() {
+      message.hidden = true;
+      video.currentTime = 0;
+      try { await video.play(); }
+      catch {
+        if (screen.hidden) return;
+        message.textContent = 'Videoyu başlatmak için üzerindeki oynat düğmesine dokun.';
+        message.hidden = false;
+      }
+    }
+    document.getElementById('start').addEventListener('click', () => {
+      intro.hidden = true;
+      screen.hidden = false;
+      video.focus();
+      startVideo();
+    });
+    document.getElementById('replay-video').addEventListener('click', startVideo);
+    document.getElementById('back-home').addEventListener('click', () => {
+      video.pause();
+      screen.hidden = true;
+      intro.hidden = false;
+      document.getElementById('start').focus();
+    });
+    video.addEventListener('playing', () => { message.hidden = true; });
+    video.addEventListener('error', () => {
+      message.textContent = 'Video açılamadı. merhaba.mp4 dosyası aynı klasörde olmalı.';
+      message.hidden = false;
+    });
+
+    const statusText = document.getElementById('status');
+    const board = document.querySelector('.animal-board');
+    const characters = [
+      ['Leylo', 'portrait', 'play', 'voice'],
+      ['Robot', 'robot', 'robot', 'robot-voice'],
+      ['Kuş', 'bird', 'bird', 'bird-voice'],
+      ['Ayı', 'bear', 'bear', 'bear-voice'],
+      ['Tavşan', 'rabbit', 'rabbit', 'rabbit-voice']
+    ].map(([name, card, button, audio]) => ({
+      name, card: document.getElementById(card),
+      button: document.getElementById(button), audio: document.getElementById(audio)
+    }));
+    let selected = null;
+    let requestId = 0;
+    const rewardTimers = new Map();
+    function reset(c) {
+      c.card.classList.remove('focused', 'talking');
+      c.button.setAttribute('aria-pressed', 'false');
+      c.button.setAttribute('aria-label', c.name + ': merhaba sesini dinle');
+      if (c.name === 'Leylo') c.button.textContent = '▶';
+      if (!characters.some(item => item.card.classList.contains('focused'))) board.classList.remove('has-focus');
+    }
+    function reward(c) {
+      clearTimeout(rewardTimers.get(c));
+      c.card.classList.remove('rewarding');
+      void c.card.offsetWidth;
+      c.card.classList.add('rewarding');
+      rewardTimers.set(c, setTimeout(() => c.card.classList.remove('rewarding'), 1100));
+    }
+    async function toggle(c) {
+      const ticket = ++requestId;
+      if (selected === c && !c.audio.paused) {
+        selected = null;
+        c.audio.pause();
+        return;
+      }
+      selected = c;
+      characters.forEach(other => {
+        if (other !== c) { other.audio.pause(); reset(other); }
+      });
+      clearTimeout(rewardTimers.get(c));
+      c.card.classList.remove('rewarding');
+      c.card.classList.add('focused');
+      board.classList.add('has-focus');
+      if (c.audio.ended) c.audio.currentTime = 0;
+      try { await c.audio.play(); }
+      catch {
+        if (ticket !== requestId) return;
+        selected = null;
+        reset(c);
+        statusText.textContent = c.name + ' sesi açılamadı. Tekrar dokunmayı dene.';
+      }
+    }
+    characters.forEach(c => {
+      c.button.addEventListener('click', () => toggle(c));
+      c.audio.addEventListener('playing', () => {
+        if (selected !== c) { c.audio.pause(); return; }
+        characters.forEach(other => { if (other !== c) { other.audio.pause(); reset(other); } });
+        c.card.classList.remove('rewarding');
+        c.card.classList.add('focused');
+        if (c.name === 'Leylo') {
+          c.card.classList.add('talking');
+          c.button.textContent = '❚❚';
+        }
+        board.classList.add('has-focus');
+        c.button.setAttribute('aria-pressed', 'true');
+        c.button.setAttribute('aria-label', c.name + ': sesi duraklat');
+        statusText.textContent = c.name + ' konuşuyor.';
+      });
+      c.audio.addEventListener('pause', () => { if (c.audio.paused) reset(c); });
+      c.audio.addEventListener('ended', () => {
+        reset(c);
+        reward(c);
+        if (selected === c) selected = null;
+        statusText.textContent = c.name + ' sesini dinledin!';
+      });
+      c.audio.addEventListener('error', () => {
+        reset(c);
+        if (selected === c) {
+          selected = null;
+          statusText.textContent = c.name + ' ses kaydı yüklenemedi.';
+        }
+      });
+    });
+    const leyloImage = document.getElementById('leylo-image');
+    leyloImage.addEventListener('click', () => toggle(characters[0]));
+    leyloImage.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        toggle(characters[0]);
+      }
+    });
+    document.getElementById('continue-leylo').addEventListener('click', () => {
+      video.pause();
+      screen.hidden = true;
+      document.getElementById('intro').hidden = true;
+      document.getElementById('leylo-screen').hidden = false;
+      characters[0].button.focus();
+      characters[0].audio.currentTime = 0;
+      toggle(characters[0]);
+    });
+  
+
+    const nextScreen = document.getElementById('next-video-screen');
+    const nextVideo = document.getElementById('next-video');
+    const nextMessage = document.getElementById('next-status');
+    async function playNextVideo() {
+      nextMessage.hidden = true;
+      nextVideo.currentTime = 0;
+      try { await nextVideo.play(); }
+      catch {
+        if (nextScreen.hidden) return;
+        nextMessage.textContent = 'Videonun oynat düğmesine dokunarak başlatabilirsin.';
+        nextMessage.hidden = false;
+      }
+    }
+    document.getElementById('continue-next').addEventListener('click', () => {
+      ++requestId;
+      selected = null;
+      characters.forEach(c => {
+        c.audio.pause();
+        reset(c);
+        clearTimeout(rewardTimers.get(c));
+        c.card.classList.remove('rewarding');
+      });
+      video.pause();
+      document.getElementById('leylo-screen').hidden = true;
+      nextVideo.pause();
+      nextScreen.hidden = true;
+      finalScreen.hidden = true;
+      nameGame.hidden = false;
+      resetNameGame();
+      document.getElementById('name-game-title').focus();
+    });
+    document.getElementById('final-back-leylo').addEventListener('click', () => {
+      finalScreen.hidden = true;
+      document.getElementById('leylo-screen').hidden = false;
+      document.getElementById('continue-next').focus();
+    });
+    document.getElementById('restart-game').addEventListener('click', () => {
+      finalScreen.hidden = true;
+      screen.hidden = true;
+      nextScreen.hidden = true;
+      nameGame.hidden = true;
+      intro.hidden = false;
+      document.getElementById('start').focus();
+    });
+    document.getElementById('back-leylo').addEventListener('click', () => {
+      nextVideo.pause();
+      nextScreen.hidden = true;
+      document.getElementById('leylo-screen').hidden = false;
+      document.getElementById('continue-next').focus();
+    });
+    document.getElementById('replay-next').addEventListener('click', playNextVideo);
+    nextVideo.addEventListener('playing', () => {
+      if (nextScreen.hidden) { nextVideo.pause(); return; }
+      nextMessage.hidden = true;
+    });
+    nextVideo.addEventListener('error', () => {
+      nextMessage.textContent = 'Video açılamadı. merhabaaa.mp4 dosyasını kontrol et.';
+      nextMessage.hidden = false;
+    });
+    const nameGame = document.getElementById('name-game');
+    const keremAudio = document.getElementById('kerem-video');
+    keremAudio.preload = 'auto';
+    const gamePanels = ['game-name-panel', 'game-move-panel', 'game-together-panel'].map(id => document.getElementById(id));
+    const gameSteps = ['', '', ''];
+    const moves = [
+      { id: 'move-wave', instruction: 'Arkadaşlarına el salla.', together: 'Arkadaşınızın adını söyleyin ve hep birlikte el sallayın.' },
+      { id: 'move-clap', instruction: 'Ellerini üç kez çırp.', together: 'Arkadaşınızın adını söyleyin ve hep birlikte üç kez alkışlayın.' },
+      { id: 'move-arms', instruction: 'Kollarını rahatça iki yana aç.', together: 'Arkadaşınızın adını söyleyin ve hep birlikte kollarınızı açın.' },
+      { id: 'move-jump', instruction: 'Yerinde hafifçe bir kez zıpla. İstersen başka hareket seçebilirsin.', together: 'Arkadaşınızın adını söyleyin ve isteyenler yerinde hafifçe bir kez zıplasın.' }
+    ];
+    let chosenMove = null;
+    const guidanceSteps = [
+      'Merhaba! Şimdi sıra sende. Merhaba, ben, diyerek adını söyle. Sonra adımı söyledim düğmesine dokun.',
+      'Öğrenci adını söyler ve bir hareket yapar. Sonra bütün sınıf onun adını söyleyip aynı hareketi tekrar eder!',
+      'Hatırlıyor musun? Öğretmenin bir arkadaşının hareketini yapacak. Bu hareket kimindi? Arkadaşının adını söyle.'
+    ];
+    let currentGuidance = guidanceSteps[0];
+    let guidanceMuted = false;
+    let guidanceTimer;
+    let guidanceUtterance;
+    const speechEngine = typeof window !== 'undefined' ? window.speechSynthesis : null;
+    function stopGuidance() {
+      keremAudio.pause();
+      keremAudio.currentTime = 0;
+      clearTimeout(guidanceTimer);
+      if (speechEngine) speechEngine.cancel();
+      guidanceUtterance = null;
+    }
+    function speakGuidance(text, retry = true) {
+      currentGuidance = text;
+      stopGuidance();
+      const status = document.getElementById('narration-status');
+      if (guidanceMuted || nameGame.hidden) return;
+      if (!speechEngine || typeof SpeechSynthesisUtterance === 'undefined') {
+        status.textContent = 'Bu tarayıcı sesli yönergeyi desteklemiyor.';
+        return;
+      }
+      const voices = speechEngine.getVoices();
+      const femaleVoice = voices.find(voice => /^tr(?:-|_)/i.test(voice.lang) && /emel|filiz|yelda|female|kadın/i.test(voice.name));
+      if (!femaleVoice) {
+        if (!voices.length && retry) {
+          guidanceTimer = setTimeout(() => speakGuidance(text, false), 1000);
+          return;
+        }
+        status.textContent = 'Türkçe kadın sesi bulunamadı. Kadın ses kaydı eklenmesi gerekiyor.';
+        return;
+      }
+      status.textContent = '';
+      guidanceUtterance = new SpeechSynthesisUtterance(text);
+      guidanceUtterance.voice = femaleVoice;
+      guidanceUtterance.lang = 'tr-TR';
+      guidanceUtterance.rate = 0.85;
+      guidanceUtterance.pitch = 1;
+      guidanceUtterance.onerror = event => {
+        if (!['canceled', 'interrupted'].includes(event.error) && !nameGame.hidden && !guidanceMuted) status.textContent = 'Ses başlayamadı. Tekrar dinle düğmesine dokun.';
+      };
+      speechEngine.speak(guidanceUtterance);
+    }
+    if (typeof window !== 'undefined') window.addEventListener('pagehide', stopGuidance);
+    function showGameStep(step) {
+      gamePanels.forEach((panel, index) => { panel.hidden = index !== step; });
+      document.getElementById('game-step').textContent = gameSteps[step];
+      document.getElementById('game-step').hidden = !gameSteps[step];
+      if (step === 0) {
+        stopGuidance();
+        keremAudio.play().catch(() => {});
+      } else {
+        speakGuidance(guidanceSteps[step]);
+      }
+    }
+    function resetNameGame() {
+      chosenMove = null;
+      moves.forEach(move => document.getElementById(move.id).setAttribute('aria-pressed', 'false'));
+      document.getElementById('did-move').disabled = true;
+      document.getElementById('move-instruction').textContent = 'Hangi hareketi yapmak istersin?';
+      showGameStep(0);
+    }
+    document.getElementById('replay-kerem').addEventListener('click', () => {
+      keremAudio.pause();
+      keremAudio.currentTime = 0;
+      keremAudio.play().catch(() => {});
+    });
+    document.getElementById('open-name-game').addEventListener('click', () => {
+      nextVideo.pause();
+      nextScreen.hidden = true;
+      nameGame.hidden = false;
+      resetNameGame();
+      document.getElementById('name-game-title').focus();
+    });
+    document.getElementById('said-name').addEventListener('click', () => {
+      stopGuidance();
+      nameGame.hidden = true;
+      finalScreen.hidden = false;
+      burstConfetti();
+      document.getElementById('final-title').focus();
+    });
+    moves.forEach(move => document.getElementById(move.id).addEventListener('click', () => {
+      chosenMove = move;
+      const activePhoto = document.querySelector(`#${move.id} .move-photo`);
+      activePhoto.classList.remove('move-acting');
+      void activePhoto.offsetWidth;
+      activePhoto.classList.add('move-acting');
+      moves.forEach(item => document.getElementById(item.id).setAttribute('aria-pressed', 'false'));
+      void document.getElementById(move.id).offsetWidth;
+      moves.forEach(item => document.getElementById(item.id).setAttribute('aria-pressed', String(item === move)));
+      document.getElementById('move-instruction').textContent = move.instruction;
+      speakGuidance(move.instruction);
+      document.getElementById('did-move').disabled = false;
+    }));
+    document.getElementById('did-move').addEventListener('click', () => {
+      if (!chosenMove) return;
+      document.getElementById('together-instruction').textContent = 'Öğretmen bir arkadaşının hareketini tekrar eder. Bu hareket kimindi? Adını söyle!';
+      showGameStep(2);
+      document.getElementById('next-friend').focus();
+    });
+    document.getElementById('next-friend').addEventListener('click', () => {
+      resetNameGame();
+      document.getElementById('said-name').focus();
+    });
+    document.getElementById('back-to-last-video').addEventListener('click', () => {
+      stopGuidance();
+      nameGame.hidden = true;
+      nextScreen.hidden = true;
+      document.getElementById('leylo-screen').hidden = false;
+      document.getElementById('continue-next').focus();
+    });
+  </script>
+</body>
+</html>
