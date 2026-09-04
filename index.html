@@ -617,7 +617,7 @@
                 planlanan_tarih: "21-27 Eylül",
                 scormPath: "scorm/farkindalik1.zip",
                 previewUrl: "preview/farkindalik1/index.html",
-                sunumPath: "pptx/farkindalik1.pdf"
+                pdfUrl: "pptx/farkindalik1.pdf"
             },
             {
                 id: 2,
@@ -850,8 +850,8 @@
                         <a href="${material.previewUrl}" class="action-btn preview-btn" target="_blank">
                             👁️ Önizle
                         </a>
-                        <a href="${material.sunumPath}" class="action-btn pdf-btn" download>
-                            📄 Sunum
+                        <a href="${material.pdfUrl || material.sunumPath}" class="action-btn pdf-btn" download>
+                            📄 ${material.pdfUrl ? 'PDF' : 'Sunum'}
                         </a>
                     </div>
                 </div>
