@@ -673,7 +673,7 @@
       height: 100%;
       min-height: 0;
       display: grid;
-      grid-template-rows: auto auto minmax(0, 1fr) auto;
+      grid-template-rows: auto minmax(0, 1fr) auto auto;
       gap: 10px;
       padding: 10px 22px 12px;
       border-width: 10px;
@@ -879,7 +879,7 @@
     }
 
     #intro {
-      grid-template-rows: auto auto minmax(0, 1fr) auto auto;
+      grid-template-rows: auto minmax(0, 1fr) auto auto;
     }
 
     #intro .ulkem-logo {
@@ -929,26 +929,8 @@
     }
 
     #intro .cover {
-      transform-origin: center;
-      animation: photo-sway 3.2s ease-in-out infinite;
-    }
-
-    @keyframes photo-sway {
-
-      0%,
-      100% {
-        transform: scale(.97) rotate(-.8deg);
-      }
-
-      50% {
-        transform: scale(.97) rotate(.8deg);
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      #intro .cover {
-        animation: none;
-      }
+      transform: none;
+      animation: none;
     }
 
     /* Leylo ortada, dört hayvan yeri ana yönlerde. */
@@ -2116,10 +2098,6 @@
 <body>
   <main>
     <section id="intro" aria-label="Açılış">
-      <div class="logo-band" aria-label="Logolar">
-        <img class="meb-logo" src="logo-meb.svg" alt="Millî Eğitim Bakanlığı">
-        <div class="ulkem-logo"><img src="logo-ulkem-siyah-yazi.svg" alt="Ülkem Yanımda"></div>
-      </div>
       <span class="decoration sparkle-one" aria-hidden="true">✦</span>
       <span class="decoration sparkle-two" aria-hidden="true">✦</span>
       <span class="decoration cloud-decor" aria-hidden="true"></span>
