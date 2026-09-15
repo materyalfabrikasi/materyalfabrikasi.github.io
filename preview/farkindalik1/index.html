@@ -946,12 +946,78 @@
     }
 
     #leylo-screen {
-      display: grid;
-      place-items: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      height: 100%;
+    }
+
+    .slogan-banner {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 8px 22px;
+      background: #ffcc42;
+      color: #0c0d0e;
+      border: 3px solid #0c0d0e;
+      border-radius: 20px;
+      box-shadow: 4px 4px 0 #0c0d0e;
+      font-size: clamp(18px, 3.2vw, 30px);
+      font-weight: 900;
+      text-align: center;
+      max-width: 92vw;
+      transition: background 0.4s ease, transform 0.4s ease, box-shadow 0.4s ease;
+      animation: slogan-pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      z-index: 10;
+    }
+
+    .slogan-banner.aferin-state {
+      background: #7ed64e;
+      color: #0c0d0e;
+      transform: scale(1.06);
+      box-shadow: 0 0 22px #7ed64e88, 4px 4px 0 #0c0d0e;
+      animation: aferin-bounce 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .slogan-icon {
+      font-size: 1.2em;
+    }
+
+    @keyframes slogan-pop {
+      0% {
+        opacity: 0;
+        transform: translateY(-16px) scale(0.85);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes aferin-bounce {
+      0% {
+        transform: scale(0.88);
+      }
+      50% {
+        transform: scale(1.15);
+      }
+      100% {
+        transform: scale(1.06);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .slogan-banner,
+      .slogan-banner.aferin-state {
+        animation: none;
+      }
     }
 
     .animal-board {
-      width: min(94vw, calc(100dvh - 110px), 840px);
+      width: min(94vw, calc(100dvh - 170px), 760px);
       aspect-ratio: 1;
       display: grid;
       grid-template-columns: 1fr 1.2fr 1fr;
@@ -2121,6 +2187,10 @@
       <p id="video-status" role="status" hidden></p>
     </section>
     <section id="leylo-screen" aria-label="Leylo" hidden>
+      <div id="slogan-banner" class="slogan-banner" aria-live="polite">
+        <span class="slogan-icon" id="slogan-icon">🗣️</span>
+        <span id="slogan-text" class="slogan-text">Haydi şimdi sesleri tekrar et!</span>
+      </div>
       <div class="animal-board" aria-label="Ortada Leylo, solda tavşan, üstte robot, sağda kuş ve altta ayı">
         <button id="robot" class="slot-top" type="button" aria-label="Robotun merhaba sesini dinle"
           aria-pressed="false"><img src="robot.png" alt="Mavi gözlü robot"></button>
@@ -2346,6 +2416,9 @@
         reward(c);
         if (selected === c) selected = null;
         statusText.textContent = c.name + ' sesini dinledin!';
+        if (c.name !== 'Leylo') {
+          showAferinSlogan();
+        }
       });
       c.audio.addEventListener('error', () => {
         reset(c);
@@ -2355,6 +2428,33 @@
         }
       });
     });
+
+    const sloganBanner = document.getElementById('slogan-banner');
+    const sloganText = document.getElementById('slogan-text');
+    const sloganIcon = document.getElementById('slogan-icon');
+    let sloganTimer = null;
+
+    function runSloganSequence() {
+      clearTimeout(sloganTimer);
+      if (sloganBanner) {
+        sloganBanner.classList.remove('aferin-state');
+        sloganIcon.textContent = '🗣️';
+        sloganText.textContent = 'Haydi şimdi sesleri tekrar et!';
+        
+        sloganTimer = setTimeout(() => {
+          showAferinSlogan();
+        }, 2800);
+      }
+    }
+
+    function showAferinSlogan(customText = 'Aferin! 🌟') {
+      if (sloganBanner) {
+        sloganBanner.classList.add('aferin-state');
+        sloganIcon.textContent = '🌟';
+        sloganText.textContent = customText;
+      }
+    }
+
     const leyloImage = document.getElementById('leylo-image');
     leyloImage.addEventListener('click', () => toggle(characters[0]));
     leyloImage.addEventListener('keydown', event => {
@@ -2368,6 +2468,7 @@
       screen.hidden = true;
       document.getElementById('intro').hidden = true;
       document.getElementById('leylo-screen').hidden = false;
+      runSloganSequence();
       characters[0].button.focus();
       characters[0].audio.currentTime = 0;
       toggle(characters[0]);
@@ -2408,6 +2509,7 @@
     document.getElementById('final-back-leylo').addEventListener('click', () => {
       finalScreen.hidden = true;
       document.getElementById('leylo-screen').hidden = false;
+      runSloganSequence();
       document.getElementById('continue-next').focus();
     });
     document.getElementById('restart-game').addEventListener('click', () => {
@@ -2422,6 +2524,7 @@
       nextVideo.pause();
       nextScreen.hidden = true;
       document.getElementById('leylo-screen').hidden = false;
+      runSloganSequence();
       document.getElementById('continue-next').focus();
     });
     document.getElementById('replay-next').addEventListener('click', playNextVideo);
