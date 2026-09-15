@@ -2416,9 +2416,6 @@
         reward(c);
         if (selected === c) selected = null;
         statusText.textContent = c.name + ' sesini dinledin!';
-        if (c.name !== 'Leylo') {
-          showAferinSlogan();
-        }
       });
       c.audio.addEventListener('error', () => {
         reset(c);
@@ -2432,26 +2429,12 @@
     const sloganBanner = document.getElementById('slogan-banner');
     const sloganText = document.getElementById('slogan-text');
     const sloganIcon = document.getElementById('slogan-icon');
-    let sloganTimer = null;
 
     function runSloganSequence() {
-      clearTimeout(sloganTimer);
       if (sloganBanner) {
         sloganBanner.classList.remove('aferin-state');
         sloganIcon.textContent = '🗣️';
         sloganText.textContent = 'Haydi şimdi sesleri tekrar et!';
-        
-        sloganTimer = setTimeout(() => {
-          showAferinSlogan();
-        }, 2800);
-      }
-    }
-
-    function showAferinSlogan(customText = 'Aferin! 🌟') {
-      if (sloganBanner) {
-        sloganBanner.classList.add('aferin-state');
-        sloganIcon.textContent = '🌟';
-        sloganText.textContent = customText;
       }
     }
 

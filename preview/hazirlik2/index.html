@@ -1,0 +1,1533 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merhaba Ben! 🌟 — Türkçe Öğreniyorum</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nunito', 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #e0f7fa 0%, #fff9c4 50%, #f8bbd0 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        /* KARŞILAMA SAYFASI */
+        #menuScreen {
+            padding: 0;
+            background: #f7f4ec;
+            overflow: hidden;
+        }
+
+        .welcome-stage {
+            position: relative;
+            width: min(100vw, calc(100vh * 1.9304));
+            aspect-ratio: 1776 / 920;
+            background: url('welcome-page-pastel.png') center / contain no-repeat;
+            filter: drop-shadow(0 8px 28px rgba(12, 34, 67, 0.14));
+        }
+
+        .welcome-start {
+            position: absolute;
+            left: 40.48%;
+            top: 85.85%;
+            width: 17.55%;
+            height: 9.75%;
+            border: 0;
+            border-radius: 16px;
+            background: transparent;
+            cursor: pointer;
+            color: transparent;
+            font-size: 0;
+            overflow: hidden;
+            transition: none;
+        }
+
+        .welcome-start:hover,
+        .welcome-start:focus-visible {
+            filter: none;
+            box-shadow: none;
+            outline: none;
+        }
+
+        .welcome-start:active {
+            filter: none;
+            box-shadow: none;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* YILDIZ SAYACI */
+        .star-counter {
+            position: fixed;
+            top: 15px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 50px;
+            padding: 8px 20px;
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #f9a825;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            display: none;
+            align-items: center;
+            gap: 5px;
+            border: 3px solid #ffe082;
+        }
+
+        .star-counter.visible {
+            display: none;
+        }
+
+        .star-counter .star-icon {
+            font-size: 1.6rem;
+            animation: starPulse 2s infinite;
+        }
+
+        @keyframes starPulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
+        }
+
+        /* ANA MENÜ */
+        .menu-title {
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: #e91e63;
+            text-shadow: 3px 3px 0 rgba(233, 30, 99, 0.15);
+            margin-bottom: 10px;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .menu-subtitle {
+            font-size: 1.3rem;
+            color: #7b1fa2;
+            font-weight: 700;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .menu-character {
+            font-size: 8rem;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .menu-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .btn {
+            padding: 18px 30px;
+            font-size: 1.3rem;
+            font-weight: 800;
+            font-family: 'Nunito', sans-serif;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            min-height: 65px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.18);
+        }
+
+        .btn:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #e91e63, #f06292);
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .btn-section {
+            background: white;
+            color: #333;
+            border: 3px solid #e0e0e0;
+        }
+
+        .btn-section:hover {
+            border-color: #e91e63;
+        }
+
+        .btn-section .section-emoji {
+            font-size: 2rem;
+        }
+
+        .btn-green {
+            background: linear-gradient(135deg, #4caf50, #66bb6a);
+            color: white;
+        }
+
+        .btn-blue {
+            background: linear-gradient(135deg, #2196f3, #42a5f5);
+            color: white;
+        }
+
+        .btn-orange {
+            background: linear-gradient(135deg, #ff9800, #ffb74d);
+            color: white;
+        }
+
+        .btn-purple {
+            background: linear-gradient(135deg, #9c27b0, #ba68c8);
+            color: white;
+        }
+
+        .btn-small {
+            padding: 12px 24px;
+            font-size: 1rem;
+            min-height: 50px;
+            border-radius: 15px;
+        }
+
+        /* BÖLÜM BAŞLIK */
+        .section-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .section-header h2 {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #1a237e;
+            margin-bottom: 8px;
+        }
+
+        .section-header p {
+            font-size: 1.1rem;
+            color: #5c6bc0;
+            font-weight: 600;
+        }
+
+        .section-emoji-big {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        #section1Screen .section-header {
+            display: none;
+        }
+
+        /* BÖLÜM 1: SELAMLAŞMA */
+        .scene-container {
+            background: white;
+            border-radius: 30px;
+            padding: 30px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .scene-visual {
+            font-size: 6rem;
+            margin-bottom: 10px;
+            animation: sceneAppear 0.6s ease;
+        }
+
+        .test-image {
+            display: block;
+            width: 100%;
+            max-height: 310px;
+            object-fit: cover;
+            border-radius: 20px;
+            margin: 0 auto 18px;
+        }
+
+        @keyframes sceneAppear {
+            from {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .scene-description {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 25px;
+        }
+
+        .lesson-video {
+            display: block;
+            width: 100%;
+            max-height: 58vh;
+            object-fit: contain;
+            border-radius: 20px;
+            background: #111;
+            box-shadow: 0 8px 24px rgba(20, 40, 80, .18);
+            margin-bottom: 20px;
+        }
+
+        .greeting-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .greeting-options.single-option {
+            grid-template-columns: 1fr;
+        }
+
+        .greeting-btn {
+            padding: 16px 10px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            font-family: 'Nunito', sans-serif;
+            border: 3px solid #e0e0e0;
+            border-radius: 18px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-height: 60px;
+            color: #333;
+        }
+
+        .greeting-btn:hover {
+            border-color: #7c4dff;
+            background: #f3e5f5;
+            transform: scale(1.03);
+        }
+
+        .greeting-btn.correct {
+            border-color: #4caf50;
+            background: #e8f5e9;
+            animation: correctPop 0.5s ease;
+            color: #2e7d32;
+        }
+
+        .greeting-btn.wrong {
+            border-color: #ef5350;
+            background: #ffebee;
+            animation: shake 0.4s ease;
+            color: #c62828;
+        }
+
+        @keyframes correctPop {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.15);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-8px);
+            }
+
+            75% {
+                transform: translateX(8px);
+            }
+        }
+
+        .progress-bar {
+            width: 100%;
+            max-width: 600px;
+            height: 14px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #e91e63, #ff5722, #ff9800);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-text {
+            font-size: 0.95rem;
+            color: #666;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        /* BÖLÜM 2: TANIŞMA */
+        .dialogue-container {
+            background: white;
+            border-radius: 30px;
+            padding: 30px;
+            width: 100%;
+            max-width: 550px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .character {
+            font-size: 6rem;
+            margin-bottom: 15px;
+            animation: characterEnter 0.7s ease;
+        }
+
+        @keyframes characterEnter {
+            from {
+                transform: translateX(-100px) rotate(-10deg);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0) rotate(0);
+                opacity: 1;
+            }
+        }
+
+        .character-name {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #e91e63;
+            margin-bottom: 15px;
+        }
+
+        .speech-bubble {
+            background: #f3e5f5;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 25px;
+            position: relative;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #4a148c;
+            line-height: 1.5;
+        }
+
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 10px solid transparent;
+            border-bottom-color: #f3e5f5;
+        }
+
+        .name-input-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .name-input {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: 'Nunito', sans-serif;
+            padding: 15px 25px;
+            border: 3px solid #ce93d8;
+            border-radius: 18px;
+            text-align: center;
+            width: 100%;
+            max-width: 300px;
+            outline: none;
+            color: #4a148c;
+            background: #fce4ec;
+        }
+
+        .name-input:focus {
+            border-color: #e91e63;
+            box-shadow: 0 0 15px rgba(233, 30, 99, 0.2);
+        }
+
+        .name-input::placeholder {
+            color: #ce93d8;
+            font-weight: 600;
+        }
+
+        .response-bubble {
+            background: #e8f5e9;
+            border-radius: 20px;
+            padding: 20px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #2e7d32;
+            animation: fadeIn 0.5s ease;
+            margin-top: 15px;
+        }
+
+        .name-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .name-option-btn {
+            padding: 12px 8px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            font-family: 'Nunito', sans-serif;
+            border: 2px solid #ce93d8;
+            border-radius: 14px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #6a1b9a;
+        }
+
+        .name-option-btn:hover {
+            background: #f3e5f5;
+            border-color: #9c27b0;
+            transform: scale(1.05);
+        }
+
+        .or-divider {
+            font-size: 1rem;
+            color: #999;
+            font-weight: 700;
+            margin: 5px 0;
+        }
+
+        /* BÖLÜM 3: TÜRKİYE */
+        .turkey-container {
+            background: white;
+            border-radius: 30px;
+            padding: 30px;
+            width: 100%;
+            max-width: 650px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .turkey-map {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto 25px;
+        }
+
+        .turkey-map svg {
+            width: 100%;
+            height: auto;
+        }
+
+        .map-info-box {
+            background: #e3f2fd;
+            border-radius: 18px;
+            padding: 18px;
+            margin-bottom: 20px;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #1565c0;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .flag-container {
+            font-size: 5rem;
+            margin-bottom: 15px;
+            animation: flagWave 2s ease-in-out infinite;
+        }
+
+        @keyframes flagWave {
+
+            0%,
+            100% {
+                transform: rotate(-3deg);
+            }
+
+            50% {
+                transform: rotate(3deg);
+            }
+        }
+
+        .culture-icons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .culture-icon {
+            font-size: 3rem;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+
+        .culture-icon:hover {
+            transform: scale(1.3) rotate(5deg);
+        }
+
+        .culture-tooltip {
+            position: absolute;
+            bottom: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .culture-icon:hover .culture-tooltip {
+            opacity: 1;
+        }
+
+        .quiz-options-turkey {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        /* TEBRİKLER */
+        .congrats-container {
+            text-align: center;
+        }
+
+        .congrats-emoji {
+            font-size: 7rem;
+            animation: bounce 1.5s infinite;
+        }
+
+        .congrats-title {
+            font-size: 3rem;
+            font-weight: 900;
+            color: #e91e63;
+            margin: 20px 0 10px;
+        }
+
+        .congrats-subtitle {
+            font-size: 1.3rem;
+            color: #7b1fa2;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .final-stars {
+            font-size: 3rem;
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .final-stars span {
+            animation: starAppear 0.3s ease forwards;
+            opacity: 0;
+        }
+
+        @keyframes starAppear {
+            from {
+                opacity: 0;
+                transform: scale(0) rotate(-180deg);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
+        }
+
+        .final-score {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #f9a825;
+            margin-bottom: 30px;
+        }
+
+        /* KONFETİ */
+        .confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .confetti-piece {
+            position: absolute;
+            top: -10px;
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            animation: confettiFall linear forwards;
+        }
+
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* GERİBİLDİRİM POPUP */
+        .feedback-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 500;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .feedback-overlay.active {
+            display: flex;
+        }
+
+        .feedback-box {
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            text-align: center;
+            animation: popIn 0.4s ease;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            max-width: 350px;
+        }
+
+        @keyframes popIn {
+            from {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .feedback-emoji {
+            font-size: 5rem;
+            margin-bottom: 15px;
+        }
+
+        .feedback-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+        }
+
+        .feedback-text.correct {
+            color: #2e7d32;
+        }
+
+        .feedback-text.wrong {
+            color: #e65100;
+        }
+
+        /* SES & GERİ BUTONLARI */
+        .speak-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            padding: 5px;
+            transition: transform 0.2s;
+            vertical-align: middle;
+        }
+
+        .speak-btn:hover {
+            transform: scale(1.2);
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 15px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border: 3px solid #e0e0e0;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .back-btn:hover {
+            border-color: #e91e63;
+            transform: scale(1.1);
+        }
+
+        .back-btn.visible {
+            display: flex;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 600px) {
+            #menuScreen {
+                justify-content: center;
+            }
+
+            .welcome-stage {
+                width: 100vw;
+            }
+
+            .welcome-start {
+                border-radius: 10px;
+            }
+
+            .menu-title {
+                font-size: 2.5rem;
+            }
+
+            .menu-character {
+                font-size: 5rem;
+            }
+
+            .scene-visual {
+                font-size: 4rem;
+            }
+
+            .greeting-options {
+                grid-template-columns: 1fr;
+            }
+
+            .character {
+                font-size: 4rem;
+            }
+
+            .quiz-options-turkey {
+                grid-template-columns: 1fr;
+            }
+
+            .btn {
+                font-size: 1.1rem;
+                padding: 14px 20px;
+                min-height: 55px;
+            }
+
+            .scene-container,
+            .dialogue-container,
+            .turkey-container {
+                padding: 20px;
+                border-radius: 20px;
+            }
+
+            .name-options {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 400px) {
+            .menu-title {
+                font-size: 2rem;
+            }
+
+            .section-header h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <audio id="openingAudio" src="acilis.mp3" preload="auto"></audio>
+    <audio id="merhabaAudio" src="merhaba.wav" preload="auto"></audio>
+    <audio id="gunaydinAudio" src="gunaydin.wav" preload="auto"></audio>
+    <audio id="iyiGunlerAudio" src="iyi-gunler.wav" preload="auto"></audio>
+    <audio id="hoscaKalAudio" src="hosca-kal.wav" preload="auto"></audio>
+    <audio id="gorusuruzAudio" src="gorusuruz.wav" preload="auto"></audio>
+
+    <div class="star-counter" id="starCounter">
+        <span class="star-icon">⭐</span>
+        <span id="starCount">0</span>
+    </div>
+    <button class="back-btn" id="backBtn" onclick="goToMenu()">◀</button>
+    <div class="confetti-container" id="confettiContainer"></div>
+
+    <div class="feedback-overlay" id="feedbackOverlay">
+        <div class="feedback-box">
+            <div class="feedback-emoji" id="feedbackEmoji">🎉</div>
+            <div class="feedback-text" id="feedbackText">Aferin!</div>
+        </div>
+    </div>
+
+    <!-- KARŞILAMA / İLK SAYFA -->
+    <div class="screen active" id="menuScreen">
+        <div class="welcome-stage" role="img"
+            aria-label="Ülkem Yanımda ile Türkçe ve Türk Kültürü Derslerine hoş geldiniz">
+            <button class="welcome-start" onclick="playOpeningAndStart()" aria-label="Derse başla">Başlat</button>
+        </div>
+    </div>
+
+    <!-- BÖLÜM 1: SELAMLAŞMA -->
+    <div class="screen" id="section1Screen">
+        <div class="section-header">
+            <span class="section-emoji-big">👋</span>
+            <h2>Selamlaşma Zamanı!</h2>
+            <p>Doğru selamı bul ve tıkla!</p>
+        </div>
+        <div class="progress-text" id="s1ProgressText">Soru 1 / 5</div>
+        <div class="progress-bar" id="s1ProgressBar">
+            <div class="progress-fill" id="s1Progress" style="width: 0%"></div>
+        </div>
+        <div class="scene-container" id="s1SceneContainer"></div>
+    </div>
+
+    <!-- BÖLÜM 2: TANIŞMA -->
+    <div class="screen" id="section2Screen">
+        <div class="section-header">
+            <span class="section-emoji-big">🧒</span>
+            <h2>Tanışma Zamanı!</h2>
+            <p>Yeni arkadaşlarınla tanış!</p>
+        </div>
+        <div class="progress-text" id="s2ProgressText">Karakter 1 / 3</div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="s2Progress" style="width: 0%"></div>
+        </div>
+        <div class="dialogue-container" id="s2DialogueContainer"></div>
+    </div>
+
+    <!-- BÖLÜM 3: TÜRKİYE -->
+    <div class="screen" id="section3Screen">
+        <div class="section-header">
+            <span class="section-emoji-big">🇹🇷</span>
+            <h2>Türkiye'yi Tanıyalım!</h2>
+            <p>Ülkemizi keşfet!</p>
+        </div>
+        <div class="turkey-container" id="s3Container"></div>
+    </div>
+
+    <!-- TEBRİKLER -->
+    <div class="screen" id="congratsScreen">
+        <div class="congrats-container">
+            <div class="congrats-emoji">🏆</div>
+            <div class="congrats-title">Tebrikler!</div>
+            <div class="congrats-subtitle">Harikasın! Etkinliği tamamladın!</div>
+            <div class="final-stars" id="finalStars"></div>
+            <div class="final-score" id="finalScore"></div>
+            <div class="menu-buttons">
+                <button class="btn btn-primary" onclick="resetGame()">🔄 Tekrar Oyna!</button>
+                <button class="btn btn-section" onclick="goToMenu()">🏠 Ana Menü</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ====== OYUN DURUMU ======
+        let stars = 0, currentSection = 0, playAllMode = false;
+        let s1CurrentQuestion = 0, s1CurrentLesson = 0, s1Answered = false;
+        let s2CurrentChar = 0, s2Phase = 'ask', playerName = '';
+        let s3Step = 0, s3QuizAnswered = false;
+
+        // ====== BÖLÜM 1 VERİLERİ ======
+        const greetingQuestions = [
+            { image: 'test-gunaydin.png', description: 'Sabah oldu! Güneş doğuyor, uyanma vakti!', correct: 'Günaydın!', options: ['Günaydın!'] },
+            { image: 'test-merhaba.png', description: 'Okula geldin! Arkadaşlarınla karşılaştın.', correct: 'Merhaba!', options: ['Merhaba!'] },
+            { image: 'test-iyi-gunler.png', description: 'Gündüz vakti öğretmenini gördün.', correct: 'İyi günler!', options: ['İyi günler!'] },
+            { image: 'test-hosca-kal.png', description: 'Okul bitti! Arkadaşlarından ayrılıyorsun.', correct: 'Hoşça kal!', options: ['Hoşça kal!'] }
+        ];
+
+        // Testlerden önce gösterilecek öğrenme videoları
+        const greetingLessons = [
+            { title: 'Merhaba!', src: 'merhaba.mp4' },
+            { title: 'Günaydın!', src: 'gunaydin.mp4' },
+            { title: 'İyi Günler!', src: 'iyi-gunler.mp4' },
+            { title: 'Hoşça Kal!', src: 'hosca-kal.mp4' }
+        ];
+
+        // ====== BÖLÜM 2 VERİLERİ ======
+        const characters = [
+            { emoji: '👧🏻', name: 'Elif', color: '#e91e63' },
+            { emoji: '👦🏻', name: 'Ali', color: '#2196f3' },
+            { emoji: '👧🏽', name: 'Zeynep', color: '#9c27b0' }
+        ];
+        const nameOptions = ['Ege', 'Deniz', 'Ayla', 'Arda', 'Su', 'Mert'];
+
+        // ====== BÖLÜM 3 VERİLERİ ======
+        const turkeySteps = [
+            { type: 'explore', title: 'flag' },
+            { type: 'explore', title: 'map' },
+            { type: 'quiz', question: 'Türkiye\'nin başkenti neresidir?', visual: '🏛️', options: ['Ankara', 'İstanbul', 'Antalya'], correct: 'Ankara' },
+            { type: 'quiz', question: 'Türk bayrağının rengi nedir?', visual: '🏳️', options: ['Kırmızı - Beyaz', 'Mavi - Beyaz', 'Yeşil - Beyaz'], correct: 'Kırmızı - Beyaz' },
+            { type: 'quiz', question: 'Bu hangi ülkenin bayrağı? 🇹🇷', visual: '🇹🇷', options: ['Türkiye', 'Fransa', 'Almanya'], correct: 'Türkiye' }
+        ];
+
+        // ====== SES SİSTEMİ ======
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+
+            if (type === 'correct') {
+                osc.frequency.setValueAtTime(523, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(659, audioCtx.currentTime + 0.1);
+                osc.frequency.setValueAtTime(784, audioCtx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                osc.start(audioCtx.currentTime); osc.stop(audioCtx.currentTime + 0.5);
+            } else if (type === 'wrong') {
+                osc.frequency.setValueAtTime(330, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(262, audioCtx.currentTime + 0.15);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                osc.start(audioCtx.currentTime); osc.stop(audioCtx.currentTime + 0.4);
+            } else if (type === 'star') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(1047, audioCtx.currentTime + 0.1);
+                osc.frequency.setValueAtTime(1319, audioCtx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                osc.start(audioCtx.currentTime); osc.stop(audioCtx.currentTime + 0.4);
+            } else if (type === 'click') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                osc.start(audioCtx.currentTime); osc.stop(audioCtx.currentTime + 0.1);
+            } else if (type === 'fanfare') {
+                [523, 659, 784, 1047, 784, 1047].forEach((freq, i) => {
+                    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+                    o.type = 'triangle'; o.connect(g); g.connect(audioCtx.destination);
+                    o.frequency.setValueAtTime(freq, audioCtx.currentTime + i * 0.15);
+                    g.gain.setValueAtTime(0.25, audioCtx.currentTime + i * 0.15);
+                    g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + i * 0.15 + 0.3);
+                    o.start(audioCtx.currentTime + i * 0.15); o.stop(audioCtx.currentTime + i * 0.15 + 0.3);
+                });
+            }
+        }
+
+        function speak(text, callback) {
+            // Bilgisayar sesi kapalıdır; kullanıcı tarafından gönderilecek sesler eklenecektir.
+            if (callback) setTimeout(callback, 0);
+        }
+
+        function playPhraseAudio(phrase, callback) {
+            const audioMap = {
+                'Merhaba!': 'merhabaAudio',
+                'Günaydın!': 'gunaydinAudio',
+                'İyi günler!': 'iyiGunlerAudio',
+                'Hoşça kal!': 'hoscaKalAudio',
+                'Görüşürüz!': 'gorusuruzAudio'
+            };
+            const audio = document.getElementById(audioMap[phrase]);
+            if (!audio) { if (callback) callback(); return; }
+            audio.currentTime = 0;
+            audio.onended = () => { audio.onended = null; if (callback) callback(); };
+            audio.play().catch(() => { audio.onended = null; if (callback) callback(); });
+        }
+
+        // ====== KONFETİ ======
+        function launchConfetti(count = 50) {
+            const container = document.getElementById('confettiContainer');
+            const colors = ['#e91e63', '#2196f3', '#4caf50', '#ff9800', '#9c27b0', '#f44336', '#ffeb3b'];
+            for (let i = 0; i < count; i++) {
+                const piece = document.createElement('div');
+                piece.className = 'confetti-piece';
+                piece.style.left = Math.random() * 100 + '%';
+                piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                piece.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
+                piece.style.animationDelay = Math.random() * 0.5 + 's';
+                piece.style.width = (Math.random() * 10 + 6) + 'px';
+                piece.style.height = (Math.random() * 10 + 6) + 'px';
+                if (Math.random() > 0.5) piece.style.borderRadius = '50%';
+                container.appendChild(piece);
+                setTimeout(() => piece.remove(), 4000);
+            }
+        }
+
+        // ====== YILDIZ SİSTEMİ ======
+        function addStar() { stars++; document.getElementById('starCount').textContent = stars; playSound('star'); }
+        function updateStarVisibility(show) { document.getElementById('starCounter').classList.toggle('visible', show); }
+
+        // ====== GERİBİLDİRİM ======
+        function showFeedback(isCorrect, correctAnswer, callback) {
+            const overlay = document.getElementById('feedbackOverlay');
+            document.getElementById('feedbackEmoji').textContent = isCorrect ? '🎉' : '🤔';
+            const text = document.getElementById('feedbackText');
+            text.textContent = isCorrect ? 'Aferin! Doğru!' : `Doğru cevap: ${correctAnswer}`;
+            text.className = 'feedback-text ' + (isCorrect ? 'correct' : 'wrong');
+            overlay.classList.add('active');
+            if (isCorrect) speak('Aferin! Doğru cevap!');
+            setTimeout(() => { overlay.classList.remove('active'); if (callback) callback(); }, isCorrect ? 1800 : 2200);
+        }
+
+        // ====== EKRAN GEÇİŞLERİ ======
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            const screen = document.getElementById(screenId);
+            void screen.offsetWidth;
+            screen.classList.add('active');
+            const backBtn = document.getElementById('backBtn');
+            backBtn.classList.toggle('visible', screenId !== 'menuScreen' && screenId !== 'congratsScreen');
+        }
+
+        function goToMenu() { playSound('click'); updateStarVisibility(false); showScreen('menuScreen'); playAllMode = false; }
+
+        // ====== OYUN BAŞLATMA ======
+        function startAllSections() {
+            playSound('click'); playAllMode = true; stars = 0;
+            document.getElementById('starCount').textContent = '0';
+            updateStarVisibility(true); startSection(1);
+        }
+
+        function playOpeningAndStart() {
+            const openingAudio = document.getElementById('openingAudio');
+            if (openingAudio) {
+                openingAudio.currentTime = 0;
+                openingAudio.onended = () => startAllSections();
+                openingAudio.play().catch(() => startAllSections());
+                return;
+            }
+            startAllSections();
+        }
+
+        function startSection(num) {
+            playSound('click'); currentSection = num;
+            if (!playAllMode) { stars = 0; document.getElementById('starCount').textContent = '0'; }
+            updateStarVisibility(true);
+            if (num === 1) initSection1();
+            else if (num === 2) initSection2();
+            else if (num === 3) initSection3();
+        }
+
+        function nextSection() {
+            if (!playAllMode) { showCongrats(); return; }
+            currentSection++;
+            if (currentSection > 3) showCongrats();
+            else startSection(currentSection);
+        }
+
+        // ====== BÖLÜM 1: SELAMLAŞMA ======
+        function initSection1() {
+            s1CurrentQuestion = 0; s1CurrentLesson = 0; s1Answered = false;
+            showScreen('section1Screen'); renderS1Lesson();
+        }
+
+        function renderS1Lesson() {
+            const lesson = greetingLessons[s1CurrentLesson];
+            const container = document.getElementById('s1SceneContainer');
+            document.getElementById('s1ProgressText').style.display = 'none';
+            document.getElementById('s1ProgressBar').style.display = 'none';
+            container.innerHTML = `
+                <h3 style="font-size:1.8rem;color:#1a237e;margin-bottom:18px;">${lesson.title}</h3>
+                <video class="lesson-video" controls autoplay playsinline>
+                    <source src="${lesson.src}" type="video/mp4">
+                    Tarayıcınız bu videoyu desteklemiyor.
+                </video>
+                <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap;">
+                    <button class="btn btn-purple btn-small" onclick="replayS1Lesson()">🔊 Tekrar Dinle</button>
+                    <button class="btn btn-blue btn-small" onclick="finishS1Lesson()">➡️ Devam</button>
+                </div>
+            `;
+            const video = container.querySelector('video');
+            if (video) video.play().catch(() => { });
+        }
+
+        function finishS1Lesson() {
+            const video = document.querySelector('#s1SceneContainer video');
+            if (video) { video.pause(); video.onended = null; }
+            s1CurrentLesson++;
+            if (s1CurrentLesson < greetingLessons.length) renderS1Lesson();
+            else renderS1Question();
+        }
+
+        function replayS1Lesson() {
+            const video = document.querySelector('#s1SceneContainer video');
+            if (!video) return;
+            video.currentTime = 0;
+            video.play().catch(() => { });
+        }
+
+        function showS1ActivityVideo() {
+            const container = document.getElementById('s1SceneContainer');
+            document.getElementById('s1ProgressText').style.display = 'none';
+            document.getElementById('s1ProgressBar').style.display = 'none';
+            container.innerHTML = `
+                <video class="lesson-video" controls autoplay playsinline>
+                    <source src="etkinlik-sonrasi.mp4" type="video/mp4">
+                    Tarayıcınız bu videoyu desteklemiyor.
+                </video>
+                <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap;">
+                    <button class="btn btn-purple btn-small" onclick="replayS1Lesson()">🔊 Tekrar Dinle</button>
+                    <button class="btn btn-blue btn-small" onclick="finishS1ActivityVideo()">➡️ Devam</button>
+                </div>
+            `;
+            const video = container.querySelector('video');
+            if (video) video.play().catch(() => { });
+        }
+
+        function finishS1ActivityVideo() {
+            const video = document.querySelector('#s1SceneContainer video');
+            if (video) video.pause();
+            showCongrats();
+        }
+
+        function renderS1Question() {
+            const q = greetingQuestions[s1CurrentQuestion];
+            const container = document.getElementById('s1SceneContainer');
+            const total = greetingQuestions.length;
+            document.getElementById('s1ProgressText').style.display = '';
+            document.getElementById('s1ProgressBar').style.display = '';
+            document.getElementById('s1ProgressText').textContent = `Soru ${s1CurrentQuestion + 1} / ${total}`;
+            document.getElementById('s1Progress').style.width = ((s1CurrentQuestion) / total * 100) + '%';
+            s1Answered = false;
+            const shuffled = [...q.options].sort(() => Math.random() - 0.5);
+            container.innerHTML = `
+                ${q.image ? `<img class="test-image" src="${q.image}" alt="${q.description}">` : `<div class="scene-visual">${q.visual}</div>`}
+                <div class="scene-description">
+                    ${q.description}
+                    <button class="speak-btn" onclick="speak('${q.description.replace(/'/g, "\\'")}')" title="Dinle">🔊</button>
+                </div>
+                <div class="greeting-options ${q.options.length === 1 ? 'single-option' : ''}">
+                    ${shuffled.map((opt, i) => `
+                        <button class="greeting-btn" onclick="checkGreeting(this, '${opt.replace(/'/g, "\\'")}', '${q.correct.replace(/'/g, "\\'")}')" id="gBtn${i}">
+                            ${opt}
+                        </button>
+                    `).join('')}
+                </div>
+            `;
+            setTimeout(() => speak(q.description), 400);
+        }
+
+        function checkGreeting(btn, selected, correct) {
+            if (s1Answered) return;
+            s1Answered = true;
+            const isCorrect = selected === correct;
+            if (isCorrect) {
+                btn.classList.add('correct'); playSound('correct'); addStar(); launchConfetti(30);
+                playPhraseAudio(correct, () => {
+                    showFeedback(true, correct, () => {
+                        s1CurrentQuestion++;
+                        if (s1CurrentQuestion < greetingQuestions.length) renderS1Question();
+                        else { document.getElementById('s1Progress').style.width = '100%'; setTimeout(showS1ActivityVideo, 500); }
+                    });
+                });
+            } else {
+                btn.classList.add('wrong'); playSound('wrong');
+                document.querySelectorAll('.greeting-btn').forEach(b => {
+                    if (b.textContent.trim().startsWith(correct.replace('!', ''))) b.classList.add('correct');
+                });
+                playPhraseAudio(correct);
+                showFeedback(false, correct, () => {
+                    s1CurrentQuestion++;
+                    if (s1CurrentQuestion < greetingQuestions.length) renderS1Question();
+                    else { document.getElementById('s1Progress').style.width = '100%'; setTimeout(showS1ActivityVideo, 500); }
+                });
+            }
+        }
+
+        // ====== BÖLÜM 2: TANIŞMA ======
+        function initSection2() { s2CurrentChar = 0; s2Phase = 'ask'; playerName = ''; showScreen('section2Screen'); renderS2Character(); }
+
+        function renderS2Character() {
+            const char = characters[s2CurrentChar];
+            const container = document.getElementById('s2DialogueContainer');
+            const total = characters.length;
+            document.getElementById('s2ProgressText').textContent = `Karakter ${s2CurrentChar + 1} / ${total}`;
+            document.getElementById('s2Progress').style.width = ((s2CurrentChar) / total * 100) + '%';
+
+            container.innerHTML = `
+                <div class="character">${char.emoji}</div>
+                <div class="character-name" style="color: ${char.color}">${char.name}</div>
+                <div class="speech-bubble">
+                    Merhaba! Benim adım <strong>${char.name}</strong>.
+                    <br>Senin adın ne? 😊
+                    <br><button class="speak-btn" onclick="speak('Merhaba! Benim adım ${char.name}. Senin adın ne?')" title="Dinle">🔊</button>
+                </div>
+                <div class="name-input-container">
+                    <p style="font-size: 1rem; color: #666; font-weight: 700;">Adını yaz veya aşağıdan seç:</p>
+                    <input type="text" class="name-input" id="nameInput" placeholder="Adını yaz..."
+                           maxlength="20" autocomplete="off" onkeypress="if(event.key==='Enter') submitName()">
+                    <button class="btn btn-green btn-small" onclick="submitName()">✅ Tamam</button>
+                    <div class="or-divider">— veya —</div>
+                    <div class="name-options">
+                        ${nameOptions.map(n => `<button class="name-option-btn" onclick="selectName('${n}')">${n}</button>`).join('')}
+                    </div>
+                </div>
+            `;
+            setTimeout(() => {
+                speak(`Merhaba! Benim adım ${char.name}. Senin adın ne?`);
+                const input = document.getElementById('nameInput');
+                if (input) input.focus();
+            }, 400);
+        }
+
+        function selectName(name) { document.getElementById('nameInput').value = name; submitName(); }
+
+        function submitName() {
+            const input = document.getElementById('nameInput');
+            const name = input ? input.value.trim() : '';
+            if (!name) { input.style.borderColor = '#f44336'; speak('Lütfen adını yaz veya seç!'); return; }
+            playerName = name;
+            playSound('correct'); addStar(); launchConfetti(25);
+            const char = characters[s2CurrentChar];
+            const container = document.getElementById('s2DialogueContainer');
+            container.innerHTML = `
+                <div class="character">${char.emoji}</div>
+                <div class="character-name" style="color: ${char.color}">${char.name}</div>
+                <div class="speech-bubble">
+                    Merhaba! Benim adım <strong>${char.name}</strong>. <br>Senin adın ne? 😊
+                </div>
+                <div class="response-bubble">
+                    🎉 Merhaba <strong>${playerName}</strong>!
+                    <br>Tanıştığımıza memnun oldum! 🤗
+                </div>
+                <button class="btn btn-blue btn-small" onclick="nextCharacter()" style="margin-top: 20px;">
+                    ${s2CurrentChar < characters.length - 1 ? '➡️ Sonraki Arkadaş' : '✅ Devam Et'}
+                </button>
+            `;
+            speak(`Merhaba ${playerName}! Tanıştığımıza memnun oldum!`);
+        }
+
+        function nextCharacter() {
+            playSound('click'); s2CurrentChar++;
+            if (s2CurrentChar < characters.length) { s2Phase = 'ask'; renderS2Character(); }
+            else { document.getElementById('s2Progress').style.width = '100%'; setTimeout(() => nextSection(), 500); }
+        }
+
+        // ====== BÖLÜM 3: TÜRKİYE ======
+        function initSection3() { s3Step = 0; showScreen('section3Screen'); renderS3Step(); }
+
+        function renderS3Step() {
+            const container = document.getElementById('s3Container');
+            const step = turkeySteps[s3Step];
+
+            if (step.type === 'explore' && step.title === 'flag') {
+                container.innerHTML = `
+                    <div class="flag-container">🇹🇷</div>
+                    <h3 style="font-size: 1.8rem; color: #c62828; margin-bottom: 15px;">Türk Bayrağı</h3>
+                    <div class="map-info-box">
+                        🇹🇷 Bu bizim bayrağımız! Kırmızı zemin üzerinde beyaz ay ve yıldız var.
+                        <button class="speak-btn" onclick="speak('Bu bizim bayrağımız! Kırmızı zemin üzerinde beyaz ay ve yıldız var.')" title="Dinle">🔊</button>
+                    </div>
+                    <div class="culture-icons">
+                        <div class="culture-icon" onclick="speak('Çay, Türk kültürünün önemli bir parçasıdır.')">🍵<span class="culture-tooltip">Türk Çayı</span></div>
+                        <div class="culture-icon" onclick="speak('Lale, Türkiye nin simgesidir.')">🌷<span class="culture-tooltip">Lale</span></div>
+                        <div class="culture-icon" onclick="speak('Cami, ibadet edilen yerdir.')">🕌<span class="culture-tooltip">Cami</span></div>
+                        <div class="culture-icon" onclick="speak('Simit, lezzetli bir Türk yiyeceğidir.')">🥯<span class="culture-tooltip">Simit</span></div>
+                        <div class="culture-icon" onclick="speak('Türk kahvesi dünyaca ünlüdür.')">☕<span class="culture-tooltip">Türk Kahvesi</span></div>
+                    </div>
+                    <button class="btn btn-blue btn-small" onclick="s3Next()" style="margin-top: 15px;">➡️ Devam Et</button>
+                `;
+                setTimeout(() => speak('Bu bizim bayrağımız! Kırmızı zemin üzerinde beyaz ay ve yıldız var.'), 400);
+            } else if (step.type === 'explore' && step.title === 'map') {
+                container.innerHTML = `
+                    <div class="turkey-map">
+                        <svg viewBox="0 0 500 250" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M40,120 C50,90 80,70 120,65 C140,62 160,58 180,55 C200,52 220,50 240,48
+                                     C260,46 280,48 300,52 C320,56 340,55 360,50 C380,45 400,42 420,50
+                                     C440,58 455,65 460,80 C465,95 460,110 450,120 C440,130 430,140 420,145
+                                     C410,150 395,155 380,155 C370,155 360,160 350,165 C340,170 325,172 310,170
+                                     C295,168 280,170 265,175 C250,180 235,182 220,180 C205,178 190,175 175,170
+                                     C160,165 145,160 130,158 C115,156 100,155 85,152 C70,149 55,145 45,138
+                                     C35,131 35,128 40,120 Z"
+                                  fill="#a5d6a7" stroke="#2e7d32" stroke-width="2"/>
+                            <circle cx="280" cy="105" r="8" fill="#f44336" stroke="white" stroke-width="2"
+                                    style="cursor:pointer" onclick="showMapInfo('ankara')"/>
+                            <text x="280" y="92" text-anchor="middle" fill="#c62828"
+                                  font-size="13" font-weight="bold" font-family="Nunito, sans-serif">Ankara</text>
+                            <circle cx="185" cy="62" r="7" fill="#2196f3" stroke="white" stroke-width="2"
+                                    style="cursor:pointer" onclick="showMapInfo('istanbul')"/>
+                            <text x="185" y="50" text-anchor="middle" fill="#1565c0"
+                                  font-size="12" font-weight="bold" font-family="Nunito, sans-serif">İstanbul</text>
+                            <circle cx="230" cy="165" r="6" fill="#ff9800" stroke="white" stroke-width="2"
+                                    style="cursor:pointer" onclick="showMapInfo('antalya')"/>
+                            <text x="230" y="182" text-anchor="middle" fill="#e65100"
+                                  font-size="11" font-weight="bold" font-family="Nunito, sans-serif">Antalya</text>
+                            <text x="300" y="135" text-anchor="middle" fill="#1b5e20"
+                                  font-size="18" font-weight="bold" font-family="Nunito, sans-serif" opacity="0.6">TÜRKİYE</text>
+                        </svg>
+                    </div>
+                    <div class="map-info-box" id="mapInfoBox">📍 Şehirlere dokunarak keşfet!</div>
+                    <button class="btn btn-blue btn-small" onclick="s3Next()" style="margin-top: 10px;">➡️ Sorulara Geç</button>
+                `;
+                setTimeout(() => speak('Bu Türkiye haritası! Şehirlere dokunarak keşfet!'), 400);
+            } else if (step.type === 'quiz') {
+                const shuffled = [...step.options].sort(() => Math.random() - 0.5);
+                container.innerHTML = `
+                    <div style="font-size: 4rem; margin-bottom: 15px;">${step.visual}</div>
+                    <h3 style="font-size: 1.4rem; color: #1a237e; margin-bottom: 5px;">
+                        ${step.question}
+                        <button class="speak-btn" onclick="speak('${step.question.replace(/'/g, "\\'")}')" title="Dinle">🔊</button>
+                    </h3>
+                    <div class="quiz-options-turkey" id="s3QuizOptions">
+                        ${shuffled.map(opt => `
+                            <button class="greeting-btn" onclick="checkTurkeyQuiz(this, '${opt.replace(/'/g, "\\'")}', '${step.correct.replace(/'/g, "\\'")}')">${opt}</button>
+                        `).join('')}
+                    </div>
+                `;
+                setTimeout(() => speak(step.question), 400);
+            }
+        }
+
+        function checkTurkeyQuiz(btn, selected, correct) {
+            if (s3QuizAnswered) return;
+            s3QuizAnswered = true;
+            const isCorrect = selected === correct;
+            if (isCorrect) {
+                btn.classList.add('correct'); playSound('correct'); addStar(); launchConfetti(30);
+                showFeedback(true, correct, () => { s3QuizAnswered = false; s3Next(); });
+            } else {
+                btn.classList.add('wrong'); playSound('wrong');
+                document.querySelectorAll('#s3QuizOptions .greeting-btn').forEach(b => { if (b.textContent.trim() === correct) b.classList.add('correct'); });
+                speak(correct);
+                showFeedback(false, correct, () => { s3QuizAnswered = false; s3Next(); });
+            }
+        }
+
+        function s3Next() {
+            playSound('click'); s3Step++;
+            if (s3Step < turkeySteps.length) renderS3Step();
+            else nextSection();
+        }
+
+        function showMapInfo(city) {
+            const infoBox = document.getElementById('mapInfoBox');
+            const infos = {
+                ankara: '🏛️ Ankara, Türkiye\'nin başkentidir! Başkent, ülkenin yönetim merkezidir.',
+                istanbul: '🌉 İstanbul, Türkiye\'nin en büyük şehridir! İki kıtayı birleştirir.',
+                antalya: '🏖️ Antalya, güzel denizi ve plajlarıyla ünlüdür!'
+            };
+            infoBox.innerHTML = infos[city];
+            speak(infos[city].replace(/[🏛️🌉🏖️]/g, ''));
+        }
+
+        // ====== TEBRİKLER ======
+        function showCongrats() {
+            showScreen('congratsScreen'); updateStarVisibility(false);
+            playSound('fanfare'); launchConfetti(80);
+            const starsContainer = document.getElementById('finalStars');
+            starsContainer.innerHTML = '';
+            for (let i = 0; i < stars; i++) {
+                const span = document.createElement('span');
+                span.textContent = '⭐'; span.style.animationDelay = (i * 0.15) + 's';
+                starsContainer.appendChild(span);
+            }
+            document.getElementById('finalScore').textContent = `${stars} Yıldız Kazandın!`;
+            setTimeout(() => speak(`Tebrikler! ${stars} yıldız kazandın! Harikasın!`), 1000);
+        }
+
+        function resetGame() {
+            playSound('click'); stars = 0;
+            document.getElementById('starCount').textContent = '0'; startAllSections();
+        }
+
+        // ====== BAŞLANGIÇ ======
+        document.addEventListener('DOMContentLoaded', () => {
+            document.body.addEventListener('click', () => {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+            }, { once: true });
+        });
+    </script>
+</body>
+
+</html>
