@@ -36,7 +36,7 @@
       width: auto;
       max-width: 100%;
       height: auto;
-      max-height: max(200px, calc(100svh - 290px));
+      max-height: max(250px, calc(100svh - 150px));
       margin: 0 auto 25px;
       border-radius: 24px;
       box-shadow: 0 18px 55px #8f6c2920;
@@ -285,7 +285,7 @@
     #intro .cover {
       margin: 0;
       border-radius: 19px;
-      max-height: max(210px, calc(100svh - 420px));
+      max-height: max(300px, calc(100svh - 220px));
       box-shadow: none;
     }
 
@@ -503,7 +503,7 @@
 
     #intro .cover {
       border-radius: 0;
-      max-height: max(210px, calc(100svh - 450px));
+      max-height: max(300px, calc(100svh - 250px));
     }
 
     .sparkle-one {
@@ -660,11 +660,11 @@
     body:has(#intro:not([hidden])) {
       height: 100dvh;
       min-height: 0;
-      padding: 12px 18px 20px;
+      padding: 4px 8px 6px;
     }
 
     body:has(#intro:not([hidden])) main {
-      max-width: 1440px;
+      max-width: 100%;
       height: 100%;
       min-height: 0;
     }
@@ -674,15 +674,15 @@
       min-height: 0;
       display: grid;
       grid-template-rows: auto minmax(0, 1fr) auto auto;
-      gap: 10px;
-      padding: 10px 22px 12px;
-      border-width: 10px;
+      gap: 4px;
+      padding: 6px 12px 6px;
+      border-width: 8px;
       box-shadow: -7px 7px 0 #0c0d0e;
     }
 
     #intro::before {
-      inset: -10px;
-      background-size: 24px 10px;
+      inset: -8px;
+      background-size: 24px 8px;
     }
 
     #intro .logo-band {
@@ -710,11 +710,11 @@
     }
 
     #intro h1 {
-      max-width: 1150px;
+      max-width: 1250px;
       margin: 0;
       justify-self: center;
-      font-size: clamp(21px, 2.5vw, 32px);
-      line-height: 1.12;
+      font-size: clamp(17px, 2.1vw, 26px);
+      line-height: 1.1;
     }
 
     #intro h1 .welcome-line {
@@ -752,10 +752,10 @@
 
     #intro #start {
       justify-self: center;
-      min-height: 50px;
-      min-width: 200px;
-      padding: 7px 24px;
-      font-size: 22px;
+      min-height: 44px;
+      min-width: 190px;
+      padding: 4px 20px;
+      font-size: 20px;
       box-shadow: 3px 4px 0 #0c0d0e;
     }
 
@@ -894,10 +894,10 @@
       z-index: 1;
       justify-self: center;
       margin: 0;
-      padding: 3px 12px;
+      padding: 1px 8px;
       color: #0c0d0e;
-      font-size: clamp(21px, 2.4vw, 30px);
-      line-height: 1.15;
+      font-size: clamp(17px, 2vw, 24px);
+      line-height: 1.12;
       font-weight: 900;
       transform-origin: center;
       animation: welcome-sway 2.2s ease-in-out infinite;
@@ -2169,7 +2169,7 @@
       <span class="decoration cloud-decor" aria-hidden="true"></span>
       <span class="decoration dot-decor" aria-hidden="true"></span>
       <span class="decoration pencil-decor" aria-hidden="true"><span class="pencil-wood"></span></span>
-      <h1><span class="title-brand">Ülkem Yanımda</span> ile Türkçe ve Türk Kültürü Derslerine</h1>
+      <h1><span class="title-brand">Ülkem Yanımda</span> — Türkçe ve Türk Kültürü</h1>
       <div class="photo-frame"><img class="cover" src="acilis-afissiz.png"
           alt="Dijital Atölyem ekranını kullanan çocuk"></div>
       <p class="welcome-bottom">Hoş Geldiniz!</p>
@@ -2180,32 +2180,32 @@
         Tarayıcın video oynatmayı desteklemiyor.
       </video>
       <div class="video-actions">
-        <button id="back-home" type="button">← Ana sayfa</button>
-        <button id="replay-video" type="button">▶ Tekrar izle</button>
-        <button id="continue-leylo" type="button">Devam et →</button>
+        <button id="back-home" type="button">← Geri</button>
+        <button id="replay-video" type="button">▶ Tekrar</button>
+        <button id="continue-leylo" type="button">Devam →</button>
       </div>
       <p id="video-status" role="status" hidden></p>
     </section>
     <section id="leylo-screen" aria-label="Leylo" hidden>
       <div id="slogan-banner" class="slogan-banner" aria-live="polite">
         <span class="slogan-icon" id="slogan-icon">🗣️</span>
-        <span id="slogan-text" class="slogan-text">Haydi şimdi sesleri tekrar et!</span>
+        <span id="slogan-text" class="slogan-text">Sesleri tekrar et!</span>
       </div>
       <div class="animal-board" aria-label="Ortada Leylo, solda tavşan, üstte robot, sağda kuş ve altta ayı">
-        <button id="robot" class="slot-top" type="button" aria-label="Robotun merhaba sesini dinle"
-          aria-pressed="false"><img src="robot.png" alt="Mavi gözlü robot"></button>
-        <button id="rabbit" class="slot-left" type="button" aria-label="Tavşanın merhaba sesini dinle"
-          aria-pressed="false"><img src="tavsan.png" alt="Havuç tutan tavşan"></button>
+        <button id="robot" class="slot-top" type="button" aria-label="Robot sesi"
+          aria-pressed="false"><img src="robot.png" alt="Robot"></button>
+        <button id="rabbit" class="slot-left" type="button" aria-label="Tavşan sesi"
+          aria-pressed="false"><img src="tavsan.png" alt="Tavşan"></button>
         <div class="portrait" id="portrait">
-          <img id="leylo-image" src="leylo.png" alt="Kırmızı atkılı, gülümseyen Leylo" role="button" tabindex="0"
-            aria-label="Leylo: merhaba sesini dinle">
-          <button id="play" type="button" aria-label="Leylo'nun sesini oynat">▶</button>
+          <img id="leylo-image" src="leylo.png" alt="Leylo" role="button" tabindex="0"
+            aria-label="Leylo sesi">
+          <button id="play" type="button" aria-label="Sesi oynat">▶</button>
         </div>
-        <button id="bird" class="slot-right" type="button" aria-label="Kuşun merhaba sesini dinle"
-          aria-pressed="false"><img src="kus.png" alt="Çiçekli dalda duran kuş"></button>
-        <button id="bear" class="slot-bottom" type="button" aria-label="Ayının merhaba sesini dinle"
+        <button id="bird" class="slot-right" type="button" aria-label="Kuş sesi"
+          aria-pressed="false"><img src="kus.png" alt="Kuş"></button>
+        <button id="bear" class="slot-bottom" type="button" aria-label="Ayı sesi"
           aria-pressed="false"><span class="bear-crop"><img src="ayi.png"
-              alt="Ateşin yanında oturan ayı"></span></button>
+              alt="Ayı"></span></button>
       </div>
       <div class="video-actions" style="margin-top: 12px"><button id="continue-next" type="button">Devam →</button>
       </div>
@@ -2215,15 +2215,15 @@
       <video id="next-video" src="merhabaaa.mp4" controls playsinline preload="metadata"
         aria-label="Sonraki Merhaba videosu"></video>
       <div class="video-actions">
-        <button id="back-leylo" type="button">← Leylo'ya dön</button>
-        <button id="replay-next" type="button">▶ Tekrar izle</button>
-        <button id="open-name-game" type="button">Etkinliğe geç →</button>
+        <button id="back-leylo" type="button">← Geri</button>
+        <button id="replay-next" type="button">▶ Tekrar</button>
+        <button id="open-name-game" type="button">Etkinlik →</button>
       </div>
       <p id="next-status" role="status" hidden></p>
     </section>
     <section id="name-game" aria-labelledby="name-game-title" hidden>
       <header>
-        <h2 id="name-game-title" tabindex="-1">ADINI SÖYLE, HAREKETİNİ YAP!</h2>
+        <h2 id="name-game-title" tabindex="-1">Başlangıç</h2>
         <p class="game-step" id="game-step" role="status" hidden></p>
         <div class="narration-controls" hidden>
           <p id="narration-status" role="status"></p>
@@ -2233,18 +2233,15 @@
         <video id="kerem-video" class="game-student" src="ben-kerem.mp4" playsinline preload="metadata"
           aria-label="Merhaba, ben Kerem videosu"></video>
         <p class="say-name">Merhaba, ben…</p>
-        <p class="game-hint">Adını söyle. Şimdi hareketini yap!</p>
-        <button id="replay-kerem" type="button" aria-label="Kerem'in sesini tekrar dinle">▶ Kerem'i tekrar
-          dinle</button>
+        <p class="game-hint">Adını söyle. Hareket yap!</p>
+        <button id="replay-kerem" type="button" aria-label="Kerem sesi">▶ Tekrar</button>
         <button id="said-name" type="button">Adımı söyledim →</button>
       </div>
       <div class="game-panel" id="game-move-panel" hidden>
-        <p class="game-hint">Öğrenci adını söyler ve bir hareket yapar. Sonra bütün sınıf onun adını söyleyip aynı
-          hareketi tekrar eder!</p>
+        <p class="game-hint">Adını söyle. Hareket seç. Sınıf tekrar eder!</p>
         <div class="move-options" role="group" aria-label="Hareket seç">
           <button class="move-option" id="move-wave" type="button" aria-pressed="false" aria-label="El salla"><img
-              class="move-photo" src="hareket-el-sallama.png" alt="" draggable="false"><span class="move-label">El
-              salla</span></button>
+              class="move-photo" src="hareket-el-sallama.png" alt="" draggable="false"><span class="move-label">El salla</span></button>
           <button class="move-option" id="move-clap" type="button" aria-pressed="false" aria-label="Alkışla"><img
               class="move-photo" src="hareket-alkis.png" alt="" draggable="false"><span
               class="move-label">Alkışla</span></button>
@@ -2255,30 +2252,29 @@
               class="move-photo" src="hareket-ziplama.png" alt="" draggable="false"><span
               class="move-label">Zıpla</span></button>
         </div>
-        <p id="move-instruction" role="status">Hangi hareketi yapmak istersin?</p>
-        <button id="did-move" type="button" disabled>Hareketimi yaptım →</button>
+        <p id="move-instruction" role="status">Hareket seç!</p>
+        <button id="did-move" type="button" disabled>Hareket yaptım →</button>
       </div>
       <div class="game-panel" id="game-together-panel" hidden>
         <img class="remember-student" src="hatirliyor-musun.png"
           alt="El sallama, alkışlama, kollarını açma ve zıplama hareketlerini düşünen öğrenci">
         <p class="say-name">Hatırlıyor musun?</p>
-        <p class="game-hint" id="together-instruction">Öğretmen bir arkadaşının hareketini tekrar eder. Bu hareket
-          kimindi? Adını söyle!</p>
-        <button id="next-friend" type="button">Sıradaki arkadaş →</button>
+        <p class="game-hint" id="together-instruction">Bu hareket kimindi? Adını söyle!</p>
+        <button id="next-friend" type="button">Sıradaki →</button>
       </div>
       <footer class="game-footer" style="margin: 0">
-        <button id="back-to-last-video" type="button">← Leylo'ya dön</button>
+        <button id="back-to-last-video" type="button">← Geri</button>
       </footer>
     </section>
     <section id="final-screen" aria-labelledby="final-title" hidden>
       <div class="confetti-layer" id="confetti-layer" aria-hidden="true"></div>
       <div class="final-card">
         <div class="final-star" aria-hidden="true">🌟</div>
-        <h2 id="final-title" tabindex="-1">Etkinlik tamamlandı!</h2>
-        <p class="final-message">Harika iş çıkardın!</p>
+        <h2 id="final-title" tabindex="-1">Tebrikler!</h2>
+        <p class="final-message">Harika!</p>
         <div class="final-actions">
-          <button id="final-back-leylo" type="button">← Leylo'ya dön</button>
-          <button id="restart-game" type="button">Baştan başla ↻</button>
+          <button id="final-back-leylo" type="button">← Leylo</button>
+          <button id="restart-game" type="button">Yeniden ↻</button>
         </div>
       </div>
     </section>
@@ -2434,7 +2430,7 @@
       if (sloganBanner) {
         sloganBanner.classList.remove('aferin-state');
         sloganIcon.textContent = '🗣️';
-        sloganText.textContent = 'Haydi şimdi sesleri tekrar et!';
+        sloganText.textContent = 'Sesleri tekrar et!';
       }
     }
 
@@ -2467,7 +2463,7 @@
       try { await nextVideo.play(); }
       catch {
         if (nextScreen.hidden) return;
-        nextMessage.textContent = 'Videonun oynat düğmesine dokunarak başlatabilirsin.';
+        nextMessage.textContent = 'Oynat düğmesine dokun.';
         nextMessage.hidden = false;
       }
     }
@@ -2525,16 +2521,16 @@
     const gamePanels = ['game-name-panel', 'game-move-panel', 'game-together-panel'].map(id => document.getElementById(id));
     const gameSteps = ['', '', ''];
     const moves = [
-      { id: 'move-wave', instruction: 'Arkadaşlarına el salla.', together: 'Arkadaşınızın adını söyleyin ve hep birlikte el sallayın.' },
-      { id: 'move-clap', instruction: 'Ellerini üç kez çırp.', together: 'Arkadaşınızın adını söyleyin ve hep birlikte üç kez alkışlayın.' },
-      { id: 'move-arms', instruction: 'Kollarını rahatça iki yana aç.', together: 'Arkadaşınızın adını söyleyin ve hep birlikte kollarınızı açın.' },
-      { id: 'move-jump', instruction: 'Yerinde hafifçe bir kez zıpla. İstersen başka hareket seçebilirsin.', together: 'Arkadaşınızın adını söyleyin ve isteyenler yerinde hafifçe bir kez zıplasın.' }
+      { id: 'move-wave', instruction: 'El salla!', together: 'Adı söyle. El salla!' },
+      { id: 'move-clap', instruction: 'Alkışla!', together: 'Adı söyle. Alkışla!' },
+      { id: 'move-arms', instruction: 'Kollarını aç!', together: 'Adı söyle. Kollarını aç!' },
+      { id: 'move-jump', instruction: 'Zıpla!', together: 'Adı söyle. Zıpla!' }
     ];
     let chosenMove = null;
     const guidanceSteps = [
-      'Merhaba! Şimdi sıra sende. Merhaba, ben, diyerek adını söyle. Sonra adımı söyledim düğmesine dokun.',
-      'Öğrenci adını söyler ve bir hareket yapar. Sonra bütün sınıf onun adını söyleyip aynı hareketi tekrar eder!',
-      'Hatırlıyor musun? Öğretmenin bir arkadaşının hareketini yapacak. Bu hareket kimindi? Arkadaşının adını söyle.'
+      'Adını söyle!',
+      'Hareket seç!',
+      'Bu hareket kimindi? Adını söyle!'
     ];
     let currentGuidance = guidanceSteps[0];
     let guidanceMuted = false;
@@ -2594,7 +2590,7 @@
       chosenMove = null;
       moves.forEach(move => document.getElementById(move.id).setAttribute('aria-pressed', 'false'));
       document.getElementById('did-move').disabled = true;
-      document.getElementById('move-instruction').textContent = 'Hangi hareketi yapmak istersin?';
+      document.getElementById('move-instruction').textContent = 'Hareket seç!';
       showGameStep(0);
     }
     document.getElementById('replay-kerem').addEventListener('click', () => {
@@ -2631,7 +2627,7 @@
     }));
     document.getElementById('did-move').addEventListener('click', () => {
       if (!chosenMove) return;
-      document.getElementById('together-instruction').textContent = 'Öğretmen bir arkadaşının hareketini tekrar eder. Bu hareket kimindi? Adını söyle!';
+      document.getElementById('together-instruction').textContent = 'Bu hareket kimindi? Adını söyle!';
       showGameStep(2);
       document.getElementById('next-friend').focus();
     });

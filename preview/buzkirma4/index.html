@@ -1,0 +1,835 @@
+<!doctype html>
+<html lang="tr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ülkem Yanımda</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@700;800&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --ink: #17324d;
+      --paper: #fffdf5;
+      --sun: #ffd84a;
+      --mint: #8ee3c1;
+      --coral: #ff927d;
+      --sky: #a7d9ff;
+      --lavender: #c6a9f4;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      font-size: 18px;
+      /* Bigger base scale = every rem-based text/padding in the page
+         grows proportionally, making the whole game easier to read
+         and tap for a 10 year old, without touching any game logic. */
+    }
+
+    body {
+      width: 100%;
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(135deg, #fff4d6 0%, #fffdf5 52%, #dff6ed 100%);
+      font-family: "DM Sans", sans-serif;
+      overflow-x: hidden;
+    }
+
+    .game-shell {
+      width: 100%;
+      min-height: 100vh;
+      position: relative;
+      overflow: hidden;
+      padding: 1.2rem 1rem 2.2rem;
+    }
+
+    .main-content {
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .heading-font {
+      font-family: "Fraunces", serif;
+    }
+
+    .paper-box {
+      border: 3px solid var(--ink);
+      box-shadow: 5px 5px 0 var(--ink);
+    }
+
+    .action-button {
+      border: 3px solid var(--ink);
+      box-shadow: 4px 4px 0 var(--ink);
+      transition: transform .12s ease, box-shadow .12s ease;
+    }
+
+    .action-button:hover {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0 var(--ink);
+    }
+
+    /* Flip Card */
+    .flip-card {
+      height: 192px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      perspective: 1000px;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .flip-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transition: transform .5s cubic-bezier(.2, .8, .2, 1);
+    }
+
+    .flip-card.is-flipped .flip-inner {
+      transform: rotateY(180deg);
+    }
+
+    .flip-face {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      border: 3px solid var(--ink);
+      border-radius: 1.2rem;
+      box-shadow: 5px 5px 0 var(--ink);
+      backface-visibility: hidden;
+    }
+
+    .flip-back {
+      padding: 1rem;
+      transform: rotateY(180deg);
+    }
+
+    .card-art {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .card-shade {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.05), rgba(23, 50, 77, 0.72));
+    }
+
+    .card-front-content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+      padding: .85rem;
+    }
+
+    .card-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 2rem;
+      height: 2rem;
+      flex-shrink: 0;
+      border: 2px solid var(--ink);
+      border-radius: 50%;
+      background: #fff;
+      font-size: .9rem;
+      font-weight: 800;
+    }
+
+    .listen-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.9);
+      border: 2px solid var(--ink);
+      border-radius: 999px;
+      padding: 3px 10px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--ink);
+      /* Sadece bilgi rozeti: buton gibi görünüp tıklanamadığında
+         çocuğu yanıltmasın diye gölge/el imleci kaldırıldı. */
+    }
+
+    /* Gerçekçi Gökyüzü ve Balonlar */
+    .sky-area {
+      min-height: 420px;
+      background: linear-gradient(180deg, #6ec6ff 0%, #b2e4ff 65%, #f2faff 100%);
+      border: 3px solid var(--ink);
+      border-radius: 1.5rem;
+      box-shadow: 6px 6px 0 var(--ink);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Sadece süs: bulutlar ve güneş, oyunun görünmeyen "boş" alanını doldurup
+       sahneyi daha canlı ve göze hoş gösterir. Tıklanamaz, oyunu etkilemez. */
+    .sky-decor {
+      position: absolute;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .sky-sun {
+      top: 5%;
+      right: 6%;
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #fff7c2 0%, #ffd84a 60%, #ffb400 100%);
+      box-shadow: 0 0 0 8px rgba(255, 216, 74, 0.35);
+    }
+
+    .sky-cloud {
+      background: #ffffff;
+      border-radius: 999px;
+      opacity: 0.85;
+      animation: drift 22s linear infinite;
+    }
+
+    .sky-cloud::before,
+    .sky-cloud::after {
+      content: "";
+      position: absolute;
+      background: #ffffff;
+      border-radius: 50%;
+    }
+
+    .sky-cloud-1 {
+      top: 8%;
+      left: -20%;
+      width: 90px;
+      height: 30px;
+    }
+
+    .sky-cloud-1::before {
+      width: 46px;
+      height: 46px;
+      top: -22px;
+      left: 10px;
+    }
+
+    .sky-cloud-1::after {
+      width: 34px;
+      height: 34px;
+      top: -14px;
+      left: 50px;
+    }
+
+    .sky-cloud-2 {
+      top: 46%;
+      left: -20%;
+      width: 66px;
+      height: 22px;
+      animation-duration: 30s;
+      animation-delay: -10s;
+      opacity: 0.7;
+    }
+
+    .sky-cloud-2::before {
+      width: 32px;
+      height: 32px;
+      top: -14px;
+      left: 8px;
+    }
+
+    .sky-cloud-2::after {
+      width: 24px;
+      height: 24px;
+      top: -9px;
+      left: 34px;
+    }
+
+    @keyframes drift {
+      from {
+        transform: translateX(0);
+      }
+
+      to {
+        transform: translateX(560px);
+      }
+    }
+
+    .balloon {
+      position: absolute;
+      width: clamp(78px, 20vw, 104px);
+      height: clamp(96px, 24.5vw, 128px);
+      border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transform-origin: bottom center;
+      transition: transform 0.15s ease;
+      animation: float-realistic 4s ease-in-out infinite alternate;
+      filter: drop-shadow(0 14px 10px rgba(0, 30, 60, 0.22));
+      z-index: 1;
+    }
+
+    .balloon::before {
+      content: "";
+      position: absolute;
+      top: 14px;
+      left: 18px;
+      width: 24px;
+      height: 38px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0) 80%);
+      transform: rotate(-28deg);
+      pointer-events: none;
+    }
+
+    .balloon-knot {
+      position: absolute;
+      bottom: -8px;
+      width: 14px;
+      height: 9px;
+      background: inherit;
+      border-radius: 3px;
+      filter: brightness(0.85);
+      z-index: 1;
+    }
+
+    .balloon-string {
+      position: absolute;
+      bottom: -34px;
+      left: 50%;
+      width: 3px;
+      height: 28px;
+      background: rgba(23, 50, 77, 0.55);
+      border-radius: 2px;
+      transform: translateX(-50%);
+      transform-origin: top center;
+      animation: string-sway 2.5s ease-in-out infinite alternate;
+    }
+
+    .balloon-red {
+      background: radial-gradient(circle at 35% 30%, #ff7b7b 0%, #f02d42 55%, #a8071a 100%);
+    }
+
+    .balloon-yellow {
+      background: radial-gradient(circle at 35% 30%, #fff785 0%, #ffcc00 55%, #b58000 100%);
+    }
+
+    .balloon-blue {
+      background: radial-gradient(circle at 35% 30%, #76d3ff 0%, #1e90ff 55%, #004b99 100%);
+    }
+
+    .balloon-green {
+      background: radial-gradient(circle at 35% 30%, #8affb0 0%, #10c458 55%, #05662b 100%);
+    }
+
+    .balloon-purple {
+      background: radial-gradient(circle at 35% 30%, #e6a8ff 0%, #9933cc 55%, #4d0080 100%);
+    }
+
+    .balloon:hover {
+      transform: scale(1.08) translateY(-4px);
+    }
+
+    .balloon-pop {
+      animation: pop-animation 0.22s ease-out forwards !important;
+      pointer-events: none;
+    }
+
+    @keyframes float-realistic {
+      0% {
+        transform: translateY(0px) rotate(-3deg);
+      }
+
+      100% {
+        transform: translateY(-16px) rotate(4deg);
+      }
+    }
+
+    @keyframes string-sway {
+      0% {
+        transform: translateX(-50%) rotate(-6deg);
+      }
+
+      100% {
+        transform: translateX(-50%) rotate(6deg);
+      }
+    }
+
+    @keyframes pop-animation {
+      0% {
+        transform: scale(1);
+        opacity: 1;
+      }
+
+      40% {
+        transform: scale(1.35);
+        opacity: 0.8;
+      }
+
+      100% {
+        transform: scale(0);
+        opacity: 0;
+      }
+    }
+
+    .is-hidden {
+      display: none !important;
+    }
+
+    .enter-animation {
+      animation: rise-in .45s ease both;
+    }
+
+    @keyframes rise-in {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="game-shell">
+    <header class="main-content enter-animation">
+      <div class="flex items-center justify-between gap-3">
+        <div>
+          <span
+            class="inline-flex rounded-full border-2 border-[#17324d] bg-[#ffd84a] px-3 py-0.5 text-xs font-bold shadow-[2px_2px_0_#17324d]">
+            BAŞLANGIÇ SEVİYESİ · Türkçe ve Türk Kültürü Dersi
+          </span>
+          <h1 class="heading-font mt-2 text-2xl sm:text-3xl font-extrabold">Merhaba! Tanışalım ve Oynayalım</h1>
+        </div>
+        <div
+          class="w-20 h-16 rounded-xl border-2 border-[#17324d] overflow-hidden shadow-[3px_3px_0_#17324d] bg-white flex-shrink-0">
+          <img class="w-full h-full object-cover" src="img/bayrak.jpg" alt="Türk Bayrağı"
+            onerror="this.src='https://images.pexels.com/photos/11295574/pexels-photo-11295574.jpeg?auto=compress&cs=tinysrgb&w=300'">
+        </div>
+      </div>
+    </header>
+
+    <main class="main-content mt-4">
+      <!-- 1. AŞAMA: TANIŞMA KARTLARI -->
+      <section id="stage-one">
+        <div class="paper-box rounded-2xl bg-white px-4 py-3 flex items-center gap-3">
+          <span class="text-2xl">👉</span>
+          <div>
+            <h2 class="font-bold text-sm sm:text-base">1. Aşama: Kartlara tıkla. Dinle.</h2>
+            <p class="text-xs text-gray-600">Önce kartını seç. Sonra soruyu dinle. Daha sonra cevap ver. </p>
+          </div>
+        </div>
+
+        <div class="mt-4 grid grid-cols-2 gap-3.5 sm:gap-4">
+          <!-- Kart 1: Adın ne? -->
+          <button type="button" class="flip-card stage-one-card" data-sound="ses/soru-1.mp3" aria-pressed="false">
+            <div class="flip-inner">
+              <div class="flip-face bg-[#ffd84a]">
+                <img class="card-art" src="img/kart-1.jpg" alt="Gülümseyen çocuk"
+                  onerror="this.src='https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?auto=format&fit=crop&w=600&q=80'">
+                <div class="card-shade"></div>
+                <div class="card-front-content">
+                  <span class="card-number">1</span>
+                  <p class="font-bold text-white text-sm">Kartı aç!</p>
+                  <span class="text-xl">👇</span>
+                </div>
+              </div>
+              <div class="flip-face flip-back bg-[#ff927d]">
+                <div class="flex items-center justify-between">
+                  <span class="card-number">1</span>
+                  <span class="listen-btn">🔊 Dinle</span>
+                </div>
+                <div>
+                  <p class="heading-font font-bold text-lg sm:text-xl">Adın ne?</p>
+                  <p class="text-xs font-semibold mt-1">"Benim adım..."</p>
+                </div>
+                <span class="text-2xl self-end">👋</span>
+              </div>
+            </div>
+          </button>
+
+          <!-- Kart 2: Nasılsın? -->
+          <button type="button" class="flip-card stage-one-card" data-sound="ses/soru-2.mp3" aria-pressed="false">
+            <div class="flip-inner">
+              <div class="flip-face bg-[#8ee3c1]">
+                <img class="card-art" src="img/kart-2.jpg" alt="Neşeli sınıf"
+                  onerror="this.src='https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=600&q=80'">
+                <div class="card-shade"></div>
+                <div class="card-front-content">
+                  <span class="card-number">2</span>
+                  <p class="font-bold text-white text-sm">Kartı aç!</p>
+                  <span class="text-xl">👇</span>
+                </div>
+              </div>
+              <div class="flip-face flip-back bg-[#a7d9ff]">
+                <div class="flex items-center justify-between">
+                  <span class="card-number">2</span>
+                  <span class="listen-btn">🔊 Dinle</span>
+                </div>
+                <div>
+                  <p class="heading-font font-bold text-lg sm:text-xl">Nasılsın?</p>
+                  <p class="text-xs font-semibold mt-1">"İyiyim, teşekkürler!"</p>
+                </div>
+                <span class="text-2xl self-end">☀️</span>
+              </div>
+            </div>
+          </button>
+
+          <!-- Kart 3: En sevdiğin renk ne? -->
+          <button type="button" class="flip-card stage-one-card" data-sound="ses/soru-3.mp3" aria-pressed="false">
+            <div class="flip-inner">
+              <div class="flip-face bg-[#ffb4d0]">
+                <img class="card-art" src="img/kart-3.jpg" alt="Renkli boyalar"
+                  onerror="this.src='https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=600&q=80'">
+                <div class="card-shade"></div>
+                <div class="card-front-content">
+                  <span class="card-number">3</span>
+                  <p class="font-bold text-white text-sm">Kartı aç!</p>
+                  <span class="text-xl">👇</span>
+                </div>
+              </div>
+              <div class="flip-face flip-back bg-[#ffd84a]">
+                <div class="flex items-center justify-between">
+                  <span class="card-number">3</span>
+                  <span class="listen-btn">🔊 Dinle</span>
+                </div>
+                <div>
+                  <p class="heading-font font-bold text-lg sm:text-xl">En sevdiğin renk ne?</p>
+                  <p class="text-xs font-semibold mt-1">"Kırmızı, mavi, sarı..."</p>
+                </div>
+                <span class="text-2xl self-end">🎨</span>
+              </div>
+            </div>
+          </button>
+
+          <!-- Kart 4: Nerede yaşıyorsun? -->
+          <button type="button" class="flip-card stage-one-card" data-sound="ses/soru-4.mp3" aria-pressed="false">
+            <div class="flip-inner">
+              <div class="flip-face bg-[#c6a9f4]">
+                <img class="card-art" src="img/kart-4.jpg" alt="Oynayan çocuklar"
+                  onerror="this.src='https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=600&q=80'">
+                <div class="card-shade"></div>
+                <div class="card-front-content">
+                  <span class="card-number">4</span>
+                  <p class="font-bold text-white text-sm">Kartı aç!</p>
+                  <span class="text-xl">👇</span>
+                </div>
+              </div>
+              <div class="flip-face flip-back bg-[#8ee3c1]">
+                <div class="flex items-center justify-between">
+                  <span class="card-number">4</span>
+                  <span class="listen-btn">🔊 Dinle</span>
+                </div>
+                <div>
+                  <p class="heading-font font-bold text-lg sm:text-xl">Nerede yaşıyorsun?</p>
+                  <p class="text-xs font-semibold mt-1">"Ben ...'da yaşıyorum."</p>
+                </div>
+                <span class="text-2xl self-end">🏡</span>
+              </div>
+            </div>
+          </button>
+        </div>
+
+        <div id="completion-panel"
+          class="paper-box is-hidden mt-5 rounded-2xl bg-white p-5 text-center enter-animation">
+          <p class="text-2xl">🎉</p>
+          <h3 class="heading-font font-bold text-lg mt-1">Harika! Soruları tamamladın.</h3>
+          <p class="text-xs sm:text-sm text-gray-600 mt-1">Şimdi kelime balonlarını patlatalım!</p>
+          <button id="next-stage-btn" type="button"
+            class="action-button mt-3 inline-flex items-center gap-2 rounded-xl bg-[#ff735c] text-white font-bold px-5 py-2.5 text-sm">
+            <span>Balon Oyununa Başla</span>
+            <i data-lucide="arrow-right" style="width:18px;height:18px;"></i>
+          </button>
+        </div>
+      </section>
+
+      <!-- 2. AŞAMA: SESLİ BALON OYUNU -->
+      <section id="stage-two" class="is-hidden">
+        <div class="paper-box rounded-2xl bg-white px-4 py-3 flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h2 class="font-bold text-base">2. Aşama: Kelime Balonlarını Patlat!</h2>
+            <p class="text-xs text-gray-600">Hedef kelimeyi dinle. Doğru balona bas.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="bg-[#ffd84a] border-2 border-[#17324d] px-3 py-1 rounded-xl font-bold text-xs">
+              Puan: <span id="score-text">0</span> / 5
+            </span>
+          </div>
+        </div>
+
+        <!-- Hedef Kelime & Dinleme Butonu -->
+        <div
+          class="mt-3 paper-box rounded-xl bg-[#fffdf5] p-3 text-center flex flex-wrap items-center justify-center gap-2.5">
+          <span class="text-sm font-bold">Patlatılacak Kelime:</span>
+          <span id="target-word"
+            class="inline-block bg-[#17324d] text-white px-4 py-1.5 rounded-xl font-extrabold text-base tracking-wider border-2 border-white shadow-sm">
+            MERHABA
+          </span>
+          <button id="play-target-sound" type="button"
+            class="action-button rounded-xl bg-[#ffd84a] px-3 py-1.5 text-xs font-bold flex items-center gap-1">
+            <span>🔊</span> Tekrar Dinle
+          </button>
+        </div>
+
+        <!-- Gökyüzü ve Balonlar -->
+        <div id="balloon-area" class="sky-area mt-3">
+          <div class="sky-decor sky-sun"></div>
+          <div class="sky-decor sky-cloud sky-cloud-1"></div>
+          <div class="sky-decor sky-cloud sky-cloud-2"></div>
+          <div id="balloon-layer" style="position:absolute; inset:0;"></div>
+        </div>
+
+        <!-- Tebrik Paneli -->
+        <div id="win-panel" class="is-hidden paper-box mt-3 rounded-2xl bg-[#8ee3c1] p-4 text-center enter-animation">
+          <h3 class="heading-font font-bold text-xl text-[#17324d]">Tebrikler! Bütün Balonları Patlattın! 🎈</h3>
+          <p class="text-xs sm:text-sm font-medium mt-1">Kelimeleri dinledin ve başarıyla tamamladın.</p>
+          <button id="play-again-btn" type="button"
+            class="action-button mt-3 rounded-xl bg-[#17324d] text-white text-xs font-bold px-4 py-2">
+            Tekrar Oyna
+          </button>
+        </div>
+      </section>
+
+      <!-- ALT KONTROLLER -->
+      <footer class="mt-6 flex items-center justify-between border-t-2 border-[#17324d]/20 pt-3">
+        <div class="flex gap-2">
+          <button id="reset-all" type="button"
+            class="action-button rounded-xl bg-[#17324d] text-white text-xs font-bold px-3.5 py-2 flex items-center gap-1.5">
+            <i data-lucide="rotate-ccw" style="width:15px;height:15px;"></i>
+            <span>Başa Dön</span>
+          </button>
+          <button id="sound-btn" type="button"
+            class="action-button rounded-xl bg-[#ffd84a] text-xs font-bold px-3 py-2 flex items-center gap-1">
+            <span id="sound-icon">🔊</span>
+            <span id="sound-text">Ses Açık</span>
+          </button>
+        </div>
+        <p class="text-xs font-bold text-[#35546e]">Ülkem Yanımda</p>
+      </footer>
+    </main>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+
+      const cards = document.querySelectorAll(".stage-one-card");
+      const stageOne = document.getElementById("stage-one");
+      const stageTwo = document.getElementById("stage-two");
+      const completionPanel = document.getElementById("completion-panel");
+      const nextStageBtn = document.getElementById("next-stage-btn");
+
+      const balloonArea = document.getElementById("balloon-layer");
+      const targetWordEl = document.getElementById("target-word");
+      const scoreEl = document.getElementById("score-text");
+      const winPanel = document.getElementById("win-panel");
+      const playAgainBtn = document.getElementById("play-again-btn");
+      const playTargetSoundBtn = document.getElementById("play-target-sound");
+
+      const resetAllBtn = document.getElementById("reset-all");
+      const soundBtn = document.getElementById("sound-btn");
+      const soundText = document.getElementById("sound-text");
+      const soundIcon = document.getElementById("sound-icon");
+
+      let soundEnabled = true;
+      let currentAudio = null;
+
+      // MP3 Ses Oynatma Fonksiyonu (Yedek olarak tarayıcı sentezi fallback)
+      function playAudioFile(path, fallbackText = "") {
+        if (!soundEnabled) return;
+
+        if (currentAudio) {
+          currentAudio.pause();
+          currentAudio.currentTime = 0;
+        }
+
+        const audio = new Audio(path);
+        currentAudio = audio;
+
+        audio.play().catch(function () {
+          // Dosya bulunamazsa tarayıcının yerleşik Türkçe sesini kullanır
+          if ('speechSynthesis' in window && fallbackText) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(fallbackText);
+            utterance.lang = 'tr-TR';
+            utterance.rate = 0.9;
+            window.speechSynthesis.speak(utterance);
+          }
+        });
+      }
+
+      // 1. Aşama: Kart Çevirme ve Soru Seslendirme
+      cards.forEach(card => {
+        card.addEventListener("click", () => {
+          const opened = card.classList.toggle("is-flipped");
+          card.setAttribute("aria-pressed", String(opened));
+
+          if (opened) {
+            const soundPath = card.dataset.sound;
+            const questionText = card.querySelector(".heading-font").textContent;
+            playAudioFile(soundPath, questionText);
+          }
+
+          const allOpened = Array.from(cards).every(c => c.classList.contains("is-flipped"));
+          if (allOpened) {
+            completionPanel.classList.remove("is-hidden");
+          }
+        });
+      });
+
+      nextStageBtn.addEventListener("click", () => {
+        stageOne.classList.add("is-hidden");
+        stageTwo.classList.remove("is-hidden");
+        stageTwo.classList.add("enter-animation");
+        initBalloonGame();
+      });
+
+      // 2. Aşama: Balon Verileri ve Sesleri
+      const balloonData = [
+        { word: "MERHABA", class: "balloon-red", emoji: "👋", sound: "ses/merhaba.mp3" },
+        { word: "GÜNAYDIN", class: "balloon-yellow", emoji: "☀️", sound: "ses/gunaydin.mp3" },
+        { word: "TEŞEKKÜRLER", class: "balloon-blue", emoji: "🌸", sound: "ses/tesekkurler.mp3" },
+        { word: "LÜTFEN", class: "balloon-green", emoji: "🤝", sound: "ses/lutfen.mp3" },
+        { word: "GÖRÜŞÜRÜZ", class: "balloon-purple", emoji: "🎈", sound: "ses/gorusuruz.mp3" }
+      ];
+
+      let score = 0;
+      let currentTarget = null;
+      let remainingWords = [];
+
+      function initBalloonGame() {
+        score = 0;
+        scoreEl.textContent = "0";
+        winPanel.classList.add("is-hidden");
+        remainingWords = [...balloonData];
+        setNextTarget();
+        renderBalloons();
+      }
+
+      function setNextTarget() {
+        if (remainingWords.length === 0) {
+          targetWordEl.textContent = "BİTTİ! 🎉";
+          playTargetSoundBtn.classList.add("is-hidden");
+          winPanel.classList.remove("is-hidden");
+          return;
+        }
+
+        playTargetSoundBtn.classList.remove("is-hidden");
+        const randomIndex = Math.floor(Math.random() * remainingWords.length);
+        currentTarget = remainingWords[randomIndex];
+        targetWordEl.textContent = currentTarget.word;
+
+        // Hedef kelimenin sesini otomatik çalar
+        setTimeout(() => {
+          playAudioFile(currentTarget.sound, currentTarget.word);
+        }, 200);
+      }
+
+      playTargetSoundBtn.addEventListener("click", () => {
+        if (currentTarget) {
+          playAudioFile(currentTarget.sound, currentTarget.word);
+        }
+      });
+
+      function renderBalloons() {
+        balloonArea.innerHTML = "";
+        const positions = [
+          { x: 8, y: 10 },
+          { x: 62, y: 14 },
+          { x: 36, y: 33 },
+          { x: 12, y: 55 },
+          { x: 58, y: 57 }
+        ];
+
+        balloonData.forEach((item, index) => {
+          const balloon = document.createElement("div");
+          balloon.className = `balloon ${item.class}`;
+          balloon.style.left = `${positions[index].x}%`;
+          balloon.style.top = `${positions[index].y}%`;
+          balloon.style.animationDelay = `${index * 0.45}s`;
+          balloon.dataset.word = item.word;
+
+          balloon.innerHTML = `
+            <div class="relative z-10 flex flex-col items-center pointer-events-none gap-1">
+              <span class="text-2xl drop-shadow-sm">${item.emoji}</span>
+              <span class="text-[11px] font-black uppercase text-white tracking-wide leading-tight px-1.5 py-0.5 rounded-full" style="background:rgba(23,50,77,0.55);">${item.word}</span>
+            </div>
+            <div class="balloon-knot"></div>
+            <div class="balloon-string"></div>
+          `;
+
+          balloon.addEventListener("click", () => {
+            // Tıklanan balonun sesini de dinletir
+            playAudioFile(item.sound, item.word);
+
+            if (item.word === currentTarget.word) {
+              balloon.classList.add("balloon-pop");
+              score++;
+              scoreEl.textContent = score;
+
+              remainingWords = remainingWords.filter(w => w.word !== item.word);
+              setTimeout(setNextTarget, 600);
+            } else {
+              balloon.style.transform = "scale(0.92) rotate(-10deg)";
+              setTimeout(() => {
+                balloon.style.transform = "";
+              }, 250);
+            }
+          });
+
+          balloonArea.appendChild(balloon);
+        });
+      }
+
+      playAgainBtn.addEventListener("click", () => {
+        initBalloonGame();
+      });
+
+      resetAllBtn.addEventListener("click", () => {
+        if (currentAudio) currentAudio.pause();
+        cards.forEach(c => {
+          c.classList.remove("is-flipped");
+          c.setAttribute("aria-pressed", "false");
+        });
+        completionPanel.classList.add("is-hidden");
+        stageTwo.classList.add("is-hidden");
+        stageOne.classList.remove("is-hidden");
+      });
+
+      soundBtn.addEventListener("click", () => {
+        soundEnabled = !soundEnabled;
+        soundText.textContent = soundEnabled ? "Ses Açık" : "Ses Kapalı";
+        soundIcon.textContent = soundEnabled ? "🔊" : "🔇";
+        if (!soundEnabled && currentAudio) {
+          currentAudio.pause();
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>
