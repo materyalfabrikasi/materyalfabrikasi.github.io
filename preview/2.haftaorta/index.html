@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="tr" class="h-full">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bir Zarf Bol Selam - Oku, Sırala, Öğren!</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Mulish:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        paper: '#FBF3E7',
+                        paperDark: '#F3E6D2',
+                        kraft: '#E7D3AC',
+                        ink: '#2B2118',
+                        stamp: '#B23A2E',
+                        stampDark: '#8C2C22',
+                        postal: '#24344D',
+                        postalLight: '#3A4F72',
+                        leaf: '#4C7A55',
+                        leafLight: '#79A582',
+                        mustard: '#D89B2D',
+                        mustardDark: '#B87F1D'
+                    },
+                    fontFamily: {
+                        display: ['"Baloo 2"', 'sans-serif'],
+                        body: ['"Mulish"', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Mulish', system-ui, -apple-system, sans-serif;
+            background-color: #FBF3E7;
+            background-image: radial-gradient(circle at 1px 1px, rgba(43, 33, 24, 0.05) 1px, transparent 0);
+            background-size: 22px 22px;
+        }
+
+        .font-display {
+            font-family: 'Baloo 2', sans-serif;
+        }
+
+        .paper-card {
+            background: #FFFDF8;
+            border: 2px solid #E7D3AC;
+            box-shadow: 0 6px 0 rgba(43, 33, 24, 0.06), 0 10px 24px rgba(43, 33, 24, 0.08);
+        }
+
+        .torn-top {
+            position: relative;
+        }
+
+        .torn-top::before {
+            content: "";
+            position: absolute;
+            top: -1px;
+            left: 0;
+            right: 0;
+            height: 10px;
+            background-image: linear-gradient(135deg, #FFFDF8 50%, transparent 50%),
+                linear-gradient(45deg, #FFFDF8 50%, transparent 50%);
+            background-size: 16px 16px;
+            background-position: bottom;
+        }
+
+        /* 3D Zarf Kartı Tasarımı */
+        .envelope-card {
+            background: linear-gradient(135deg, #EAD7B5 0%, #D8BE90 100%);
+            border: 2px solid #C4A774;
+            box-shadow: 0 8px 18px rgba(43, 33, 24, 0.12);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.25s ease;
+        }
+
+        .envelope-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(43, 33, 24, 0.18);
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: #DECAA5;
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            border-bottom: 2px solid #BC9F6B;
+            z-index: 2;
+        }
+
+        .wax-seal {
+            width: 44px;
+            height: 44px;
+            background: radial-gradient(circle at 35% 35%, #D64535, #8C2C22);
+            border-radius: 50%;
+            border: 2px solid #6E1F17;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFE6A7;
+            font-size: 18px;
+            position: absolute;
+            top: 38px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3;
+            transition: transform 0.2s ease;
+        }
+
+        .envelope-card:hover .wax-seal {
+            transform: translateX(-50%) scale(1.08);
+        }
+
+        /* Mektubun Zarftan Çıkış Animasyonu */
+        .letter-slide-in {
+            animation: letterSlideUp 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes letterSlideUp {
+            0% {
+                opacity: 0;
+                transform: translateY(40px) scale(0.96);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .airmail-border {
+            background-image: repeating-linear-gradient(135deg, #B23A2E 0, #B23A2E 12px, #FFFDF8 12px, #FFFDF8 18px, #24344D 18px, #24344D 30px, #FFFDF8 30px, #FFFDF8 36px);
+            height: 8px;
+            width: 100%;
+        }
+
+        .shake {
+            animation: shakeAnim 0.35s ease-in-out;
+        }
+
+        @keyframes shakeAnim {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-6px);
+            }
+
+            75% {
+                transform: translateX(6px);
+            }
+        }
+
+        .float-owl {
+            animation: floatOwl 3s infinite ease-in-out;
+        }
+
+        @keyframes floatOwl {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(-1deg);
+            }
+
+            50% {
+                transform: translateY(-5px) rotate(1deg);
+            }
+        }
+
+        .chip {
+            font-family: 'Mulish', sans-serif;
+            font-weight: 700;
+            transition: all 0.15s ease;
+        }
+
+        .chip:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+
+<body class="h-full flex flex-col text-ink antialiased">
+
+    <!-- HEADER -->
+    <header class="bg-postal border-b-4 border-stamp sticky top-0 z-50 shadow-lg">
+        <div class="max-w-6xl mx-auto px-4 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <!-- Ülkem Yanımda Logosu (orijinal.svg) -->
+                <div
+                    class="h-14 sm:h-16 w-auto px-3 py-1.5 rounded-2xl bg-white/95 border-2 border-mustard flex items-center justify-center shrink-0 shadow-md">
+                    <img src="orijinal.svg" alt="Ülkem Yanımda"
+                        onerror="this.onerror=null; this.parentElement.innerHTML='<span class=\'text-2xl\'>🇹🇷</span>';"
+                        class="h-full w-auto max-h-11 sm:max-h-13 object-contain">
+                </div>
+
+                <div>
+                    <div class="flex items-center flex-wrap gap-2">
+                        <span class="font-display text-xl sm:text-2xl font-bold text-paper leading-none">Bir Zarf
+                            Bol Selam</span>
+                        <span
+                            class="bg-mustard text-postal text-[11px] px-2.5 py-0.5 rounded-full font-display font-bold shadow-sm">
+                            Temel Seviye
+                        </span>
+                    </div>
+                    <p class="text-[11px] text-paper/80 font-semibold mt-1 flex items-center gap-1.5">
+                        <span>Türkçe ve Türk Kültürü</span>
+                        <span class="text-mustard">•</span>
+                        <span class="text-mustard font-bold"><i class="fa-solid fa-heart mr-1"></i>Kaynak: Ülkem
+                            Yanımda</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-2 sm:space-x-3">
+                <div
+                    class="hidden sm:flex items-center space-x-2 bg-paper/10 px-3 py-1.5 rounded-xl border border-paper/20">
+                    <i class="fa-solid fa-clipboard-check text-mustard text-sm"></i>
+                    <div>
+                        <div class="text-[9px] text-paper/60 font-bold uppercase tracking-wide">Görev</div>
+                        <div id="taskProgress" class="font-display text-sm font-bold text-paper">0 / 8</div>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-2 bg-paper/10 px-3 py-1.5 rounded-xl border border-paper/20">
+                    <i class="fa-solid fa-stamp text-mustard text-sm"></i>
+                    <div>
+                        <div class="text-[9px] text-paper/60 font-bold uppercase tracking-wide">Puan</div>
+                        <div id="globalScore" class="font-display text-sm sm:text-base font-bold text-mustard">0 XP
+                        </div>
+                    </div>
+                </div>
+
+                <button id="soundToggleBtn" onclick="toggleSound()"
+                    class="w-10 h-10 rounded-full bg-paper/10 hover:bg-paper/20 text-paper flex items-center justify-center border border-paper/20 transition-all cursor-pointer"
+                    title="Sesi aç/kapat">
+                    <i id="soundIcon" class="fa-solid fa-volume-high text-sm"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="flex-1 max-w-6xl w-full mx-auto px-4 py-5 flex flex-col gap-5">
+
+        <!-- 3 AŞAMA SEKMELERİ -->
+        <div
+            class="paper-card rounded-2xl p-2 sm:p-2.5 flex flex-wrap sm:flex-nowrap justify-between items-center gap-2">
+            <button id="tabBtn1" onclick="switchStage(1)"
+                class="flex-1 min-w-[30%] py-2.5 px-3 rounded-xl font-display font-bold text-xs sm:text-sm transition-all duration-200 bg-stamp text-paper shadow-md flex items-center justify-center gap-2 cursor-pointer">
+                <span class="w-5 h-5 rounded-full bg-paper/25 flex items-center justify-center text-[11px]">1</span>
+                <span>Zarfları Aç</span>
+            </button>
+            <button id="tabBtn2" onclick="switchStage(2)"
+                class="flex-1 min-w-[30%] py-2.5 px-3 rounded-xl font-display font-bold text-xs sm:text-sm transition-all duration-200 bg-paperDark text-ink/50 hover:bg-kraft flex items-center justify-center gap-2 cursor-pointer">
+                <span
+                    class="w-5 h-5 rounded-full bg-kraft text-ink/60 flex items-center justify-center text-[11px]">2</span>
+                <span>Cümle Atölyesi</span>
+            </button>
+            <button id="tabBtn3" onclick="switchStage(3)"
+                class="flex-1 min-w-[30%] py-2.5 px-3 rounded-xl font-display font-bold text-xs sm:text-sm transition-all duration-200 bg-paperDark text-ink/50 hover:bg-kraft flex items-center justify-center gap-2 cursor-pointer">
+                <span
+                    class="w-5 h-5 rounded-full bg-kraft text-ink/60 flex items-center justify-center text-[11px]">3</span>
+                <span>Selam Karnesi</span>
+            </button>
+        </div>
+
+        <!-- 1. BÖLÜM: ZARFLARI AÇ -->
+        <section id="stage1" class="flex-1 flex flex-col gap-5">
+            <div class="paper-card rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <div
+                        class="w-14 h-14 rounded-2xl bg-stamp/10 border-2 border-stamp/40 flex items-center justify-center text-3xl shrink-0">
+                        📬
+                    </div>
+                    <div class="space-y-1 text-center sm:text-left">
+                        <h2 class="font-display text-xl sm:text-2xl font-bold text-ink">Mühürlü Zarfları Aç!</h2>
+                        <p class="text-xs sm:text-sm text-ink/70">
+                            Zarfları aç. İçindeki <strong>resmi incele. Kısa durumu</strong> oku. En uygun
+                            sözü seç.
+                        </p>
+                    </div>
+                </div>
+                <div class="bg-paperDark border-2 border-kraft px-4 py-2.5 rounded-2xl text-center shrink-0">
+                    <div class="text-[10px] text-ink/50 uppercase font-bold tracking-wide">Açılan Zarf</div>
+                    <div id="stage1ProgressText" class="font-display font-bold text-base text-stamp">0 / 4</div>
+                </div>
+            </div>
+
+            <!-- ZARF LİSTESİ (ÖZEL ZARF TASARIMI) -->
+            <div id="stationGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"></div>
+
+            <!-- BÖLÜMLER ARASI İLERLEME BUTONU (1 -> 2) -->
+            <div
+                class="paper-card rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3 bg-gradient-to-r from-paper to-paperDark">
+                <div class="flex items-center gap-3">
+                    <span class="text-2xl">💡</span>
+                    <p class="text-xs sm:text-sm text-ink/80 font-semibold">
+                        Zarfları inceledikten sonra kelimeleri sıraya dizmek için sonraki bölüme geçebilirsin!
+                    </p>
+                </div>
+                <button onclick="switchStage(2)"
+                    class="w-full sm:w-auto bg-postal hover:bg-postalLight text-paper px-6 py-3 rounded-xl font-display font-bold text-sm shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all hover:scale-105 shrink-0">
+                    <span>2. Bölüme İlerle (Cümle Atölyesi)</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <!-- ZARF AÇILINCA ÇIKAN ÖZEL MEKTUP PENCERESİ -->
+            <div id="stationModal"
+                class="fixed inset-0 bg-ink/70 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+                <div
+                    class="paper-card rounded-3xl max-w-lg w-full p-0 space-y-0 letter-slide-in max-h-[94vh] overflow-y-auto shadow-2xl border-4 border-kraft">
+
+                    <!-- Posta Çizgisi -->
+                    <div class="airmail-border rounded-t-2xl"></div>
+
+                    <div class="p-5 sm:p-6 space-y-4">
+                        <div class="flex justify-between items-center border-b-2 border-kraft/70 pb-3">
+                            <span
+                                class="bg-stamp/10 text-stamp font-display font-bold text-xs sm:text-sm px-3.5 py-1 rounded-full border border-stamp/30 flex items-center gap-2">
+                                <span id="modalStationIcon" class="text-lg">🥖</span>
+                                <span id="modalStationName">Durak Adı</span>
+                            </span>
+                            <span
+                                class="text-xs font-display font-bold text-mustardDark bg-mustard/15 px-3 py-1 rounded-full border border-mustard/40">
+                                +20 XP
+                            </span>
+                        </div>
+
+                        <!-- ZARFTAN ÇIKAN GÖRSEL -->
+                        <div
+                            class="rounded-2xl overflow-hidden border-2 border-kraft bg-paperDark flex items-center justify-center relative shadow-inner">
+                            <img id="modalStationImg" src="" alt="Zarf Görseli" class="w-full h-48 object-cover">
+                            <div
+                                class="absolute bottom-2 left-2 bg-ink/80 text-white text-[11px] px-2.5 py-1 rounded-lg backdrop-blur-sm font-semibold">
+                                <i class="fa-regular fa-image mr-1 text-mustard"></i><span
+                                    id="modalImgLabel">Görsel</span>
+                            </div>
+                        </div>
+
+                        <!-- ZARFTAN ÇIKAN KISA DURUM METNİ -->
+                        <div class="bg-paperDark/90 p-4 rounded-2xl border-2 border-kraft/80 space-y-1">
+                            <div
+                                class="flex items-center gap-1.5 text-[10px] font-display font-bold text-stamp uppercase tracking-wider">
+                                <i class="fa-solid fa-scroll"></i> Zarfın İçindeki Durum
+                            </div>
+                            <p id="modalPassage" class="text-sm sm:text-base font-bold text-ink leading-relaxed"></p>
+                        </div>
+
+                        <!-- SORU VE SEÇENEKLER -->
+                        <div class="space-y-2 pt-1">
+                            <p id="modalQuestion"
+                                class="font-display font-bold text-ink text-sm sm:text-base flex items-center gap-2">
+                                <i class="fa-solid fa-circle-question text-postal"></i>
+                                <span>Bu durumda ne söylenir?</span>
+                            </p>
+                            <div id="modalOptionsContainer" class="space-y-2"></div>
+                        </div>
+
+                        <!-- GERİ BİLDİRİM -->
+                        <div id="modalFeedback"
+                            class="hidden p-3.5 rounded-xl text-xs sm:text-sm flex items-start gap-2.5">
+                            <i id="modalFeedbackIcon" class="text-base mt-0.5"></i>
+                            <span id="modalFeedbackText"></span>
+                        </div>
+
+                        <div class="flex justify-between items-center pt-2 border-t-2 border-kraft/70">
+                            <span class="text-[11px] text-ink/50 font-bold">Kaynak: Ülkem Yanımda</span>
+                            <button onclick="closeStationModal()"
+                                class="bg-postal hover:bg-postalLight text-paper px-6 py-2 rounded-xl font-display font-bold text-sm transition-all cursor-pointer">
+                                Zarfı Kapat
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. BÖLÜM: CÜMLE ATÖLYESİ (KELİME SIRALAMA) -->
+        <section id="stage2" class="hidden flex-1 flex-col gap-5">
+            <div class="paper-card rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <div
+                        class="w-14 h-14 rounded-2xl bg-postal/10 border-2 border-postal/40 flex items-center justify-center text-3xl shrink-0">
+                        🧵
+                    </div>
+                    <div class="space-y-1 text-center sm:text-left">
+                        <h2 class="font-display text-xl sm:text-2xl font-bold text-ink">Kelimeleri Sırala</h2>
+                        <p class="text-xs sm:text-sm text-ink/70">
+                            Kelimelere <strong>sırasıyla tıkla</strong> ve doğru selamlaşma cümlesini kur. Yanlış
+                            kelimeye
+                            tekrar tıklayarak geri alabilirsin.
+                        </p>
+                    </div>
+                </div>
+                <div class="bg-paperDark border-2 border-kraft px-4 py-2.5 rounded-2xl text-center shrink-0">
+                    <div class="text-[10px] text-ink/50 uppercase font-bold tracking-wide">Kurulan Cümle</div>
+                    <div id="stage2ProgressText" class="font-display font-bold text-base text-postal">0 / 4</div>
+                </div>
+            </div>
+
+            <div id="sentenceWorkshop" class="grid grid-cols-1 lg:grid-cols-2 gap-4"></div>
+
+            <!-- BÖLÜMLER ARASI İLERLEME BUTONU (2 -> 3) -->
+            <div
+                class="paper-card rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3 bg-gradient-to-r from-paper to-paperDark">
+                <button onclick="switchStage(1)"
+                    class="w-full sm:w-auto bg-paperDark hover:bg-kraft text-ink border-2 border-kraft px-5 py-2.5 rounded-xl font-display font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 cursor-pointer">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span>1. Bölüme Dön (Zarflar)</span>
+                </button>
+                <button onclick="switchStage(3)"
+                    class="w-full sm:w-auto bg-stamp hover:bg-stampDark text-paper px-6 py-3 rounded-xl font-display font-bold text-sm shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all hover:scale-105 shrink-0">
+                    <span>3. Bölüme İlerle (Selam Karnesi)</span>
+                    <i class="fa-solid fa-award"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- 3. BÖLÜM: SELAM KARNESİ (GÜÇLÜ KUTLAMA ALANI) -->
+        <section id="stage3" class="hidden flex-1 flex-col gap-4 items-center justify-center">
+            <div
+                class="paper-card torn-top rounded-3xl max-w-xl w-full p-6 sm:p-9 text-center space-y-6 shadow-2xl relative overflow-hidden">
+
+                <!-- Başlık & Logo Rozeti -->
+                <div class="flex justify-center">
+                    <div
+                        class="w-20 h-20 rounded-full bg-paperDark border-4 border-mustard flex items-center justify-center text-5xl shadow-lg transform -rotate-3 hover:rotate-0 transition-transform">
+                        🏅
+                    </div>
+                </div>
+
+                <div class="space-y-1">
+                    <h2 class="font-display text-2xl sm:text-4xl font-extrabold text-ink tracking-tight">Selam Karnen
+                    </h2>
+                    <p class="text-xs sm:text-sm text-ink/70 font-semibold flex items-center justify-center gap-1.5">
+                        <span>Kaynak: Ülkem Yanımda</span>
+                        <span class="text-mustard">•</span>
+                        <span>Türkçe ve Türk Kültürü</span>
+                    </p>
+                </div>
+
+                <!-- Kutlama Mesajı Rozeti -->
+                <div id="karneBadgeBox" class="p-4 rounded-2xl bg-mustard/15 border-2 border-mustard/40 transition-all">
+                    <p id="karneBadgeText" class="font-display text-lg sm:text-xl font-extrabold text-stamp"></p>
+                    <p id="karneBadgeSub" class="text-xs font-semibold text-ink/70 mt-1"></p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 text-left">
+                    <div class="bg-paperDark rounded-2xl p-4 border border-kraft">
+                        <div class="text-[10px] uppercase font-bold text-ink/50">1. Zarfları Aç (Okuma)</div>
+                        <div id="karneReading" class="font-display font-extrabold text-2xl text-stamp mt-0.5">0 / 4
+                        </div>
+                    </div>
+                    <div class="bg-paperDark rounded-2xl p-4 border border-kraft">
+                        <div class="text-[10px] uppercase font-bold text-ink/50">2. Cümle Atölyesi (Sıralama)</div>
+                        <div id="karneSentence" class="font-display font-extrabold text-2xl text-postal mt-0.5">0 / 4
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-stamp/10 border-2 border-stamp/30 rounded-2xl p-4">
+                    <div class="text-[10px] uppercase font-bold text-ink/50">Toplam Başarı Puanı</div>
+                    <div id="karneScore" class="font-display font-extrabold text-3xl sm:text-4xl text-stamp">0 XP</div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+                    <button onclick="triggerGrandCelebration()"
+                        class="bg-mustard hover:bg-mustardDark text-postal font-display font-bold text-sm px-6 py-2.5 rounded-xl shadow transition-all cursor-pointer flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        <span>Kutlamayı Tekrarla</span>
+                    </button>
+                    <button onclick="restartApp()"
+                        class="bg-postal hover:bg-postalLight text-paper px-6 py-2.5 rounded-xl font-display font-bold text-sm transition-all cursor-pointer flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-rotate-right"></i>
+                        <span>Baştan Başla</span>
+                    </button>
+                    <button onclick="switchStage(1)"
+                        class="bg-paperDark hover:bg-kraft text-ink border-2 border-kraft px-5 py-2.5 rounded-xl font-display font-bold text-sm transition-all cursor-pointer flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-envelope"></i>
+                        <span>Zarflara Dön</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        /* SVG YEDEK GÖRSELLERİ */
+        const svgFallbacks = {
+            firin: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 240' width='100%' height='100%'><rect width='400' height='240' fill='%23F4E5CC'/><circle cx='200' cy='120' r='60' fill='%23E19C5B'/><path d='M150 145 C150 90 250 90 250 145 Z' fill='%23B8652A'/><text x='200' y='195' font-family='sans-serif' font-size='16' font-weight='bold' fill='%234A311D' text-anchor='middle'>🥖 Mahalle Fırını</text></svg>",
+            tamirci: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 240' width='100%' height='100%'><rect width='400' height='240' fill='%23DEE6EE'/><circle cx='200' cy='115' r='55' fill='%233A506B'/><text x='200' y='125' font-size='45' text-anchor='middle'>🔧</text><text x='200' y='195' font-family='sans-serif' font-size='16' font-weight='bold' fill='%231C2D42' text-anchor='middle'>🚲 Tamirci Dükkânı</text></svg>",
+            vedalasma: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 240' width='100%' height='100%'><rect width='400' height='240' fill='%23E4EFE3'/><circle cx='165' cy='115' r='38' fill='%2379A582'/><circle cx='235' cy='115' r='38' fill='%234C7A55'/><text x='165' y='125' font-size='26' text-anchor='middle'>👧</text><text x='235' y='125' font-size='26' text-anchor='middle'>👦</text><text x='200' y='195' font-family='sans-serif' font-size='16' font-weight='bold' fill='%23224328' text-anchor='middle'>👋 Vedalaşma</text></svg>",
+            misafir: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 240' width='100%' height='100%'><rect width='400' height='240' fill='%23FDF1DC'/><rect x='150' y='65' width='100' height='105' rx='8' fill='%23D89B2D'/><polygon points='140,70 200,25 260,70' fill='%23B23A2E'/><text x='200' y='125' font-size='32' text-anchor='middle'>🏡</text><text x='200' y='195' font-family='sans-serif' font-size='16' font-weight='bold' fill='%235A3E16' text-anchor='middle'>🚪 Ev Kapısı (Misafir)</text></svg>"
+        };
+
+        // Sadeleştirilmiş kısa durumlar ve görseller
+        const stations = [
+            {
+                id: 1,
+                name: "Fırın",
+                icon: "🥖",
+                imageFile: "firin.jpg",
+                imageKey: "firin",
+                passage: "Ayşe fırına girdi. Fırıncı ekmek pişiriyor. Ayşe selam vermek istedi.",
+                question: "Ayşe fırıncıya ne der?",
+                options: [
+                    { text: "Güle güle!", correct: false },
+                    { text: "Hayırlı işler!", correct: true },
+                    { text: "Afiyet olsun!", correct: false }
+                ],
+                explanation: "Dükkâna girince çalışanlara 'Hayırlı işler' veya 'Kolay gelsin' denir."
+            },
+            {
+                id: 2,
+                name: "Tamirci Dükkânı",
+                icon: "🔧",
+                imageFile: "tamirci.jpg",
+                imageKey: "tamirci",
+                passage: "Usta bisiklet tamir ediyor. İşi çok. Durmadan çalışıyor.",
+                question: "Çalışan ustaya ne söylenir?",
+                options: [
+                    { text: "Geçmiş olsun!", correct: false },
+                    { text: "Kolay gelsin!", correct: true },
+                    { text: "Hoş geldiniz!", correct: false }
+                ],
+                explanation: "Çalışan kişilere 'Kolay gelsin' denir."
+            },
+            {
+                id: 3,
+                name: "Parktan Ayrılırken",
+                icon: "👋",
+                imageFile: "vedalasma.jpg",
+                imageKey: "vedalasma",
+                passage: "Elif ve Can parkta oynadı. Oyun bitti. Can evine gidiyor.",
+                question: "Can arkadaşına ne der?",
+                options: [
+                    { text: "Hoş geldin!", correct: false },
+                    { text: "Hoşça kal!", correct: true },
+                    { text: "Günaydın!", correct: false }
+                ],
+                explanation: "Ayrılırken 'Hoşça kal' veya 'Görüşürüz' deriz."
+            },
+            {
+                id: 4,
+                name: "Ev Kapısı",
+                icon: "🏡",
+                imageFile: "misafir.jpg",
+                imageKey: "misafir",
+                passage: "Dede ziyarete geldi. Kapıyı torunu açtı. Yüzü gülüyor.",
+                question: "Torun dedesine ne söyler?",
+                options: [
+                    { text: "Hoş geldin dedeciğim!", correct: true },
+                    { text: "Kolay gelsin dedeciğim!", correct: false },
+                    { text: "İyi uykular dedeciğim!", correct: false }
+                ],
+                explanation: "Gelen misafire 'Hoş geldin' veya 'Hoş geldiniz' denir."
+            }
+        ];
+
+        const sentencePuzzles = [
+            { id: 1, context: "Dükkâna girerken söylenir:", target: "Hayırlı işler kolay gelsin!" },
+            { id: 2, context: "Çalışan kişiye söylenir:", target: "Kolay gelsin iyi çalışmalar!" },
+            { id: 3, context: "Arkadaştan ayrılırken söylenir:", target: "Hoşça kal kendine iyi bak!" },
+            { id: 4, context: "Gelen misafire söylenir:", target: "Hoş geldin sefalar getirdin!" }
+        ];
+
+        /* OYUN DURUMU */
+        const gameState = {
+            score: 0,
+            readingDone: new Set(),
+            sentenceDone: new Set()
+        };
+
+        const TOTAL_TASKS = stations.length + sentencePuzzles.length; // 8 Görev
+
+        let soundOn = true;
+        let activeStationId = null;
+        let audioCtx = null;
+
+        function ensureAudioCtx() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            return audioCtx;
+        }
+
+        function playTone(freq, duration, type, delay, gainVal) {
+            if (!soundOn) return;
+            try {
+                const ctx = ensureAudioCtx();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = type || 'sine';
+                osc.frequency.value = freq;
+                gain.gain.value = gainVal || 0.14;
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                const startTime = ctx.currentTime + (delay || 0);
+                osc.start(startTime);
+                gain.gain.setValueAtTime(gain.gain.value, startTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+                osc.stop(startTime + duration + 0.03);
+            } catch (e) { }
+        }
+
+        function playCorrectSound() {
+            playTone(523.25, 0.12, 'triangle', 0);
+            playTone(659.25, 0.12, 'triangle', 0.11);
+            playTone(783.99, 0.18, 'triangle', 0.22);
+        }
+
+        function playWrongSound() {
+            playTone(180, 0.24, 'sawtooth', 0, 0.1);
+        }
+
+        function playClickSound() {
+            playTone(340, 0.04, 'sine', 0, 0.05);
+        }
+
+        function playFanfareSound() {
+            if (!soundOn) return;
+            const notes = [261.63, 329.63, 392.00, 523.25, 659.25, 783.99];
+            notes.forEach((freq, idx) => {
+                playTone(freq, 0.25, 'triangle', idx * 0.12, 0.2);
+            });
+        }
+
+        function toggleSound() {
+            soundOn = !soundOn;
+            const icon = document.getElementById('soundIcon');
+            icon.className = soundOn ? "fa-solid fa-volume-high text-sm" : "fa-solid fa-volume-xmark text-sm";
+        }
+
+        function normalizeTr(s) {
+            if (!s) return "";
+            return s.toString()
+                .toLocaleLowerCase('tr-TR')
+                .replace(/ı/g, 'i').replace(/İ/g, 'i')
+                .replace(/ş/g, 's').replace(/ç/g, 'c')
+                .replace(/ğ/g, 'g').replace(/ö/g, 'o').replace(/ü/g, 'u')
+                .replace(/[^a-z0-9\s]/g, '')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        function shuffleArray(arr) {
+            const a = arr.slice();
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
+            }
+            return a;
+        }
+
+        function updateGlobalScore(points) {
+            gameState.score += points;
+            document.getElementById('globalScore').innerText = `${gameState.score} XP`;
+        }
+
+        function updateAllProgressTexts() {
+            document.getElementById('stage1ProgressText').innerText = `${gameState.readingDone.size} / ${stations.length}`;
+            document.getElementById('stage2ProgressText').innerText = `${gameState.sentenceDone.size} / ${sentencePuzzles.length}`;
+            const totalDone = gameState.readingDone.size + gameState.sentenceDone.size;
+            document.getElementById('taskProgress').innerText = `${totalDone} / ${TOTAL_TASKS}`;
+        }
+
+        /* 1. AŞAMA: HAVALI ZARFLARIN OLUŞTURULMASI */
+        function buildStationGrid() {
+            const grid = document.getElementById('stationGrid');
+            grid.innerHTML = '';
+            stations.forEach(st => {
+                const card = document.createElement('div');
+                card.id = `stationCard-${st.id}`;
+                card.className = "envelope-card rounded-2xl p-5 pt-16 flex flex-col items-center justify-between text-center cursor-pointer min-h-[220px]";
+                card.onclick = () => openStationModal(st.id);
+
+                card.innerHTML = `
+                    <div class="envelope-flap"></div>
+                    <div id="seal-${st.id}" class="wax-seal">
+                        <i class="fa-solid fa-stamp"></i>
+                    </div>
+
+                    <div class="space-y-2 mt-4 z-10 w-full">
+                        <div class="inline-flex items-center gap-1.5 bg-paper/90 px-3 py-1 rounded-full text-xs font-display font-bold text-ink shadow-sm border border-kraft">
+                            <span>${st.icon}</span>
+                            <span>${st.name}</span>
+                        </div>
+                        <p class="text-[11px] font-semibold text-ink/70">Mektubu açmak için tıkla</p>
+                    </div>
+
+                    <div class="w-full pt-3 border-t border-kraft/60 mt-3 flex items-center justify-between text-[11px] font-bold z-10">
+                        <span class="text-mustardDark font-display">+20 XP</span>
+                        <span id="stationStatus-${st.id}" class="text-stamp flex items-center gap-1">
+                            <i class="fa-solid fa-envelope"></i> Mühürlü
+                        </span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function openStationModal(id) {
+            activeStationId = id;
+            const st = stations.find(s => s.id === id);
+            playClickSound();
+
+            document.getElementById('modalStationIcon').innerText = st.icon;
+            document.getElementById('modalStationName').innerText = st.name;
+            document.getElementById('modalPassage').innerText = st.passage;
+            document.getElementById('modalQuestion').innerHTML = `<i class="fa-solid fa-circle-question text-postal"></i> <span>${st.question}</span>`;
+            document.getElementById('modalImgLabel').innerText = st.name;
+
+            const modalImg = document.getElementById('modalStationImg');
+            modalImg.src = st.imageFile;
+            modalImg.onerror = function () {
+                this.onerror = null;
+                this.src = svgFallbacks[st.imageKey];
+            };
+
+            const container = document.getElementById('modalOptionsContainer');
+            container.innerHTML = '';
+            st.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.id = `modalOpt-${idx}`;
+                btn.className = "w-full text-left p-3.5 rounded-xl border-2 border-kraft bg-paperDark/60 hover:bg-stamp/10 hover:border-stamp/40 transition-all text-xs sm:text-sm font-bold text-ink flex items-center justify-between cursor-pointer";
+                btn.innerHTML = `<span>${opt.text}</span><i class="fa-regular fa-circle text-ink/30"></i>`;
+                btn.onclick = () => selectStationAnswer(idx);
+                container.appendChild(btn);
+            });
+
+            document.getElementById('modalFeedback').classList.add('hidden');
+            document.getElementById('stationModal').classList.remove('hidden');
+            document.getElementById('stationModal').classList.add('flex');
+        }
+
+        function selectStationAnswer(idx) {
+            const st = stations.find(s => s.id === activeStationId);
+            const isCorrect = st.options[idx].correct;
+
+            st.options.forEach((_, i) => {
+                const b = document.getElementById(`modalOpt-${i}`);
+                b.onclick = null;
+                b.classList.remove('cursor-pointer', 'hover:bg-stamp/10', 'hover:border-stamp/40');
+                if (i === idx) {
+                    if (isCorrect) {
+                        b.className = "w-full text-left p-3.5 rounded-xl border-2 border-leaf bg-leaf/15 text-leaf font-bold text-xs sm:text-sm flex items-center justify-between";
+                        b.innerHTML = `<span>${st.options[i].text}</span><i class="fa-solid fa-circle-check text-leaf"></i>`;
+                    } else {
+                        b.className = "w-full text-left p-3.5 rounded-xl border-2 border-stamp bg-stamp/10 text-stampDark font-bold text-xs sm:text-sm flex items-center justify-between";
+                        b.innerHTML = `<span>${st.options[i].text}</span><i class="fa-solid fa-circle-xmark text-stamp"></i>`;
+                    }
+                }
+            });
+
+            const fb = document.getElementById('modalFeedback');
+            const fbIcon = document.getElementById('modalFeedbackIcon');
+            const fbText = document.getElementById('modalFeedbackText');
+            fb.classList.remove('hidden');
+
+            if (isCorrect) {
+                playCorrectSound();
+                fb.className = "p-3.5 rounded-xl text-xs sm:text-sm flex items-start gap-2 bg-leaf/15 text-leaf border-2 border-leaf/40";
+                fbIcon.className = "fa-solid fa-circle-check text-leaf text-base mt-0.5";
+                if (!gameState.readingDone.has(st.id)) {
+                    updateGlobalScore(20);
+                    gameState.readingDone.add(st.id);
+                }
+                fbText.innerHTML = `<strong>Tebrikler! (+20 XP)</strong> ${st.explanation}`;
+                markStationStatus(st.id, true);
+            } else {
+                playWrongSound();
+                fb.className = "p-3.5 rounded-xl text-xs sm:text-sm flex items-start gap-2 bg-mustard/15 text-mustardDark border-2 border-mustard/40";
+                fbIcon.className = "fa-solid fa-lightbulb text-mustardDark text-base mt-0.5";
+                fbText.innerHTML = `<strong>Hatırla:</strong> ${st.explanation}`;
+                markStationStatus(st.id, false);
+            }
+            updateAllProgressTexts();
+        }
+
+        function markStationStatus(id, success) {
+            const status = document.getElementById(`stationStatus-${id}`);
+            const seal = document.getElementById(`seal-${id}`);
+            if (success) {
+                status.className = "text-leaf flex items-center gap-1 font-bold";
+                status.innerHTML = '<i class="fa-solid fa-circle-check"></i> Açıldı & Doğru';
+                seal.innerHTML = '<i class="fa-solid fa-check text-white"></i>';
+                seal.style.background = "radial-gradient(circle at 35% 35%, #4C7A55, #2B4D32)";
+                seal.style.borderColor = "#1B3321";
+            } else {
+                status.className = "text-mustardDark flex items-center gap-1 font-bold";
+                status.innerHTML = '<i class="fa-solid fa-envelope-open"></i> İncelendi';
+                seal.innerHTML = '<i class="fa-solid fa-envelope-open text-white"></i>';
+            }
+        }
+
+        function closeStationModal() {
+            document.getElementById('stationModal').classList.add('hidden');
+            document.getElementById('stationModal').classList.remove('flex');
+        }
+
+        /* 2. AŞAMA: CÜMLE ATÖLYESİ */
+        let sentenceState = {};
+        let chipUidCounter = 0;
+
+        function buildSentenceWorkshop() {
+            const wrap = document.getElementById('sentenceWorkshop');
+            wrap.innerHTML = '';
+
+            sentencePuzzles.forEach(p => {
+                const tokens = p.target.split(' ');
+                const tokenObjs = tokens.map(t => ({ uid: chipUidCounter++, text: t, placed: false }));
+                sentenceState[p.id] = { tokens: shuffleArray(tokenObjs), order: [], completed: false };
+
+                const card = document.createElement('div');
+                card.className = "paper-card rounded-2xl p-4 sm:p-5 space-y-3";
+                card.id = `puzzleCard-${p.id}`;
+                card.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <p class="text-xs sm:text-sm font-bold text-ink/80"><i class="fa-solid fa-comment-dots text-postal mr-1.5"></i>${p.context}</p>
+                        <span class="text-[11px] font-display font-bold text-mustardDark bg-mustard/15 px-2.5 py-0.5 rounded-full border border-mustard/30">+25 XP</span>
+                    </div>
+                    <div id="answerRow-${p.id}" class="min-h-[52px] flex flex-wrap gap-2 p-2.5 rounded-xl bg-paperDark/60 border-2 border-dashed border-kraft items-center"></div>
+                    <div id="poolRow-${p.id}" class="flex flex-wrap gap-2 min-h-[40px] pt-1"></div>
+                    <div class="flex items-center justify-between pt-2 border-t border-kraft/60">
+                        <button onclick="resetSentencePuzzle(${p.id})" id="resetBtn-${p.id}"
+                            class="text-xs font-bold text-ink/50 hover:text-ink/80 cursor-pointer flex items-center gap-1">
+                            <i class="fa-solid fa-rotate-left"></i> Sıfırla
+                        </button>
+                        <button onclick="checkSentence(${p.id})" id="checkBtn-${p.id}"
+                            class="bg-postal hover:bg-postalLight text-paper px-5 py-2 rounded-xl font-display font-bold text-xs sm:text-sm transition-all cursor-pointer shadow">
+                            Cümleyi Kontrol Et
+                        </button>
+                    </div>
+                    <div id="sentenceFeedback-${p.id}" class="hidden text-xs font-bold p-3 rounded-xl"></div>
+                `;
+                wrap.appendChild(card);
+            });
+
+            sentencePuzzles.forEach(p => renderSentencePuzzle(p.id));
+        }
+
+        function renderSentencePuzzle(id) {
+            const state = sentenceState[id];
+            const poolRow = document.getElementById(`poolRow-${id}`);
+            const answerRow = document.getElementById(`answerRow-${id}`);
+
+            poolRow.innerHTML = '';
+            state.tokens.filter(t => !t.placed).forEach(t => {
+                const chip = document.createElement('button');
+                chip.className = "chip bg-mustard/20 border-2 border-mustard/50 text-mustardDark px-3.5 py-1.5 rounded-xl text-xs sm:text-sm cursor-pointer shadow-sm hover:bg-mustard/30";
+                chip.innerText = t.text;
+                if (!state.completed) {
+                    chip.onclick = () => placeChip(id, t.uid);
+                } else {
+                    chip.disabled = true;
+                }
+                poolRow.appendChild(chip);
+            });
+
+            answerRow.innerHTML = '';
+            if (state.order.length === 0 && !state.completed) {
+                answerRow.innerHTML = '<span class="text-xs text-ink/40 italic">Aşağıdaki kelimelere sırasıyla dokun...</span>';
+            } else {
+                state.order.forEach(uid => {
+                    const t = state.tokens.find(x => x.uid === uid);
+                    const chip = document.createElement('button');
+                    chip.className = state.completed
+                        ? "chip bg-leaf/20 border-2 border-leaf/60 text-leaf px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold"
+                        : "chip bg-postal/10 border-2 border-postal/40 text-postal px-3.5 py-1.5 rounded-xl text-xs sm:text-sm cursor-pointer hover:bg-postal/20";
+                    chip.innerText = t.text;
+                    if (!state.completed) {
+                        chip.onclick = () => removeChip(id, uid);
+                    } else {
+                        chip.disabled = true;
+                    }
+                    answerRow.appendChild(chip);
+                });
+            }
+        }
+
+        function placeChip(id, uid) {
+            const state = sentenceState[id];
+            const t = state.tokens.find(x => x.uid === uid);
+            t.placed = true;
+            state.order.push(uid);
+            playClickSound();
+            renderSentencePuzzle(id);
+        }
+
+        function removeChip(id, uid) {
+            const state = sentenceState[id];
+            const t = state.tokens.find(x => x.uid === uid);
+            t.placed = false;
+            state.order = state.order.filter(u => u !== uid);
+            playClickSound();
+            renderSentencePuzzle(id);
+        }
+
+        function resetSentencePuzzle(id) {
+            const state = sentenceState[id];
+            if (state.completed) return;
+            state.tokens.forEach(t => t.placed = false);
+            state.order = [];
+            renderSentencePuzzle(id);
+        }
+
+        function checkSentence(id) {
+            const state = sentenceState[id];
+            if (state.completed) return;
+            const fb = document.getElementById(`sentenceFeedback-${id}`);
+
+            if (state.order.length !== state.tokens.length) {
+                fb.classList.remove('hidden');
+                fb.className = "text-xs font-bold p-3 rounded-xl bg-mustard/15 text-mustardDark border border-mustard/30";
+                fb.innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-1"></i> Bütün kelime pullarını yukarıya yerleştirmelisin.';
+                return;
+            }
+
+            const answerText = state.order.map(uid => state.tokens.find(t => t.uid === uid).text).join(' ');
+            const target = sentencePuzzles.find(p => p.id === id).target;
+
+            fb.classList.remove('hidden');
+            if (normalizeTr(answerText) === normalizeTr(target)) {
+                state.completed = true;
+                playCorrectSound();
+                fb.className = "text-xs font-bold p-3 rounded-xl bg-leaf/15 text-leaf border border-leaf/40";
+                fb.innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i> Harika! Cümleyi doğru kurdun. (+25 XP)';
+                if (!gameState.sentenceDone.has(id)) {
+                    updateGlobalScore(25);
+                    gameState.sentenceDone.add(id);
+                }
+                document.getElementById(`checkBtn-${id}`).disabled = true;
+                document.getElementById(`checkBtn-${id}`).classList.add('opacity-40', 'cursor-not-allowed');
+                document.getElementById(`resetBtn-${id}`).classList.add('opacity-40', 'cursor-not-allowed');
+                document.getElementById(`puzzleCard-${id}`).classList.add('border-leaf');
+                renderSentencePuzzle(id);
+                updateAllProgressTexts();
+            } else {
+                playWrongSound();
+                fb.className = "text-xs font-bold p-3 rounded-xl bg-stamp/10 text-stampDark border border-stamp/30";
+                fb.innerHTML = '<i class="fa-solid fa-circle-xmark mr-1"></i> Sıralama doğru değil. Yanlış kelimelere dokunup tekrar dene.';
+                const answerRow = document.getElementById(`answerRow-${id}`);
+                answerRow.classList.add('shake');
+                setTimeout(() => answerRow.classList.remove('shake'), 400);
+            }
+        }
+
+        /* 3. AŞAMA: SELAM KARNESİ VE GÜÇLÜ KUTLAMA */
+        function renderKarne() {
+            document.getElementById('karneReading').innerText = `${gameState.readingDone.size} / ${stations.length}`;
+            document.getElementById('karneSentence').innerText = `${gameState.sentenceDone.size} / ${sentencePuzzles.length}`;
+            document.getElementById('karneScore').innerText = `${gameState.score} XP`;
+
+            const totalDone = gameState.readingDone.size + gameState.sentenceDone.size;
+            const badgeEl = document.getElementById('karneBadgeText');
+            const badgeSub = document.getElementById('karneBadgeSub');
+
+            if (totalDone === TOTAL_TASKS) {
+                badgeEl.innerText = "🌟 MUHTEŞEM! SELAMLAŞMA USTASI OLDUN 🌟";
+                badgeSub.innerText = "Tüm zarfları açtın ve bütün selamlaşma cümlelerini doğru sıraladın. Seninle gurur duyuyoruz!";
+            } else if (totalDone >= 5) {
+                badgeEl.innerText = "👏 TEBRİKLER! SELAM KÂŞİFİ";
+                badgeSub.innerText = "Harika bir ilerleme kaydettin, selamlaşma ifadelerini çok iyi biliyorsun!";
+            } else if (totalDone >= 1) {
+                badgeEl.innerText = "🌱 GÜZEL BAŞLANGIÇ! SELAM YOLCUSU";
+                badgeSub.innerText = "Öğrenmeye ve zarfları keşfetmeye devam et!";
+            } else {
+                badgeEl.innerText = "📬 Zarfları Keşfetmeye Başla!";
+                badgeSub.innerText = "1. Bölümdeki mühürlü zarfları açarak ilk puanlarını toplayabilirsin.";
+            }
+        }
+
+        /* Güçlü Kutlama / Havai Fişek Konfeti Efekti */
+        function triggerGrandCelebration() {
+            playFanfareSound();
+            if (typeof confetti !== 'function') return;
+
+            const duration = 3.5 * 1000;
+            const end = Date.now() + duration;
+
+            (function frame() {
+                confetti({
+                    particleCount: 7,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0, y: 0.7 },
+                    colors: ['#B23A2E', '#D89B2D', '#24344D', '#4C7A55', '#E7D3AC']
+                });
+                confetti({
+                    particleCount: 7,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1, y: 0.7 },
+                    colors: ['#B23A2E', '#D89B2D', '#24344D', '#4C7A55', '#E7D3AC']
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+
+            // Merkezden büyük patlama
+            setTimeout(() => {
+                confetti({
+                    particleCount: 120,
+                    spread: 100,
+                    origin: { y: 0.5 },
+                    colors: ['#FFD700', '#B23A2E', '#4C7A55', '#FFFFFF']
+                });
+            }, 600);
+        }
+
+        function switchStage(n) {
+            for (let i = 1; i <= 3; i++) {
+                document.getElementById(`stage${i}`).classList.add('hidden');
+                document.getElementById(`stage${i}`).classList.remove('flex');
+                const btn = document.getElementById(`tabBtn${i}`);
+                btn.className = "flex-1 min-w-[30%] py-2.5 px-3 rounded-xl font-display font-bold text-xs sm:text-sm transition-all duration-200 bg-paperDark text-ink/50 hover:bg-kraft flex items-center justify-center gap-2 cursor-pointer";
+                btn.querySelector('span').className = "w-5 h-5 rounded-full bg-kraft text-ink/60 flex items-center justify-center text-[11px]";
+            }
+
+            const activeBtn = document.getElementById(`tabBtn${n}`);
+            activeBtn.className = "flex-1 min-w-[30%] py-2.5 px-3 rounded-xl font-display font-bold text-xs sm:text-sm transition-all duration-200 bg-stamp text-paper shadow-md flex items-center justify-center gap-2 cursor-pointer";
+            activeBtn.querySelector('span').className = "w-5 h-5 rounded-full bg-paper/25 flex items-center justify-center text-[11px]";
+
+            const stage = document.getElementById(`stage${n}`);
+            stage.classList.remove('hidden');
+            stage.classList.add('flex');
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            if (n === 3) {
+                renderKarne();
+                triggerGrandCelebration();
+            }
+        }
+
+        function restartApp() {
+            location.reload();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            buildStationGrid();
+            buildSentenceWorkshop();
+            updateAllProgressTexts();
+        });
+    </script>
+</body>
+
+</html>

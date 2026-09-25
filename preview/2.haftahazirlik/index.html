@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Selamlaşma Balonları</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #c9a9f3;
+      overflow: hidden;
+    }
+
+    .welcome-screen {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 12px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .welcome-art {
+      position: relative;
+      width: min(100%, calc(100vh * 2.01));
+      aspect-ratio: 1792 / 892;
+      background: url('acilis-lila-kalpsiz.png') center / contain no-repeat;
+    }
+
+    .start-area {
+      position: absolute;
+      left: 41.1%;
+      top: 70.7%;
+      width: 18.1%;
+      height: 10.6%;
+      border: 0;
+      border-radius: 20px;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .start-area:focus-visible {
+      outline: 4px solid #fff;
+      outline-offset: 4px;
+    }
+
+    .game-screen {
+      position: relative;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 22px;
+      overflow: hidden;
+      background: radial-gradient(circle at 10% 12%, #fbf6ff 0 6%, transparent 19%), radial-gradient(circle at 89% 85%, #bf8ee9 0 5%, transparent 19%), linear-gradient(135deg, #f0e5fc 0%, #d3b5f1 52%, #aa80d8 100%);
+      font-family: Arial, sans-serif;
+      color: #39225d;
+    }
+
+    .game-screen::before,
+    .game-screen::after {
+      content: '';
+      position: absolute;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      border: 28px solid rgba(255, 255, 255, .18);
+      pointer-events: none;
+    }
+
+    .game-screen::before {
+      top: -118px;
+      left: -82px;
+    }
+
+    .game-screen::after {
+      right: -95px;
+      bottom: -120px;
+    }
+
+    .game-card {
+      position: relative;
+      z-index: 1;
+      width: min(93vw, 1010px);
+      max-height: calc(100vh - 44px);
+      padding: clamp(18px, 3.5vh, 32px);
+      border: 1px solid rgba(255, 255, 255, .8);
+      border-radius: 34px;
+      text-align: center;
+      overflow: hidden;
+      background: rgba(253, 250, 255, .7);
+      box-shadow: 0 24px 64px rgba(60, 30, 103, .26);
+      backdrop-filter: blur(13px);
+    }
+
+    .game-card::before {
+      content: '';
+      position: absolute;
+      inset: 0 0 auto;
+      height: 7px;
+      background: linear-gradient(90deg, #f18ab6, #8d76e3, #5bc6ad, #f3b34c);
+    }
+
+    .game-eyebrow {
+      display: none;
+    }
+
+    .game-card h1 {
+      margin: 0;
+      font-size: clamp(29px, 4vw, 48px);
+      letter-spacing: -.8px;
+    }
+
+    .game-card p {
+      display: none;
+    }
+
+    .listen-banner {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      margin: 6px auto 2px;
+      padding: 12px 22px;
+      border-radius: 18px;
+      text-align: left;
+      background: rgba(255, 255, 255, .78);
+      box-shadow: 0 8px 20px rgba(95, 61, 138, .12);
+    }
+
+    .listen-icon {
+      display: grid;
+      place-items: center;
+      width: 43px;
+      height: 43px;
+      border-radius: 14px;
+      background: linear-gradient(145deg, #ae84dc, #7963c7);
+      color: #fff;
+      font-size: 22px;
+    }
+
+    .listen-banner strong {
+      display: block;
+      color: #523478;
+      font-size: clamp(18px, 2.3vw, 25px);
+    }
+
+    .listen-banner small {
+      display: block;
+      margin-top: 2px;
+      color: #806898;
+      font-size: clamp(12px, 1.6vw, 15px);
+    }
+
+    .balloons {
+      position: relative;
+      min-height: min(43vh, 330px);
+      display: flex;
+      flex-wrap: nowrap;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(10px, 3vw, 46px);
+      margin-top: 12px;
+      padding: 15px 3% 48px;
+      border-radius: 26px;
+      background: linear-gradient(180deg, rgba(223, 202, 246, .38), rgba(255, 255, 255, .35));
+    }
+
+    .balloons::before {
+      content: '';
+      position: absolute;
+      right: 8%;
+      left: 8%;
+      bottom: 28px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #c69fe0, transparent);
+    }
+
+    .balloon {
+      width: clamp(76px, 14vw, 150px);
+      aspect-ratio: .78;
+      border: 4px solid rgba(255, 255, 255, .68);
+      border-radius: 50% 50% 46% 46%;
+      background: #8d64d9;
+      color: #fff;
+      font-size: clamp(14px, 2.2vw, 25px);
+      font-weight: 800;
+      cursor: pointer;
+      text-shadow: 0 2px 2px rgba(57, 34, 93, .24);
+      box-shadow: inset 12px 12px 13px rgba(255, 255, 255, .24), inset -13px -15px rgba(0, 0, 0, .12), 0 12px 18px rgba(70, 46, 110, .22);
+      position: relative;
+      transition: transform .2s;
+    }
+
+    .balloon::after {
+      content: '';
+      position: absolute;
+      width: 2px;
+      height: 70px;
+      background: #9074a4;
+      bottom: -67px;
+      left: 50%;
+    }
+
+    .balloon:hover,
+    .balloon:focus-visible {
+      transform: translateY(-12px) scale(1.04);
+    }
+
+    .balloon:nth-child(1) {
+      background: #ed6ca7;
+      animation: flightOne 3.4s ease-in-out infinite;
+    }
+
+    .balloon:nth-child(2) {
+      background: #7188eb;
+      animation: flightTwo 3.8s ease-in-out .2s infinite;
+    }
+
+    .balloon:nth-child(3) {
+      background: #efa940;
+      animation: flightThree 3.6s ease-in-out .4s infinite;
+    }
+
+    .balloon:nth-child(4) {
+      background: #52ba9a;
+      animation: flightFour 4s ease-in-out .1s infinite;
+    }
+
+    .balloon.selected {
+      pointer-events: none;
+      z-index: 3;
+      animation: selectedFlight 2.25s ease-in-out forwards;
+    }
+
+    .feedback {
+      min-height: 30px;
+      margin-top: 3px;
+      font-size: clamp(15px, 2vw, 20px);
+      font-weight: bold;
+      color: #7654aa;
+    }
+
+    .completion-actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 9px;
+    }
+
+    .next-activity,
+    .replay-activity {
+      display: inline-block;
+      padding: 12px 25px;
+      border: 0;
+      border-radius: 999px;
+      color: #fff;
+      box-shadow: 0 8px 16px rgba(105, 66, 151, .25);
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .next-activity {
+      background: linear-gradient(135deg, #e867a2, #8d68cc);
+    }
+
+    .replay-activity {
+      background: linear-gradient(135deg, #6a91e8, #7654aa);
+    }
+
+    @keyframes flightOne {
+      25% {
+        transform: translate(25px, -42px) rotate(8deg);
+      }
+
+      55% {
+        transform: translate(-22px, -12px) rotate(-7deg);
+      }
+
+      80% {
+        transform: translate(18px, -55px) rotate(6deg);
+      }
+    }
+
+    @keyframes flightTwo {
+      28% {
+        transform: translate(-24px, -55px) rotate(-8deg);
+      }
+
+      58% {
+        transform: translate(24px, -14px) rotate(7deg);
+      }
+
+      82% {
+        transform: translate(-17px, -39px) rotate(-5deg);
+      }
+    }
+
+    @keyframes flightThree {
+      30% {
+        transform: translate(22px, -34px) rotate(7deg);
+      }
+
+      60% {
+        transform: translate(-26px, -60px) rotate(-8deg);
+      }
+
+      84% {
+        transform: translate(15px, -15px) rotate(5deg);
+      }
+    }
+
+    @keyframes flightFour {
+      25% {
+        transform: translate(-20px, -40px) rotate(-7deg);
+      }
+
+      54% {
+        transform: translate(27px, -58px) rotate(8deg);
+      }
+
+      80% {
+        transform: translate(-18px, -18px) rotate(-5deg);
+      }
+    }
+
+    @keyframes balloonPop {
+      0% {
+        transform: scale(1);
+        opacity: 1;
+      }
+
+      55% {
+        transform: scale(1.42);
+        opacity: 1;
+      }
+
+      100% {
+        transform: scale(1.85);
+        opacity: 0;
+      }
+    }
+
+    @keyframes selectedFlight {
+      0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 1;
+      }
+
+      25% {
+        transform: translate(42px, -74px) scale(1.12) rotate(9deg);
+      }
+
+      52% {
+        transform: translate(-42px, -150px) scale(1.25) rotate(-9deg);
+      }
+
+      76% {
+        transform: translate(34px, -230px) scale(1.4) rotate(7deg);
+      }
+
+      88% {
+        transform: translate(0, -300px) scale(2.05);
+        opacity: 1;
+      }
+
+      100% {
+        transform: translate(0, -300px) scale(.1);
+        opacity: 0;
+      }
+    }
+
+    .video-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      display: grid;
+      place-items: center;
+      padding: 22px;
+      background: rgba(48, 30, 83, .78);
+    }
+
+    .video-box {
+      width: min(92vw, 920px);
+      padding: 16px;
+      border-radius: 24px;
+      background: #fff;
+      box-shadow: 0 18px 50px rgba(0, 0, 0, .35);
+    }
+
+    .video-box video {
+      display: block;
+      width: 100%;
+      max-height: 72vh;
+      border-radius: 15px;
+      background: #111;
+    }
+
+    .video-actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .video-close,
+    .video-repeat {
+      padding: 10px 24px;
+      border: 0;
+      border-radius: 999px;
+      color: #fff;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .video-repeat {
+      background: #e95c9b;
+    }
+
+    .video-close {
+      background: #7654aa;
+    }
+
+    @media (max-width: 600px) {
+      .welcome-screen {
+        padding: 0;
+      }
+
+      .welcome-art {
+        width: 100vw;
+      }
+
+      .start-area {
+        border-radius: 10px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <audio id="openingAudio" preload="auto">
+    <source src="acilis.mp3?v=2" type="audio/mpeg">
+  </audio>
+  <main class="welcome-screen">
+    <div class="welcome-art" role="img" aria-label="Ülkem Yanımda ile Türkçe ve Türk Kültürü Derslerine hoş geldiniz">
+      <button class="start-area" type="button" onclick="playOpeningAudio()" aria-label="Başlat"></button>
+    </div>
+  </main>
+
+  <main id="gameScreen" class="game-screen hidden" aria-live="polite">
+    <section class="game-card">
+      <div class="listen-banner">
+        <span class="listen-icon">♪</span>
+        <span><strong>Dinle ve Tekrar Et!</strong><small>Bir balonu seç, videoyu izle.</small></span>
+      </div>
+      <div class="balloons">
+        <button class="balloon" type="button"
+          onclick="playBalloon(this, 'Merhaba', 'merhaba-yeni.mp4')">Merhaba</button>
+        <button class="balloon" type="button"
+          onclick="playBalloon(this, 'Günaydın', 'gunaydin-yeni.mp4')">Günaydın</button>
+        <button class="balloon" type="button" onclick="playBalloon(this, 'İyi Günler', 'iyi-gunler-yeni.mp4')">İyi
+          Günler</button>
+        <button class="balloon" type="button" onclick="playBalloon(this, 'Hoşça Kal', 'hosca-kal-yeni.mp4')">Hoşça
+          Kal</button>
+      </div>
+      <div id="feedback" class="feedback">Bir balon seç.</div>
+      <div id="completionActions" class="completion-actions hidden">
+        <button class="replay-activity" type="button" onclick="replayBalloons()">↻ Tekrar Oyna</button>
+        <a class="next-activity" href="sarki-dinle.html">Devam Et →</a>
+      </div>
+    </section>
+  </main>
+
+  <section id="videoOverlay" class="video-overlay hidden" aria-label="Selamlaşma videosu">
+    <div class="video-box">
+      <video id="greetingVideo" controls playsinline></video>
+      <div id="videoActions" class="video-actions hidden">
+        <button class="video-repeat" type="button" onclick="repeatVideo()">Tekrar İzle</button>
+        <button class="video-close" type="button" onclick="closeVideo()">Balonlara Dön</button>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const initialBalloons = document.querySelector('.balloons').innerHTML;
+
+    function playOpeningAudio() {
+      const audio = document.getElementById('openingAudio');
+      if (!audio) return;
+      audio.pause();
+      audio.currentTime = 0;
+      audio.muted = false;
+      audio.volume = 1;
+      audio.onended = showGameScreen;
+      audio.play().catch(() => {
+        document.querySelector('.welcome-screen').classList.add('hidden');
+        document.getElementById('gameScreen').classList.remove('hidden');
+      });
+    }
+
+    function showGameScreen() {
+      document.querySelector('.welcome-screen').classList.add('hidden');
+      document.getElementById('gameScreen').classList.remove('hidden');
+    }
+
+    function playBalloon(button, greeting, videoSource) {
+      button.classList.add('selected');
+      document.getElementById('feedback').textContent = greeting + ' balonu uçuyor!';
+      window.setTimeout(() => openVideo(videoSource), 2250);
+    }
+
+    function openVideo(videoSource) {
+      const video = document.getElementById('greetingVideo');
+      video.src = videoSource;
+      video.onended = () => document.getElementById('videoActions').classList.remove('hidden');
+      document.getElementById('videoActions').classList.add('hidden');
+      document.getElementById('videoOverlay').classList.remove('hidden');
+      video.play().catch(() => { });
+    }
+
+    function repeatVideo() {
+      const video = document.getElementById('greetingVideo');
+      document.getElementById('videoActions').classList.add('hidden');
+      video.currentTime = 0;
+      video.play().catch(() => { });
+    }
+
+    function closeVideo() {
+      const video = document.getElementById('greetingVideo');
+      video.pause();
+      video.removeAttribute('src');
+      video.load();
+      document.getElementById('videoOverlay').classList.add('hidden');
+      document.getElementById('videoActions').classList.add('hidden');
+      document.querySelectorAll('.balloon.selected').forEach((balloon) => balloon.remove());
+      const remainingBalloons = document.querySelectorAll('.balloon').length;
+      if (remainingBalloons === 0) {
+        document.getElementById('feedback').textContent = 'Harika! Balonların hepsini tamamladın.';
+        document.getElementById('completionActions').classList.remove('hidden');
+      } else {
+        document.getElementById('feedback').textContent = 'Başka bir balon seç.';
+      }
+    }
+
+    function replayBalloons() {
+      document.querySelector('.balloons').innerHTML = initialBalloons;
+      document.getElementById('feedback').textContent = 'Bir balon seç.';
+      document.getElementById('completionActions').classList.add('hidden');
+    }
+
+    function sayGreeting(greeting) {
+      document.getElementById('feedback').textContent = greeting + '! Harika, tekrar et!';
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const speech = new SpeechSynthesisUtterance(greeting);
+        speech.lang = 'tr-TR';
+        window.speechSynthesis.speak(speech);
+      }
+    }
+  </script>
+</body>
+
+</html>

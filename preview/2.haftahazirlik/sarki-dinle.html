@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Şarkı Dinle</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      height: 100vh;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+      color: #3f2865;
+      background: radial-gradient(circle at 12% 14%, #fbf4ff 0 7%, transparent 20%), radial-gradient(circle at 88% 82%, #c590e8 0 6%, transparent 20%), linear-gradient(135deg, #efdefb, #c6a1eb 58%, #a87bd8);
+    }
+
+    .music-card {
+      position: relative;
+      width: min(90vw, 720px);
+      max-height: calc(100vh - 28px);
+      padding: clamp(18px, 3vh, 32px);
+      overflow: hidden;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, .8);
+      border-radius: 32px;
+      background: rgba(255, 255, 255, .72);
+      box-shadow: 0 24px 58px rgba(57, 32, 92, .28);
+      backdrop-filter: blur(12px);
+    }
+
+    .music-card::before,
+    .music-card::after {
+      content: '♪';
+      position: absolute;
+      color: #cf90e6;
+      opacity: .35;
+      font-size: 120px;
+      font-weight: bold;
+    }
+
+    .music-card::before {
+      top: -38px;
+      left: 30px;
+      transform: rotate(-15deg);
+    }
+
+    .music-card::after {
+      right: 35px;
+      bottom: -56px;
+      transform: rotate(18deg);
+    }
+
+    .badge {
+      position: relative;
+      z-index: 1;
+      display: inline-block;
+      padding: 8px 17px;
+      border-radius: 999px;
+      color: #7251a2;
+      background: #ead9fa;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: .6px;
+    }
+
+    h1 {
+      position: relative;
+      z-index: 1;
+      margin: 10px 0 4px;
+      font-size: clamp(28px, 5vw, 43px);
+    }
+
+    p {
+      position: relative;
+      z-index: 1;
+      margin: 0;
+      color: #765d90;
+      font-size: clamp(14px, 2vw, 19px);
+    }
+
+    .song-video {
+      position: relative;
+      z-index: 1;
+      display: block;
+      width: min(100%, 460px);
+      max-height: min(29vh, 220px);
+      margin: 12px auto 9px;
+      border: 4px solid rgba(255, 255, 255, .8);
+      border-radius: 18px;
+      background: #7354a2;
+      box-shadow: 0 12px 24px rgba(86, 50, 128, .2);
+      object-fit: cover;
+    }
+
+    .play-button {
+      position: relative;
+      z-index: 1;
+      width: clamp(76px, 11vh, 96px);
+      height: clamp(76px, 11vh, 96px);
+      margin: 7px auto 9px;
+      border: 5px solid rgba(255, 255, 255, .85);
+      border-radius: 50%;
+      color: #fff;
+      background: linear-gradient(145deg, #ec83b7, #8a68ce);
+      box-shadow: 0 16px 25px rgba(100, 60, 150, .3), inset 8px 8px 12px rgba(255, 255, 255, .25);
+      cursor: pointer;
+      font-size: 35px;
+      transition: transform .2s;
+    }
+
+    .play-button:hover,
+    .play-button:focus-visible {
+      transform: scale(1.06);
+    }
+
+    .status {
+      position: relative;
+      z-index: 1;
+      min-height: 22px;
+      color: #6c4d99;
+      font-weight: bold;
+      font-size: clamp(14px, 2vw, 17px);
+    }
+
+    .song-actions {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .song-actions button,
+    .song-actions a {
+      padding: 11px 22px;
+      border: 0;
+      border-radius: 999px;
+      color: #fff;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .repeat {
+      background: #e965a2;
+    }
+
+    .continue {
+      background: #7050a5;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="music-card">
+    <div id="songBadge" class="badge">1. ŞARKI</div>
+    <h1 id="songTitle">Şarkı Dinle</h1>
+    <p>Şarkıyı dinle, ritme eşlik et ve söyle!</p>
+    <video id="songVideo" class="song-video" src="merhaba-sarki-video.mp4" muted loop playsinline></video>
+    <button id="playButton" class="play-button" type="button" aria-label="Şarkıyı oynat">▶</button>
+    <div id="status" class="status">Başlamak için düğmeye dokun.</div>
+    <div id="songActions" class="song-actions">
+      <button class="repeat" type="button" onclick="repeatSong()">Tekrar Dinle</button>
+      <a class="continue" href="sarki-dinle-2.html">Devam Et</a>
+    </div>
+  </main>
+  <audio id="song" src="tanisma-sarkisi.mp3" preload="auto"></audio>
+  <script>
+    const song = document.getElementById('song');
+    const playButton = document.getElementById('playButton');
+    const status = document.getElementById('status');
+    const songVideo = document.getElementById('songVideo');
+
+    playButton.addEventListener('click', () => {
+      if (song.paused) {
+        song.play().catch(() => { });
+      } else {
+        song.pause();
+      }
+    });
+    song.addEventListener('play', () => {
+      songVideo.play().catch(() => { });
+      playButton.textContent = 'Ⅱ';
+      playButton.setAttribute('aria-label', 'Şarkıyı duraklat');
+      status.textContent = 'Şarkı çalıyor. Sen de eşlik et!';
+    });
+    song.addEventListener('pause', () => {
+      songVideo.pause();
+      if (!song.ended) {
+        playButton.textContent = '▶';
+        playButton.setAttribute('aria-label', 'Şarkıyı oynat');
+        status.textContent = 'Şarkı duraklatıldı.';
+      }
+    });
+    song.addEventListener('ended', () => {
+      playButton.textContent = '▶';
+      playButton.setAttribute('aria-label', 'Şarkıyı yeniden oynat');
+      status.textContent = 'Şarkı bitti. İstersen yeniden dinle!';
+    });
+    function repeatSong() { song.currentTime = 0; song.play().catch(() => { }); }
+  </script>
+</body>
+
+</html>

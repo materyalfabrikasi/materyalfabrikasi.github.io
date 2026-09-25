@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Türkçe Selamlaşma Kültürü - Cümle Kurma Oyunu</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome İkon Kütüphanesi -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Fredoka & Nunito (Çocuk Dostu, Net ve Büyük Tipografi) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700;800&family=Nunito:wght@500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <!-- Canvas Confetti Kütüphanesi -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Nunito', 'sans-serif'],
+                        heading: ['Fredoka', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Modern ve Neşeli Arka Plan */
+        body {
+            background-color: #f1f5f9;
+            background-image:
+                radial-gradient(circle at 50% 50%, #cbd5e1 2px, transparent 2px),
+                radial-gradient(circle at 0% 0%, #e2e8f0 2px, #f1f5f9 2px);
+            background-size: 32px 32px;
+            background-position: 0 0, 16px 16px;
+        }
+
+        /* Yumuşak Renkli Arka Plan Işıltıları */
+        .bg-glow {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(70px);
+            opacity: 0.35;
+            pointer-events: none;
+            z-index: 0;
+            animation: pulseGlow 14s ease-in-out infinite alternate;
+        }
+
+        .bg-glow-1 {
+            top: -80px;
+            left: -80px;
+            width: 420px;
+            height: 420px;
+            background: #818cf8;
+        }
+
+        .bg-glow-2 {
+            bottom: -80px;
+            right: -80px;
+            width: 440px;
+            height: 440px;
+            background: #f59e0b;
+        }
+
+        .bg-glow-3 {
+            top: 30%;
+            right: -100px;
+            width: 380px;
+            height: 380px;
+            background: #34d399;
+        }
+
+        @keyframes pulseGlow {
+            0% {
+                transform: scale(1) translate(0, 0);
+            }
+
+            100% {
+                transform: scale(1.18) translate(30px, -25px);
+            }
+        }
+
+        .animate-popIn {
+            animation: popIn 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: scale(0.92) translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        /* 3B Dokulu Büyük Butonlar */
+        .btn-3d {
+            box-shadow: 0 6px 0 rgba(0, 0, 0, 0.1);
+            transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .btn-3d:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 9px 0 rgba(0, 0, 0, 0.12);
+        }
+
+        .btn-3d:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 rgba(0, 0, 0, 0.08);
+        }
+
+        /* Geniş Cümle Yuvası */
+        .tile-slot {
+            min-height: 80px;
+            border: 3px dashed #94a3b8;
+        }
+    </style>
+</head>
+
+<body
+    class="text-slate-800 font-sans h-screen h-[100dvh] flex flex-col justify-between selection:bg-indigo-600 selection:text-white relative overflow-hidden">
+
+    <!-- ARKA PLAN IŞILTILARI -->
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+    <div class="bg-glow bg-glow-3"></div>
+
+    <!-- ÜST BİLGİ & SKOR ÇUBUĞU -->
+    <header class="bg-white/95 backdrop-blur-md border-b border-indigo-100 shrink-0 z-40 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-8 py-2.5 flex items-center justify-between gap-3 relative z-10">
+
+            <!-- Başlık -->
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-tr from-indigo-600 to-indigo-700 text-white flex items-center justify-center text-xl shadow-md shrink-0">
+                    <i class="fa-solid fa-comments"></i>
+                </div>
+                <div>
+                    <h1 class="font-heading font-black text-indigo-950 text-base sm:text-lg leading-tight">
+                        Türkçe Selamlaşalım! 💬
+                    </h1>
+                    <p class="text-xs text-slate-500 font-bold hidden sm:block">T.C. Millî Eğitim Bakanlığı • Türkçe ve
+                        Türk Kültürü Dersi</p>
+                </div>
+            </div>
+
+            <!-- Sağ Taraf: Soru Sayacı ve Puan -->
+            <div class="flex items-center gap-3 shrink-0">
+                <!-- Soru Adımı -->
+                <div class="flex items-center gap-1.5 bg-indigo-50 px-3.5 py-1.5 rounded-xl border border-indigo-200">
+                    <span class="text-xs font-extrabold text-indigo-700">Soru:</span>
+                    <span class="font-heading font-black text-indigo-950 text-sm sm:text-base" id="headerStep">1 /
+                        4</span>
+                </div>
+
+                <!-- Toplam Puan -->
+                <div
+                    class="bg-gradient-to-r from-amber-400 to-amber-500 text-amber-950 px-4 py-1.5 rounded-xl border border-amber-300 shadow-sm flex items-center gap-2">
+                    <i class="fa-solid fa-star text-amber-900 text-base"></i>
+                    <span class="font-heading font-black text-lg sm:text-xl leading-none" id="totalScore">0</span>
+                    <span class="text-xs font-bold opacity-80">/ 100</span>
+                </div>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- ANA OYUN ALANI (BÜYÜTÜLMÜŞ, GENİŞLETİLMİŞ VE ÇERÇEVESİZ) -->
+    <main
+        class="max-w-7xl mx-auto px-4 sm:px-8 py-3 w-full flex-grow relative z-10 flex flex-col justify-center overflow-hidden">
+
+        <!-- OYUN KARTI (MODERN, FERAH, ÇİNİ ÇERÇEVESİZ VE GENİŞLETİLMİŞ ALAN) -->
+        <div
+            class="bg-white/95 backdrop-blur-md rounded-3xl border-2 border-indigo-100 shadow-xl overflow-hidden flex flex-col justify-between flex-grow max-h-[calc(100dvh-105px)]">
+
+            <!-- Üst Navigasyon Çubuğu: İlerleme ve Başlık -->
+            <div
+                class="bg-slate-50/90 px-5 sm:px-8 py-3 border-b border-indigo-100 flex items-center justify-between gap-3 shrink-0">
+                <div class="flex items-center gap-3">
+                    <span
+                        class="w-8 h-8 rounded-xl bg-indigo-600 text-white font-heading font-black flex items-center justify-center text-sm shadow-sm"
+                        id="badgeStepNumber">
+                        1
+                    </span>
+                    <h2 class="font-heading font-black text-indigo-950 text-base sm:text-lg truncate" id="stepTitle">
+                        Fırında Selamlaşma
+                    </h2>
+                </div>
+
+                <!-- Adım Butonları -->
+                <div class="flex items-center gap-2" id="stepIndicatorContainer">
+                    <!-- JS ile dinamik oluşturulur -->
+                </div>
+            </div>
+
+            <!-- Çalışma Alanı (BÜYÜTÜLMÜŞ İKİ KOLONLU DÜZEN) -->
+            <div class="p-4 sm:p-6 lg:p-8 overflow-hidden flex-grow flex items-center">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center w-full h-full">
+
+                    <!-- SOL KOLON: BÜYÜTÜLMÜŞ GÖRSEL VE BÜYÜK DURUM METNİ (6 Kolon) -->
+                    <div class="lg:col-span-6 flex flex-col items-center justify-center h-full">
+                        <!-- Büyütülmüş Görsel Kutusu -->
+                        <div
+                            class="w-full max-w-lg h-52 sm:h-64 md:h-72 lg:h-[330px] xl:h-[370px] rounded-3xl overflow-hidden bg-slate-100 border-4 border-slate-100 shadow-lg relative group transition-all">
+                            <img id="questionImage" src="" alt="Durum Görseli"
+                                class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
+
+                            <!-- Büyüteç Butonu -->
+                            <button type="button" onclick="openLightbox()"
+                                class="absolute top-3 right-3 w-10 h-10 bg-slate-900/80 hover:bg-indigo-600 text-white rounded-2xl flex items-center justify-center text-sm transition-all shadow-lg hover:scale-110"
+                                title="Görseli Tam Ekran Büyüt">
+                                <i class="fa-solid fa-magnifying-glass-plus"></i>
+                            </button>
+                        </div>
+
+                        <!-- Büyütülmüş ve Net Durum Kutusu -->
+                        <div
+                            class="w-full max-w-lg mt-3 sm:mt-4 px-4 py-3 rounded-2xl bg-indigo-50/90 border border-indigo-100 text-center shadow-sm">
+                            <span
+                                class="text-xs font-black uppercase tracking-wider text-indigo-600 block mb-0.5">Durum:</span>
+                            <p class="font-heading font-black text-indigo-950 text-sm sm:text-base md:text-lg leading-snug"
+                                id="situationText">
+                                Fırından simit aldık. Çıkarken ne deriz?
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- SAĞ KOLON: BÜYÜTÜLMÜŞ CÜMLE YUVASI VE 3 KELİMELİK GENİŞ HAVUZ (6 Kolon) -->
+                    <div class="lg:col-span-6 flex flex-col justify-center space-y-4 sm:space-y-6">
+
+                        <!-- 1. Bölüm: Cümle Dizme Yuvası -->
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <label
+                                    class="font-heading font-black text-slate-800 text-sm sm:text-base flex items-center gap-2">
+                                    <i class="fa-solid fa-puzzle-piece text-indigo-600 text-lg"></i>
+                                    <span>Kelimeleri seç ve doğru sıraya koy:</span>
+                                </label>
+                                <button type="button" id="btnClearSlot" onclick="clearSelectedWords()"
+                                    class="text-xs font-extrabold text-rose-600 hover:text-rose-800 bg-rose-50 hover:bg-rose-100 px-3 py-1 rounded-xl border border-rose-200 transition-colors flex items-center gap-1.5 shadow-2xs">
+                                    <i class="fa-solid fa-rotate-left"></i>
+                                    <span>Temizle</span>
+                                </button>
+                            </div>
+
+                            <!-- Geniş Cümle Yuvası -->
+                            <div id="sentenceSlot"
+                                class="tile-slot p-3 sm:p-4 rounded-3xl bg-slate-50 flex flex-wrap items-center gap-3">
+                                <!-- JS ile oluşturulan kelimeler -->
+                            </div>
+                        </div>
+
+                        <!-- 2. Bölüm: 3 Kelimelik Havuz (Geniş Butonlar) -->
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span
+                                    class="text-xs sm:text-sm font-extrabold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                                    <i class="fa-solid fa-layer-group text-amber-500 text-base"></i>
+                                    <span>Kelime Havuzu (Doğru 2 kelimeyi seç):</span>
+                                </span>
+                            </div>
+
+                            <!-- Büyütülmüş 3 Kelime Kartı -->
+                            <div id="wordBank"
+                                class="flex flex-wrap gap-3 sm:gap-4 p-3.5 sm:p-4 rounded-3xl bg-indigo-50/50 border-2 border-dashed border-indigo-200">
+                                <!-- JS ile 3 kelime basılır -->
+                            </div>
+                        </div>
+
+                        <!-- Geri Bildirim & Aksiyon Butonları -->
+                        <div class="pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
+                            <div id="feedbackBox" class="text-sm font-bold min-h-[28px] flex items-center">
+                                <!-- Mesaj -->
+                            </div>
+
+                            <div class="flex items-center gap-2.5 ml-auto">
+                                <!-- İpucu Butonu -->
+                                <button type="button" id="btnHint" onclick="giveHint()"
+                                    class="px-4 py-2.5 rounded-2xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 font-heading font-black text-xs sm:text-sm transition-all flex items-center gap-1.5 shadow-2xs">
+                                    <i class="fa-regular fa-lightbulb text-amber-600 text-base"></i>
+                                    <span>İpucu</span>
+                                </button>
+
+                                <!-- Kontrol Et Butonu -->
+                                <button type="button" id="btnVerify" onclick="checkAnswer()"
+                                    class="btn-3d px-6 py-3 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white font-heading font-black text-sm sm:text-base transition-all flex items-center gap-2 shadow-sm">
+                                    <i class="fa-solid fa-check text-base"></i>
+                                    <span>Kontrol Et</span>
+                                </button>
+
+                                <!-- Sonraki Soru Butonu -->
+                                <button type="button" id="btnNext" onclick="goToNextQuestion()"
+                                    class="hidden btn-3d px-6 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-heading font-black text-sm sm:text-base transition-all flex items-center gap-2 shadow-sm">
+                                    <span>Sonraki Soru</span>
+                                    <i class="fa-solid fa-arrow-right text-base"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- ALT BİLGİ -->
+    <footer class="bg-white/90 backdrop-blur-md border-t border-slate-200 py-2 shrink-0 relative z-10">
+        <div
+            class="max-w-7xl mx-auto px-4 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-1 text-xs text-slate-500 font-semibold text-center sm:text-left">
+            <div class="flex items-center gap-2 justify-center">
+                <i class="fa-solid fa-graduation-cap text-indigo-600 text-sm"></i>
+                <span>T.C. Millî Eğitim Bakanlığı • Türkçe ve Türk Kültürü Dersi • ÜLKEM YANIMDA</span>
+            </div>
+
+            <div class="flex items-center gap-2 justify-center">
+                <a href="https://ulkemyanimda.github.io/" target="_blank" rel="noopener noreferrer"
+                    class="text-indigo-600 hover:text-indigo-800 font-heading font-extrabold flex items-center gap-1.5">
+                    <i class="fa-solid fa-house-chimney text-xs"></i>
+                    <span>Ülkem Yanımda</span>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- GÖRSEL BÜYÜTME MODALI (LIGHTBOX) -->
+    <div id="lightboxModal"
+        class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 hidden animate-popIn"
+        onclick="closeLightbox()">
+        <div class="relative max-w-3xl w-full bg-white rounded-3xl p-5 shadow-2xl flex flex-col items-center border-4 border-indigo-100"
+            onclick="event.stopPropagation()">
+            <div class="w-full flex justify-between items-center mb-3 pb-2 border-b border-slate-100">
+                <h3 id="lightboxTitle" class="font-heading font-black text-indigo-950 text-base sm:text-lg">Görsel
+                    İnceleme</h3>
+                <button type="button" onclick="closeLightbox()"
+                    class="w-9 h-9 rounded-full bg-slate-100 text-slate-600 hover:bg-rose-100 hover:text-rose-600 font-black flex items-center justify-center transition-colors">
+                    ✕
+                </button>
+            </div>
+            <img id="lightboxImg" src="" alt="Büyük Görsel" class="max-h-[72vh] object-contain rounded-2xl shadow-sm">
+        </div>
+    </div>
+
+    <!-- BİTİŞ KUTLAMA MODALI -->
+    <div id="finalModal"
+        class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 hidden animate-popIn">
+        <div
+            class="relative max-w-md w-full bg-white rounded-3xl p-6 sm:p-8 shadow-2xl text-center border-4 border-amber-300 overflow-hidden">
+            <div
+                class="w-20 h-20 bg-amber-400 rounded-3xl mx-auto flex items-center justify-center text-amber-950 text-4xl mb-3 shadow-lg animate-bounce">
+                🏆
+            </div>
+            <h2 class="font-heading font-black text-indigo-950 text-2xl sm:text-3xl mb-1">Tebrikler! 🎉</h2>
+            <p class="text-xs sm:text-sm text-slate-600 font-bold mb-5">
+                Tüm selamlaşma cümlelerini başarıyla ve doğru sırayla kurdun!
+            </p>
+
+            <div class="bg-indigo-50 rounded-2xl p-4 mb-6 border border-indigo-100 text-center">
+                <span class="text-xs font-extrabold text-indigo-600 uppercase tracking-wide block">Kazanılan Toplam
+                    Puan</span>
+                <span class="font-heading font-black text-4xl text-indigo-950 block my-1">
+                    <span id="finalScoreText">100</span> / 100
+                </span>
+                <span
+                    class="inline-block mt-1 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-heading font-black">
+                    ⭐ Kültür ve Dil Başarısı!
+                </span>
+            </div>
+
+            <button type="button" onclick="location.reload()"
+                class="w-full py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-heading font-black text-sm sm:text-base shadow-lg transition-transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-rotate-right"></i>
+                <span>Tekrar Oyna</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // YENİLENEN SORU VERİ MODELİ
+        // 1. Hayırlı işler ve 4. Hayırlı sabahlar karışıklığı giderildi:
+        //    - 1. Soru: "Hayırlı işler." (Çeldirici: "tatiller.")
+        //    - 2. Soru: "Kolay gelsin." (Çeldirici: "olsun.")
+        //    - 3. Soru: "Allah'a ısmarladık." (Çeldirici: "kal.")
+        //    - 4. Soru: "İyi günler." (Çeldirici: "akşamlar.") -> Böylece her kalıp tamamen benzersiz bir kelimeyle başlar!
+        const gameQuestions = [
+            {
+                id: 1,
+                image: "1.png",
+                title: "1. Fırında Selamlaşma 🛍️",
+                situation: "Fırından simit aldık. Çıkarken ne deriz?",
+                correctSentence: "Hayırlı işler.",
+                targetWords: ["Hayırlı", "işler."],
+                // 3 Kelimelik Havuz: "sabahlar." yerine karışmayan "tatiller." çeldiricisi konuldu
+                wordPool: ["işler.", "Hayırlı", "tatiller."],
+                explanation: "Dükkân sahibine bereket dilemek için 'Hayırlı işler.' deriz."
+            },
+            {
+                id: 2,
+                image: "2.png",
+                title: "2. Çalışan Biriyle Karşılaşma 🚜",
+                situation: "Çalışan birini gördük. Ne deriz?",
+                correctSentence: "Kolay gelsin.",
+                targetWords: ["Kolay", "gelsin."],
+                // 3 Kelimelik Havuz
+                wordPool: ["gelsin.", "Kolay", "olsun."],
+                explanation: "Çalışan insanlara kolaylık dilemek için 'Kolay gelsin.' deriz."
+            },
+            {
+                id: 3,
+                image: "3.png",
+                title: "3. Arkadaşla Vedalaşma 👋",
+                situation: "Arkadaşımızın yanından ayrılırken ne deriz?",
+                correctSentence: "Allah'a ısmarladık.",
+                targetWords: ["Allah'a", "ısmarladık."],
+                // 3 Kelimelik Havuz
+                wordPool: ["ısmarladık.", "Allah'a", "kal."],
+                explanation: "Bir yerden ayrılırken kalanlara 'Allah'a ısmarladık.' deriz."
+            },
+            {
+                id: 4,
+                image: "4.png",
+                title: "4. Gün İçinde Karşılaşma ☀️",
+                situation: "Gündüz komşumuzla karşılaştık. Güzel bir gün dilemek için ne deriz?",
+                correctSentence: "İyi günler.",
+                targetWords: ["İyi", "günler."],
+                // 3 Kelimelik Havuz: Karışıklığı önlemek için "Hayırlı" yerine "İyi günler." kalıbına geçildi
+                wordPool: ["günler.", "İyi", "akşamlar."],
+                explanation: "Karşılaştığımız kişilere güzel bir gün geçirmelerini dilemek için 'İyi günler.' deriz."
+            }
+        ];
+
+        // Durum Değişkenleri
+        let currentQuestionIdx = 0;
+        let userSelectedWords = [];
+        let completedQuestions = {};
+        let totalScore = 0;
+
+        // Sayfa Başlangıcı
+        window.addEventListener('DOMContentLoaded', () => {
+            loadQuestion(0);
+        });
+
+        function loadQuestion(index) {
+            currentQuestionIdx = index;
+            userSelectedWords = [];
+
+            const current = gameQuestions[currentQuestionIdx];
+            const isFinished = completedQuestions[current.id] === true;
+
+            // Başlıklar ve Durum
+            document.getElementById('badgeStepNumber').innerText = currentQuestionIdx + 1;
+            document.getElementById('headerStep').innerText = `${currentQuestionIdx + 1} / ${gameQuestions.length}`;
+            document.getElementById('stepTitle').innerText = current.title;
+            document.getElementById('situationText').innerText = current.situation;
+
+            // Büyütülmüş Görsel
+            const imgEl = document.getElementById('questionImage');
+            imgEl.src = current.image;
+            imgEl.onerror = () => {
+                imgEl.src = `https://placehold.co/800x600/e0e7ff/3730a3?text=${encodeURIComponent(current.title)}`;
+            };
+
+            // Geri Bildirim Sıfırlama
+            const fbBox = document.getElementById('feedbackBox');
+            fbBox.innerHTML = '';
+
+            // Kontroller
+            const btnVerify = document.getElementById('btnVerify');
+            const btnNext = document.getElementById('btnNext');
+            const btnClear = document.getElementById('btnClearSlot');
+            const btnHint = document.getElementById('btnHint');
+
+            if (isFinished) {
+                userSelectedWords = [...current.targetWords];
+                btnVerify.classList.add('hidden');
+                btnNext.classList.remove('hidden');
+                btnClear.classList.add('hidden');
+                btnHint.classList.add('hidden');
+                fbBox.innerHTML = `<span class="text-emerald-700 bg-emerald-100 px-3 py-1 rounded-xl text-xs sm:text-sm font-black"><i class="fa-solid fa-circle-check mr-1.5"></i> Doğru tamamlandı!</span>`;
+            } else {
+                btnVerify.classList.remove('hidden');
+                btnNext.classList.add('hidden');
+                btnClear.classList.remove('hidden');
+                btnHint.classList.remove('hidden');
+            }
+
+            renderStepIndicators();
+            renderSentenceSlot();
+            renderWordBank();
+        }
+
+        function renderStepIndicators() {
+            const container = document.getElementById('stepIndicatorContainer');
+            container.innerHTML = gameQuestions.map((q, i) => {
+                const isDone = completedQuestions[q.id];
+                const isCurrent = i === currentQuestionIdx;
+
+                let style = "bg-slate-200 text-slate-500 hover:bg-slate-300";
+                if (isDone) {
+                    style = "bg-emerald-500 text-white shadow-xs";
+                } else if (isCurrent) {
+                    style = "bg-amber-400 text-amber-950 font-black ring-2 ring-amber-300 shadow-xs";
+                }
+
+                return `
+                    <button type="button" onclick="loadQuestion(${i})"
+                        class="w-8 h-8 rounded-xl text-xs sm:text-sm font-heading font-black transition-all flex items-center justify-center ${style}"
+                        title="Soru ${i + 1}">
+                        ${isDone ? '<i class="fa-solid fa-check"></i>' : (i + 1)}
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function renderSentenceSlot() {
+            const slot = document.getElementById('sentenceSlot');
+            const current = gameQuestions[currentQuestionIdx];
+            const isFinished = completedQuestions[current.id] === true;
+
+            if (userSelectedWords.length === 0) {
+                slot.innerHTML = `
+                    <div class="w-full text-center py-2 text-slate-400 font-heading font-bold text-sm sm:text-base select-none">
+                        <i class="fa-solid fa-arrow-down mr-1.5 text-indigo-400 animate-bounce"></i> Havuzdan doğru kelimeleri sırayla seç...
+                    </div>
+                `;
+                return;
+            }
+
+            slot.innerHTML = userSelectedWords.map((word, index) => `
+                <div class="animate-popIn px-5 py-2.5 sm:px-6 sm:py-3 rounded-2xl bg-indigo-600 text-white font-heading font-black text-base sm:text-lg md:text-xl shadow-md flex items-center gap-2.5">
+                    <span>${word}</span>
+                    ${!isFinished ? `
+                        <button type="button" onclick="removeWordFromSlot(${index})"
+                            class="w-5 h-5 rounded-full bg-white/20 hover:bg-rose-500 text-white flex items-center justify-center text-xs transition-colors"
+                            title="Kaldır">
+                            ✕
+                        </button>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        function renderWordBank() {
+            const bank = document.getElementById('wordBank');
+            const current = gameQuestions[currentQuestionIdx];
+            const isFinished = completedQuestions[current.id] === true;
+
+            bank.innerHTML = current.wordPool.map((word) => {
+                const isSelected = userSelectedWords.includes(word);
+                const disabled = isSelected || isFinished;
+
+                let btnStyle = "bg-white border-2 border-indigo-200 text-indigo-950 hover:bg-indigo-50 hover:border-indigo-400 shadow-sm";
+                if (disabled) {
+                    btnStyle = "bg-slate-200/80 border-2 border-slate-300 text-slate-400 opacity-40 cursor-not-allowed shadow-none";
+                }
+
+                const safeWord = word.replace(/'/g, "\\'");
+
+                return `
+                    <button type="button"
+                        ${disabled ? 'disabled' : ''}
+                        onclick="addWordToSlot('${safeWord}')"
+                        class="btn-3d px-5 py-3 sm:px-7 sm:py-4 rounded-2xl font-heading font-black text-base sm:text-lg md:text-xl transition-all ${btnStyle}">
+                        ${word}
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function addWordToSlot(word) {
+            const current = gameQuestions[currentQuestionIdx];
+            if (completedQuestions[current.id]) return;
+
+            if (!userSelectedWords.includes(word)) {
+                userSelectedWords.push(word);
+                renderSentenceSlot();
+                renderWordBank();
+                document.getElementById('feedbackBox').innerHTML = '';
+            }
+        }
+
+        function removeWordFromSlot(index) {
+            const current = gameQuestions[currentQuestionIdx];
+            if (completedQuestions[current.id]) return;
+
+            userSelectedWords.splice(index, 1);
+            renderSentenceSlot();
+            renderWordBank();
+        }
+
+        function clearSelectedWords() {
+            const current = gameQuestions[currentQuestionIdx];
+            if (completedQuestions[current.id]) return;
+
+            userSelectedWords = [];
+            renderSentenceSlot();
+            renderWordBank();
+            document.getElementById('feedbackBox').innerHTML = '';
+        }
+
+        function checkAnswer() {
+            const current = gameQuestions[currentQuestionIdx];
+            const fb = document.getElementById('feedbackBox');
+
+            if (userSelectedWords.length === 0) {
+                fb.innerHTML = `
+                    <span class="text-rose-600 bg-rose-50 px-3 py-1.5 rounded-xl border border-rose-200 animate-popIn text-xs sm:text-sm">
+                        <i class="fa-solid fa-circle-exclamation mr-1.5"></i> Önce kelime seçmelisin!
+                    </span>
+                `;
+                return;
+            }
+
+            const assembledSentence = userSelectedWords.join(' ');
+            const isCorrect = assembledSentence === current.correctSentence;
+
+            if (isCorrect) {
+                if (!completedQuestions[current.id]) {
+                    completedQuestions[current.id] = true;
+                    totalScore += 25;
+                    document.getElementById('totalScore').innerText = totalScore;
+                }
+
+                fb.innerHTML = `
+                    <span class="text-emerald-800 bg-emerald-100 px-3.5 py-1.5 rounded-xl border border-emerald-300 font-black animate-popIn text-xs sm:text-sm">
+                        <i class="fa-solid fa-circle-check text-emerald-600 mr-1.5"></i> Harika! "${current.correctSentence}"
+                    </span>
+                `;
+
+                document.getElementById('btnVerify').classList.add('hidden');
+                document.getElementById('btnClearSlot').classList.add('hidden');
+                document.getElementById('btnHint').classList.add('hidden');
+
+                const btnNext = document.getElementById('btnNext');
+                btnNext.classList.remove('hidden');
+
+                if (currentQuestionIdx === gameQuestions.length - 1) {
+                    btnNext.innerHTML = `<span>Sonuçları Gör 🏆</span>`;
+                    btnNext.className = "btn-3d px-6 py-3 rounded-2xl bg-amber-400 hover:bg-amber-500 text-amber-950 font-heading font-black text-sm sm:text-base transition-all flex items-center gap-2 shadow-md animate-bounce";
+                }
+
+                renderStepIndicators();
+                renderSentenceSlot();
+                renderWordBank();
+
+                if (Object.keys(completedQuestions).length === gameQuestions.length) {
+                    setTimeout(() => {
+                        showFinalCelebration();
+                    }, 700);
+                }
+            } else {
+                fb.innerHTML = `
+                    <span class="text-rose-700 bg-rose-50 px-3 py-1.5 rounded-xl border border-rose-200 animate-popIn text-xs sm:text-sm">
+                        <i class="fa-solid fa-triangle-exclamation mr-1.5"></i> Tekrar dene, kelimelerin sırasına dikkat et!
+                    </span>
+                `;
+            }
+        }
+
+        function giveHint() {
+            const current = gameQuestions[currentQuestionIdx];
+            const fb = document.getElementById('feedbackBox');
+            fb.innerHTML = `
+                <span class="text-amber-900 bg-amber-100 px-3 py-1.5 rounded-xl border border-amber-300 font-bold animate-popIn text-xs sm:text-sm">
+                    <i class="fa-regular fa-lightbulb text-amber-600 mr-1.5"></i> Cümle <strong>"${current.targetWords[0]}"</strong> kelimesiyle başlar.
+                </span>
+            `;
+        }
+
+        function goToNextQuestion() {
+            if (currentQuestionIdx < gameQuestions.length - 1) {
+                loadQuestion(currentQuestionIdx + 1);
+            } else {
+                showFinalCelebration();
+            }
+        }
+
+        function openLightbox() {
+            const current = gameQuestions[currentQuestionIdx];
+            const modal = document.getElementById('lightboxModal');
+            const img = document.getElementById('lightboxImg');
+            const title = document.getElementById('lightboxTitle');
+
+            img.src = current.image;
+            title.innerText = current.title;
+            modal.classList.remove('hidden');
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightboxModal').classList.add('hidden');
+        }
+
+        function showFinalCelebration() {
+            const modal = document.getElementById('finalModal');
+            document.getElementById('finalScoreText').innerText = totalScore;
+            modal.classList.remove('hidden');
+
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 90,
+                    spread: 80,
+                    origin: { y: 0.6 }
+                });
+            }
+        }
+    </script>
+</body>
+
+</html>
