@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="tr" class="h-full bg-slate-50 text-slate-800">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Türklerde Selamlaşma - Okuma ve Sürükle Bırak Etkinliği</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        game: ['Fredoka', 'cursive', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .font-game {
+            font-family: 'Fredoka', cursive, sans-serif;
+        }
+
+        .soft-card {
+            background: #ffffff;
+            border-radius: 1.25rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+            border: 2px solid #e2e8f0;
+            transition: all 0.25s ease;
+        }
+
+        .soft-card:hover {
+            box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.08);
+        }
+
+        .drag-chip {
+            cursor: grab;
+            user-select: none;
+            touch-action: none;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .drag-chip:active {
+            cursor: grabbing;
+            transform: scale(0.96);
+        }
+
+        .drop-target {
+            transition: all 0.2s ease-in-out;
+            min-height: 58px;
+        }
+
+        .drop-target.drag-hover {
+            background-color: #dbeafe !important;
+            border-color: #3b82f6 !important;
+            transform: scale(1.02);
+        }
+
+        .bounce-slight {
+            animation: bounceSlight 2.2s infinite ease-in-out;
+        }
+
+        @keyframes bounceSlight {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+    </style>
+</head>
+
+<body
+    class="min-h-full flex flex-col font-sans bg-gradient-to-br from-amber-50/50 via-sky-50/60 to-indigo-50/40 text-slate-800 antialiased selection:bg-amber-200">
+
+    <!-- HEADER (Light & Friendly) -->
+    <header class="bg-white/90 border-b border-slate-200 sticky top-0 z-40 backdrop-blur-md shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+
+            <!-- Logo & Title -->
+            <div class="flex items-center space-x-3">
+                <div
+                    class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-amber-400 via-orange-400 to-amber-500 flex items-center justify-center text-white shadow-md shadow-orange-300/40 font-bold text-2xl">
+                    🤝
+                </div>
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <span class="font-game font-bold text-lg sm:text-xl tracking-tight text-slate-800">
+                            TÜRKLERDE SELAMLAŞMA
+                        </span>
+                        <span
+                            class="bg-sky-100 text-sky-700 border border-sky-200 text-[11px] px-2.5 py-0.5 rounded-full font-game font-bold">
+                            SÜRÜKLE - BIRAK
+                        </span>
+                    </div>
+                    <p class="text-xs text-slate-500 font-medium">Videoyu izle, doğru ifadeyi boşluğa sürükle!</p>
+                </div>
+            </div>
+
+            <!-- Header Controls & Score -->
+            <div class="flex items-center space-x-3">
+                <!-- Source Badge -->
+                <div
+                    class="hidden md:flex items-center space-x-2 bg-slate-100 px-3.5 py-1.5 rounded-full border border-slate-200 text-xs">
+                    <i class="fa-solid fa-graduation-cap text-indigo-600"></i>
+                    <span class="text-slate-600">Kaynak: <a href="https://ulkemyanimda.eba.gov.tr" target="_blank"
+                            rel="noopener noreferrer" class="text-indigo-600 hover:underline font-bold">Ülkem
+                            Yanımda</a></span>
+                </div>
+
+                <!-- Culture XP Score -->
+                <div
+                    class="flex items-center space-x-2.5 bg-amber-50 px-3.5 py-1.5 rounded-2xl border-2 border-amber-200 shadow-sm">
+                    <i class="fa-solid fa-star text-amber-500 text-lg animate-spin-slow"></i>
+                    <div>
+                        <div class="text-[9px] text-amber-800 font-bold uppercase tracking-wider">KÜLTÜR PUANI</div>
+                        <div id="globalScore" class="font-game text-base sm:text-lg font-bold text-amber-600">0 XP</div>
+                    </div>
+                </div>
+
+                <!-- Sound Button -->
+                <button id="soundToggleBtn" onclick="toggleAudio()"
+                    class="w-10 h-10 rounded-2xl bg-white hover:bg-slate-100 text-slate-600 flex items-center justify-center border border-slate-200 shadow-sm transition-all cursor-pointer"
+                    title="Sesi Aç/Kapat">
+                    <i id="soundIcon" class="fa-solid fa-volume-high text-sm text-slate-700"></i>
+                </button>
+            </div>
+
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-6xl w-full mx-auto px-4 py-6 flex flex-col gap-6">
+
+        <!-- INTRO INSTRUCTION CARD -->
+        <section
+            class="bg-white rounded-3xl p-5 sm:p-6 border-2 border-sky-100 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div class="flex items-center space-x-4">
+                <div
+                    class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-sky-400 to-indigo-500 text-white flex items-center justify-center text-3xl shadow-md shrink-0">
+                    🎯
+                </div>
+                <div class="space-y-1">
+                    <div
+                        class="inline-flex items-center space-x-2 bg-indigo-50 text-indigo-700 text-xs px-3 py-1 rounded-full font-game font-semibold border border-indigo-200">
+                        <span>3 Senaryo</span>
+                    </div>
+                    <h1 class="font-game font-bold text-xl sm:text-2xl text-slate-800">
+                        Doğru Selamlaşmayı Boşluğa Sürükle!
+                    </h1>
+                    <p class="text-xs sm:text-sm text-slate-600">
+                        Videoyu izle, diyaloğu oku ve uygun ifadeyi kutuya sürükleyip kontrol et.
+                    </p>
+                </div>
+            </div>
+
+            <div
+                class="bg-slate-50 border-2 border-slate-200 px-5 py-3 rounded-2xl text-center shrink-0 w-full sm:w-auto">
+                <div class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">İlerleme Durumu</div>
+                <div id="progressDisplay" class="font-game font-bold text-xl text-sky-600">0 / 3 Tamamlandı</div>
+            </div>
+        </section>
+
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+            <!-- ================= SCENARIO 1 ================= -->
+            <div id="card-0" class="soft-card p-5 flex flex-col justify-between space-y-4">
+                <div class="space-y-3.5">
+                    <!-- Scenario Badge -->
+                    <div class="flex items-center justify-between">
+                        <span
+                            class="bg-amber-100 text-amber-800 border border-amber-200 text-xs px-3 py-1 rounded-full font-game font-bold flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                            1. Senaryo: Misafir Karşılama
+                        </span>
+                        <span id="badge-0" class="text-xs font-game font-semibold text-slate-400">Bekliyor</span>
+                    </div>
+
+                    <!-- Video 1 -->
+                    <div
+                        class="relative bg-slate-900 rounded-2xl overflow-hidden aspect-video border-2 border-slate-200 shadow-inner flex items-center justify-center">
+                        <video id="vid-0" class="w-full h-full object-contain" controls preload="metadata">
+                            <source src="rutin1.mp4" type="video/mp4">
+                            Tarayıcınız video oynatmayı desteklemiyor.
+                        </video>
+                    </div>
+
+                    <!-- Dialogue Reading Box -->
+                    <div class="bg-amber-50/80 p-3.5 rounded-2xl border border-amber-200/80 space-y-1">
+                        <div
+                            class="text-[11px] text-amber-700 font-bold uppercase tracking-wider flex items-center gap-1">
+                            <i class="fa-solid fa-house-user"></i> Ev Sahibi Diyor ki:
+                        </div>
+                        <p class="text-sm text-slate-800 font-game font-medium">"Aaa, hoş geldiniz! Buyurun, içeri geçin
+                            lütfen!"</p>
+                    </div>
+
+                    <!-- Options / Word Bank -->
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-game font-bold text-slate-600 flex items-center gap-1">
+                            <i class="fa-solid fa-hand text-sky-500"></i> Kelimeler (Sürükle):
+                        </label>
+                        <div id="optionsBank-0"
+                            class="flex flex-wrap gap-2 p-2.5 bg-slate-50 rounded-2xl border border-slate-200 min-h-[50px] items-center">
+                            <div draggable="true" ondragstart="handleDragStart(event)" data-word="Afiyet olsun"
+                                class="drag-chip bg-white hover:bg-rose-50 text-slate-800 border-2 border-slate-200 hover:border-rose-300 px-3 py-1.5 rounded-xl font-game font-bold text-xs shadow-sm">
+                                Afiyet olsun
+                            </div>
+                            <div draggable="true" ondragstart="handleDragStart(event)" data-word="Geçmiş olsun"
+                                class="drag-chip bg-white hover:bg-rose-50 text-slate-800 border-2 border-slate-200 hover:border-rose-300 px-3 py-1.5 rounded-xl font-game font-bold text-xs shadow-sm">
+                                Geçmiş olsun
+                            </div>
+                            <div draggable="true" ondragstart="handleDragStart(event)" data-word="Hoş bulduk"
+                                class="drag-chip bg-white hover:bg-sky-50 text-slate-800 border-2 border-slate-200 hover:border-sky-400 px-3 py-1.5 rounded-xl font-game font-bold text-xs shadow-sm">
+                                Hoş bulduk
+                            </div>
+                            <div draggable="true" ondragstart="handleDragStart(event)" data-word="Güle güle"
+                                class="drag-chip bg-white hover:bg-rose-50 text-slate-800 border-2 border-slate-200 hover:border-rose-300 px-3 py-1.5 rounded-xl font-game font-bold text-xs shadow-sm">
+                                Güle güle
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Drop Target Box (No text writing, purely drop) -->
+                    <div class="space-y-1.5">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-game font-bold text-slate-700">Senin Cevabın:</span>
+                            <button id="clearBtn-0" onclick="clearDropZone(0)"
+                                class="text-[11px] text-slate-400 hover:text-slate-600 font-game hidden">
+                                <i class="fa-solid fa-rotate-left"></i> Değiştir
+                            </button>
+                        </div>
+                        <div id="dropZone-0" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)"
+                            ondrop="handleDrop(event, 0)"
+                            class="drop-target border-2 border-dashed border-slate-300 bg-slate-50/70 rounded-2xl flex items-center justify-center p-3 text-center transition-all">
+                            <span id="placeholder-0" class="text-xs text-slate-400 font-game pointer-events-none">
+                                Buraya sürükleyin
+                            </span>
+                            <span id="placedWord-0"
+                                class="hidden text-sm font-game font-bold text-sky-700 bg-sky-100 border border-sky-300 px-3.5 py-1.5 rounded-xl shadow-sm"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Actions & Feedback -->
+                <div class="space-y-2 pt-3 border-t border-slate-100">
+                    <button id="checkBtn-0" onclick="checkAnswer(0)"
+                        class="w-full bg-amber-500 hover:bg-amber-600 text-white font-game font-bold py-3 rounded-2xl text-sm transition-all shadow-md shadow-amber-500/20 flex items-center justify-center space-x-2 cursor-pointer">
+                        <span>Cevabı Kontrol Et</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </button>
+                    <div id="feedback-0" class="hidden p-3 rounded-2xl text-xs font-game transition-all"></div>
+                </div>
+            </div>
+
+            <!-- ================= SCENARIO 2 ================= -->
+            <div id="card-1" class="soft-card p-5 flex flex-col justify-between space-y-4">
+                <div class="space-y-3.5">
+                    <!-- Scenario Badge -->
+                    <div class="flex items-center justify-between">
+                        <span
+                            class="bg-indigo-100 text-indigo-800 border border-indigo-200 text-xs px-3 py-1 rounded-full font-game font-bold flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+                            2. Senaryo: Büyüğe Saygı
+                        </span>
+                        <span id="badge-1" class="text-xs font-game font-semibold text-slate-400">Bekliyor</span>
+                    </div>
+
+                    <!-- Video 2 -->
+                    <div
+                        class="relative bg-slate-900 rounded-2xl overflow-hidden aspect-video border-2 border-slate-200 shadow-inner flex items-center justify-center">
+                        <video id="vid-1" class="w-full h-full object-contain" controls preload="metadata">
+                            <source src="rutin2.mp4" type="video/mp4">
+                            Tarayıcınız video oynatmayı desteklemiyor.
+                        </video>
+                    </div>
+
+                    <!-- Dialogue Reading Box -->
+                    <div class="bg-indigo-50/80 p-3.5 rounded-2xl border border-indigo-200/80 space-y-1">
+                        <div
+                            class="text-[11px] text-indigo-700 font-bold uppercase tracking-wider flex items-center gap-1">
+                            <i class="fa-solid fa-person-cane"></i> Aile Büyüğü Diyor ki:
+                        </div>
+                        <p class="text-sm text-slate-800 font-game font-medium">"Gel bakalım evladım, hoş geldin!
+                            Nasılsın?"</p>
+                    </div>
+
+                    <!-- Options / Word Bank -->
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-game font-bold text-slate-600 flex items-center gap-1">
+                            <i class="fa-solid fa-hand text-indigo-500"></i> Kelimeler (Sürükle):
+                        </label>
+                        <div id="optionsBank-1"
+                            class="flex flex-wrap gap-2 p-2.5 bg-slate-50 rounded-2xl border border-slate-200 min-h-[50px] items-center">
+                            <div draggable="true" ondragstart="handleDragStart(event)"
+                                data-word="Çok geçmiş olsun, acil şifalar dilerim"
+                                class="drag-chip bg-white hover:bg-rose-50 text-slate-800 border-2 border-slate-200 hover:border-rose-300 px-3 py-1.5 rounded-xl font-game font-bold text-xs shadow-sm">
+                                Çok geçmiş olsun, acil şifalar dilerim
+                            </div>
+                            <div draggable="true" ondragstart="handleDragStart(event)"
+                                data-word="İyiyim, teşekkür ederim, siz nasılsınız?"
+                                class="drag-chip bg-white hover:bg-indigo-50 text-slate-800 border-2 border-slate-200 hover:border-indigo-400 px-3 py-1.5 rounded-xl font-game font-bold text-xs shadow-sm">
+                                İyiyim, teşekkür ederim, siz nasılsınız?
+                            </div>
+                            <div draggable="true" ondragstart="handleDragStart(event)"
+                                data-word="Güle güle gidin, kendinize çok iyi bakın"
+                                class="drag-chip bg-white hover:bg-rose-50 text-slate-800 border-2 border-slate-200 hover:border-rose-300 px-3 py-1.5 rounded-xl font-game font-bold text-xs shadow-sm">
+                                Güle güle gidin, kendinize çok iyi bakın
+                            </div>
+                            <div draggable="true" ondragstart="handleDragStart(event)"
+                                data-word="Afiyet olsun, ellerinize sağlık çok lezzetli"
+                                class="drag-chip bg-white hover:bg-rose-50 text-slate-800 border-2 border-slate-200 hover:border-rose-300 px-3 py-1.5 rounded-xl font-game font-bold text-xs shadow-sm">
+                                Afiyet olsun, ellerinize sağlık çok lezzetli
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Drop Target Box -->
+                    <div class="space-y-1.5">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-game font-bold text-slate-700">Senin Cevabın:</span>
+                            <button id="clearBtn-1" onclick="clearDropZone(1)"
+                                class="text-[11px] text-slate-400 hover:text-slate-600 font-game hidden">
+                                <i class="fa-solid fa-rotate-left"></i> Değiştir
+                            </button>
+                        </div>
+                        <div id="dropZone-1" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)"
+                            ondrop="handleDrop(event, 1)"
+                            class="drop-target border-2 border-dashed border-slate-300 bg-slate-50/70 rounded-2xl flex items-center justify-center p-3 text-center transition-all">
+                            <span id="placeholder-1" class="text-xs text-slate-400 font-game pointer-events-none">
+                                Buraya sürükleyin
+                            </span>
+                            <span id="placedWord-1"
+                                class="hidden text-sm font-game font-bold text-indigo-700 bg-indigo-100 border border-indigo-300 px-3.5 py-1.5 rounded-xl shadow-sm"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Actions & Feedback -->
+                <div class="space-y-2 pt-3 border-t border-slate-100">
+                    <button id="checkBtn-1" onclick="checkAnswer(1)"
+                        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-game font-bold py-3 rounded-2xl text-sm transition-all shadow-md shadow-indigo-600/20 flex items-center justify-center space-x-2 cursor-pointer">
+                        <span>Cevabı Kontrol Et</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </button>
+                    <div id="feedback-1" class="hidden p-3 rounded-2xl text-xs font-game transition-all"></div>
+                </div>
+            </div>
+
+            <!-- ================= SCENARIO 3 ================= -->
+            <div id="card-2" class="soft-card p-5 flex flex-col justify-between space-y-4">
+                <div class="space-y-3.5">
+                    <!-- Scenario Badge -->
+                    <div class="flex items-center justify-between">
+                        <span
+                            class="bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs px-3 py-1 rounded-full font-game font-bold flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                            3. Senaryo: Çalışan Emekçi
+                        </span>
+                        <span id="badge-2" class="text-xs font-game font-semibold text-slate-400">Bekliyor</span>
+                    </div>
+
+                    <!-- Video 3 -->
+                    <div
+                        class="relative bg-slate-900 rounded-2xl overflow-hidden aspect-video border-2 border-slate-200 shadow-inner flex items-center justify-center">
+                        <video id="vid-2" class="w-full h-full object-contain" controls preload="metadata">
+                            <source src="rutin3.mp4" type="video/mp4">
+                            Tarayıcınız video oynatmayı desteklemiyor.
+                        </video>
+                    </div>
+
+                    <!-- Dialogue Reading Box -->
+                    <div class="bg-emerald-50/80 p-3.5 rounded-2xl border border-emerald-200/80 space-y-1">
+                        <div
+                            class="text-[11px] text-emerald-700 font-bold uppercase tracking-wider flex items-center gap-1">
+                            <i class="fa-solid fa-person-digging"></i> Usta / Çalışan Diyor ki:
+                        </div>
+                        <p class="text-sm text-slate-800 font-game font-medium">"Hayırlı günler evladım! Bir şey mi
+                            bakmıştın?"</p>
+                    </div>
+
+                    <!-- Options / Word Bank -->
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-game font-bold text-slate-600 flex items-center gap-1">
+                            <i class="fa-solid fa-hand text-emerald-500"></i> Kelimeler (Sürükle):
+                        </label>
+                        <div id="optionsBank-2"
+                            class="flex flex-wrap gap-2 p-2.5 bg-slate-50 rounded-2xl border border-slate-200 min-h-[50px] items-center">
+                            <div draggable="true" ondragstart="handleDragStart(event)" data-word="Geçmiş olsun"
+                                class="drag-chip bg-white hover:bg-rose-50 text-slate-800 border-2 border-slate-200 hover:border-rose-300 px-3 py-1.5 rounded-xl font-game font-bold text-xs shadow-sm">
+                                Geçmiş olsun
+                            </div>
+                            <div draggable="true" ondragstart="handleDragStart(event)" data-word="Afiyet olsun"
+                                class="drag-chip bg-white hover:bg-rose-50 text-slate-800 border-2 border-slate-200 hover:border-rose-300 px-3 py-1.5 rounded-xl font-game font-bold text-xs shadow-sm">
+                                Afiyet olsun
+                            </div>
+                            <div draggable="true" ondragstart="handleDragStart(event)" data-word="Güle güle"
+                                class="drag-chip bg-white hover:bg-rose-50 text-slate-800 border-2 border-slate-200 hover:border-rose-300 px-3 py-1.5 rounded-xl font-game font-bold text-xs shadow-sm">
+                                Güle güle
+                            </div>
+                            <div draggable="true" ondragstart="handleDragStart(event)" data-word="Kolay gelsin"
+                                class="drag-chip bg-white hover:bg-emerald-50 text-slate-800 border-2 border-slate-200 hover:border-emerald-400 px-3 py-1.5 rounded-xl font-game font-bold text-xs shadow-sm">
+                                Kolay gelsin
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Drop Target Box -->
+                    <div class="space-y-1.5">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-game font-bold text-slate-700">Senin Cevabın:</span>
+                            <button id="clearBtn-2" onclick="clearDropZone(2)"
+                                class="text-[11px] text-slate-400 hover:text-slate-600 font-game hidden">
+                                <i class="fa-solid fa-rotate-left"></i> Değiştir
+                            </button>
+                        </div>
+                        <div id="dropZone-2" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)"
+                            ondrop="handleDrop(event, 2)"
+                            class="drop-target border-2 border-dashed border-slate-300 bg-slate-50/70 rounded-2xl flex items-center justify-center p-3 text-center transition-all">
+                            <span id="placeholder-2" class="text-xs text-slate-400 font-game pointer-events-none">
+                                Buraya sürükleyin
+                            </span>
+                            <span id="placedWord-2"
+                                class="hidden text-sm font-game font-bold text-emerald-700 bg-emerald-100 border border-emerald-300 px-3.5 py-1.5 rounded-xl shadow-sm"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Actions & Feedback -->
+                <div class="space-y-2 pt-3 border-t border-slate-100">
+                    <button id="checkBtn-2" onclick="checkAnswer(2)"
+                        class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-game font-bold py-3 rounded-2xl text-sm transition-all shadow-md shadow-emerald-600/20 flex items-center justify-center space-x-2 cursor-pointer">
+                        <span>Cevabı Kontrol Et</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </button>
+                    <div id="feedback-2" class="hidden p-3 rounded-2xl text-xs font-game transition-all"></div>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-slate-200 py-5 mt-auto">
+        <div class="max-w-6xl mx-auto px-4 text-center text-xs text-slate-500 space-y-1 font-medium">
+            <p class="font-bold text-slate-700">Türklerde Selamlaşma - Okuma ve Sürükle Bırak Etkinliği</p>
+            <p>Eğitim Materyali Kaynağı: <a href="https://ulkemyanimda.eba.gov.tr" target="_blank"
+                    rel="noopener noreferrer" class="text-indigo-600 hover:underline font-bold">Ülkem Yanımda</a></p>
+        </div>
+    </footer>
+
+    <!-- CONGRATULATIONS MODAL (Light & Cheerful) -->
+    <div id="congratulationsModal"
+        class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50 transition-all duration-300">
+        <div
+            class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 space-y-5 border-2 border-amber-300 shadow-2xl text-center relative overflow-hidden transform scale-95 transition-transform duration-300">
+
+            <!-- Trophy / Celebration Icon -->
+            <div class="relative w-20 h-20 mx-auto">
+                <div
+                    class="w-full h-full bg-gradient-to-tr from-amber-400 via-orange-400 to-yellow-300 text-white rounded-3xl border-2 border-amber-200 flex items-center justify-center text-4xl shadow-xl bounce-slight">
+                    🏆
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <span
+                    class="inline-flex items-center space-x-1.5 bg-amber-100 text-amber-800 border border-amber-200 text-xs px-3.5 py-1 rounded-full font-game font-bold">
+                    <i class="fa-solid fa-star text-amber-500"></i>
+                    <span>TÜM GÖREVLER TAMAMLANDI</span>
+                </span>
+                <h2 class="font-game text-2xl sm:text-3xl font-bold text-slate-800">
+                    🎉 HARİKA İŞ ÇIKARDIN! 🎉
+                </h2>
+                <p class="text-xs sm:text-sm text-slate-600 font-game leading-relaxed">
+                    Tüm selamlaşma senaryolarındaki doğru ifadeleri başarıyla eşleştirdin ve kültürümüzü en güzel
+                    şekilde öğrendin!
+                </p>
+            </div>
+
+            <!-- Stats -->
+            <div class="grid grid-cols-2 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                <div class="space-y-1">
+                    <div class="text-[10px] text-slate-400 font-bold uppercase">Toplam Puan</div>
+                    <div id="modalScore" class="font-game text-2xl font-bold text-amber-500">90 XP</div>
+                </div>
+                <div class="space-y-1 border-l border-slate-200">
+                    <div class="text-[10px] text-slate-400 font-bold uppercase">Kazanılan Unvan</div>
+                    <div class="font-game text-sm font-bold text-indigo-600">Selamlaşma Ustası ⭐</div>
+                </div>
+            </div>
+
+            <!-- Button -->
+            <button onclick="restartApp()"
+                class="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white py-3.5 rounded-2xl font-game font-bold text-sm shadow-lg shadow-orange-500/25 transition-all cursor-pointer">
+                Yeniden Oyna 🔄
+            </button>
+        </div>
+    </div>
+
+    <script>
+        /* SCENARIO CONFIGURATION */
+        const scenarios = [
+            {
+                id: 0,
+                title: "1. Senaryo: Misafir Karşılama",
+                correctAnswers: ["hoş bulduk"],
+                correctExplanation: "Harika! Ev sahibinin 'Hoş geldiniz' sözüne karşılık kültürümüzde 'Hoş bulduk' denir.",
+                wrongExplanation: "Yanlış ifade! Ev sahibi 'Hoş geldiniz' dediğinde 'Afiyet olsun' (yemekte denir), 'Güle güle' veya 'Geçmiş olsun' denilmez. Doğru cevap: 'Hoş bulduk'."
+            },
+            {
+                id: 1,
+                title: "2. Senaryo: Büyüğe Saygı ve Hal Hatır",
+                correctAnswers: [
+                    "iyiyim teşekkür ederim siz nasılsınız",
+                    "iyiyim teşekkür ederim siz nasılsınız?",
+                    "iyiyim, teşekkür ederim, siz nasılsınız?"
+                ],
+                correctExplanation: "Tebrikler! Bir büyüğümüz 'Nasılsın?' diye sorduğunda kültürümüzde nezaketle 'İyiyim, teşekkür ederim, siz nasılsınız?' denir.",
+                wrongExplanation: "Yanlış ifade! Aile büyüğümüz hal hatır sorduğunda güle güle, geçmiş olsun veya afiyet olsun denilmez. Doğru cevap: 'İyiyim, teşekkür ederim, siz nasılsınız?'."
+            },
+            {
+                id: 2,
+                title: "3. Senaryo: Çalışan Emekçi",
+                correctAnswers: ["kolay gelsin"],
+                correctExplanation: "Çok doğru! Emek veren, çalışan birini gördüğümüzde iyi dilek olarak 'Kolay gelsin' denir.",
+                wrongExplanation: "Yanlış ifade! Çalışan birine yemek yemiyorsa 'Afiyet olsun' veya ayrılmıyorsa 'Güle güle' denilmez. Doğru cevap: 'Kolay gelsin'."
+            }
+        ];
+
+        // Helper to reliably normalize Turkish text, handle dotted/dotless I, and strip punctuation
+        function normalizeText(text) {
+            if (!text) return '';
+            return text
+                .replace(/İ/g, 'i')
+                .replace(/I/g, 'ı')
+                .toLowerCase()
+                .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?]/g, '')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        /* GAME STATE */
+        const gameState = {
+            score: 0,
+            soundEnabled: true,
+            selectedWords: { 0: null, 1: null, 2: null },
+            completedScenarios: new Set()
+        };
+
+        /* SOUND EFFECTS */
+        function playAudio(type) {
+            if (!gameState.soundEnabled) return;
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtx) return;
+                const ctx = new AudioCtx();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                if (type === 'correct') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
+                    osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.25); // A5
+                    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.25);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.25);
+                } else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(260, ctx.currentTime);
+                    osc.frequency.linearRampToValueAtTime(140, ctx.currentTime + 0.25);
+                    gain.gain.setValueAtTime(0.12, ctx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.25);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.25);
+                } else if (type === 'place') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(440, ctx.currentTime);
+                    gain.gain.setValueAtTime(0.08, ctx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.08);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.08);
+                }
+            } catch (e) { }
+        }
+
+        function toggleAudio() {
+            gameState.soundEnabled = !gameState.soundEnabled;
+            const icon = document.getElementById('soundIcon');
+            if (gameState.soundEnabled) {
+                icon.className = "fa-solid fa-volume-high text-sm text-slate-700";
+            } else {
+                icon.className = "fa-solid fa-volume-xmark text-sm text-rose-500";
+            }
+        }
+
+        function handleDragStart(e) {
+            const word = e.target.getAttribute('data-word');
+            e.dataTransfer.setData('text/plain', word);
+            e.dataTransfer.effectAllowed = 'copy';
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'copy';
+            const zone = e.currentTarget;
+            zone.classList.add('drag-hover');
+        }
+
+        function handleDragLeave(e) {
+            const zone = e.currentTarget;
+            zone.classList.remove('drag-hover');
+        }
+
+        function handleDrop(e, index) {
+            e.preventDefault();
+            const zone = e.currentTarget;
+            zone.classList.remove('drag-hover');
+
+            if (gameState.completedScenarios.has(index)) return;
+
+            const word = e.dataTransfer.getData('text/plain');
+            if (word) {
+                setPlacedWord(index, word);
+            }
+        }
+
+        function setPlacedWord(index, word) {
+            gameState.selectedWords[index] = word;
+            playAudio('place');
+
+            const placeholder = document.getElementById(`placeholder-${index}`);
+            const placedWordEl = document.getElementById(`placedWord-${index}`);
+            const clearBtn = document.getElementById(`clearBtn-${index}`);
+            const dropZone = document.getElementById(`dropZone-${index}`);
+
+            if (placeholder) placeholder.classList.add('hidden');
+            if (placedWordEl) {
+                placedWordEl.innerText = word;
+                placedWordEl.classList.remove('hidden');
+            }
+            if (clearBtn) clearBtn.classList.remove('hidden');
+
+            dropZone.classList.remove('border-slate-300', 'bg-slate-50/70');
+            dropZone.classList.add('border-sky-400', 'bg-sky-50/50');
+        }
+
+        function clearDropZone(index) {
+            if (gameState.completedScenarios.has(index)) return;
+
+            gameState.selectedWords[index] = null;
+
+            const placeholder = document.getElementById(`placeholder-${index}`);
+            const placedWordEl = document.getElementById(`placedWord-${index}`);
+            const clearBtn = document.getElementById(`clearBtn-${index}`);
+            const dropZone = document.getElementById(`dropZone-${index}`);
+            const feedback = document.getElementById(`feedback-${index}`);
+
+            if (placeholder) placeholder.classList.remove('hidden');
+            if (placedWordEl) placedWordEl.classList.add('hidden');
+            if (clearBtn) clearBtn.classList.add('hidden');
+            if (feedback) feedback.classList.add('hidden');
+
+            dropZone.className = "drop-target border-2 border-dashed border-slate-300 bg-slate-50/70 rounded-2xl flex items-center justify-center p-3 text-center transition-all";
+        }
+
+        function checkAnswer(index) {
+            const scenario = scenarios[index];
+            const selectedWord = gameState.selectedWords[index];
+            const feedback = document.getElementById(`feedback-${index}`);
+            const badge = document.getElementById(`badge-${index}`);
+            const card = document.getElementById(`card-${index}`);
+            const checkBtn = document.getElementById(`checkBtn-${index}`);
+            const clearBtn = document.getElementById(`clearBtn-${index}`);
+            const dropZone = document.getElementById(`dropZone-${index}`);
+
+            if (!selectedWord) {
+                feedback.classList.remove('hidden');
+                feedback.className = "p-3 rounded-2xl text-xs font-game bg-amber-50 text-amber-800 border-2 border-amber-300 flex items-center gap-2";
+                feedback.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-600 text-sm"></i> <span>Lütfen önce seçeneklerden birini boşluğa sürükleyin.</span>`;
+                return;
+            }
+
+            const cleanSelected = normalizeText(selectedWord);
+            const isCorrect = scenario.correctAnswers.some(ans => cleanSelected === normalizeText(ans));
+
+            feedback.classList.remove('hidden');
+
+            if (isCorrect) {
+                playAudio('correct');
+
+                // Award points only once per scenario
+                if (!gameState.completedScenarios.has(index)) {
+                    gameState.score += 30;
+                    document.getElementById('globalScore').innerText = `${gameState.score} XP`;
+                    gameState.completedScenarios.add(index);
+                }
+
+                // Visual styling for success
+                card.className = "soft-card p-5 flex flex-col justify-between space-y-4 border-2 border-emerald-400 bg-emerald-50/20";
+                dropZone.className = "drop-target border-2 border-emerald-400 bg-emerald-100/60 rounded-2xl flex items-center justify-center p-3 text-center transition-all";
+
+                badge.className = "text-xs font-game font-bold text-emerald-600 flex items-center gap-1";
+                badge.innerHTML = `<i class="fa-solid fa-circle-check"></i> Doğru`;
+
+                feedback.className = "p-3.5 rounded-2xl text-xs font-game bg-emerald-100 text-emerald-900 border-2 border-emerald-300 space-y-1";
+                feedback.innerHTML = `
+                    <div class="flex items-center gap-1.5 font-bold text-emerald-800 text-sm">
+                        <i class="fa-solid fa-circle-check text-emerald-600"></i>
+                        <span>Tebrikler! (+30 XP)</span>
+                    </div>
+                    <p class="text-emerald-800 leading-relaxed">${scenario.correctExplanation}</p>
+                `;
+
+                // Lock elements
+                checkBtn.disabled = true;
+                checkBtn.className = "w-full bg-emerald-600 text-white font-game font-bold py-3 rounded-2xl text-sm opacity-90 cursor-default flex items-center justify-center space-x-1.5 shadow-sm";
+                checkBtn.innerHTML = `<span>Doğru Cevap Verildi</span> <i class="fa-solid fa-check"></i>`;
+
+                if (clearBtn) clearBtn.classList.add('hidden');
+
+                // Update Progress Count
+                updateProgress();
+
+            } else {
+                playAudio('wrong');
+
+                // Visual styling for wrong answer
+                card.className = "soft-card p-5 flex flex-col justify-between space-y-4 border-2 border-rose-300 bg-rose-50/20";
+                dropZone.className = "drop-target border-2 border-rose-400 bg-rose-100/50 rounded-2xl flex items-center justify-center p-3 text-center transition-all";
+
+                badge.className = "text-xs font-game font-bold text-rose-600 flex items-center gap-1";
+                badge.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> Yanlış`;
+
+                feedback.className = "p-3.5 rounded-2xl text-xs font-game bg-rose-100 text-rose-900 border-2 border-rose-300 space-y-2";
+                feedback.innerHTML = `
+                    <div class="flex items-center gap-1.5 font-bold text-rose-800 text-sm">
+                        <i class="fa-solid fa-circle-xmark text-rose-600"></i>
+                        <span>Yanlış Seçenek!</span>
+                    </div>
+                    <p class="text-rose-800 leading-relaxed">${scenario.wrongExplanation}</p>
+                    <button onclick="retryScenario(${index})" class="mt-1 bg-white hover:bg-rose-50 text-rose-700 border border-rose-300 px-3 py-1.5 rounded-xl font-bold font-game text-xs transition-all shadow-sm flex items-center gap-1.5 cursor-pointer">
+                        <i class="fa-solid fa-rotate-left"></i> Tekrar Dene
+                    </button>
+                `;
+            }
+
+            // Check if all complete
+            if (gameState.completedScenarios.size === scenarios.length) {
+                setTimeout(() => {
+                    showFinalCelebration();
+                }, 700);
+            }
+        }
+
+        function retryScenario(index) {
+            clearDropZone(index);
+            const card = document.getElementById(`card-${index}`);
+            const badge = document.getElementById(`badge-${index}`);
+            const checkBtn = document.getElementById(`checkBtn-${index}`);
+
+            card.className = "soft-card p-5 flex flex-col justify-between space-y-4";
+            badge.className = "text-xs font-game font-semibold text-slate-400";
+            badge.innerText = "Bekliyor";
+
+            checkBtn.disabled = false;
+        }
+
+        function updateProgress() {
+            const count = gameState.completedScenarios.size;
+            document.getElementById('progressDisplay').innerText = `${count} / 3 Tamamlandı`;
+            if (count > 0 && typeof confetti === 'function') {
+                confetti({
+                    particleCount: 50,
+                    spread: 60,
+                    origin: { y: 0.7 }
+                });
+            }
+        }
+
+        function showFinalCelebration() {
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 160,
+                    spread: 100,
+                    origin: { y: 0.55 }
+                });
+            }
+
+            const modal = document.getElementById('congratulationsModal');
+            if (modal) {
+                document.getElementById('modalScore').innerText = `${gameState.score} XP`;
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    const inner = modal.firstElementChild;
+                    if (inner) {
+                        inner.classList.remove('scale-95');
+                        inner.classList.add('scale-100');
+                    }
+                }, 50);
+            }
+        }
+
+        function restartApp() {
+            location.reload();
+        }
+    </script>
+</body>
+
+</html>
