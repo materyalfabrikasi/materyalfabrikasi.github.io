@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nerelisin?</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
+
+    <!-- Tone.js (Sistem Geri Bildirim Sesleri İçin) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+
+    <style>
+        :root {
+            --primary-dark: #0b1329;
+            --accent-gold: #d97706;
+            --accent-gold-light: #fcd34d;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--primary-dark);
+            background-image:
+                radial-gradient(circle at 15% 15%, rgba(64, 190, 170, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(210, 32, 39, 0.12) 0%, transparent 40%),
+                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231e293b' fill-opacity='0.3'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            color: #333;
+            user-select: none;
+            overflow: hidden;
+            /* Sayfa kaydırmasını önler, her şey tek ekranda */
+            height: 100vh;
+            width: 100vw;
+        }
+
+        h1,
+        h2,
+        .oyun-basligi {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* Glassmorphism (Cam Efekti) Kartlar */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.2);
+        }
+
+        .logo-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-secenek {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-secenek:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px -4px rgba(217, 119, 6, 0.3);
+            border-color: var(--accent-gold);
+            background-color: #fffbeb;
+        }
+
+        .btn-secenek:active {
+            transform: translateY(1px);
+        }
+
+        video {
+            border-radius: 0.875rem;
+            background-color: #0f172a;
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0.92);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .animate-pop-in {
+            animation: popIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(0.85);
+                box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.7);
+            }
+
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 12px rgba(217, 119, 6, 0);
+            }
+
+            100% {
+                transform: scale(0.85);
+                box-shadow: 0 0 0 0 rgba(217, 119, 6, 0);
+            }
+        }
+
+        .animate-pulse-ring {
+            animation: pulse-ring 2s infinite;
+        }
+
+        .progress-bar-fill {
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+
+<body class="h-screen w-screen flex flex-col items-center justify-between p-2 sm:p-4 md:p-5 relative overflow-hidden">
+
+    <!-- Üst Bar: Belirgin Logo ve Başlık -->
+    <header class="w-full max-w-6xl flex justify-between items-center z-20 flex-shrink-0 mb-2">
+        <a href="https://ulkemyanimda.com" target="_blank"
+            class="logo-card px-4 py-2 rounded-2xl flex items-center transition-all hover:scale-105"
+            aria-label="Ülkem Yanımda Sayfasına Git">
+            <!-- Kullanıcının Logosu (1.svg) - Beyaz net zemin üzerinde kristal netliğinde -->
+            <img src="1.svg" alt="Ülkem Yanımda Logosu" class="h-9 sm:h-11 w-auto"
+                onerror="this.onerror=null; this.src='https://placehold.co/200x60/transparent/ffffff?text=Ulkem+Yanimda+Logo';">
+        </a>
+        <div
+            class="hidden sm:flex items-center gap-2 text-slate-300 text-sm font-medium bg-slate-800/80 px-4 py-1.5 rounded-full border border-slate-700 backdrop-blur-md">
+            <span>🌍</span>
+            <span>Nerelisin?</span>
+        </div>
+    </header>
+
+    <!-- Ana Oyun Konteyneri (Tek Ekrana Tam Sığan) -->
+    <main
+        class="w-full max-w-6xl flex-1 max-h-[calc(100vh-5rem)] glass-panel rounded-2xl sm:rounded-3xl overflow-hidden relative flex flex-col z-10 shadow-2xl">
+
+        <!-- BÖLÜM 1: BAŞLANGIÇ EKRANI -->
+        <div id="ekran-baslangic" class="flex-1 flex flex-col items-center justify-center p-6 md:p-10 text-center">
+            <div
+                class="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mb-4 shadow-inner border-2 border-amber-300">
+                <span class="text-4xl">🌍</span>
+            </div>
+            <h1 class="text-3xl md:text-5xl text-slate-800 font-bold mb-3 oyun-basligi">Nerelisin?</h1>
+            <p class="text-base md:text-lg text-slate-600 mb-6 max-w-xl leading-relaxed">
+                Arkadaşlarımız videolarla sana memleketleri hakkında bazı ipuçları verecek. Videoları izle ve onların
+                nereli olduğunu tahmin et!
+            </p>
+            <button onclick="oyunuBaslat()"
+                class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white text-lg md:text-xl font-bold py-3.5 px-10 rounded-2xl shadow-xl transition-all transform hover:scale-105 active:scale-95 flex items-center gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Turu Başlat
+            </button>
+        </div>
+
+        <!-- BÖLÜM 1: OYUN EKRANI (Sağlı Sollu - Scrollsuz Tek Ekran Düzeni) -->
+        <div id="ekran-oyun" class="hidden flex-1 flex-col h-full overflow-hidden">
+
+            <!-- Üst Bilgi Barı -->
+            <div
+                class="bg-slate-800 text-white py-2.5 px-4 sm:px-6 flex justify-between items-center z-10 flex-shrink-0 border-b border-slate-700">
+                <div
+                    class="font-bold text-sm sm:text-base bg-slate-700 px-3 py-1.5 rounded-xl flex items-center gap-1.5 border border-slate-600">
+                    <span class="text-amber-400">⭐</span> Puan: <span id="skor-gosterge">0</span>
+                </div>
+                <div
+                    class="flex-1 mx-4 sm:mx-6 bg-slate-900 h-2.5 rounded-full overflow-hidden border border-slate-700 shadow-inner max-w-md">
+                    <div id="ilerleme-bari"
+                        class="progress-bar-fill bg-gradient-to-r from-amber-400 to-amber-500 h-full w-0"></div>
+                </div>
+                <div class="font-bold text-sm sm:text-base text-slate-300">
+                    Soru <span id="soru-sayaci" class="text-amber-400 font-extrabold">1</span> / 5
+                </div>
+            </div>
+
+            <!-- Soru Alanı: SAĞLI SOLLU (Sol: Video, Sağ: Sorular & Seçenekler) -->
+            <div
+                class="flex-1 p-3 sm:p-5 grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-center overflow-hidden bg-slate-50/60">
+
+                <!-- SOL SÜTUN: Video Alanı -->
+                <div class="lg:col-span-7 flex flex-col items-center justify-center h-full max-h-full">
+                    <div
+                        class="w-full h-full max-h-[52vh] aspect-video bg-black rounded-2xl shadow-xl overflow-hidden relative border-2 border-white/80 flex items-center justify-center">
+                        <video id="soru-videosu" class="w-full h-full object-contain" controls playsinline>
+                            Tarayıcınız video etiketini desteklemiyor.
+                        </video>
+                    </div>
+                </div>
+
+                <!-- SAĞ SÜTUN: Soru Yönergesi ve Seçenek Butonları -->
+                <div class="lg:col-span-5 flex flex-col justify-center gap-3 h-full max-h-full py-1">
+
+                    <div
+                        class="bg-white/90 backdrop-blur-sm p-3.5 rounded-2xl shadow-sm border border-slate-200 text-center">
+                        <span class="text-xs font-bold uppercase tracking-wider text-amber-600 block mb-0.5">Tahmin
+                            Zamanı</span>
+                        <p class="text-slate-800 font-bold text-lg sm:text-xl leading-snug">Bu arkadaşımız nereli?</p>
+                    </div>
+
+                    <!-- Seçenekler Listesi (Alt alta 4 şık) -->
+                    <div id="secenekler-alani" class="grid grid-cols-1 gap-2.5 w-full">
+                        <!-- Butonlar JavaScript ile buraya eklenecek -->
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- BÖLÜM 1: GERİ BİLDİRİM MODALI -->
+        <div id="modal-geribildirim"
+            class="hidden absolute inset-0 bg-slate-900/80 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+            <div
+                class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full text-center shadow-2xl flex flex-col items-center animate-pop-in border-2 border-slate-100">
+                <div id="ikon-geribildirim"
+                    class="w-16 h-16 rounded-full flex items-center justify-center mb-4 text-3xl shadow-inner">
+                    <!-- İkon -->
+                </div>
+                <h2 id="baslik-geribildirim" class="text-2xl font-bold mb-2 oyun-basligi text-slate-800">Sonuç</h2>
+                <div class="bg-slate-50 p-4 rounded-2xl w-full mb-5 border border-slate-200">
+                    <p id="metin-geribildirim" class="text-slate-700 text-base leading-relaxed">Açıklama metni.</p>
+                </div>
+                <button onclick="sonrakiSoru()"
+                    class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3.5 px-6 rounded-xl shadow-lg transition-transform active:scale-95 text-lg flex justify-center items-center gap-2">
+                    Devam Et
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- BÖLÜM 2: ETKİLEŞİMLİ VİDEO EKRANI (ana.mp4) -->
+        <div id="ekran-bolum2" class="hidden flex-1 flex-col h-full bg-black relative overflow-hidden">
+
+            <div
+                class="absolute top-3 left-3 z-20 bg-slate-900/80 text-white px-3 py-1.5 rounded-lg backdrop-blur-md border border-slate-600">
+                <span class="text-xs font-semibold text-amber-400 uppercase tracking-wider">2. Bölüm: Sıra Sende!</span>
+            </div>
+
+            <!-- Ana Video (ana.mp4) -->
+            <div class="w-full h-full flex items-center justify-center bg-black">
+                <video id="ana-video" class="w-full h-full object-contain max-h-[calc(100vh-6rem)]" playsinline
+                    controlsList="nodownload">
+                    Tarayıcınız video etiketini desteklemiyor.
+                </video>
+            </div>
+
+            <!-- 11. Saniyede Çıkacak Soru Arayüzü -->
+            <div id="arayuz-sozlu-cevap"
+                class="hidden absolute inset-0 bg-slate-900/90 z-30 flex items-center justify-center p-4 backdrop-blur-md">
+                <div
+                    class="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full text-center shadow-2xl flex flex-col items-center animate-pop-in">
+
+                    <div
+                        class="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mb-4 animate-pulse-ring text-amber-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-9 w-9" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                        </svg>
+                    </div>
+
+                    <h2 class="text-2xl md:text-3xl font-bold mb-3 oyun-basligi text-slate-800">Bize memleketini kısaca
+                        tanıtır mısın?</h2>
+
+                    <p class="text-slate-600 text-sm md:text-base mb-6">
+                        Lütfen bu soruya <span class="font-bold text-slate-800">sözlü olarak</span> cevap ver. Cevabını
+                        bitirdikten sonra aşağıdaki butona tıklayarak videoya devam edebilirsin.
+                    </p>
+
+                    <button onclick="sozluCevapTamamlandi()"
+                        class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-3.5 px-6 rounded-2xl shadow-lg transition-transform hover:scale-105 active:scale-95 text-lg flex items-center justify-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Cevapladım, Tamam
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- BİTİŞ EKRANI -->
+        <div id="ekran-bitis" class="hidden flex-1 flex-col items-center justify-center p-6 text-center animate-pop-in">
+            <div
+                class="w-24 h-24 bg-gradient-to-br from-amber-200 to-amber-400 rounded-full flex items-center justify-center mb-4 shadow-xl border-2 border-white">
+                <span class="text-5xl">🏆</span>
+            </div>
+            <h1 class="text-3xl md:text-4xl text-slate-800 font-bold mb-2 oyun-basligi">Tebrikler! Tur Bitti.</h1>
+            <p class="text-base text-slate-600 mb-4 max-w-md">Türkiye kültür turunu ve sözlü anlatımını başarıyla
+                tamamladın.</p>
+
+            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 mb-6 inline-block shadow-sm">
+                <p class="text-sm text-slate-500 font-medium">Bölüm 1 Başarısı</p>
+                <p class="text-2xl text-amber-600 font-bold">Toplam Puan: <span id="son-skor">0</span></p>
+            </div>
+
+            <button onclick="oyunuSifirla()"
+                class="bg-slate-800 hover:bg-slate-900 text-white text-base md:text-lg font-bold py-3 px-8 rounded-2xl shadow-xl transition-transform hover:scale-105 active:scale-95 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Tekrar Oyna
+            </button>
+        </div>
+
+    </main>
+
+    <script>
+        /**
+         * KULLANICI İÇİN NOT:
+         * Videoların bulunduğu dizine göre "video" alanlarını güncelleyiniz.
+         * Örneğin videolar html dosyası ile aynı klasördeyse: "1.mp4", "2.mp4" şeklinde bırakın.
+         */
+        const oyunVerisi = [
+            {
+                id: 1,
+                video: "1.mp4",
+                secenekler: ["Gaziantep", "İzmir", "Trabzon", "Antalya"],
+                dogruCevap: "Gaziantep"
+            },
+            {
+                id: 2,
+                video: "2.mp4",
+                secenekler: ["Ankara", "Trabzon", "Konya", "Mardin"],
+                dogruCevap: "Trabzon"
+            },
+            {
+                id: 3,
+                video: "3.mp4",
+                secenekler: ["İstanbul", "Diyarbakır", "Nevşehir", "Bursa"],
+                dogruCevap: "Nevşehir"
+            },
+            {
+                id: 4,
+                video: "4.mp4",
+                secenekler: ["Erzurum", "İzmir", "Şanlıurfa", "Kayseri"],
+                dogruCevap: "İzmir"
+            },
+            {
+                id: 5,
+                video: "5.mp4",
+                secenekler: ["Konya", "Rize", "Çanakkale", "Hatay"],
+                dogruCevap: "Konya"
+            }
+        ];
+
+        // Oyun Durumu (Bölüm 1)
+        let mevcutSoruIndeksi = 0;
+        let skor = 0;
+        let puanArtisi = 20;
+        let synthesizer = null; // Tone.js objesi
+
+        // Oyun Durumu (Bölüm 2)
+        let bolum2SoruSoruldu = false;
+
+        // DOM Elementleri
+        const ekranBaslangic = document.getElementById('ekran-baslangic');
+        const ekranOyun = document.getElementById('ekran-oyun');
+        const ekranBolum2 = document.getElementById('ekran-bolum2');
+        const ekranBitis = document.getElementById('ekran-bitis');
+
+        const uiSkor = document.getElementById('skor-gosterge');
+        const uiSayac = document.getElementById('soru-sayaci');
+        const uiIlerleme = document.getElementById('ilerleme-bari');
+
+        const elVideo1 = document.getElementById('soru-videosu');
+        const elSecenekler = document.getElementById('secenekler-alani');
+
+        const modalGeribildirim = document.getElementById('modal-geribildirim');
+        const ikonGeribildirim = document.getElementById('ikon-geribildirim');
+        const baslikGeribildirim = document.getElementById('baslik-geribildirim');
+        const metinGeribildirim = document.getElementById('metin-geribildirim');
+
+        const anaVideo = document.getElementById('ana-video');
+        const arayuzSozluCevap = document.getElementById('arayuz-sozlu-cevap');
+
+        // Tone.js Başlatma (Kullanıcı etkileşimi sonrası)
+        async function sesMotorunuBaslat() {
+            if (!synthesizer) {
+                await Tone.start();
+                synthesizer = new Tone.Synth().toDestination();
+            }
+        }
+
+        // Oyunu Başlat
+        function oyunuBaslat() {
+            sesMotorunuBaslat();
+
+            ekranBaslangic.classList.add('hidden');
+            ekranBitis.classList.add('hidden');
+            ekranBolum2.classList.add('hidden');
+
+            ekranOyun.classList.remove('hidden');
+            ekranOyun.classList.add('flex');
+
+            mevcutSoruIndeksi = 0;
+            skor = 0;
+            uiSkor.innerText = skor;
+            bolum2SoruSoruldu = false;
+
+            soruyuYukle();
+        }
+
+        // Soruyu Ekrana Çiz
+        function soruyuYukle() {
+            const soru = oyunVerisi[mevcutSoruIndeksi];
+
+            // Arayüz güncellemeleri
+            uiSayac.innerText = mevcutSoruIndeksi + 1;
+            const yuzde = ((mevcutSoruIndeksi) / oyunVerisi.length) * 100;
+            uiIlerleme.style.width = yuzde + '%';
+
+            // Video kaynağını ayarla ve oynat
+            elVideo1.src = soru.video;
+            elVideo1.load();
+            elVideo1.play().catch(e => console.log("Otomatik oynatma engellendi, kullanıcının play tuşuna basması beklenecek."));
+
+            // Seçenekleri rastgele karıştır ve oluştur
+            const karisikSecenekler = [...soru.secenekler].sort(() => Math.random() - 0.5);
+            elSecenekler.innerHTML = '';
+
+            karisikSecenekler.forEach(secenek => {
+                const btn = document.createElement('button');
+                btn.className = "btn-secenek bg-white border-2 border-slate-200 text-slate-800 font-bold py-3 sm:py-3.5 px-4 sm:px-5 rounded-xl shadow-sm text-base sm:text-lg text-left w-full flex items-center justify-between group cursor-pointer hover:border-amber-500";
+                btn.innerHTML = `
+                    <span class="font-semibold text-slate-800 group-hover:text-amber-700">${secenek}</span>
+                    <div class="w-5 h-5 rounded-full border-2 border-slate-300 group-hover:border-amber-500 group-hover:bg-amber-100 transition-colors flex items-center justify-center">
+                        <div class="w-2 h-2 rounded-full bg-amber-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    </div>
+                `;
+                btn.onclick = () => cevabiKontrolEt(secenek);
+                elSecenekler.appendChild(btn);
+            });
+        }
+
+        // Türkçe büyük ve küçük ünlü uyumuna göre -lı/-li/-lu/-lü ve ek-fiil eklerini doğru bağlayan yardımcı fonksiyon
+        function sehirEkiGetir(sehir, ekTuru = '') {
+            if (!sehir) return '';
+            const sesliHarfler = 'aıoueiöüAIOUEİÖÜ';
+            let sonSesli = 'i';
+            for (let i = sehir.length - 1; i >= 0; i--) {
+                const char = sehir[i];
+                if (sesliHarfler.includes(char)) {
+                    if (char === 'I' || char === 'ı') sonSesli = 'ı';
+                    else if (char === 'İ' || char === 'i') sonSesli = 'i';
+                    else sonSesli = char.toLowerCase();
+                    break;
+                }
+            }
+
+            let liEki = 'li';
+            let dirEki = 'dir';
+
+            if (sonSesli === 'a' || sonSesli === 'ı') {
+                liEki = 'lı';
+                dirEki = 'dır';
+            } else if (sonSesli === 'e' || sonSesli === 'i') {
+                liEki = 'li';
+                dirEki = 'dir';
+            } else if (sonSesli === 'o' || sonSesli === 'u') {
+                liEki = 'lu';
+                dirEki = 'dur';
+            } else if (sonSesli === 'ö' || sonSesli === 'ü') {
+                liEki = 'lü';
+                dirEki = 'dür';
+            }
+
+            if (ekTuru === 'dir') {
+                return `${sehir}${liEki}${dirEki}`;
+            }
+            return `${sehir}${liEki}`;
+        }
+
+        // Eğitsel Geri Bildirim
+        function cevabiKontrolEt(secilenCevap) {
+            elVideo1.pause(); // Seçim yapılınca videoyu durdur
+
+            const soru = oyunVerisi[mevcutSoruIndeksi];
+            const dogruMu = secilenCevap === soru.dogruCevap;
+
+            // Ses efektleri
+            if (synthesizer) {
+                if (dogruMu) {
+                    synthesizer.triggerAttackRelease("C5", "0.1");
+                    setTimeout(() => synthesizer.triggerAttackRelease("E5", "0.1"), 100);
+                    setTimeout(() => synthesizer.triggerAttackRelease("G5", "0.3"), 200);
+                } else {
+                    synthesizer.triggerAttackRelease("C4", "0.1");
+                    setTimeout(() => synthesizer.triggerAttackRelease("G3", "0.4"), 150);
+                }
+            }
+
+            // Geri Bildirim Modalı İçeriğini Hazırla
+            if (dogruMu) {
+                skor += puanArtisi;
+                uiSkor.innerText = skor;
+
+                ikonGeribildirim.innerHTML = "✅";
+                ikonGeribildirim.className = "w-20 h-20 rounded-full flex items-center justify-center mb-4 text-4xl shadow-inner bg-green-100 text-green-600 border-4 border-green-300";
+                baslikGeribildirim.innerText = "Doğru!";
+                baslikGeribildirim.className = "text-2xl font-bold mb-2 oyun-basligi text-green-700";
+                metinGeribildirim.innerHTML = `Tebrikler! Bu arkadaşımız <span class="font-bold text-slate-900">${sehirEkiGetir(secilenCevap, 'dir')}</span>.`;
+            } else {
+                ikonGeribildirim.innerHTML = "💡";
+                ikonGeribildirim.className = "w-20 h-20 rounded-full flex items-center justify-center mb-4 text-4xl shadow-inner bg-amber-100 text-amber-600 border-4 border-amber-300";
+                baslikGeribildirim.innerText = "Biraz Daha Düşün";
+                baslikGeribildirim.className = "text-2xl font-bold mb-2 oyun-basligi text-amber-700";
+                metinGeribildirim.innerHTML = `Bu arkadaşımız <span class="font-bold text-red-500">${sehirEkiGetir(secilenCevap)}</span> değildi.<br><br>Doğru cevap: <span class="font-bold text-green-600">${sehirEkiGetir(soru.dogruCevap, 'dir')}</span>.`;
+            }
+
+            modalGeribildirim.classList.remove('hidden');
+        }
+
+        // Modal kapatılıp sonraki aşamaya geçiş
+        function sonrakiSoru() {
+            modalGeribildirim.classList.add('hidden');
+            mevcutSoruIndeksi++;
+
+            if (mevcutSoruIndeksi < oyunVerisi.length) {
+                soruyuYukle();
+            } else {
+                // Bölüm 1 bitti, Bölüm 2'ye geç (ana.mp4)
+                bolum2YiBaslat();
+            }
+        }
+
+        // BÖLÜM 2 MANTIĞI
+        function bolum2YiBaslat() {
+            ekranOyun.classList.remove('flex');
+            ekranOyun.classList.add('hidden');
+
+            ekranBolum2.classList.remove('hidden');
+            ekranBolum2.classList.add('flex');
+
+            bolum2SoruSoruldu = false;
+
+            // ana.mp4 videosunu yükle ve oynat
+            anaVideo.src = "ana.mp4";
+            anaVideo.load();
+            anaVideo.play().catch(e => console.log("Otomatik oynatma engellendi, kullanıcının oynatması bekleniyor."));
+        }
+
+        // 11. Saniyede videoyu durdur ve soruyu sor
+        anaVideo.addEventListener('timeupdate', () => {
+            // Eğer soru henüz sorulmadıysa ve video 11. saniyeye ulaştıysa (veya geçtiyse)
+            if (!bolum2SoruSoruldu && anaVideo.currentTime >= 11) {
+                anaVideo.pause();
+                bolum2SoruSoruldu = true; // Soru soruldu olarak işaretle, tekrar tetiklenmesin
+
+                // Sözlü cevap arayüzünü göster
+                arayuzSozluCevap.classList.remove('hidden');
+                arayuzSozluCevap.classList.add('flex');
+            }
+        });
+
+        // Öğrenci "Cevapladım, Tamam" butonuna basınca
+        function sozluCevapTamamlandi() {
+            arayuzSozluCevap.classList.remove('flex');
+            arayuzSozluCevap.classList.add('hidden');
+
+            // Videoyu kaldığı yerden oynatmaya devam et
+            anaVideo.play();
+        }
+
+        // ana.mp4 videosu tamamen bittiğinde
+        anaVideo.addEventListener('ended', () => {
+            oyunuBitir();
+        });
+
+        // OYUN BİTİŞİ
+        function oyunuBitir() {
+            ekranBolum2.classList.remove('flex');
+            ekranBolum2.classList.add('hidden');
+
+            ekranBitis.classList.remove('hidden');
+            ekranBitis.classList.add('flex');
+
+            uiIlerleme.style.width = '100%';
+            document.getElementById('son-skor').innerText = skor;
+
+            // Bitiş sesi (Tone.js)
+            if (synthesizer) {
+                const now = Tone.now();
+                synthesizer.triggerAttackRelease("C4", "0.2", now);
+                synthesizer.triggerAttackRelease("E4", "0.2", now + 0.2);
+                synthesizer.triggerAttackRelease("G4", "0.2", now + 0.4);
+                synthesizer.triggerAttackRelease("C5", "0.6", now + 0.6);
+            }
+        }
+
+        // Oyunu en başa sar
+        function oyunuSifirla() {
+            // Videoları sıfırla
+            elVideo1.pause();
+            elVideo1.currentTime = 0;
+            anaVideo.pause();
+            anaVideo.currentTime = 0;
+
+            oyunuBaslat();
+        }
+
+    </script>
+</body>
+
+</html>

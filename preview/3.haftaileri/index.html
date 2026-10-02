@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memleketim Neresi? - Eğitici Oyun</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Nunito -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        /* 1.png Arka Planı - Tam Ekran Uyumlu */
+        .game-bg {
+            background-image: url('1.png');
+            background-size: 100% 100%;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        /* 3D Buton Efektleri */
+        .btn-game {
+            box-shadow: 0 6px 0px 0px rgba(0, 0, 0, 0.16);
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-game:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 0px 0px rgba(0, 0, 0, 0.18);
+        }
+
+        .btn-game:active:not(:disabled) {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0px 0px rgba(0, 0, 0, 0.16);
+        }
+
+        /* Dalga / Ses Çalma Animasyonu */
+        .ripple-effect {
+            animation: pulse-ring 1.3s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 18px rgba(59, 130, 246, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+            }
+        }
+
+        /* Hata Animasyonu */
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20%,
+            60% {
+                transform: translateX(-8px);
+            }
+
+            40%,
+            80% {
+                transform: translateX(8px);
+            }
+        }
+
+        /* Başarı Animasyonu */
+        .pop {
+            animation: pop 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes pop {
+            0% {
+                transform: scale(0.92);
+            }
+
+            50% {
+                transform: scale(1.06);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* İleri Butonu Işıltı Animasyonu */
+        .next-btn-pulse {
+            animation: nextPulse 1.6s ease-in-out infinite;
+        }
+
+        @keyframes nextPulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                box-shadow: 0 6px 0 #15803d, 0 10px 20px rgba(34, 197, 94, 0.4);
+            }
+
+            50% {
+                transform: scale(1.03);
+                box-shadow: 0 8px 0 #15803d, 0 14px 28px rgba(34, 197, 94, 0.6);
+            }
+        }
+    </style>
+</head>
+
+<body
+    class="game-bg h-screen w-screen flex flex-col items-center justify-between p-2 sm:p-4 md:p-6 relative overflow-hidden bg-slate-900">
+
+    <!-- Arka plan okunabilirlik katmanı -->
+    <div class="absolute inset-0 bg-black/15 pointer-events-none z-[1]"></div>
+
+    <!-- ÜST BAR: Logo ve Başlık -->
+    <header class="z-10 w-full max-w-4xl flex items-center justify-center pt-1 sm:pt-2 pb-1">
+        <div
+            class="bg-white/90 backdrop-blur-md px-6 py-2 rounded-2xl shadow-xl border-2 border-white/80 flex items-center justify-center transition-all">
+            <img src="1.svg" alt="Memleketim Neresi Logo"
+                class="h-10 sm:h-12 md:h-14 max-w-[80vw] object-contain drop-shadow filter">
+        </div>
+    </header>
+
+    <!-- ANA OYUN ALANI -->
+    <main
+        class="z-10 w-full max-w-2xl flex-1 flex flex-col items-center justify-center py-1 sm:py-2 px-2 overflow-y-auto">
+
+        <!-- 1. AŞAMA: SES VE ŞEHİR TAHMİNİ -->
+        <div id="game-screen"
+            class="w-full bg-white/92 backdrop-blur-lg rounded-3xl shadow-2xl border-4 border-white/90 p-4 sm:p-6 md:p-7 flex flex-col items-center my-auto transition-all">
+
+            <!-- Bilgi Şeridi: Soru Sayacı ve Puan -->
+            <div class="w-full flex justify-between items-center mb-3 sm:mb-4">
+                <div
+                    class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-2xl font-black text-sm sm:text-base border-2 border-white flex items-center gap-2">
+                    <i class="fas fa-layer-group text-yellow-300"></i>
+                    <span>Soru: <span id="current-question-text" class="text-yellow-300 text-base sm:text-lg">1</span> /
+                        <span id="total-questions-text">5</span></span>
+                </div>
+
+                <div
+                    class="bg-gradient-to-r from-amber-500 to-yellow-500 text-white shadow-md px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-2xl font-black text-sm sm:text-base border-2 border-white flex items-center gap-2">
+                    <i class="fas fa-star text-white animate-spin" style="animation-duration: 6s;"></i>
+                    <span>Puan: <span id="score-text" class="text-white text-base sm:text-lg">0</span></span>
+                </div>
+            </div>
+
+            <!-- Yönerge Başlığı -->
+            <div class="mb-3 sm:mb-4 text-center">
+                <p
+                    class="text-gray-800 font-extrabold text-sm sm:text-base md:text-lg bg-purple-100/90 text-purple-950 px-4 sm:px-6 py-1.5 rounded-full border border-purple-300 shadow-sm inline-flex items-center gap-2">
+                    <i class="fas fa-headphones-alt text-purple-600"></i>
+                    <span>Konuşanı dinle ve <strong class="text-purple-700">memleketini</strong> tahmin et!</span>
+                </p>
+            </div>
+
+            <!-- Ses Kontrol Butonları -->
+            <div class="flex items-center justify-center gap-3 sm:gap-4 mb-3 sm:mb-4">
+                <!-- Dinle / Duraklat Butonu -->
+                <button id="play-btn"
+                    class="h-12 sm:h-14 px-5 sm:px-6 rounded-2xl bg-gradient-to-r from-blue-500 to-blue-700 text-white flex items-center justify-center gap-2.5 text-sm sm:text-base md:text-lg font-black btn-game border-2 border-white cursor-pointer"
+                    title="Dinle veya Duraklat">
+                    <i id="play-icon" class="fas fa-play text-lg sm:text-xl"></i>
+                    <span id="play-btn-text">Dinle</span>
+                </button>
+
+                <!-- Tekrar Dinle Butonu -->
+                <button id="replay-btn"
+                    class="h-12 sm:h-14 px-5 sm:px-6 rounded-2xl bg-gradient-to-r from-purple-500 to-indigo-600 text-white flex items-center justify-center gap-2.5 text-sm sm:text-base md:text-lg font-black btn-game border-2 border-white cursor-pointer"
+                    title="Sesi Baştan Başlat">
+                    <i class="fas fa-rotate-right text-lg sm:text-xl"></i>
+                    <span>Tekrar Dinle</span>
+                </button>
+            </div>
+
+            <!-- Ses Durum Göstergesi -->
+            <div id="audio-status"
+                class="mb-3 text-blue-700 font-extrabold text-xs sm:text-sm h-6 opacity-0 transition-opacity bg-blue-50 px-3 py-1 rounded-full border border-blue-200 flex items-center gap-1.5">
+                <i class="fas fa-volume-high animate-bounce text-blue-600"></i> Ses Oynatılıyor...
+            </div>
+
+            <!-- Şehir Seçenekleri Grid (2x2) -->
+            <div id="options-grid" class="w-full grid grid-cols-2 gap-2.5 sm:gap-3.5 mb-2">
+                <!-- Butonlar JS ile dinamik olarak doldurulacaktır -->
+            </div>
+
+            <!-- SONRAKİ SORU BUTONU (Cevaplandıktan sonra görünür) -->
+            <div id="next-action-container" class="w-full mt-3 sm:mt-4 hidden justify-center items-center">
+                <button id="next-question-btn"
+                    class="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white text-base sm:text-lg md:text-xl font-black btn-game border-3 border-white cursor-pointer flex items-center justify-center gap-3 next-btn-pulse">
+                    <span id="next-btn-text">Sonraki Soruya Geç</span>
+                    <i class="fas fa-arrow-right text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- 2. AŞAMA: VİDEO EKRANI (Dikey Format) -->
+        <div id="part2-screen"
+            class="w-full max-w-md bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl border-4 border-white/90 p-3 sm:p-5 flex-col items-center justify-center hidden my-auto">
+            <h2
+                class="text-base sm:text-lg md:text-xl font-black mb-2.5 text-center text-gray-800 bg-purple-100 text-purple-900 px-5 py-1.5 rounded-full border border-purple-300 shadow-sm flex items-center gap-2">
+                <i class="fas fa-video text-purple-600"></i>
+                <span>2. Aşama: <strong class="text-purple-700">Memleket</strong></span>
+            </h2>
+
+            <div
+                class="relative w-full max-w-[340px] sm:max-w-[380px] h-[60vh] sm:h-[66vh] rounded-2xl overflow-hidden shadow-2xl border-3 border-purple-200 bg-black flex items-center justify-center mx-auto">
+                <!-- Video Başlatma Örtüsü -->
+                <div id="video-start-overlay"
+                    class="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/65 backdrop-blur-sm p-4 text-center">
+                    <button id="start-video-btn"
+                        class="bg-gradient-to-br from-purple-500 to-pink-500 text-white rounded-full w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center text-3xl sm:text-4xl btn-game hover:scale-105 transition-transform border-4 border-white cursor-pointer shadow-lg">
+                        <i class="fas fa-play ml-1"></i>
+                    </button>
+                    <p class="text-white font-black text-base sm:text-lg mt-3 drop-shadow">Videoyu Başlat</p>
+                </div>
+
+                <!-- Video (Dikey 9:16 Uyumlu) -->
+                <video id="main-video" class="w-full h-full object-cover" src="ana.mp4" playsinline></video>
+
+                <!-- 19. Saniye Soru Örtüsü -->
+                <div id="video-question-overlay"
+                    class="hidden absolute inset-0 z-30 flex-col items-center justify-center bg-black/85 backdrop-blur-md p-4 sm:p-5 text-center">
+                    <h3 class="text-lg sm:text-xl md:text-2xl font-black text-white mb-2 leading-snug">
+                        <span class="text-pink-300 block mb-1">Memleketini</span>
+                        üç kelimeyle anlatır mısın?
+                    </h3>
+                    <p class="text-gray-200 mb-5 text-xs sm:text-sm md:text-base font-semibold max-w-xs">
+                        <i class="fas fa-microphone-alt mr-1 text-pink-400 animate-pulse"></i> Sözlü olarak cevap
+                        verdikten sonra butona tıkla.
+                    </p>
+                    <button id="answered-btn"
+                        class="bg-gradient-to-r from-green-500 to-emerald-600 text-white font-black text-sm sm:text-base md:text-lg py-2.5 px-6 rounded-2xl border-3 border-white btn-game hover:scale-105 transition-transform cursor-pointer flex items-center gap-2 shadow-lg">
+                        <i class="fas fa-check-circle"></i> Cevapladım, Devam Et
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SONUÇ EKRANI -->
+        <div id="result-screen"
+            class="w-full max-w-md bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl border-4 border-white/90 p-6 sm:p-8 flex-col items-center justify-center hidden my-auto text-center relative z-20">
+            <h2
+                class="text-2xl sm:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 mb-2">
+                Tebrikler! 🎉
+            </h2>
+            <div class="text-5xl sm:text-6xl mb-3 text-yellow-400 drop-shadow-md pop">
+                <i class="fas fa-trophy"></i>
+            </div>
+            <p class="text-base sm:text-lg font-bold text-gray-700 mb-1">Etkinliği Başarıyla Tamamladın!</p>
+            <p class="text-sm font-semibold text-gray-500 mb-4">Toplam Kazandığın Puan:</p>
+            <div id="final-score"
+                class="text-4xl sm:text-5xl font-black text-purple-600 mb-6 bg-purple-50 py-2.5 px-6 rounded-2xl border-2 border-purple-200 inline-block shadow-inner">
+                0
+            </div>
+            <button id="restart-btn"
+                class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-black text-lg sm:text-xl py-3.5 px-6 rounded-2xl border-3 border-white btn-game hover:scale-105 transition-transform cursor-pointer flex items-center justify-center gap-2">
+                <i class="fas fa-rotate-right"></i> Tekrar Oyna
+            </button>
+        </div>
+    </main>
+
+
+
+    <!-- Toast Bildirimleri -->
+    <div id="feedback-toast"
+        class="fixed top-6 left-1/2 transform -translate-x-1/2 opacity-0 pointer-events-none transition-all duration-300 z-50">
+    </div>
+
+    <script>
+        // Şehirler ve Sorular
+        const cities = ["Rize", "İstanbul", "Eskişehir", "Ankara", "Bursa"];
+
+        const baseQuestions = [
+            { audioFile: "istanbul.mp3", correctAnswer: "İstanbul" },
+            { audioFile: "ankara.mp3", correctAnswer: "Ankara" },
+            { audioFile: "bursa.mp3", correctAnswer: "Bursa" },
+            { audioFile: "eskisehir.mp3", correctAnswer: "Eskişehir" },
+            { audioFile: "rize.mp3", correctAnswer: "Rize" }
+        ];
+
+        let questions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        const pointsPerQuestion = 20;
+        let currentAudio = null;
+        let isPlaying = false;
+        let isAnswered = false;
+        let videoQuestionAsked = false;
+
+        const screens = {
+            game: document.getElementById('game-screen'),
+            part2: document.getElementById('part2-screen'),
+            result: document.getElementById('result-screen')
+        };
+
+        const elements = {
+            playBtn: document.getElementById('play-btn'),
+            playIcon: document.getElementById('play-icon'),
+            playBtnText: document.getElementById('play-btn-text'),
+            replayBtn: document.getElementById('replay-btn'),
+            audioStatus: document.getElementById('audio-status'),
+            optionsGrid: document.getElementById('options-grid'),
+            currentQText: document.getElementById('current-question-text'),
+            totalQText: document.getElementById('total-questions-text'),
+            scoreText: document.getElementById('score-text'),
+            finalScore: document.getElementById('final-score'),
+            restartBtn: document.getElementById('restart-btn'),
+            feedbackToast: document.getElementById('feedback-toast'),
+            nextActionContainer: document.getElementById('next-action-container'),
+            nextQuestionBtn: document.getElementById('next-question-btn'),
+            nextBtnText: document.getElementById('next-btn-text')
+        };
+
+        const videoElements = {
+            video: document.getElementById('main-video'),
+            startOverlay: document.getElementById('video-start-overlay'),
+            startBtn: document.getElementById('start-video-btn'),
+            questionOverlay: document.getElementById('video-question-overlay'),
+            answeredBtn: document.getElementById('answered-btn')
+        };
+
+        // Soruları karıştır (İlk soru Rize olmasın)
+        function prepareQuestions() {
+            let qList = [...baseQuestions].sort(() => Math.random() - 0.5);
+            if (qList[0].correctAnswer === "Rize") {
+                const swapIdx = Math.floor(Math.random() * (qList.length - 1)) + 1;
+                const temp = qList[0];
+                qList[0] = qList[swapIdx];
+                qList[swapIdx] = temp;
+            }
+            return qList;
+        }
+
+        function initGame() {
+            questions = prepareQuestions();
+            currentQuestionIndex = 0;
+            score = 0;
+            videoQuestionAsked = false;
+            updateScoreDisplay();
+            elements.totalQText.innerText = questions.length;
+
+            screens.result.classList.add('hidden');
+            screens.result.classList.remove('flex');
+            screens.part2.classList.add('hidden');
+            screens.part2.classList.remove('flex');
+            screens.game.classList.remove('hidden');
+            screens.game.classList.add('flex');
+
+            videoElements.video.currentTime = 0;
+            videoElements.video.pause();
+            videoElements.startOverlay.classList.remove('hidden');
+            videoElements.startOverlay.classList.add('flex');
+            videoElements.questionOverlay.classList.add('hidden');
+            videoElements.questionOverlay.classList.remove('flex');
+
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            isAnswered = false;
+            const q = questions[currentQuestionIndex];
+            elements.currentQText.innerText = currentQuestionIndex + 1;
+
+            // Sonraki soru butonunu gizle
+            elements.nextActionContainer.classList.add('hidden');
+            elements.nextActionContainer.classList.remove('flex');
+
+            // 4 Şık oluştur (1 Doğru + 3 Yanlış)
+            const otherCities = cities.filter(c => c !== q.correctAnswer).sort(() => Math.random() - 0.5).slice(0, 3);
+            const questionOptions = [q.correctAnswer, ...otherCities].sort(() => Math.random() - 0.5);
+
+            const optionBadges = ['A', 'B', 'C', 'D'];
+
+            elements.optionsGrid.innerHTML = '';
+            questionOptions.forEach((city, index) => {
+                const btn = document.createElement('button');
+                btn.className = `city-option bg-slate-50 hover:bg-purple-50 text-gray-800 font-extrabold text-base sm:text-lg md:text-xl py-3 sm:py-3.5 px-3 sm:px-4 rounded-2xl btn-game border-2 border-purple-200 hover:border-purple-400 flex items-center justify-start gap-3 transition-all cursor-pointer`;
+
+                btn.innerHTML = `
+                    <span class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 font-black text-sm flex items-center justify-center border border-purple-300 shadow-sm shrink-0">
+                        ${optionBadges[index]}
+                    </span>
+                    <span class="city-name flex-1 text-left">${city}</span>
+                `;
+
+                btn.onclick = () => handleAnswer(city, btn);
+                elements.optionsGrid.appendChild(btn);
+            });
+
+            // Ses dosyasını hazırla
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+            }
+            currentAudio = new Audio(q.audioFile);
+
+            currentAudio.onended = () => {
+                stopPlayingState();
+            };
+
+            currentAudio.onerror = () => {
+                console.warn(`Ses dosyası bulunamadı: ${q.audioFile}`);
+                setTimeout(stopPlayingState, 1500);
+            };
+
+            resetPlayButton();
+        }
+
+        // Dinle / Duraklat Buton Olayı
+        elements.playBtn.addEventListener('click', () => {
+            if (!currentAudio) return;
+
+            if (isPlaying) {
+                currentAudio.pause();
+                stopPlayingState();
+            } else {
+                currentAudio.play().catch(e => {
+                    console.log("Ses oynatma hatası:", e);
+                });
+                startPlayingState();
+            }
+        });
+
+        // Tekrar Dinle Buton Olayı
+        elements.replayBtn.addEventListener('click', () => {
+            if (!currentAudio) return;
+
+            currentAudio.currentTime = 0;
+            currentAudio.play().catch(e => {
+                console.log("Ses oynatma hatası:", e);
+            });
+            startPlayingState();
+        });
+
+        function startPlayingState() {
+            isPlaying = true;
+            elements.playIcon.className = 'fas fa-pause text-lg sm:text-xl';
+            if (elements.playBtnText) elements.playBtnText.innerText = "Duraklat";
+            elements.playBtn.classList.add('ripple-effect');
+            elements.audioStatus.classList.remove('opacity-0');
+        }
+
+        function stopPlayingState() {
+            isPlaying = false;
+            elements.playIcon.className = 'fas fa-play text-lg sm:text-xl';
+            if (elements.playBtnText) elements.playBtnText.innerText = "Dinle";
+            elements.playBtn.classList.remove('ripple-effect');
+            elements.audioStatus.classList.add('opacity-0');
+        }
+
+        function resetPlayButton() {
+            stopPlayingState();
+        }
+
+        // Cevap Kontrolü
+        function handleAnswer(selectedCity, buttonElement) {
+            if (isAnswered) return;
+            isAnswered = true;
+
+            const q = questions[currentQuestionIndex];
+            const isCorrect = selectedCity === q.correctAnswer;
+
+            if (currentAudio && isPlaying) {
+                currentAudio.pause();
+                stopPlayingState();
+            }
+
+            const allButtons = document.querySelectorAll('.city-option');
+            allButtons.forEach(btn => btn.disabled = true);
+
+            if (isCorrect) {
+                // Doğru Buton Tasarımı
+                buttonElement.className = `city-option bg-emerald-500 text-white font-extrabold text-base sm:text-lg md:text-xl py-3 sm:py-3.5 px-3 sm:px-4 rounded-2xl btn-game border-2 border-emerald-600 flex items-center justify-start gap-3 pop shadow-lg`;
+                buttonElement.innerHTML = `
+                    <span class="w-8 h-8 rounded-xl bg-white text-emerald-700 font-black text-base flex items-center justify-center shadow-sm shrink-0">
+                        <i class="fas fa-check"></i>
+                    </span>
+                    <span class="city-name flex-1 text-left font-black">${selectedCity} (Doğru!)</span>
+                `;
+
+                score += pointsPerQuestion;
+                updateScoreDisplay();
+                showToast("🎉 Harika! Doğru Tahmin.", "bg-emerald-600 text-white");
+            } else {
+                // Yanlış Buton Tasarımı
+                buttonElement.className = `city-option bg-rose-500 text-white font-extrabold text-base sm:text-lg md:text-xl py-3 sm:py-3.5 px-3 sm:px-4 rounded-2xl btn-game border-2 border-rose-600 flex items-center justify-start gap-3 shake shadow-lg`;
+                buttonElement.innerHTML = `
+                    <span class="w-8 h-8 rounded-xl bg-white text-rose-600 font-black text-base flex items-center justify-center shadow-sm shrink-0">
+                        <i class="fas fa-times"></i>
+                    </span>
+                    <span class="city-name flex-1 text-left font-black">${selectedCity}</span>
+                `;
+
+                // Doğru Cevabı Yeşil Göster
+                allButtons.forEach(btn => {
+                    if (btn.querySelector('.city-name').innerText.trim() === q.correctAnswer) {
+                        btn.className = `city-option bg-emerald-500 text-white font-extrabold text-base sm:text-lg md:text-xl py-3 sm:py-3.5 px-3 sm:px-4 rounded-2xl btn-game border-2 border-emerald-600 flex items-center justify-start gap-3 pop shadow-md`;
+                        btn.innerHTML = `
+                            <span class="w-8 h-8 rounded-xl bg-white text-emerald-700 font-black text-base flex items-center justify-center shadow-sm shrink-0">
+                                <i class="fas fa-check"></i>
+                            </span>
+                            <span class="city-name flex-1 text-left font-black">${q.correctAnswer} (Doğru Cevap)</span>
+                        `;
+                    }
+                });
+
+                showToast("💡 Doğru cevabı inceleyebilirsin.", "bg-amber-600 text-white");
+            }
+
+            // Son soru kontrolü ve buton metni
+            if (currentQuestionIndex === questions.length - 1) {
+                elements.nextBtnText.innerText = "2. Aşamaya Geç 🚀";
+            } else {
+                elements.nextBtnText.innerText = "Sonraki Soruya Geç";
+            }
+
+            // Sonraki Soru Butonunu Göster (Otomatik geçmez, tıklayarak geçilir)
+            elements.nextActionContainer.classList.remove('hidden');
+            elements.nextActionContainer.classList.add('flex');
+        }
+
+        // Sonraki Soru Butonuna Tıklanınca
+        elements.nextQuestionBtn.addEventListener('click', () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                startPart2();
+            }
+        });
+
+        function updateScoreDisplay() {
+            elements.scoreText.innerText = score;
+        }
+
+        function showToast(message, extraClasses) {
+            const toast = elements.feedbackToast;
+            toast.className = `fixed top-14 left-1/2 transform -translate-x-1/2 px-6 py-2.5 rounded-2xl font-black text-base sm:text-lg shadow-2xl pointer-events-none transition-all duration-300 z-50 border-2 border-white/80 flex items-center gap-2 ${extraClasses}`;
+            toast.innerHTML = message;
+
+            toast.style.opacity = '1';
+            toast.style.transform = 'translate(-50%, 0)';
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translate(-50%, -15px)';
+            }, 2600);
+        }
+
+        function startPart2() {
+            screens.game.classList.add('hidden');
+            screens.game.classList.remove('flex');
+
+            screens.part2.classList.remove('hidden');
+            screens.part2.classList.add('flex');
+
+            showToast("🎬 Harika! Şimdi 2. Aşamaya geçiyoruz.", "bg-purple-600 text-white");
+        }
+
+        videoElements.startBtn.addEventListener('click', () => {
+            videoElements.startOverlay.classList.add('hidden');
+            videoElements.startOverlay.classList.remove('flex');
+            videoElements.video.play().catch(e => {
+                console.log("Video oynatılamadı:", e);
+            });
+        });
+
+        // 19. Saniye Kontrolü
+        videoElements.video.addEventListener('timeupdate', () => {
+            if (videoElements.video.currentTime >= 19 && !videoQuestionAsked) {
+                videoElements.video.pause();
+                videoQuestionAsked = true;
+
+                videoElements.questionOverlay.classList.remove('hidden');
+                videoElements.questionOverlay.classList.add('flex');
+            }
+        });
+
+        videoElements.answeredBtn.addEventListener('click', () => {
+            videoElements.questionOverlay.classList.add('hidden');
+            videoElements.questionOverlay.classList.remove('flex');
+            videoElements.video.play();
+            showToast("👏 Teşekkürler! Video devam ediyor...", "bg-emerald-600 text-white");
+        });
+
+        videoElements.video.addEventListener('ended', () => {
+            endGame();
+        });
+
+        function endGame() {
+            screens.game.classList.add('hidden');
+            screens.game.classList.remove('flex');
+            screens.part2.classList.add('hidden');
+            screens.part2.classList.remove('flex');
+
+            screens.result.classList.remove('hidden');
+            screens.result.classList.add('flex');
+
+            elements.finalScore.innerText = score + " / " + (questions.length * pointsPerQuestion);
+        }
+
+        elements.restartBtn.addEventListener('click', initGame);
+
+        window.onload = () => {
+            initGame();
+        };
+    </script>
+</body>
+
+</html>
