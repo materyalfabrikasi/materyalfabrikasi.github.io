@@ -442,6 +442,136 @@
       background: #ffffff;
     }
 
+    /* Audio Player & Clue Card */
+    .audio-clue-card {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .audio-control-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 16px;
+      background: linear-gradient(135deg, #fff9ea 0%, #fff0d0 100%);
+      border: 1.5px solid #f6d899;
+      border-radius: 18px;
+      box-shadow: 0 4px 14px rgba(233, 185, 73, 0.14);
+    }
+
+    .audio-play-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 18px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #b52632 0%, #d92d3c 100%);
+      color: #ffffff;
+      border: none;
+      font-size: 14.5px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      box-shadow: 0 4px 14px rgba(181, 38, 50, 0.35);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .audio-play-btn:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 6px 18px rgba(181, 38, 50, 0.45);
+      background: linear-gradient(135deg, #9b1e28 0%, #c42230 100%);
+    }
+
+    .audio-play-btn:active {
+      transform: translateY(0) scale(0.98);
+    }
+
+    .audio-play-btn.is-playing {
+      background: linear-gradient(135deg, #15803d 0%, #16a34a 100%);
+      box-shadow: 0 4px 14px rgba(22, 163, 74, 0.35);
+    }
+
+    .audio-play-btn .btn-icon {
+      font-size: 15px;
+      display: inline-block;
+      transition: transform 0.2s;
+    }
+
+    .audio-info-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+      justify-content: flex-end;
+    }
+
+    .audio-character-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #78350f;
+    }
+
+    /* Sound Wave Equalizer Animation */
+    .sound-wave {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      height: 20px;
+    }
+
+    .sound-wave .bar {
+      width: 3.5px;
+      height: 6px;
+      background: #ca8a04;
+      border-radius: 999px;
+      transition: height 0.2s ease, background-color 0.2s ease;
+    }
+
+    .audio-play-btn.is-playing~.audio-info-wrap .sound-wave .bar {
+      background: #15803d;
+      animation: soundWaveAnim 0.9s ease-in-out infinite alternate;
+    }
+
+    .audio-play-btn.is-playing~.audio-info-wrap .sound-wave .bar:nth-child(1) {
+      animation-delay: 0.1s;
+    }
+
+    .audio-play-btn.is-playing~.audio-info-wrap .sound-wave .bar:nth-child(2) {
+      animation-delay: 0.3s;
+    }
+
+    .audio-play-btn.is-playing~.audio-info-wrap .sound-wave .bar:nth-child(3) {
+      animation-delay: 0.2s;
+    }
+
+    .audio-play-btn.is-playing~.audio-info-wrap .sound-wave .bar:nth-child(4) {
+      animation-delay: 0.4s;
+    }
+
+    .audio-play-btn.is-playing~.audio-info-wrap .sound-wave .bar:nth-child(5) {
+      animation-delay: 0.15s;
+    }
+
+    @keyframes soundWaveAnim {
+      0% {
+        height: 4px;
+      }
+
+      50% {
+        height: 18px;
+      }
+
+      100% {
+        height: 7px;
+      }
+    }
+
     /* Enhanced Clue Box (Yönerge / İpucu) */
     .clue-box {
       position: relative;
@@ -1180,6 +1310,15 @@
         padding: 28px 22px;
       }
 
+      .audio-control-bar {
+        padding: 8px 12px;
+      }
+
+      .audio-play-btn {
+        padding: 8px 14px;
+        font-size: 13.5px;
+      }
+
       .question-title {
         font-size: 26px;
         margin-top: 24px;
@@ -1237,9 +1376,9 @@
 
             <div>
               <div class="subtitle-instruction-box">
-                <span class="instruction-icon">🎯</span>
+                <span class="instruction-icon">🎧</span>
                 <p class="subtitle" data-template-id="lesson-subtitle">
-                  Fotoğrafa bak. <strong>İpucunu oku.</strong> Karakterin nereli olduğunu bul!
+                  Fotoğrafa bak. <strong>Sesi dinle.</strong> Karakterin nereli olduğunu bul!
                 </p>
               </div>
             </div>
@@ -1269,14 +1408,36 @@
                 loading="lazy">
             </div>
             <div class="question-body">
-              <div class="clue-box">
-                <div class="clue-row"><span class="clue-icon">💬</span>
-                  <p class="clue-text" data-template-id="istanbul-clue">Ben Ali. Burada Boğaz, vapurlar ve martılar var.
-                    Çok güzel bir şehir!</p>
+              <div class="audio-clue-card">
+                <div class="audio-control-bar">
+                  <button class="audio-play-btn" type="button" data-audio="audio-ali"
+                    aria-label="Ali'nin ses kaydını dinle">
+                    <span class="btn-icon play-icon">▶</span>
+                    <span class="btn-icon pause-icon" style="display:none;">⏸</span>
+                    <span class="btn-text">Sesi Dinle</span>
+                  </button>
+                  <div class="audio-info-wrap">
+                    <div class="sound-wave" aria-hidden="true">
+                      <span class="bar"></span>
+                      <span class="bar"></span>
+                      <span class="bar"></span>
+                      <span class="bar"></span>
+                      <span class="bar"></span>
+                    </div>
+                    <span class="audio-character-badge">🗣️ Ali Konuşuyor</span>
+                  </div>
+                  <audio id="audio-ali" class="character-audio" src="ali.mp3" preload="auto"></audio>
+                </div>
+                <div class="clue-box">
+                  <div class="clue-row"><span class="clue-icon">💬</span>
+                    <p class="clue-text" data-template-id="istanbul-clue">Ben Ali. Burada Boğaz, vapurlar ve martılar
+                      var.
+                      Çok güzel bir şehir!</p>
+                  </div>
                 </div>
               </div>
               <h2 class="question-title" data-template-id="istanbul-question">Ali nereli?</h2>
-              <p class="helper" data-template-id="istanbul-helper">💡 Doğru cevabı seç.</p>
+              <p class="helper" data-template-id="istanbul-helper">Sesi dinle ve Ali'nin nereli olduğunu seç.</p>
               <div class="options" role="group" aria-label="Ali için cevap seçenekleri"><button class="option-btn"
                   type="button" data-correct="true" data-question-index="0"
                   data-template-id="istanbul-answer-1"><span>İstanbullu</span> <span>➔</span></button> <button
@@ -1298,14 +1459,35 @@
                 loading="lazy">
             </div>
             <div class="question-body">
-              <div class="clue-box">
-                <div class="clue-row"><span class="clue-icon">💬</span>
-                  <p class="clue-text" data-template-id="ankara-clue">Ben Elif. Burası başkent. Burada Anıtkabir ve
-                    büyük parklar var.</p>
+              <div class="audio-clue-card">
+                <div class="audio-control-bar">
+                  <button class="audio-play-btn" type="button" data-audio="audio-elif"
+                    aria-label="Elif'in ses kaydını dinle">
+                    <span class="btn-icon play-icon">▶</span>
+                    <span class="btn-icon pause-icon" style="display:none;">⏸</span>
+                    <span class="btn-text">Sesi Dinle</span>
+                  </button>
+                  <div class="audio-info-wrap">
+                    <div class="sound-wave" aria-hidden="true">
+                      <span class="bar"></span>
+                      <span class="bar"></span>
+                      <span class="bar"></span>
+                      <span class="bar"></span>
+                      <span class="bar"></span>
+                    </div>
+                    <span class="audio-character-badge">🗣️ Elif Konuşuyor</span>
+                  </div>
+                  <audio id="audio-elif" class="character-audio" src="elif.mp3" preload="auto"></audio>
+                </div>
+                <div class="clue-box">
+                  <div class="clue-row"><span class="clue-icon">💬</span>
+                    <p class="clue-text" data-template-id="ankara-clue">Ben Elif. Burası başkent. Burada Anıtkabir ve
+                      büyük parklar var.</p>
+                  </div>
                 </div>
               </div>
               <h2 class="question-title" data-template-id="ankara-question">Elif nereli?</h2>
-              <p class="helper" data-template-id="ankara-helper">💡 Başkent ipucuna bak.</p>
+              <p class="helper" data-template-id="ankara-helper">Sesi dinle ve Elif'in nereli olduğunu seç.</p>
               <div class="options" role="group" aria-label="Elif için cevap seçenekleri"><button class="option-btn"
                   type="button" data-correct="false" data-question-index="1"
                   data-template-id="ankara-answer-1"><span>Antalyalı</span> <span>➔</span></button> <button
@@ -1327,14 +1509,36 @@
                 loading="lazy">
             </div>
             <div class="question-body">
-              <div class="clue-box">
-                <div class="clue-row"><span class="clue-icon">💬</span>
-                  <p class="clue-text" data-template-id="izmir-clue">Ben Mert. Burada deniz, Kordon ve Saat Kulesi var.
-                    Çok güzel bir şehir!</p>
+              <div class="audio-clue-card">
+                <div class="audio-control-bar">
+                  <button class="audio-play-btn" type="button" data-audio="audio-mert"
+                    aria-label="Mert'in ses kaydını dinle">
+                    <span class="btn-icon play-icon">▶</span>
+                    <span class="btn-icon pause-icon" style="display:none;">⏸</span>
+                    <span class="btn-text">Sesi Dinle</span>
+                  </button>
+                  <div class="audio-info-wrap">
+                    <div class="sound-wave" aria-hidden="true">
+                      <span class="bar"></span>
+                      <span class="bar"></span>
+                      <span class="bar"></span>
+                      <span class="bar"></span>
+                      <span class="bar"></span>
+                    </div>
+                    <span class="audio-character-badge">🗣️ Mert Konuşuyor</span>
+                  </div>
+                  <audio id="audio-mert" class="character-audio" src="mert.mp3" preload="auto"></audio>
+                </div>
+                <div class="clue-box">
+                  <div class="clue-row"><span class="clue-icon">💬</span>
+                    <p class="clue-text" data-template-id="izmir-clue">Ben Mert. Burada deniz, Kordon ve Saat Kulesi
+                      var.
+                      Çok güzel bir şehir!</p>
+                  </div>
                 </div>
               </div>
               <h2 class="question-title" data-template-id="izmir-question">Mert nereli?</h2>
-              <p class="helper" data-template-id="izmir-helper">💡 Fotoğrafa dikkat et.</p>
+              <p class="helper" data-template-id="izmir-helper">Sesi dinle ve Mert'in nereli olduğunu seç.</p>
               <div class="options" role="group" aria-label="Mert için cevap seçenekleri"><button class="option-btn"
                   type="button" data-correct="false" data-question-index="2"
                   data-template-id="izmir-answer-1"><span>Ankaralı</span> <span>➔</span></button> <button
@@ -1356,14 +1560,35 @@
                 loading="lazy">
             </div>
             <div class="question-body">
-              <div class="clue-box">
-                <div class="clue-row"><span class="clue-icon">💬</span>
-                  <p class="clue-text" data-template-id="antalya-clue">Ben Esma. Burada güneş, masmavi bir deniz,
-                    palmiyeler ve Kaleiçi var.</p>
+              <div class="audio-clue-card">
+                <div class="audio-control-bar">
+                  <button class="audio-play-btn" type="button" data-audio="audio-esma"
+                    aria-label="Esma'nın ses kaydını dinle">
+                    <span class="btn-icon play-icon">▶</span>
+                    <span class="btn-icon pause-icon" style="display:none;">⏸</span>
+                    <span class="btn-text">Sesi Dinle</span>
+                  </button>
+                  <div class="audio-info-wrap">
+                    <div class="sound-wave" aria-hidden="true">
+                      <span class="bar"></span>
+                      <span class="bar"></span>
+                      <span class="bar"></span>
+                      <span class="bar"></span>
+                      <span class="bar"></span>
+                    </div>
+                    <span class="audio-character-badge">🗣️ Esma Konuşuyor</span>
+                  </div>
+                  <audio id="audio-esma" class="character-audio" src="esma.mp3" preload="auto"></audio>
+                </div>
+                <div class="clue-box">
+                  <div class="clue-row"><span class="clue-icon">💬</span>
+                    <p class="clue-text" data-template-id="antalya-clue">Ben Esma. Burada güneş, masmavi bir deniz,
+                      palmiyeler ve Kaleiçi var.</p>
+                  </div>
                 </div>
               </div>
               <h2 class="question-title" data-template-id="antalya-question">Esma nereli?</h2>
-              <p class="helper" data-template-id="antalya-helper">💡 Kaleiçi ipucuna bak.</p>
+              <p class="helper" data-template-id="antalya-helper">Sesi dinle ve Esma'nın nereli olduğunu seç.</p>
               <div class="options" role="group" aria-label="Esma için cevap seçenekleri"><button class="option-btn"
                   type="button" data-correct="false" data-question-index="3"
                   data-template-id="antalya-answer-1"><span>İzmirli</span> <span>➔</span></button> <button
@@ -1512,7 +1737,92 @@
       let hasTriggeredQuestion = false;
       const answeredQuestions = new Set();
 
+      // Audio elementleri ve kontrolleri
+      const audioButtons = document.querySelectorAll(".audio-play-btn");
+      const allAudios = document.querySelectorAll(".character-audio");
+
+      function stopAllAudios() {
+        allAudios.forEach(audio => {
+          audio.pause();
+          audio.currentTime = 0;
+        });
+        audioButtons.forEach(btn => {
+          btn.classList.remove("is-playing");
+          const playIcon = btn.querySelector(".play-icon");
+          const pauseIcon = btn.querySelector(".pause-icon");
+          const btnText = btn.querySelector(".btn-text");
+          if (playIcon) playIcon.style.display = "inline";
+          if (pauseIcon) pauseIcon.style.display = "none";
+          if (btnText) btnText.textContent = "Sesi Dinle";
+        });
+      }
+
+      audioButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+          const audioId = btn.dataset.audio;
+          const audio = document.getElementById(audioId);
+          if (!audio) return;
+
+          const playIcon = btn.querySelector(".play-icon");
+          const pauseIcon = btn.querySelector(".pause-icon");
+          const btnText = btn.querySelector(".btn-text");
+
+          if (!audio.paused) {
+            audio.pause();
+            btn.classList.remove("is-playing");
+            if (playIcon) playIcon.style.display = "inline";
+            if (pauseIcon) pauseIcon.style.display = "none";
+            if (btnText) btnText.textContent = "Devam Et";
+          } else {
+            // Diğer sesleri durdur
+            allAudios.forEach(otherAudio => {
+              if (otherAudio !== audio) {
+                otherAudio.pause();
+                otherAudio.currentTime = 0;
+              }
+            });
+            audioButtons.forEach(otherBtn => {
+              if (otherBtn !== btn) {
+                otherBtn.classList.remove("is-playing");
+                const otherPlay = otherBtn.querySelector(".play-icon");
+                const otherPause = otherBtn.querySelector(".pause-icon");
+                const otherText = otherBtn.querySelector(".btn-text");
+                if (otherPlay) otherPlay.style.display = "inline";
+                if (otherPause) otherPause.style.display = "none";
+                if (otherText) otherText.textContent = "Sesi Dinle";
+              }
+            });
+
+            audio.play().then(() => {
+              btn.classList.add("is-playing");
+              if (playIcon) playIcon.style.display = "none";
+              if (pauseIcon) pauseIcon.style.display = "inline";
+              if (btnText) btnText.textContent = "Duraklat";
+            }).catch(err => {
+              console.warn("Ses çalma uyarısı:", err);
+            });
+          }
+        });
+      });
+
+      allAudios.forEach(audio => {
+        audio.addEventListener("ended", () => {
+          const btn = document.querySelector(`[data-audio="${audio.id}"]`);
+          if (btn) {
+            btn.classList.remove("is-playing");
+            const playIcon = btn.querySelector(".play-icon");
+            const pauseIcon = btn.querySelector(".pause-icon");
+            const btnText = btn.querySelector(".btn-text");
+            if (playIcon) playIcon.style.display = "inline";
+            if (pauseIcon) pauseIcon.style.display = "none";
+            if (btnText) btnText.textContent = "Tekrar Dinle";
+          }
+        });
+      });
+
       function updateLessonView() {
+        stopAllAudios();
+
         panels.forEach((panel, index) => {
           panel.classList.toggle("active", index === currentQuestion);
         });
@@ -1532,6 +1842,7 @@
       }
 
       function showPekiSen() {
+        stopAllAudios();
         panels.forEach(panel => panel.classList.remove("active"));
         navigation.style.display = "none";
         pekiSenPanel.classList.add("active");
@@ -1541,6 +1852,7 @@
       }
 
       function startVideoLesson() {
+        stopAllAudios();
         pekiSenPanel.classList.remove("active");
         videoPanel.classList.add("active");
         progressText.textContent = "2. Bölüm (Video)";
@@ -1553,6 +1865,7 @@
       }
 
       function finishLesson() {
+        stopAllAudios();
         if (lessonVideo) {
           lessonVideo.pause();
         }
@@ -1677,6 +1990,7 @@
       });
 
       restartButton.addEventListener("click", () => {
+        stopAllAudios();
         currentQuestion = 0;
         score = 0;
         hasTriggeredQuestion = false;
