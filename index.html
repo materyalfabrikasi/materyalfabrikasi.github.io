@@ -993,33 +993,7 @@
             noResults.style.display = 'none';
             resultsCount.style.display = 'block';
 
-            const staticCard = `
-                <div class="material-card" style="border: 2px solid #bfdbfe; background: #f8fafc;">
-                    <div class="card-header">
-                        <div class="card-icon" style="background: #ffffff; border: 1px solid #e2e8f0; overflow: hidden; padding: 0;">
-                            <img src="icons/haftalik-etkinlikler-logo.png" alt="Haftalık Etkinlikler Logo"
-                                 style="width: 100%; height: 100%; object-fit: contain;">
-                        </div>
-                        <div class="card-title">
-                            <h3>2025-2026 Türkçe ve Türk Kültürü Dersi Haftalık Etkinlik Planları</h3>
-                            <span style="font-size: 0.85rem; color: #64748b; font-weight: 600;">📌 Sabit İçerik</span>
-                        </div>
-                    </div>
-                    <div class="card-description">
-                        2025-2026 Türkçe ve Türk Kültürü dersine yönelik haftalık etkinlik planlarını bu bağlantıdan inceleyebilirsiniz.
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 0.6rem; margin-top: 0.5rem; padding: 0.9rem 1.2rem; background: #eff6ff; border-radius: 12px; transform: translateZ(10px);">
-                        <span style="font-size: 1.3rem;">🔗</span>
-                        <a href="https://ulkemyanimda.github.io/ogretmensandigi/HaftalikEtkinlikler/index.html"
-                           target="_blank"
-                           style="color: #2563eb; font-weight: 700; font-size: 1rem; text-decoration: none;">
-                            Haftalık Etkinliklere Git →
-                        </a>
-                    </div>
-                </div>
-            `;
-
-            grid.innerHTML = staticCard + materialsToRender.map(material => `
+            grid.innerHTML = materialsToRender.map(material => `
                 <div class="material-card">
                     <div class="card-header">
                         <div class="card-icon">
