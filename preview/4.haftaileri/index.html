@@ -331,33 +331,41 @@
           </h1>
         </div>
       </div>
-      <p class="hidden md:block text-xs sm:text-sm font-semibold text-[#3b4740] max-w-xs text-right leading-snug">
-        Aynı memleketten olan kişileri eşleştir!
-      </p>
     </header>
 
-    <!-- STATUS & CONTROLS BAR -->
-    <div class="flex items-center justify-between gap-3 my-1.5 flex-none">
+    <!-- STATUS & CONTROLS BAR WITH HIGHLIGHTED CENTERED INSTRUCTION -->
+    <div class="flex items-center justify-between gap-2 sm:gap-3 my-1.5 flex-none">
       <div
-        class="flex items-center gap-3 bg-white/90 border-2 border-[#233128] rounded-xl px-3 py-1.5 shadow-[2px_2px_0_#233128] flex-1 max-w-sm">
+        class="flex items-center gap-2 sm:gap-3 bg-white/90 border-2 border-[#233128] rounded-xl px-2.5 sm:px-3 py-1.5 shadow-[2px_2px_0_#233128] w-[130px] sm:w-auto sm:flex-1 sm:max-w-[220px]">
         <span class="text-xs sm:text-sm font-extrabold text-[#233128] whitespace-nowrap">İlerleme:</span>
         <div class="flex-1 progress-track">
           <div id="progress-fill" class="progress-fill"></div>
         </div>
         <span id="progress-text"
-          class="text-xs sm:text-sm font-black text-[#1f7a4f] whitespace-nowrap min-w-[36px] text-right">0 / 5</span>
+          class="text-xs sm:text-sm font-black text-[#1f7a4f] whitespace-nowrap min-w-[30px] sm:min-w-[36px] text-right">0
+          / 5</span>
       </div>
 
-      <div class="flex items-center gap-2">
+      <!-- HIGHLIGHTED & CENTERED INSTRUCTION -->
+      <div
+        class="flex-1 flex items-center justify-center text-center bg-white/95 border-2 border-[#233128] px-3 sm:px-4 py-1.5 rounded-xl shadow-[2px_2px_0_#233128]">
+        <p
+          class="text-xs sm:text-sm font-extrabold text-[#1f2d26] text-center leading-snug flex items-center justify-center gap-1.5">
+          <span class="text-sm sm:text-base">🎯</span>
+          <span>Aynı memleketten olan kişileri eşleştir!</span>
+        </p>
+      </div>
+
+      <div class="flex items-center gap-1.5 sm:gap-2">
         <button id="sound-button" type="button" class="btn-action shadow-[2px_2px_0_#233128]" aria-pressed="false"
           title="Sesi Aç / Kapat">
           <span id="sound-icon">🔊</span>
-          <span id="sound-label" class="hidden sm:inline">Ses: Açık</span>
+          <span id="sound-label" class="hidden md:inline">Ses: Açık</span>
         </button>
         <button id="reset-button" type="button" class="btn-action shadow-[2px_2px_0_#233128] bg-[#f9faf7]"
           title="Oyunu Baştan Başlat">
           <span>🔄</span>
-          <span>Yeniden Başlat</span>
+          <span class="hidden sm:inline">Yeniden Başlat</span>
         </button>
       </div>
     </div>
@@ -496,21 +504,7 @@
       </div>
     </main>
 
-    <!-- STATUS & GUIDE BAR (Compact at bottom) -->
-    <section id="feedback-panel"
-      class="feedback-box feedback-idle mt-2 rounded-xl px-4 py-2.5 shadow-[3px_3px_0_#233128] flex-none flex items-center justify-between gap-3 min-h-[50px] sm:min-h-[56px]">
-      <div class="flex items-center gap-2.5 min-w-0 flex-1">
-        <span id="feedback-icon" class="text-xl sm:text-2xl flex-none">💡</span>
-        <p id="feedback-message" class="text-xs sm:text-sm font-bold leading-snug truncate sm:whitespace-normal"
-          role="status" aria-live="polite">
-          Soldan bir kişi, ardından sağdan hemşehrisini seç.
-        </p>
-      </div>
-      <div id="badge-city"
-        class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-white/80 border border-[#233128]/20 flex-none">
-        <span id="badge-text">Memleket</span>
-      </div>
-    </section>
+
 
   </div>
 
@@ -552,11 +546,6 @@
     const cards = [...document.querySelectorAll('.clue-btn')];
     const selections = { left: null, right: null };
     const completed = new Set();
-    const feedback = document.getElementById('feedback-message');
-    const feedbackIcon = document.getElementById('feedback-icon');
-    const feedbackPanel = document.getElementById('feedback-panel');
-    const badgeCity = document.getElementById('badge-city');
-    const badgeText = document.getElementById('badge-text');
     const soundButton = document.getElementById('sound-button');
     const soundLabel = document.getElementById('sound-label');
     const soundIcon = document.getElementById('sound-icon');
@@ -719,10 +708,6 @@
         card.setAttribute('aria-pressed', 'false');
         card.querySelector('.clue-mark').textContent = '';
       });
-      feedbackPanel.className = 'feedback-box feedback-idle mt-2 rounded-xl px-4 py-2.5 shadow-[3px_3px_0_#233128] flex-none flex items-center justify-between gap-3 min-h-[50px] sm:min-h-[56px]';
-      feedbackIcon.textContent = '💡';
-      feedback.textContent = 'Yeni tur başladı! Soldan bir kişi, ardından sağdan hemşehrisini seç.';
-      badgeCity.classList.add('hidden');
       updateProgress();
       tone('select');
     }
@@ -745,12 +730,6 @@
       tone('select');
 
       if (!selections.left || !selections.right) {
-        feedbackPanel.className = 'feedback-box feedback-idle mt-2 rounded-xl px-4 py-2.5 shadow-[3px_3px_0_#233128] flex-none flex items-center justify-between gap-3 min-h-[50px] sm:min-h-[56px]';
-        feedbackIcon.textContent = '👉';
-        feedback.textContent = side === 'left'
-          ? 'Şimdi sağ taraftan hemşehrisini seç.'
-          : 'Şimdi sol taraftan kişiyi seç.';
-        badgeCity.classList.add('hidden');
         return;
       }
 
@@ -774,16 +753,10 @@
         selections.left = null;
         selections.right = null;
 
-        feedbackPanel.className = 'feedback-box feedback-success mt-2 rounded-xl px-4 py-2.5 shadow-[3px_3px_0_#233128] flex-none flex items-center justify-between gap-3 min-h-[50px] sm:min-h-[56px]';
-        feedbackIcon.textContent = '🎉';
-        badgeCity.classList.remove('hidden');
-        badgeText.textContent = info.name;
-
         updateProgress();
         tone('success');
 
         if (completed.size === 5) {
-          feedback.textContent = `Tebrikler! ${info.p1} ve ${info.p2} ${info.name}! 🏆 Tüm hemşehrileri buldun!`;
           launchConfetti();
 
           showModal({
@@ -798,27 +771,16 @@
             }
           });
         } else {
-          feedback.textContent = `Tebrikler! ${info.p1} ve ${info.p2} ${info.name}! ${info.landmark}`;
-
           showModal({
             type: 'success',
             icon: '🎉',
             title: 'Tebrikler! Doğru Eşleştirme',
             badge: info.name,
             message: `Evet, ${info.p1} ve ${info.p2} ${info.name} yani hemşehri!\n\n${info.landmark}`,
-            buttonText: 'Tamam',
-            onConfirm: () => {
-              feedbackPanel.className = 'feedback-box feedback-idle mt-2 rounded-xl px-4 py-2.5 shadow-[3px_3px_0_#233128] flex-none flex items-center justify-between gap-3 min-h-[50px] sm:min-h-[56px]';
-              feedbackIcon.textContent = '💡';
-              feedback.textContent = 'Harika! Diğer hemşehrileri eşleştirmeye devam et.';
-            }
+            buttonText: 'Tamam'
           });
         }
       } else {
-        feedbackPanel.className = 'feedback-box feedback-error mt-2 rounded-xl px-4 py-2.5 shadow-[3px_3px_0_#233128] flex-none flex items-center justify-between gap-3 min-h-[50px] sm:min-h-[56px]';
-        feedbackIcon.textContent = '❌';
-        feedback.textContent = 'Farklı şehirler! İpuçlarını oku ve hemşehrileri eşleştir.';
-        badgeCity.classList.add('hidden');
         tone('error');
 
         showModal({
@@ -831,9 +793,6 @@
           onConfirm: () => {
             clearSelection('left');
             clearSelection('right');
-            feedbackPanel.className = 'feedback-box feedback-idle mt-2 rounded-xl px-4 py-2.5 shadow-[3px_3px_0_#233128] flex-none flex items-center justify-between gap-3 min-h-[50px] sm:min-h-[56px]';
-            feedbackIcon.textContent = '💡';
-            feedback.textContent = 'Soldan bir kişi, ardından sağdan hemşehrisini seç.';
           }
         });
       }
