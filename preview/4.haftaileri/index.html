@@ -1,0 +1,859 @@
+<!doctype html>
+<html lang="tr" class="h-full">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hemşehri Eşleştirme Oyunu</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,600&display=swap"
+    rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    :root {
+      --ink: #1f2d26;
+      --muted: #4e5f55;
+      --yellow: #ffc83d;
+      --green: #1f7a4f;
+      --cream: #fbf7ee;
+      --accent: #d9622b;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+      height: 100dvh;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--ink);
+      background: #f7f2e6;
+      user-select: none;
+    }
+
+    .bg-blobs::before,
+    .bg-blobs::after {
+      content: "";
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+      opacity: .45;
+    }
+
+    .bg-blobs::before {
+      width: 320px;
+      height: 320px;
+      right: -80px;
+      top: 10%;
+      background: #ffe3a8;
+      box-shadow: -460px 480px 0 40px #d4ecdc, -160px -380px 0 -40px #bee8d8;
+    }
+
+    .bg-blobs::after {
+      width: 200px;
+      height: 200px;
+      left: -60px;
+      bottom: 5%;
+      background: #cdebe0;
+      box-shadow: 320px -520px 0 -20px #ffd978;
+    }
+
+    .display-font {
+      font-family: 'Fraunces', serif;
+      letter-spacing: -0.025em;
+    }
+
+    .board-container {
+      background: #fffdf8;
+      border: 2px solid #233128;
+      box-shadow: 5px 5px 0 #233128;
+    }
+
+    .clue-btn {
+      width: 100%;
+      text-align: left;
+      background: #ffffff;
+      border: 2px solid #cbd6cd;
+      border-radius: 14px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: all .16s ease;
+    }
+
+    .clue-btn:not(:disabled):hover {
+      transform: translateY(-2px);
+      border-color: var(--ink);
+      box-shadow: 0 4px 0 #23312822;
+      background: #fffffc;
+    }
+
+    .clue-btn.selected {
+      border-color: #126b9e !important;
+      background: #eaf4fd !important;
+      box-shadow: 0 0 0 3px #126b9e38 !important;
+      transform: scale(1.01);
+    }
+
+    .clue-btn.matched {
+      border-color: var(--green) !important;
+      background: #eaf7ed !important;
+      box-shadow: none !important;
+      opacity: .9;
+      cursor: default;
+    }
+
+    .clue-btn:disabled {
+      cursor: default;
+    }
+
+    .clue-btn:focus-visible,
+    .btn-action:focus-visible {
+      outline: 3px solid #126b9e;
+      outline-offset: 2px;
+    }
+
+    .avatar-badge {
+      flex: none;
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      background: #fedb88;
+      color: #27352e;
+      font-weight: 800;
+      font-size: 15px;
+      border: 1.5px solid #27352e20;
+    }
+
+    .right-col .avatar-badge {
+      background: #bce9d7;
+    }
+
+    .clue-btn.matched .avatar-badge {
+      background: #73cf9b;
+      color: #0b3d22;
+    }
+
+    .btn-action {
+      height: 36px;
+      border: 2px solid #233128;
+      border-radius: 10px;
+      padding: 0 14px;
+      font-weight: 700;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: #ffffff;
+      color: var(--ink);
+      transition: all .15s ease;
+      cursor: pointer;
+    }
+
+    .btn-action:hover {
+      transform: translateY(-1.5px);
+      box-shadow: 0 3px 0 #23312822;
+      background: #fffef9;
+    }
+
+    .btn-action:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    .feedback-box {
+      border: 2px solid #233128;
+      transition: background-color .2s ease, border-color .2s ease;
+    }
+
+    .feedback-box.feedback-success {
+      background: #e3f8ea;
+      border-color: #1f7a4f;
+      color: #0d4629;
+    }
+
+    .feedback-box.feedback-error {
+      background: #fff1e5;
+      border-color: #cb5319;
+      color: #682305;
+    }
+
+    .feedback-box.feedback-idle {
+      background: #ffffff;
+      border-color: #233128;
+      color: var(--ink);
+    }
+
+    .progress-track {
+      background: #dce3dd;
+      height: 10px;
+      border-radius: 99px;
+      overflow: hidden;
+      border: 1px solid #b8c4ba;
+    }
+
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #208757, #2bb374);
+      transition: width .35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Modal backdrop & animation */
+    .modal-backdrop {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .modal-backdrop.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      transform: scale(0.9) translateY(12px);
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .modal-backdrop.active .modal-card {
+      transform: scale(1) translateY(0);
+    }
+
+    /* Confetti animation */
+    .confetti-piece {
+      position: absolute;
+      width: 9px;
+      height: 14px;
+      background: #ffd300;
+      top: 0;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 60;
+      animation: drop 2.5s ease-out forwards;
+    }
+
+    @keyframes drop {
+      0% {
+        opacity: 1;
+        transform: translateY(0) rotate(0deg);
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateY(85vh) rotate(720deg);
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-blobs h-full flex flex-col justify-between">
+
+  <div id="confetti-container" class="fixed inset-0 pointer-events-none overflow-hidden z-50"></div>
+
+  <!-- FEEDBACK MODAL OVERLAY -->
+  <div id="feedback-modal"
+    class="modal-backdrop fixed inset-0 bg-[#1f2d26]/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+    role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div
+      class="modal-card bg-[#fffdf8] border-2 sm:border-[3px] border-[#233128] rounded-3xl p-6 sm:p-7 max-w-md w-full text-center shadow-[6px_6px_0_#233128] relative flex flex-col items-center">
+
+      <!-- Icon badge -->
+      <div id="modal-icon-container"
+        class="w-16 h-16 rounded-2xl border-2 border-[#233128] flex items-center justify-center text-3xl shadow-[3px_3px_0_#233128] mb-3 bg-[#bce9d7]">
+        <span id="modal-icon">🎉</span>
+      </div>
+
+      <!-- City Badge -->
+      <div id="modal-badge-container" class="mb-2">
+        <span id="modal-badge"
+          class="px-3.5 py-1 rounded-full text-xs font-extrabold bg-[#e3f8ea] text-[#1f7a4f] border border-[#1f7a4f]/30 inline-block">
+          ANKARALI
+        </span>
+      </div>
+
+      <!-- Title -->
+      <h3 id="modal-title" class="display-font font-bold text-xl sm:text-2xl text-[#1f2d26] mb-2">
+        Doğru Eşleştirme!
+      </h3>
+
+      <!-- Message text -->
+      <p id="modal-message"
+        class="text-xs sm:text-sm font-semibold text-[#3b4740] leading-relaxed mb-6 whitespace-pre-line">
+        Tebrikler! Evet, Ayşe ve Ahmet ANKARALI yani hemşehri! Anıtkabir ve Kuğulu Park ANKARA’dadır.
+      </p>
+
+      <!-- Action Button -->
+      <button id="modal-ok-btn" type="button"
+        class="btn-action w-full sm:w-auto min-w-[150px] !h-11 text-sm sm:text-base font-black bg-[#ffc83d] hover:bg-[#ffbe1a] text-[#1f2d26] border-2 border-[#233128] rounded-xl shadow-[3px_3px_0_#233128] cursor-pointer">
+        Tamam
+      </button>
+
+    </div>
+  </div>
+
+  <!-- APP ROOT: Fit inside single screen without scroll -->
+  <div
+    class="relative z-10 w-full h-full max-w-6xl mx-auto px-3 sm:px-6 py-2 sm:py-3 flex flex-col justify-between overflow-hidden">
+
+    <!-- HEADER BAR: Compact with Logo & Title -->
+    <header
+      class="flex items-center justify-between gap-3 bg-[#ffc83d] border-2 border-[#233128] rounded-2xl px-4 py-2 sm:py-2.5 shadow-[3px_3px_0_#233128] flex-none">
+      <div class="flex items-center gap-3 min-w-0">
+        <!-- 1.svg Logo -->
+        <div
+          class="bg-white/95 rounded-xl p-1.5 border-2 border-[#233128] shadow-sm flex items-center justify-center flex-none">
+          <img src="1.svg" alt="Logo" class="h-7 sm:h-9 w-auto object-contain block">
+        </div>
+        <div class="min-w-0">
+          <div class="flex items-center gap-2">
+            <span
+              class="text-[10px] sm:text-xs font-black uppercase tracking-wider bg-white/80 px-2 py-0.5 rounded-full border border-[#233128]/20 text-[#1f2d26]">✦
+              Çevrim İçi Türkçe ve Türk Kültürü Dersi</span>
+          </div>
+          <h1 class="display-font font-bold text-base sm:text-xl text-[#233128] leading-tight truncate">
+            <span class="text-[#b24813] underline decoration-3 underline-offset-3">Hemşehri</span> Eşleştirme Oyunu
+          </h1>
+        </div>
+      </div>
+      <p class="hidden md:block text-xs sm:text-sm font-semibold text-[#3b4740] max-w-xs text-right leading-snug">
+        Aynı memleketten olan kişileri eşleştir!
+      </p>
+    </header>
+
+    <!-- STATUS & CONTROLS BAR -->
+    <div class="flex items-center justify-between gap-3 my-1.5 flex-none">
+      <div
+        class="flex items-center gap-3 bg-white/90 border-2 border-[#233128] rounded-xl px-3 py-1.5 shadow-[2px_2px_0_#233128] flex-1 max-w-sm">
+        <span class="text-xs sm:text-sm font-extrabold text-[#233128] whitespace-nowrap">İlerleme:</span>
+        <div class="flex-1 progress-track">
+          <div id="progress-fill" class="progress-fill"></div>
+        </div>
+        <span id="progress-text"
+          class="text-xs sm:text-sm font-black text-[#1f7a4f] whitespace-nowrap min-w-[36px] text-right">0 / 5</span>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button id="sound-button" type="button" class="btn-action shadow-[2px_2px_0_#233128]" aria-pressed="false"
+          title="Sesi Aç / Kapat">
+          <span id="sound-icon">🔊</span>
+          <span id="sound-label" class="hidden sm:inline">Ses: Açık</span>
+        </button>
+        <button id="reset-button" type="button" class="btn-action shadow-[2px_2px_0_#233128] bg-[#f9faf7]"
+          title="Oyunu Baştan Başlat">
+          <span>🔄</span>
+          <span>Yeniden Başlat</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- MAIN GAME BOARD (2 Columns side-by-side, 5 items each, compact) -->
+    <main class="board-container rounded-2xl p-3 sm:p-4 flex-1 min-h-0 flex flex-col justify-center overflow-hidden">
+      <div class="grid grid-cols-2 gap-3 sm:gap-5 h-full items-center">
+
+        <!-- LEFT COLUMN: 1. Kişiler -->
+        <div class="flex flex-col justify-between h-full min-h-0">
+          <div class="flex items-center justify-between mb-1.5 px-1 flex-none">
+            <h2 class="display-font font-bold text-sm sm:text-base text-[#1f2d26] flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-[#ffc83d] inline-block border border-[#233128]"></span>
+              1. Kişiler
+            </h2>
+            <span class="text-[11px] font-medium text-gray-500 hidden sm:inline">Bir kişi seçin</span>
+          </div>
+
+          <div class="flex-1 flex flex-col justify-between gap-1.5 sm:gap-2 min-h-0">
+            <button type="button" class="clue-btn" data-side="left" data-city="ankara" aria-pressed="false">
+              <span class="avatar-badge" aria-hidden="true">A</span>
+              <div class="min-w-0 flex-1">
+                <span class="block text-xs sm:text-sm font-extrabold text-[#1f2d26] leading-none mb-0.5">Ayşe</span>
+                <span class="block text-[11px] sm:text-xs text-[#4e5f55] leading-snug">Ben memleketimde Anıtkabir'i ve
+                  Kuğulu Park'ı gezerim.</span>
+              </div>
+              <span class="clue-mark text-base font-black text-[#1f7a4f] flex-none ml-1"></span>
+            </button>
+
+            <button type="button" class="clue-btn" data-side="left" data-city="istanbul" aria-pressed="false">
+              <span class="avatar-badge" aria-hidden="true">E</span>
+              <div class="min-w-0 flex-1">
+                <span class="block text-xs sm:text-sm font-extrabold text-[#1f2d26] leading-none mb-0.5">Elif</span>
+                <span class="block text-[11px] sm:text-xs text-[#4e5f55] leading-snug">Ben memleketimde Boğaz'da vapurla
+                  gezerim.</span>
+              </div>
+              <span class="clue-mark text-base font-black text-[#1f7a4f] flex-none ml-1"></span>
+            </button>
+
+            <button type="button" class="clue-btn" data-side="left" data-city="bursa" aria-pressed="false">
+              <span class="avatar-badge" aria-hidden="true">Z</span>
+              <div class="min-w-0 flex-1">
+                <span class="block text-xs sm:text-sm font-extrabold text-[#1f2d26] leading-none mb-0.5">Zeynep</span>
+                <span class="block text-[11px] sm:text-xs text-[#4e5f55] leading-snug">Ben memleketimde Uludağ'da kayak
+                  yaparım.</span>
+              </div>
+              <span class="clue-mark text-base font-black text-[#1f7a4f] flex-none ml-1"></span>
+            </button>
+
+            <button type="button" class="clue-btn" data-side="left" data-city="rize" aria-pressed="false">
+              <span class="avatar-badge" aria-hidden="true">D</span>
+              <div class="min-w-0 flex-1">
+                <span class="block text-xs sm:text-sm font-extrabold text-[#1f2d26] leading-none mb-0.5">Duru</span>
+                <span class="block text-[11px] sm:text-xs text-[#4e5f55] leading-snug">Ben memleketimde çay bahçelerinde
+                  dolaşırım.</span>
+              </div>
+              <span class="clue-mark text-base font-black text-[#1f7a4f] flex-none ml-1"></span>
+            </button>
+
+            <button type="button" class="clue-btn" data-side="left" data-city="antalya" aria-pressed="false">
+              <span class="avatar-badge" aria-hidden="true">S</span>
+              <div class="min-w-0 flex-1">
+                <span class="block text-xs sm:text-sm font-extrabold text-[#1f2d26] leading-none mb-0.5">Selin</span>
+                <span class="block text-[11px] sm:text-xs text-[#4e5f55] leading-snug">Ben memleketimde Kaleiçi
+                  sokaklarında gezerim.</span>
+              </div>
+              <span class="clue-mark text-base font-black text-[#1f7a4f] flex-none ml-1"></span>
+            </button>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN: 2. Hemşehriler -->
+        <div class="right-col flex flex-col justify-between h-full min-h-0">
+          <div class="flex items-center justify-between mb-1.5 px-1 flex-none">
+            <h2 class="display-font font-bold text-sm sm:text-base text-[#1f2d26] flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-[#5fcb9a] inline-block border border-[#233128]"></span>
+              2. Hemşehriler
+            </h2>
+            <span class="text-[11px] font-medium text-gray-500 hidden sm:inline">Hemşehrisini seçin</span>
+          </div>
+
+          <div class="flex-1 flex flex-col justify-between gap-1.5 sm:gap-2 min-h-0">
+            <button type="button" class="clue-btn" data-side="right" data-city="rize" aria-pressed="false">
+              <span class="avatar-badge" aria-hidden="true">E</span>
+              <div class="min-w-0 flex-1">
+                <span class="block text-xs sm:text-sm font-extrabold text-[#1f2d26] leading-none mb-0.5">Emir</span>
+                <span class="block text-[11px] sm:text-xs text-[#4e5f55] leading-snug">Ben memleketimde yaylalara çıkar,
+                  çay toplarım.</span>
+              </div>
+              <span class="clue-mark text-base font-black text-[#1f7a4f] flex-none ml-1"></span>
+            </button>
+
+            <button type="button" class="clue-btn" data-side="right" data-city="ankara" aria-pressed="false">
+              <span class="avatar-badge" aria-hidden="true">A</span>
+              <div class="min-w-0 flex-1">
+                <span class="block text-xs sm:text-sm font-extrabold text-[#1f2d26] leading-none mb-0.5">Ahmet</span>
+                <span class="block text-[11px] sm:text-xs text-[#4e5f55] leading-snug">Ben memleketimde başkentimizin
+                  parklarında gezerim.</span>
+              </div>
+              <span class="clue-mark text-base font-black text-[#1f7a4f] flex-none ml-1"></span>
+            </button>
+
+            <button type="button" class="clue-btn" data-side="right" data-city="antalya" aria-pressed="false">
+              <span class="avatar-badge" aria-hidden="true">C</span>
+              <div class="min-w-0 flex-1">
+                <span class="block text-xs sm:text-sm font-extrabold text-[#1f2d26] leading-none mb-0.5">Can</span>
+                <span class="block text-[11px] sm:text-xs text-[#4e5f55] leading-snug">Ben memleketimde Akdeniz
+                  sahilinde yüzerim.</span>
+              </div>
+              <span class="clue-mark text-base font-black text-[#1f7a4f] flex-none ml-1"></span>
+            </button>
+
+            <button type="button" class="clue-btn" data-side="right" data-city="istanbul" aria-pressed="false">
+              <span class="avatar-badge" aria-hidden="true">M</span>
+              <div class="min-w-0 flex-1">
+                <span class="block text-xs sm:text-sm font-extrabold text-[#1f2d26] leading-none mb-0.5">Mert</span>
+                <span class="block text-[11px] sm:text-xs text-[#4e5f55] leading-snug">Ben memleketimde Galata Kulesi'ni
+                  ve
+                  Kız Kulesi'ni gezerim.</span>
+              </div>
+              <span class="clue-mark text-base font-black text-[#1f7a4f] flex-none ml-1"></span>
+            </button>
+
+            <button type="button" class="clue-btn" data-side="right" data-city="bursa" aria-pressed="false">
+              <span class="avatar-badge" aria-hidden="true">K</span>
+              <div class="min-w-0 flex-1">
+                <span class="block text-xs sm:text-sm font-extrabold text-[#1f2d26] leading-none mb-0.5">Kerem</span>
+                <span class="block text-[11px] sm:text-xs text-[#4e5f55] leading-snug">Ben memleketimde İskender kebap
+                  yer, Uludağ'a çıkarım.</span>
+              </div>
+              <span class="clue-mark text-base font-black text-[#1f7a4f] flex-none ml-1"></span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- STATUS & GUIDE BAR (Compact at bottom) -->
+    <section id="feedback-panel"
+      class="feedback-box feedback-idle mt-2 rounded-xl px-4 py-2.5 shadow-[3px_3px_0_#233128] flex-none flex items-center justify-between gap-3 min-h-[50px] sm:min-h-[56px]">
+      <div class="flex items-center gap-2.5 min-w-0 flex-1">
+        <span id="feedback-icon" class="text-xl sm:text-2xl flex-none">💡</span>
+        <p id="feedback-message" class="text-xs sm:text-sm font-bold leading-snug truncate sm:whitespace-normal"
+          role="status" aria-live="polite">
+          Soldan bir kişi, ardından sağdan hemşehrisini seç.
+        </p>
+      </div>
+      <div id="badge-city"
+        class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-white/80 border border-[#233128]/20 flex-none">
+        <span id="badge-text">Memleket</span>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    // City details and required message formats
+    const cityInfo = {
+      ankara: {
+        name: 'ANKARALI',
+        p1: 'Ayşe',
+        p2: 'Ahmet',
+        landmark: 'Anıtkabir ve Kuğulu Park ANKARA’dadır.'
+      },
+      istanbul: {
+        name: 'İSTANBULLU',
+        p1: 'Elif',
+        p2: 'Mert',
+        landmark: 'Boğaz ve Kız Kulesi İSTANBUL’u hatırlatır.'
+      },
+      bursa: {
+        name: 'BURSALI',
+        p1: 'Zeynep',
+        p2: 'Kerem',
+        landmark: 'Uludağ ve İskender kebabı BURSA’yla ilişkilidir.'
+      },
+      rize: {
+        name: 'RİZELİ',
+        p1: 'Duru',
+        p2: 'Emir',
+        landmark: 'Çay bahçeleri ve yemyeşil dağlar RİZE’yi hatırlatır.'
+      },
+      antalya: {
+        name: 'ANTALYALI',
+        p1: 'Selin',
+        p2: 'Can',
+        landmark: 'Kaleiçi ve Akdeniz kıyısı ANTALYA’dadır.'
+      }
+    };
+
+    const cards = [...document.querySelectorAll('.clue-btn')];
+    const selections = { left: null, right: null };
+    const completed = new Set();
+    const feedback = document.getElementById('feedback-message');
+    const feedbackIcon = document.getElementById('feedback-icon');
+    const feedbackPanel = document.getElementById('feedback-panel');
+    const badgeCity = document.getElementById('badge-city');
+    const badgeText = document.getElementById('badge-text');
+    const soundButton = document.getElementById('sound-button');
+    const soundLabel = document.getElementById('sound-label');
+    const soundIcon = document.getElementById('sound-icon');
+
+    // Modal elements
+    const modal = document.getElementById('feedback-modal');
+    const modalIconContainer = document.getElementById('modal-icon-container');
+    const modalIcon = document.getElementById('modal-icon');
+    const modalBadgeContainer = document.getElementById('modal-badge-container');
+    const modalBadge = document.getElementById('modal-badge');
+    const modalTitle = document.getElementById('modal-title');
+    const modalMessage = document.getElementById('modal-message');
+    const modalOkBtn = document.getElementById('modal-ok-btn');
+
+    let modalConfirmCallback = null;
+    let soundOn = true;
+    let audioContext;
+    let lockBoard = false;
+
+    // Show popup feedback modal on top of game
+    function showModal({ type, icon, title, badge, message, buttonText = 'Tamam', onConfirm = null }) {
+      modalIcon.textContent = icon;
+      modalTitle.textContent = title;
+      modalMessage.textContent = message;
+      modalOkBtn.textContent = buttonText;
+      modalConfirmCallback = onConfirm;
+
+      if (type === 'success') {
+        modalIconContainer.className = 'w-16 h-16 rounded-2xl border-2 border-[#233128] flex items-center justify-center text-3xl shadow-[3px_3px_0_#233128] mb-3 bg-[#bce9d7]';
+      } else if (type === 'error') {
+        modalIconContainer.className = 'w-16 h-16 rounded-2xl border-2 border-[#233128] flex items-center justify-center text-3xl shadow-[3px_3px_0_#233128] mb-3 bg-[#ffd8c2]';
+      } else if (type === 'finish') {
+        modalIconContainer.className = 'w-16 h-16 rounded-2xl border-2 border-[#233128] flex items-center justify-center text-3xl shadow-[3px_3px_0_#233128] mb-3 bg-[#ffc83d]';
+      }
+
+      if (badge) {
+        modalBadgeContainer.classList.remove('hidden');
+        modalBadge.textContent = badge;
+      } else {
+        modalBadgeContainer.classList.add('hidden');
+      }
+
+      lockBoard = true;
+      modal.classList.add('active');
+      setTimeout(() => {
+        modalOkBtn.focus();
+      }, 50);
+    }
+
+    function closeModal() {
+      if (!modal.classList.contains('active')) return;
+      modal.classList.remove('active');
+      lockBoard = false;
+      const cb = modalConfirmCallback;
+      modalConfirmCallback = null;
+      if (cb) cb();
+    }
+
+    modalOkBtn.addEventListener('click', closeModal);
+
+    document.addEventListener('keydown', (e) => {
+      if (modal.classList.contains('active')) {
+        if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') {
+          e.preventDefault();
+          closeModal();
+        }
+      }
+    });
+
+    // Play pleasant tones
+    function tone(type) {
+      if (!soundOn) return;
+      try {
+        if (!audioContext) {
+          audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioContext.state === 'suspended') audioContext.resume();
+        const now = audioContext.currentTime;
+
+        if (type === 'success') {
+          [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+            gain.gain.setValueAtTime(0.001, now + idx * 0.08);
+            gain.gain.exponentialRampToValueAtTime(0.12, now + idx * 0.08 + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.22);
+            osc.connect(gain).connect(audioContext.destination);
+            osc.start(now + idx * 0.08);
+            osc.stop(now + idx * 0.08 + 0.23);
+          });
+        } else if (type === 'error') {
+          [350, 260].forEach((freq, idx) => {
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(freq, now + idx * 0.12);
+            gain.gain.setValueAtTime(0.001, now + idx * 0.12);
+            gain.gain.exponentialRampToValueAtTime(0.08, now + idx * 0.12 + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.12 + 0.2);
+            osc.connect(gain).connect(audioContext.destination);
+            osc.start(now + idx * 0.12);
+            osc.stop(now + idx * 0.12 + 0.22);
+          });
+        } else if (type === 'select') {
+          const osc = audioContext.createOscillator();
+          const gain = audioContext.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(600, now);
+          gain.gain.setValueAtTime(0.001, now);
+          gain.gain.exponentialRampToValueAtTime(0.05, now + 0.01);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
+          osc.connect(gain).connect(audioContext.destination);
+          osc.start(now);
+          osc.stop(now + 0.08);
+        }
+      } catch (_) { }
+    }
+
+    // Trigger colorful confetti celebration
+    function launchConfetti() {
+      const container = document.getElementById('confetti-container');
+      container.innerHTML = '';
+      const colors = ['#ffc83d', '#1f7a4f', '#d9622b', '#126b9e', '#f43f5e', '#a855f7'];
+      for (let i = 0; i < 45; i++) {
+        const piece = document.createElement('div');
+        piece.className = 'confetti-piece';
+        piece.style.left = Math.random() * 100 + 'vw';
+        piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.animationDelay = (Math.random() * 0.6) + 's';
+        piece.style.transform = `rotate(${Math.random() * 360}deg)`;
+        container.appendChild(piece);
+      }
+      setTimeout(() => { container.innerHTML = ''; }, 3500);
+    }
+
+    function clearSelection(side) {
+      const card = selections[side];
+      if (card) {
+        card.classList.remove('selected');
+        card.setAttribute('aria-pressed', 'false');
+        selections[side] = null;
+      }
+    }
+
+    function updateProgress() {
+      document.getElementById('progress-text').textContent = `${completed.size} / 5`;
+      document.getElementById('progress-fill').style.width = `${completed.size * 20}%`;
+    }
+
+    function resetGame() {
+      lockBoard = false;
+      clearSelection('left');
+      clearSelection('right');
+      completed.clear();
+      cards.forEach(card => {
+        card.disabled = false;
+        card.classList.remove('matched', 'selected');
+        card.setAttribute('aria-pressed', 'false');
+        card.querySelector('.clue-mark').textContent = '';
+      });
+      feedbackPanel.className = 'feedback-box feedback-idle mt-2 rounded-xl px-4 py-2.5 shadow-[3px_3px_0_#233128] flex-none flex items-center justify-between gap-3 min-h-[50px] sm:min-h-[56px]';
+      feedbackIcon.textContent = '💡';
+      feedback.textContent = 'Yeni tur başladı! Soldan bir kişi, ardından sağdan hemşehrisini seç.';
+      badgeCity.classList.add('hidden');
+      updateProgress();
+      tone('select');
+    }
+
+    // Card click interaction
+    cards.forEach(card => card.addEventListener('click', () => {
+      if (card.disabled || lockBoard) return;
+      const side = card.dataset.side;
+
+      // Deselect if clicking already selected card
+      if (selections[side] === card) {
+        clearSelection(side);
+        return;
+      }
+
+      clearSelection(side);
+      selections[side] = card;
+      card.classList.add('selected');
+      card.setAttribute('aria-pressed', 'true');
+      tone('select');
+
+      if (!selections.left || !selections.right) {
+        feedbackPanel.className = 'feedback-box feedback-idle mt-2 rounded-xl px-4 py-2.5 shadow-[3px_3px_0_#233128] flex-none flex items-center justify-between gap-3 min-h-[50px] sm:min-h-[56px]';
+        feedbackIcon.textContent = '👉';
+        feedback.textContent = side === 'left'
+          ? 'Şimdi sağ taraftan hemşehrisini seç.'
+          : 'Şimdi sol taraftan kişiyi seç.';
+        badgeCity.classList.add('hidden');
+        return;
+      }
+
+      const left = selections.left;
+      const right = selections.right;
+
+      // Match check
+      if (left.dataset.city === right.dataset.city) {
+        const cityKey = left.dataset.city;
+        const info = cityInfo[cityKey];
+        completed.add(cityKey);
+
+        [left, right].forEach(item => {
+          item.classList.remove('selected');
+          item.classList.add('matched');
+          item.setAttribute('aria-pressed', 'false');
+          item.querySelector('.clue-mark').textContent = '✓';
+          item.disabled = true;
+        });
+
+        selections.left = null;
+        selections.right = null;
+
+        feedbackPanel.className = 'feedback-box feedback-success mt-2 rounded-xl px-4 py-2.5 shadow-[3px_3px_0_#233128] flex-none flex items-center justify-between gap-3 min-h-[50px] sm:min-h-[56px]';
+        feedbackIcon.textContent = '🎉';
+        badgeCity.classList.remove('hidden');
+        badgeText.textContent = info.name;
+
+        updateProgress();
+        tone('success');
+
+        if (completed.size === 5) {
+          feedback.textContent = `Tebrikler! ${info.p1} ve ${info.p2} ${info.name}! 🏆 Tüm hemşehrileri buldun!`;
+          launchConfetti();
+
+          showModal({
+            type: 'finish',
+            icon: '🏆',
+            title: 'Tebrikler! Oyunu Tamamladın!',
+            badge: info.name,
+            message: `Evet, ${info.p1} ve ${info.p2} ${info.name} yani hemşehri!\n\nTüm hemşehri çiftlerini başarıyla buldun! 🎉`,
+            buttonText: 'Yeniden Başlat',
+            onConfirm: () => {
+              resetGame();
+            }
+          });
+        } else {
+          feedback.textContent = `Tebrikler! ${info.p1} ve ${info.p2} ${info.name}! ${info.landmark}`;
+
+          showModal({
+            type: 'success',
+            icon: '🎉',
+            title: 'Tebrikler! Doğru Eşleştirme',
+            badge: info.name,
+            message: `Evet, ${info.p1} ve ${info.p2} ${info.name} yani hemşehri!\n\n${info.landmark}`,
+            buttonText: 'Tamam',
+            onConfirm: () => {
+              feedbackPanel.className = 'feedback-box feedback-idle mt-2 rounded-xl px-4 py-2.5 shadow-[3px_3px_0_#233128] flex-none flex items-center justify-between gap-3 min-h-[50px] sm:min-h-[56px]';
+              feedbackIcon.textContent = '💡';
+              feedback.textContent = 'Harika! Diğer hemşehrileri eşleştirmeye devam et.';
+            }
+          });
+        }
+      } else {
+        feedbackPanel.className = 'feedback-box feedback-error mt-2 rounded-xl px-4 py-2.5 shadow-[3px_3px_0_#233128] flex-none flex items-center justify-between gap-3 min-h-[50px] sm:min-h-[56px]';
+        feedbackIcon.textContent = '❌';
+        feedback.textContent = 'Farklı şehirler! İpuçlarını oku ve hemşehrileri eşleştir.';
+        badgeCity.classList.add('hidden');
+        tone('error');
+
+        showModal({
+          type: 'error',
+          icon: '❌',
+          title: 'Tekrar Dene!',
+          badge: null,
+          message: 'Bu iki kişi farklı şehirlerden.\n\nİpuçlarını oku ve hemşehrisini bul.',
+          buttonText: 'Tamam',
+          onConfirm: () => {
+            clearSelection('left');
+            clearSelection('right');
+            feedbackPanel.className = 'feedback-box feedback-idle mt-2 rounded-xl px-4 py-2.5 shadow-[3px_3px_0_#233128] flex-none flex items-center justify-between gap-3 min-h-[50px] sm:min-h-[56px]';
+            feedbackIcon.textContent = '💡';
+            feedback.textContent = 'Soldan bir kişi, ardından sağdan hemşehrisini seç.';
+          }
+        });
+      }
+    }));
+
+    // Sound toggle button
+    soundButton.addEventListener('click', () => {
+      soundOn = !soundOn;
+      soundButton.setAttribute('aria-pressed', String(soundOn));
+      soundIcon.textContent = soundOn ? '🔊' : '🔇';
+      soundLabel.textContent = soundOn ? 'Ses: Açık' : 'Ses: Kapalı';
+      if (soundOn) tone('select');
+    });
+
+    // Reset game button
+    document.getElementById('reset-button').addEventListener('click', resetGame);
+
+    // Initialize audio label
+    soundLabel.textContent = soundOn ? 'Ses: Açık' : 'Ses: Kapalı';
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="tr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nereli? — Harfleri Tamamla</title>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Fraunces:wght@600;700&display=swap"
+    rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com/3.4.17" type="text/javascript"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js" type="text/javascript"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "DM Sans", sans-serif;
+      color: #263348;
+    }
+
+    .app-shell {
+      width: 100%;
+      min-height: 100vh;
+      background-image: radial-gradient(circle at 9% 13%, #fff5ac 0 8%, transparent 8.2%), radial-gradient(circle at 94% 83%, #b9f1e9 0 11%, transparent 11.2%);
+    }
+
+    .display {
+      font-family: "Fraunces", serif;
+    }
+
+    .hero-photo {
+      height: 270px;
+    }
+
+    .hero-photo img,
+    .hero-photo video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .letter-box {
+      width: clamp(24px, 3.2vw, 38px);
+      height: clamp(38px, 4.8vw, 52px);
+      border-radius: 10px;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      font-size: clamp(15px, 2vw, 22px);
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .letter-fixed {
+      background: #fff1b5;
+      color: #273b66;
+      border: 2px solid #f2d975;
+    }
+
+    .letter-input {
+      background: #fff;
+      color: #243a64;
+      border: 2px dashed #398dc3;
+      outline: none;
+      text-align: center;
+      padding: 0;
+      text-transform: uppercase;
+      caret-color: #f36760;
+    }
+
+    .letter-input:focus-visible {
+      border-style: solid;
+      border-color: #f36760;
+      box-shadow: 0 0 0 4px #ffd9d5;
+    }
+
+    .letter-input.is-wrong {
+      border-color: #e96366;
+      background: #fff0ef;
+    }
+
+    button:focus-visible {
+      outline: 3px solid #225caa;
+      outline-offset: 4px;
+    }
+
+    .game-card {
+      animation: rise .45s ease both;
+    }
+
+    @keyframes rise {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .heart {
+      transition: transform .2s, opacity .2s;
+    }
+
+    .heart.is-lost {
+      opacity: .24;
+      transform: scale(.82);
+      filter: grayscale(1);
+    }
+
+    @media (max-width: 767px) {
+      .hero-photo {
+        height: 190px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app-shell w-full flex items-center justify-center">
+    <main class="w-full max-w-6xl mx-auto px-4 sm:px-7 py-6 sm:py-10">
+      <div class="grid md:grid-cols-[minmax(0,.88fr)_minmax(0,1.12fr)] gap-5 lg:gap-8 items-stretch">
+
+        <header
+          class="canva-panel bg-white overflow-hidden rounded-[30px] shadow-[0_14px_35px_#22538416] flex flex-col">
+          <div class="hero-photo relative overflow-hidden bg-slate-900 group">
+            <video id="hero-video" src="1.mp4" autoplay loop playsinline
+              class="w-full h-full object-cover cursor-pointer" title="Oynat / Durdur"></video>
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 pointer-events-none">
+            </div>
+            <span
+              class="canva-tag bg-white/95 backdrop-blur text-[#263348] absolute top-3.5 left-3.5 rounded-full px-3.5 py-1.5 font-bold shadow-md text-xs sm:text-sm tracking-wide flex items-center gap-1.5 z-10 pointer-events-none">
+              <span>🏙️</span> NERELİ OYUNU
+            </span>
+            <div
+              class="absolute bottom-3 left-3 right-3 flex items-center justify-between gap-2 bg-slate-900/85 backdrop-blur-md rounded-2xl px-3 py-2 text-white z-10 border border-white/10 shadow-lg">
+              <div class="flex items-center gap-1.5 sm:gap-2">
+                <button id="video-toggle-btn" type="button"
+                  class="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 active:scale-95 text-white px-2.5 py-1.5 rounded-xl font-semibold text-xs sm:text-sm transition cursor-pointer"
+                  title="Durdur / Oynat" aria-label="Videoyu Durdur veya Oynat">
+                  <svg id="play-icon" class="w-4 h-4 hidden" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                  <svg id="pause-icon" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                  </svg>
+                  <span id="video-toggle-text" class="hidden sm:inline text-xs">Durdur</span>
+                </button>
+                <button id="video-replay-btn" type="button"
+                  class="flex items-center gap-1.5 bg-[#25bca8] hover:bg-[#1fa996] active:scale-95 text-white px-2.5 sm:px-3 py-1.5 rounded-xl font-bold text-xs sm:text-sm transition shadow-sm cursor-pointer"
+                  title="Baştan Tekrar Dinle" aria-label="Tekrar Dinle">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  <span>Tekrar Dinle</span>
+                </button>
+                <button id="video-sound-btn" type="button"
+                  class="p-1.5 bg-white/15 hover:bg-white/25 active:scale-95 rounded-xl transition cursor-pointer text-white"
+                  title="Sesi Aç / Kapat" aria-label="Sesi Aç veya Kapat">
+                  <svg id="sound-on-icon" class="w-4 h-4 hidden" fill="none" stroke="currentColor" stroke-width="2"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M15.536 8.464a5 5 0 010 7.072M17.95 6.05a8 8 0 010 11.9M11 5L6 9H2v6h4l5 4V5z" />
+                  </svg>
+                  <svg id="sound-off-icon" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+                  </svg>
+                </button>
+              </div>
+              <div class="flex items-center gap-2 flex-1 max-w-[110px] sm:max-w-[150px] ml-1">
+                <div id="video-progress-container"
+                  class="w-full bg-white/25 hover:bg-white/40 h-2 rounded-full overflow-hidden cursor-pointer transition relative"
+                  title="Videoyu sar">
+                  <div id="video-progress-bar" class="bg-[#25bca8] h-full w-0 transition-all rounded-full"></div>
+                </div>
+                <span id="video-time" class="text-[11px] font-mono opacity-90 tabular-nums select-none">0:00</span>
+              </div>
+            </div>
+          </div>
+          <div class="p-7 sm:p-9 flex-1 flex flex-col justify-center">
+            <div class="mb-4">
+              <img src="1.svg" alt="Logo" class="h-10 sm:h-12 w-auto max-w-[180px] object-contain">
+            </div>
+
+            <h1 class="canva-text display text-3xl sm:text-4xl leading-[1.12] mb-4">Nereli? — Harfleri Tamamla</h1>
+            <p class="canva-text leading-relaxed text-slate-600 max-w-md">İpuçlarını oku. Harfleri tamamla. Kişinin
+              nereli olduğunu bul!
+            </p>
+            <div class="mt-7 pt-5 border-t border-[#d9e9ec]">
+              <p class="canva-text text-sm text-gray-500 leading-relaxed"><strong>Dikkat:</strong> Toplam 3 canın var.
+                Yanlış harf girdiğinde canın azalır. Dikkatli düşün!</p>
+            </div>
+          </div>
+        </header>
+
+        <section
+          class="canva-panel bg-white game-card rounded-[30px] shadow-[0_14px_35px_#22538416] p-6 sm:p-9 lg:p-11 flex flex-col justify-center min-h-[510px]"
+          aria-label="Harf tamamlama oyunu">
+          <div id="question-screen">
+            <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
+              <span class="canva-text font-bold uppercase text-gray-400 tracking-wider">Soru</span>
+              <div class="flex items-center gap-4">
+                <span id="progress-text" class="font-bold tabular-nums" aria-live="polite"></span>
+                <div id="lives" class="flex gap-1 text-2xl" aria-label="3 can kaldı">
+                  <span class="heart" aria-hidden="true">❤️</span><span class="heart" aria-hidden="true">❤️</span><span
+                    class="heart" aria-hidden="true">❤️</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="canva-progress bg-gray-100 h-3 rounded-full overflow-hidden mb-8">
+              <div id="progress-fill" class="h-full rounded-full transition-all duration-500"
+                style="width:12.5%; background:#25bca8"></div>
+            </div>
+            <p class="canva-text font-bold uppercase tracking-[.12em] mb-3 text-orange-500">İPUCU</p>
+            <h2 class="canva-text display text-2xl mb-3">Nereli?</h2>
+            <p id="clue" class="canva-text leading-relaxed text-lg mb-6 min-h-[64px]"></p>
+
+            <form id="answer-form" novalidate>
+              <div id="letter-grid"
+                class="flex flex-nowrap items-center max-w-full overflow-x-auto py-1 gap-1 sm:gap-1.5 mb-4" role="group"
+                aria-label="Eksik harfleri doldur"></div>
+              <p class="canva-text text-sm text-gray-400 mb-5">Kutucuklara tıklayarak eksik harfleri klavyenle yaz.</p>
+              <button id="check-button" type="submit"
+                class="canva-button bg-[#25bca8] text-white rounded-full px-7 py-3.5 font-bold transition hover:brightness-95 active:scale-[.98]">Kontrol
+                Et</button>
+            </form>
+
+            <p id="validation" class="hidden mt-4 font-bold text-[#bc4251]" role="alert">Önce bütün boşlukları doldur!
+              ✏️</p>
+
+            <div id="correct-feedback" class="hidden mt-5 rounded-2xl bg-[#def9e9] p-5 text-green-800" role="status">
+              <p class="canva-text font-bold">Harika! Doğru. 🎉</p>
+            </div>
+
+            <div id="wrong-feedback" class="hidden mt-5 rounded-2xl bg-[#fff0db] p-5 text-red-700" role="status">
+              <p class="canva-text font-bold">Maalesef Yanlış! 😞</p>
+              <p class="canva-text mt-1 text-sm">Bir can kaybettin. Harfleri kontrol edip tekrar dene.</p>
+            </div>
+
+            <button id="next-button" type="button"
+              class="canva-button bg-[#225caa] text-white hidden mt-5 rounded-full px-7 py-3.5 font-bold transition hover:brightness-95">Sonraki
+              Soru</button>
+          </div>
+
+          <div id="result-screen" class="hidden text-center" aria-live="polite">
+            <div class="text-6xl mb-5" aria-hidden="true">🌟</div>
+            <p class="canva-text font-bold uppercase tracking-[.14em] mb-3 text-orange-500">OYUN BİTTİ</p>
+            <h2 class="canva-text display text-4xl mb-4">Sonucun</h2>
+            <p id="result-reveal" class="hidden mb-3 font-semibold text-red-500"></p>
+            <p id="final-score" class="canva-text display text-5xl font-bold mb-3 text-[#25bca8]"></p>
+            <p class="canva-text mb-7 text-gray-500">Oynadığın için teşekkürler! Kendini geliştirmek için tekrar
+              oynayabilirsin.</p>
+            <button id="restart-button" type="button"
+              class="canva-button bg-[#225caa] text-white rounded-full px-8 py-3.5 font-bold transition hover:brightness-95">Tekrar
+              Oyna</button>
+          </div>
+        </section>
+      </div>
+
+      <footer class="text-center pt-6">
+        <p class="canva-text text-gray-400 text-sm">© 2026 Nereli Oyunu</p>
+      </footer>
+    </main>
+  </div>
+
+  <script>
+    const questions = [
+      { answer: "Adanalı", hidden: [1, 3, 5], clue: "Kebabı, şalgamı ve Seyhan Nehri ile ünlü şehirdenim." },
+      { answer: "Edirneli", hidden: [1, 3, 6], clue: "Selimiye Camii ve lezzetli tava ciğeri benim şehrimde!" },
+      { answer: "Kayserili", hidden: [1, 3, 6], clue: "Erciyes Dağı, mantı ve pastırmasıyla ünlü bu şehirdenim." },
+      { answer: "Ispartalı", hidden: [1, 3, 5, 8], clue: "Mis kokulu gül bahçeleri ve lavanta kokusuyla ünlü bu şehirdenim." },
+      { answer: "Eskişehirli", hidden: [1, 3, 5, 8], clue: "Şehrimde Porsuk Çayı'nda gondollar gezer, çi börek çok sevilir." },
+      { answer: "Vanlı", hidden: [1, 3], clue: "Şehrimde kocaman bir göl ve dünyaca ünlü bir kahvaltı var." }
+    ];
+
+    const grid = document.getElementById("letter-grid");
+    const form = document.getElementById("answer-form");
+    const validation = document.getElementById("validation");
+    const correctFeedback = document.getElementById("correct-feedback");
+    const wrongFeedback = document.getElementById("wrong-feedback");
+    const nextButton = document.getElementById("next-button");
+    let index = 0, score = 0, lives = 3, solved = false;
+    let inputs = [];
+
+    function upper(value) { return value.toLocaleUpperCase("tr-TR"); }
+    function letters(value) { return [...upper(value)].filter(ch => /[A-ZÇĞİÖŞÜ]/u.test(ch)); }
+
+    function updateLives() {
+      document.querySelectorAll(".heart").forEach((heart, i) => heart.classList.toggle("is-lost", i >= lives));
+      document.getElementById("lives").setAttribute("aria-label", `${lives} can kaldı`);
+    }
+
+    function showQuestion() {
+      solved = false;
+      const current = questions[index];
+      document.getElementById("clue").textContent = current.clue;
+      document.getElementById("progress-text").textContent = `${index + 1} / ${questions.length}`;
+      document.getElementById("progress-fill").style.width = `${((index + 1) / questions.length) * 100}%`;
+      grid.replaceChildren();
+      inputs = [];
+
+      [...upper(current.answer)].forEach((letter, position) => {
+        if (current.hidden.includes(position)) {
+          const input = document.createElement("input");
+          input.type = "text";
+          input.inputMode = "text";
+          input.autocomplete = "off";
+          input.spellcheck = false;
+          input.className = "letter-box letter-input";
+          input.setAttribute("aria-label", `${position + 1}. harf`);
+          input.dataset.position = position;
+          input.maxLength = 1;
+          grid.appendChild(input);
+          inputs.push(input);
+        } else {
+          const box = document.createElement("span");
+          box.className = "letter-box letter-fixed";
+          box.textContent = letter;
+          box.setAttribute("aria-label", letter);
+          grid.appendChild(box);
+        }
+      });
+      validation.classList.add("hidden");
+      correctFeedback.classList.add("hidden");
+      wrongFeedback.classList.add("hidden");
+      nextButton.classList.add("hidden");
+      form.classList.remove("hidden");
+      updateLives();
+    }
+
+    grid.addEventListener("input", event => {
+      if (!event.target.matches(".letter-input")) return;
+      const input = event.target;
+      const typed = letters(input.value);
+      const start = inputs.indexOf(input);
+
+      if (typed.length > 0) {
+        input.value = typed[0];
+      } else {
+        input.value = "";
+      }
+
+      input.classList.remove("is-wrong");
+      validation.classList.add("hidden");
+
+      if (typed.length && inputs[start + 1]) {
+        inputs[start + 1].focus();
+      }
+    });
+
+    grid.addEventListener("keydown", event => {
+      if (!event.target.matches(".letter-input")) return;
+      const pos = inputs.indexOf(event.target);
+      if (event.key === "Backspace" && !event.target.value && pos > 0) {
+        inputs[pos - 1].value = "";
+        inputs[pos - 1].focus();
+      }
+      if (event.key === "ArrowLeft" && pos > 0) inputs[pos - 1].focus();
+      if (event.key === "ArrowRight" && pos < inputs.length - 1) inputs[pos + 1].focus();
+    });
+
+    form.addEventListener("submit", event => {
+      event.preventDefault();
+      if (solved) return;
+      if (inputs.some(input => !input.value)) {
+        validation.classList.remove("hidden");
+        inputs.find(input => !input.value).focus();
+        return;
+      }
+      const current = questions[index];
+      const expected = [...upper(current.answer)];
+      const correct = inputs.every(input => upper(input.value) === expected[Number(input.dataset.position)]);
+      validation.classList.add("hidden");
+
+      if (correct) {
+        score++;
+        solved = true;
+        inputs.forEach(input => input.disabled = true);
+        correctFeedback.classList.remove("hidden");
+        wrongFeedback.classList.add("hidden");
+        form.classList.add("hidden");
+        nextButton.classList.remove("hidden");
+        nextButton.focus();
+      } else {
+        lives--;
+        updateLives();
+        inputs.forEach(input => input.classList.add("is-wrong"));
+        if (lives === 0) {
+          showResult(true);
+        } else {
+          wrongFeedback.classList.remove("hidden");
+          inputs.forEach(input => { input.value = ""; input.classList.remove("is-wrong"); });
+          inputs[0].focus();
+        }
+      }
+    });
+
+    function showResult(outOfLives) {
+      document.getElementById("question-screen").classList.add("hidden");
+      document.getElementById("result-screen").classList.remove("hidden");
+      document.getElementById("final-score").textContent = `${score} / ${questions.length}`;
+      const reveal = document.getElementById("result-reveal");
+      reveal.classList.toggle("hidden", !outOfLives);
+      if (outOfLives) reveal.textContent = `Canların bitti! Son cevap: ${questions[index].answer}.`;
+      document.getElementById("restart-button").focus();
+    }
+
+    nextButton.addEventListener("click", () => {
+      index++;
+      if (index === questions.length) showResult(false);
+      else {
+        showQuestion();
+        inputs[0].focus();
+      }
+    });
+
+    document.getElementById("restart-button").addEventListener("click", () => {
+      index = 0; score = 0; lives = 3;
+      document.getElementById("result-screen").classList.add("hidden");
+      document.getElementById("question-screen").classList.remove("hidden");
+      showQuestion();
+      inputs[0].focus();
+    });
+
+    // Oyunu başlat
+    showQuestion();
+
+    // Video Kontrolleri (Durdurma, Tekrar Dinleme, Ses ve İlerleme)
+    const heroVideo = document.getElementById("hero-video");
+    const videoToggleBtn = document.getElementById("video-toggle-btn");
+    const videoToggleText = document.getElementById("video-toggle-text");
+    const playIcon = document.getElementById("play-icon");
+    const pauseIcon = document.getElementById("pause-icon");
+    const videoReplayBtn = document.getElementById("video-replay-btn");
+    const videoSoundBtn = document.getElementById("video-sound-btn");
+    const soundOnIcon = document.getElementById("sound-on-icon");
+    const soundOffIcon = document.getElementById("sound-off-icon");
+    const videoProgressBar = document.getElementById("video-progress-bar");
+    const videoProgressContainer = document.getElementById("video-progress-container");
+    const videoTime = document.getElementById("video-time");
+
+    function updatePlayState() {
+      if (!heroVideo) return;
+      if (heroVideo.paused) {
+        playIcon.classList.remove("hidden");
+        pauseIcon.classList.add("hidden");
+        if (videoToggleText) videoToggleText.textContent = "Oynat";
+        videoToggleBtn.setAttribute("title", "Oynat");
+      } else {
+        playIcon.classList.add("hidden");
+        pauseIcon.classList.remove("hidden");
+        if (videoToggleText) videoToggleText.textContent = "Durdur";
+        videoToggleBtn.setAttribute("title", "Durdur");
+      }
+    }
+
+    function updateSoundState() {
+      if (!heroVideo) return;
+      if (heroVideo.muted) {
+        soundOnIcon.classList.add("hidden");
+        soundOffIcon.classList.remove("hidden");
+        videoSoundBtn.setAttribute("title", "Sesi Aç");
+      } else {
+        soundOnIcon.classList.remove("hidden");
+        soundOffIcon.classList.add("hidden");
+        videoSoundBtn.setAttribute("title", "Sesi Kapat");
+      }
+    }
+
+    function formatTime(seconds) {
+      if (isNaN(seconds) || seconds < 0) return "0:00";
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
+    }
+
+    if (heroVideo) {
+      // Oynat / Durdur Butonu
+      videoToggleBtn?.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (heroVideo.paused) {
+          heroVideo.play();
+        } else {
+          heroVideo.pause();
+        }
+      });
+
+      // Video üzerine tıklayınca durdur/oynat
+      heroVideo.addEventListener("click", () => {
+        if (heroVideo.paused) {
+          heroVideo.play();
+        } else {
+          heroVideo.pause();
+        }
+      });
+
+      // Tekrar Dinle Butonu (Başa sar, sesi aç ve oynat)
+      videoReplayBtn?.addEventListener("click", (e) => {
+        e.stopPropagation();
+        heroVideo.currentTime = 0;
+        heroVideo.muted = false; // Kullanıcı dinlemek istediğinde sesi de aktif hale getir
+        updateSoundState();
+        heroVideo.play();
+      });
+
+      // Ses Aç / Kapat Butonu
+      videoSoundBtn?.addEventListener("click", (e) => {
+        e.stopPropagation();
+        heroVideo.muted = !heroVideo.muted;
+        updateSoundState();
+      });
+
+      // İlerleme ve Süre Takibi
+      heroVideo.addEventListener("timeupdate", () => {
+        if (heroVideo.duration) {
+          const percent = (heroVideo.currentTime / heroVideo.duration) * 100;
+          videoProgressBar.style.width = `${percent}%`;
+          videoTime.textContent = formatTime(heroVideo.currentTime);
+        }
+      });
+
+      // İlerleme Çubuğuna Tıklayarak İleri/Geri Sarma
+      videoProgressContainer?.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const rect = videoProgressContainer.getBoundingClientRect();
+        const clickPos = (e.clientX - rect.left) / rect.width;
+        if (heroVideo.duration) {
+          heroVideo.currentTime = clickPos * heroVideo.duration;
+        }
+      });
+
+      heroVideo.addEventListener("play", updatePlayState);
+      heroVideo.addEventListener("pause", updatePlayState);
+      heroVideo.addEventListener("volumechange", updateSoundState);
+
+      // İlk durum kontrolü
+      updatePlayState();
+      updateSoundState();
+    }
+  </script>
+</body>
+
+</html>

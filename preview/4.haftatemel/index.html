@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="tr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Memleket Bavulum</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Fraunces:wght@600;700;800&display=swap"
+    rel="stylesheet">
+
+  <style>
+    :root {
+      --ink: #19394b;
+      --teal: #087e82;
+      --paper: #fffaf0;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 100%;
+      margin: 0;
+      font-family: "DM Sans", sans-serif;
+      color: var(--ink);
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    button:focus-visible {
+      outline: 4px solid #087e82;
+      outline-offset: 4px;
+    }
+
+    .scene {
+      background: radial-gradient(circle at 14% 18%, #fff4d7 0, transparent 32%), radial-gradient(circle at 88% 78%, #d3eeeb 0, transparent 30%), #f6efe1;
+    }
+
+    .game-shell {
+      max-width: 1120px;
+      margin: auto;
+    }
+
+    .eyebrow {
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+
+    .stage {
+      border: 2px solid #e8dac2;
+      box-shadow: 0 20px 55px #3c4b3a1c;
+    }
+
+    .suitcase-area {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 10px 14px;
+    }
+
+    .video-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 420px;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(25, 57, 75, 0.15);
+      border: 3px solid #e8dac2;
+      background: #000;
+      aspect-ratio: 16/9;
+    }
+
+    .video-wrapper video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* UI Elements */
+    .clue {
+      border: 2px solid #eadac4;
+      border-left: 6px solid var(--teal);
+      background: #fff;
+    }
+
+    .answer {
+      min-height: 48px;
+      border: 2px solid #bfdedb;
+      transition: transform .15s, background .15s;
+      background: #fff;
+    }
+
+    .answer:hover:not(:disabled) {
+      background: #daf2ed !important;
+      transform: translateY(-2px);
+    }
+
+    .answer:disabled {
+      opacity: .7;
+      cursor: default;
+    }
+
+    .primary {
+      min-height: 46px;
+      box-shadow: 0 4px 0 #075c60;
+      background: #087e82;
+      color: #fff;
+      border: none;
+    }
+
+    .primary:hover {
+      filter: brightness(.9);
+    }
+
+    .primary:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 #075c60;
+    }
+
+    .feedback {
+      border-radius: 14px;
+      padding: 10px 14px;
+    }
+
+    .wrong {
+      background: #fff0db;
+      color: #d97706;
+      font-weight: bold;
+    }
+
+    .right {
+      background: #e0f4e9;
+      color: #047857;
+      font-weight: bold;
+    }
+
+    .highlight-memleket {
+      color: #065f62;
+      font-weight: 800;
+      background: rgba(8, 126, 130, 0.12);
+      padding: 1px 6px;
+      border-radius: 6px;
+      border-bottom: 2px solid #e89b43;
+      display: inline-block;
+      line-height: 1.25;
+    }
+
+    .emphasis {
+      color: #087e82;
+      font-weight: 800;
+      text-decoration: underline;
+      text-decoration-color: #e89b43;
+      text-underline-offset: 5px;
+    }
+
+    @media(prefers-reduced-motion:reduce) {
+
+      *,
+      *:before,
+      *:after {
+        transition-duration: .01ms !important;
+        animation-duration: .01ms !important;
+      }
+    }
+  </style>
+  <script src="https://cdn.tailwindcss.com/3.4.17" type="text/javascript"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js" type="text/javascript"></script>
+</head>
+
+<body data-template-id="__page-root" class="scene min-h-screen">
+  <div class="w-full px-3 py-3 sm:px-6 sm:py-4">
+    <div class="game-shell">
+      <header class="mb-3">
+        <div class="flex items-center justify-between gap-4 mb-2">
+          <img src="1.svg" alt="Logo" class="h-9 sm:h-11 w-auto object-contain" />
+          <p class="canva-text eyebrow font-bold text-xs text-gray-500">Çevrim İçi Türkçe ve Türk Kültürü Dersi</p>
+        </div>
+        <div class="text-center">
+          <h1 class="canva-text font-bold leading-tight text-2xl sm:text-3xl mb-1"><span
+              class="highlight-memleket">Memleket</span> Bavulum</h1>
+          <p class="canva-text text-sm sm:text-base text-gray-700 max-w-xl mx-auto">İpuçlarını takip et. Sıradaki
+            bavulun hangi şehrimize ait olduğunu bul. <span class="canva-text emphasis font-bold ml-1">Hazırsan
+              başlayalım!</span></p>
+        </div>
+      </header>
+      <main>
+        <section class="canva-panel stage rounded-2xl p-4 sm:p-5 bg-white/60 backdrop-blur-sm"
+          aria-label="Memleket tahmin oyunu">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-1">
+            <span id="progress" class="canva-tag rounded-full px-3 py-1 font-bold text-sm bg-teal-100 text-teal-800"
+              aria-live="polite">0 / 4 <span class="highlight-memleket">memleket</span> bulundu</span>
+            <span class="canva-text font-medium text-xs sm:text-sm text-gray-600">İpuçları bavulda saklı!</span>
+          </div>
+
+          <div class="suitcase-area">
+            <div class="video-wrapper">
+              <video id="suitcase-video" playsinline preload="auto" src="izmir.mp4">
+                <source src="izmir.mp4" type="video/mp4">
+                Tarayıcınız video oynatmayı desteklemiyor.
+              </video>
+            </div>
+          </div>
+
+          <div class="max-w-2xl mx-auto">
+            <div id="closed-actions" class="text-center mb-4">
+              <button id="open-button" type="button"
+                class="canva-button primary rounded-xl px-7 py-2.5 font-bold text-base sm:text-lg">Bavulu Aç ve
+                İpuçlarını Gör</button>
+            </div>
+
+            <!-- 1. Tur: İzmir -->
+            <section id="round-1" class="round hidden" data-video="izmir.mp4" aria-labelledby="round-1-heading">
+              <h2 id="round-1-heading" tabindex="-1" class="canva-text font-bold text-center mb-2 text-xl sm:text-2xl">
+                1. Bavul
+              </h2>
+              <div class="space-y-2 mb-4">
+                <p class="canva-card clue rounded-xl p-3 text-base sm:text-lg">Benim <span
+                    class="highlight-memleket">memleketimde</span> sabahları boyoz ve gevrek yemek bir
+                  klasiktir.</p>
+              </div>
+              <div class="grid sm:grid-cols-3 gap-2.5">
+                <button data-correct="false" type="button"
+                  class="canva-button answer rounded-xl px-3 py-2 font-bold">Ankara</button>
+                <button data-correct="true" type="button"
+                  class="canva-button answer rounded-xl px-3 py-2 font-bold">İzmir</button>
+                <button data-correct="false" type="button"
+                  class="canva-button answer rounded-xl px-3 py-2 font-bold">Bursa</button>
+              </div>
+              <div class="mt-3" role="status" aria-live="polite">
+                <p class="canva-text feedback wrong wrong-feedback hidden text-center text-sm sm:text-base">Yanlış
+                  cevap! Tekrar düşün.</p>
+                <div class="right-feedback hidden text-center">
+                  <p class="canva-text feedback right text-sm sm:text-base">Tebrikler! Doğru cevap İzmir'di.</p>
+                  <button type="button"
+                    class="canva-button next-button primary rounded-xl px-5 py-2.5 mt-3 font-bold text-sm sm:text-base">Sıradaki
+                    Bavula
+                    Geç</button>
+                </div>
+              </div>
+            </section>
+
+            <!-- 2. Tur: Nevşehir -->
+            <section id="round-2" class="round hidden" data-video="nevsehir.mp4" aria-labelledby="round-2-heading">
+              <h2 id="round-2-heading" tabindex="-1" class="canva-text font-bold text-center mb-2 text-xl sm:text-2xl">
+                2. Bavul
+              </h2>
+              <div class="space-y-2 mb-4">
+                <p class="canva-card clue rounded-xl p-3 text-base sm:text-lg">Benim <span
+                    class="highlight-memleket">memleketimde</span> gün doğumu rengârenk balonlarla izlenir.</p>
+              </div>
+              <div class="grid sm:grid-cols-3 gap-2.5">
+                <button data-correct="true" type="button"
+                  class="canva-button answer rounded-xl px-3 py-2 font-bold">Nevşehir</button>
+                <button data-correct="false" type="button"
+                  class="canva-button answer rounded-xl px-3 py-2 font-bold">Kayseri</button>
+                <button data-correct="false" type="button"
+                  class="canva-button answer rounded-xl px-3 py-2 font-bold">Aksaray</button>
+              </div>
+              <div class="mt-3" role="status" aria-live="polite">
+                <p class="canva-text feedback wrong wrong-feedback hidden text-center text-sm sm:text-base">Yanlış
+                  cevap! Tekrar düşün.</p>
+                <div class="right-feedback hidden text-center">
+                  <p class="canva-text feedback right text-sm sm:text-base">Harika! Kapadokya'nın kalbi Nevşehir doğru
+                    cevap.</p>
+                  <button type="button"
+                    class="canva-button next-button primary rounded-xl px-5 py-2.5 mt-3 font-bold text-sm sm:text-base">Sıradaki
+                    Bavula
+                    Geç</button>
+                </div>
+              </div>
+            </section>
+
+            <!-- 3. Tur: Adana -->
+            <section id="round-3" class="round hidden" data-video="adana.mp4" aria-labelledby="round-3-heading">
+              <h2 id="round-3-heading" tabindex="-1" class="canva-text font-bold text-center mb-2 text-xl sm:text-2xl">
+                3. Bavul
+              </h2>
+              <div class="space-y-2 mb-4">
+                <p class="canva-card clue rounded-xl p-3 text-base sm:text-lg">Benim <span
+                    class="highlight-memleket">memleketimde</span> akla ilk kebap ve şalgam
+                  gelir.</p>
+              </div>
+              <div class="grid sm:grid-cols-3 gap-2.5">
+                <button data-correct="false" type="button"
+                  class="canva-button answer rounded-xl px-3 py-2 font-bold">Edirne</button>
+                <button data-correct="false" type="button"
+                  class="canva-button answer rounded-xl px-3 py-2 font-bold">Çanakkale</button>
+                <button data-correct="true" type="button"
+                  class="canva-button answer rounded-xl px-3 py-2 font-bold">Adana</button>
+              </div>
+              <div class="mt-3" role="status" aria-live="polite">
+                <p class="canva-text feedback wrong wrong-feedback hidden text-center text-sm sm:text-base">Yanlış
+                  cevap! Tekrar düşün.</p>
+                <div class="right-feedback hidden text-center">
+                  <p class="canva-text feedback right text-sm sm:text-base">Bildin! Lezzet başkenti Adana.</p>
+                  <button type="button"
+                    class="canva-button next-button primary rounded-xl px-5 py-2.5 mt-3 font-bold text-sm sm:text-base">Sıradaki
+                    Bavula
+                    Geç</button>
+                </div>
+              </div>
+            </section>
+
+            <!-- 4. Tur: Trabzon -->
+            <section id="round-4" class="round hidden" data-video="trabzon.mp4" aria-labelledby="round-4-heading">
+              <h2 id="round-4-heading" tabindex="-1" class="canva-text font-bold text-center mb-2 text-xl sm:text-2xl">
+                4. Bavul
+              </h2>
+              <div class="space-y-2 mb-4">
+                <p class="canva-card clue rounded-xl p-3 text-base sm:text-lg">Benim <span
+                    class="highlight-memleket">memleketimde</span> kuymak, mısır ekmeği ve hamsi
+                  sofraların ayrılmaz bir parçasıdır.</p>
+              </div>
+              <div class="grid sm:grid-cols-3 gap-2.5">
+                <button data-correct="false" type="button"
+                  class="canva-button answer rounded-xl px-3 py-2 font-bold">Antalya</button>
+                <button data-correct="true" type="button"
+                  class="canva-button answer rounded-xl px-3 py-2 font-bold">Trabzon</button>
+                <button data-correct="false" type="button"
+                  class="canva-button answer rounded-xl px-3 py-2 font-bold">Eskişehir</button>
+              </div>
+              <div class="mt-3" role="status" aria-live="polite">
+                <p class="canva-text feedback wrong wrong-feedback hidden text-center text-sm sm:text-base">Yanlış
+                  cevap! Tekrar düşün.</p>
+                <div class="right-feedback hidden text-center">
+                  <p class="canva-text feedback right text-sm sm:text-base">Çok iyi! Doğru cevap Trabzon.</p>
+                  <button type="button"
+                    class="canva-button next-button primary rounded-xl px-5 py-2.5 mt-3 font-bold text-sm sm:text-base">Sonuçları
+                    Gör</button>
+                </div>
+              </div>
+            </section>
+
+            <!-- Bitiş Ekranı -->
+            <section id="finished" class="hidden text-center py-2 sm:py-3" aria-labelledby="finished-heading">
+              <div class="text-3xl mb-1.5" aria-hidden="true">🧳 ✨</div>
+              <h2 id="finished-heading" tabindex="-1" class="canva-text font-bold mb-2 text-2xl sm:text-3xl">Tebrikler,
+                Oyun Bitti!</h2>
+              <div
+                class="my-2.5 p-4 sm:p-5 rounded-2xl bg-teal-50/80 border-2 border-[#087e82]/20 inline-block shadow-sm max-w-xl mx-auto">
+                <p class="canva-text text-base sm:text-lg font-bold text-[#087e82] leading-snug">
+                  Bütün bavulların <span class="highlight-memleket">memleketlerini</span> başarıyla buldun.<br>Peki,
+                  senin <span class="highlight-memleket">memleket</span> bavulunda ne var?
+                </p>
+              </div>
+              <div class="mt-2">
+                <button id="restart-button" type="button"
+                  class="canva-button primary rounded-xl px-6 py-2.5 font-bold text-base sm:text-lg">Tekrar
+                  Oyna</button>
+              </div>
+            </section>
+          </div>
+        </section>
+      </main>
+
+    </div>
+  </div>
+
+  <script>
+    const rounds = [...document.querySelectorAll(".round")];
+    const suitcaseVideo = document.getElementById("suitcase-video");
+    const closedActions = document.getElementById("closed-actions");
+    const finished = document.getElementById("finished");
+    const progress = document.getElementById("progress");
+    let roundIndex = 0;
+
+    function updateProgress() {
+      progress.innerHTML = roundIndex < rounds.length
+        ? `<span class="highlight-memleket">Memleket</span> bavulu ${roundIndex + 1} / ${rounds.length}`
+        : `${rounds.length} / ${rounds.length} <span class="highlight-memleket">memleket</span> bulundu`;
+    }
+
+    function syncVideoForCurrentRound() {
+      if (!suitcaseVideo) return;
+      const targetVideo = rounds[roundIndex]?.dataset?.video || "izmir.mp4";
+      if (!suitcaseVideo.src.endsWith(targetVideo)) {
+        suitcaseVideo.src = targetVideo;
+        suitcaseVideo.load();
+      }
+    }
+
+    function showRound() {
+      if (suitcaseVideo) {
+        syncVideoForCurrentRound();
+        suitcaseVideo.currentTime = 0;
+        suitcaseVideo.play().catch(err => console.log("Video oynatma:", err));
+      }
+      closedActions.classList.add("hidden");
+      rounds[roundIndex].classList.remove("hidden");
+      rounds[roundIndex].querySelector("h2").focus();
+    }
+
+    function resetGame() {
+      roundIndex = 0;
+      if (suitcaseVideo) {
+        suitcaseVideo.pause();
+        const targetVideo = rounds[0]?.dataset?.video || "izmir.mp4";
+        suitcaseVideo.src = targetVideo;
+        suitcaseVideo.load();
+        suitcaseVideo.currentTime = 0;
+      }
+      finished.classList.add("hidden");
+      closedActions.classList.remove("hidden");
+      rounds.forEach(round => {
+        round.classList.add("hidden");
+        round.querySelector(".wrong-feedback").classList.add("hidden");
+        round.querySelector(".right-feedback").classList.add("hidden");
+        round.querySelectorAll(".answer").forEach(button => {
+          button.disabled = false;
+          button.classList.remove("opacity-50", "cursor-not-allowed");
+        });
+      });
+      updateProgress();
+      document.getElementById("open-button").focus();
+    }
+
+    document.getElementById("open-button").addEventListener("click", showRound);
+    document.getElementById("restart-button").addEventListener("click", resetGame);
+
+    rounds.forEach(round => {
+      // Cevap Butonları
+      round.querySelectorAll(".answer").forEach(button => button.addEventListener("click", () => {
+        if (button.dataset.correct === "true") {
+          round.querySelector(".wrong-feedback").classList.add("hidden");
+          round.querySelector(".right-feedback").classList.remove("hidden");
+          round.querySelectorAll(".answer").forEach(answer => { answer.disabled = true; });
+          round.querySelector(".next-button").focus();
+        } else {
+          round.querySelector(".wrong-feedback").classList.remove("hidden");
+          button.disabled = true;
+          button.classList.add("opacity-50", "cursor-not-allowed");
+        }
+      }));
+
+      // "Sıradaki" Butonu
+      round.querySelector(".next-button").addEventListener("click", () => {
+        round.classList.add("hidden");
+        roundIndex++;
+        updateProgress();
+
+        if (roundIndex === rounds.length) {
+          if (suitcaseVideo) {
+            suitcaseVideo.src = "1.mp4";
+            suitcaseVideo.load();
+            suitcaseVideo.currentTime = 0;
+            suitcaseVideo.play().catch(err => console.log("Video oynatma:", err));
+          }
+          finished.classList.remove("hidden");
+          document.getElementById("finished-heading").focus();
+        } else {
+          if (suitcaseVideo) {
+            suitcaseVideo.pause();
+            syncVideoForCurrentRound();
+            suitcaseVideo.currentTime = 0;
+          }
+          closedActions.classList.remove("hidden");
+          document.getElementById("open-button").focus();
+        }
+      });
+    });
+
+    updateProgress();
+  </script>
+</body>
+
+</html>

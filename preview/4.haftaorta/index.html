@@ -1,0 +1,1510 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kavram Eşleştirme Oyunu — Nerelisin?</title>
+  <link rel="icon" type="image/svg+xml" href="1.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap"
+    rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-light: #6366f1;
+      --primary-dark: #3730a3;
+      --primary-soft: #eef2ff;
+      --accent: #f59e0b;
+      --accent-soft: #fef3c7;
+      --success: #10b981;
+      --success-soft: #d1fae5;
+      --danger: #ef4444;
+      --danger-soft: #fee2e2;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --card-bg: #ffffff;
+      --bg-page: #f8fafc;
+      --shadow-sm: 0 2px 5px rgba(15, 23, 42, 0.05);
+      --shadow-md: 0 8px 20px -3px rgba(15, 23, 42, 0.08);
+      --shadow-lg: 0 20px 35px -5px rgba(79, 70, 229, 0.15);
+      --radius-xl: 18px;
+      --radius-lg: 14px;
+      --radius-md: 10px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    html,
+    body {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      color: var(--text-main);
+      background-color: var(--bg-page);
+    }
+
+    /* Arka Plan Deseni & Canlı Gradyan */
+    body {
+      background-image:
+        radial-gradient(circle, #cbd5e1 1.4px, transparent 1.4px),
+        radial-gradient(circle at 12% 18%, rgba(99, 102, 241, 0.12), transparent 450px),
+        radial-gradient(circle at 88% 82%, rgba(245, 158, 11, 0.10), transparent 500px),
+        radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.06), transparent 600px);
+      background-size: 24px 24px, 100% 100%, 100% 100%, 100% 100%;
+      background-position: 0 0, 0 0, 0 0, 0 0;
+    }
+
+    .app-container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      max-height: 100vh;
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 10px 20px;
+      gap: 8px;
+    }
+
+    /* ÜST BAR */
+    header.top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      border-radius: var(--radius-xl);
+      padding: 8px 18px;
+      box-shadow: var(--shadow-sm);
+      flex-shrink: 0;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      height: 38px;
+      width: auto;
+      max-width: 140px;
+      object-fit: contain;
+      display: block;
+      filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.06));
+      transition: transform 0.2s ease;
+    }
+
+    .brand-logo:hover {
+      transform: scale(1.03);
+    }
+
+    .title-group h1 {
+      font-size: 1.08rem;
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1.2;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .title-group p {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .lesson-tag {
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .header-stats {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .stat-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #f1f5f9;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #334155;
+    }
+
+    .stat-pill .val {
+      color: var(--primary);
+      font-size: 0.92rem;
+      font-weight: 800;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      font-family: inherit;
+      border-radius: var(--radius-md);
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .btn-secondary {
+      background: #ffffff;
+      color: #475569;
+      border-color: var(--border-color);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-secondary:hover {
+      background: #f8fafc;
+      color: var(--primary);
+      border-color: #cbd5e1;
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: #ffffff;
+      box-shadow: 0 4px 10px rgba(79, 70, 229, 0.22);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+      transform: translateY(-1px);
+      box-shadow: 0 6px 14px rgba(79, 70, 229, 0.32);
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    /* İLERLEME ÇUBUĞU */
+    .progress-strip {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.65);
+      backdrop-filter: blur(8px);
+      border-radius: 999px;
+      padding: 4px 14px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      flex-shrink: 0;
+    }
+
+    .progress-bar-wrap {
+      flex: 1;
+      height: 7px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #4f46e5, #06b6d4, #10b981);
+      border-radius: 999px;
+      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ANA OYUN ALANI (SOLDAN SAĞA 5'Lİ YERLEŞİM - TEK EKRAN) */
+    .game-arena {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .row-panel {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      border-radius: var(--radius-xl);
+      padding: 8px 12px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .row-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      padding: 0 4px;
+      flex-shrink: 0;
+    }
+
+    .row-title {
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: #334155;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .row-title .icon {
+      font-size: 0.95rem;
+    }
+
+    .row-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #f1f5f9;
+      color: #64748b;
+    }
+
+    /* 5 Sütunlu Yatay Izgara */
+    .cards-row-grid {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+
+    /* KART GENEL STİLİ */
+    .game-card {
+      position: relative;
+      background: var(--card-bg);
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: var(--shadow-sm);
+      outline: none;
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .game-card:hover:not(:disabled) {
+      border-color: var(--primary-light);
+      background: #ffffff;
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md), 0 0 0 1px var(--primary-light);
+    }
+
+    /* Seçilmiş Kart Durumu */
+    .game-card.selected {
+      border-color: var(--primary) !important;
+      background: var(--primary-soft) !important;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.28), var(--shadow-md);
+      transform: scale(1.02);
+      z-index: 2;
+    }
+
+    /* İpucu Gösterim Durumu */
+    .game-card.hint-glow {
+      border-color: var(--accent) !important;
+      background: var(--accent-soft) !important;
+      animation: pulseHint 0.8s infinite alternate ease-in-out;
+    }
+
+    /* Hata Sallantısı */
+    .game-card.wrong-shake {
+      border-color: var(--danger) !important;
+      background: var(--danger-soft) !important;
+      animation: shakeAnim 0.4s ease-in-out;
+    }
+
+    /* Eşleşmiş (Başarılı) Kart Durumu */
+    .game-card.matched {
+      border-color: var(--success) !important;
+      background: linear-gradient(145deg, #f0fdf4 0%, #dcfce7 100%) !important;
+      cursor: default;
+      box-shadow: none;
+      opacity: 0.95;
+    }
+
+    .game-card:disabled {
+      cursor: default;
+    }
+
+    /* ÜST KAVRAM KARTI (Görsel Odaklı + Büyüteç Butonu) */
+    .term-card {
+      padding: 6px;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .term-image-box {
+      position: relative;
+      width: 100%;
+      flex: 1;
+      min-height: 0;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .term-image-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #ffffff;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .game-card:hover:not(:disabled) .term-image-box img {
+      transform: scale(1.05);
+    }
+
+    /* Büyüteç Butonu */
+    .zoom-btn {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      color: #334155;
+      font-size: 0.82rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      transition: all 0.18s ease;
+      z-index: 5;
+    }
+
+    .zoom-btn:hover {
+      background: var(--primary);
+      color: #ffffff;
+      transform: scale(1.15);
+      box-shadow: 0 4px 10px rgba(79, 70, 229, 0.35);
+    }
+
+    .term-footer {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 4px 0 4px;
+      margin-top: 4px;
+      flex-shrink: 0;
+    }
+
+    .term-info {
+      text-align: left;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .term-name {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.2;
+    }
+
+    .term-tag {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      display: block;
+    }
+
+    .term-status-badge {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #f1f5f9;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 800;
+      flex-shrink: 0;
+      transition: all 0.2s ease;
+    }
+
+    .game-card.selected .term-status-badge {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .game-card.matched .term-status-badge {
+      background: var(--success);
+      color: #fff;
+    }
+
+    /* ALT TANIM KARTI (Kısa & Net İfadeler) */
+    .clue-card {
+      padding: 8px 10px;
+      justify-content: flex-start;
+      text-align: left;
+      gap: 6px;
+    }
+
+    .clue-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      flex-shrink: 0;
+    }
+
+    .clue-letter {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      background: #f1f5f9;
+      color: #475569;
+      font-weight: 800;
+      font-size: 0.78rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .game-card.matched .clue-letter {
+      background: var(--success);
+      color: #fff;
+    }
+
+    .clue-tag {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #94a3b8;
+    }
+
+    .clue-text {
+      font-size: 0.82rem;
+      font-weight: 600;
+      line-height: 1.35;
+      color: #1e293b;
+      flex: 1;
+      display: flex;
+      align-items: center;
+    }
+
+    .game-card.matched .clue-text {
+      color: #065f46;
+      font-weight: 700;
+    }
+
+    /* ALT BİLGİ & GERİ BİLDİRİM BARI */
+    footer.bottom-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-radius: var(--radius-xl);
+      padding: 6px 16px;
+      box-shadow: var(--shadow-sm);
+      flex-shrink: 0;
+      min-height: 42px;
+    }
+
+    .feedback-msg {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: #334155;
+      flex: 1;
+      transition: all 0.2s ease;
+    }
+
+    .feedback-msg.success {
+      color: #047857;
+    }
+
+    .feedback-msg.error {
+      color: #b91c1c;
+    }
+
+    .feedback-msg.info {
+      color: #4338ca;
+    }
+
+    .feedback-icon {
+      font-size: 1.05rem;
+    }
+
+    .help-tooltip-trigger {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #64748b;
+      cursor: pointer;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #f1f5f9;
+      transition: background 0.15s ease;
+      border: none;
+    }
+
+    .help-tooltip-trigger:hover {
+      background: #e2e8f0;
+      color: var(--text-main);
+    }
+
+    /* BÜYÜTEÇ IŞIK KUTUSU (Lightbox Modal) */
+    .lightbox-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .lightbox-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .lightbox-content {
+      position: relative;
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 16px;
+      max-width: 90vw;
+      max-height: 88vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      transform: scale(0.9);
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .lightbox-overlay.active .lightbox-content {
+      transform: scale(1);
+    }
+
+    .lightbox-close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #f1f5f9;
+      border: none;
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #475569;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+      z-index: 10;
+    }
+
+    .lightbox-close-btn:hover {
+      background: #fee2e2;
+      color: #ef4444;
+      transform: rotate(90deg);
+    }
+
+    .lightbox-image {
+      max-width: 82vw;
+      max-height: 72vh;
+      object-fit: contain;
+      border-radius: 12px;
+      background: #f8fafc;
+    }
+
+    .lightbox-meta {
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    .lightbox-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    /* KAZANMA MODALI */
+    .win-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 150;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .win-overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .win-modal {
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 30px 28px;
+      max-width: 440px;
+      width: 90%;
+      text-align: center;
+      box-shadow: var(--shadow-lg), 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      transform: scale(0.9);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .win-overlay.show .win-modal {
+      transform: scale(1);
+    }
+
+    .win-icon {
+      font-size: 3.4rem;
+      margin-bottom: 8px;
+      display: inline-block;
+      animation: bounceWin 1.2s infinite alternate;
+    }
+
+    .win-title {
+      font-size: 1.45rem;
+      font-weight: 900;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+
+    .win-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+      margin-bottom: 20px;
+    }
+
+    .win-stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .win-stat-box {
+      background: #f8fafc;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 10px;
+    }
+
+    .win-stat-box .title {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .win-stat-box .num {
+      font-size: 1.25rem;
+      font-weight: 900;
+      color: var(--primary);
+      margin-top: 2px;
+    }
+
+    /* Bilgi Notu Modalı */
+    .info-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 120;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .info-modal-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .info-dialog {
+      background: #ffffff;
+      border-radius: 18px;
+      max-width: 480px;
+      width: 90%;
+      padding: 22px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .info-dialog h3 {
+      font-size: 1.1rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .info-dialog p {
+      font-size: 0.85rem;
+      color: #475569;
+      line-height: 1.55;
+      margin-bottom: 16px;
+    }
+
+    /* ANİMASYONLAR */
+    @keyframes pulseHint {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4);
+      }
+
+      100% {
+        transform: scale(1.02);
+        box-shadow: 0 0 0 6px rgba(245, 158, 11, 0);
+      }
+    }
+
+    @keyframes shakeAnim {
+
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+
+      20%,
+      60% {
+        transform: translateX(-5px);
+      }
+
+      40%,
+      80% {
+        transform: translateX(5px);
+      }
+    }
+
+    @keyframes bounceWin {
+      0% {
+        transform: translateY(0);
+      }
+
+      100% {
+        transform: translateY(-8px);
+      }
+    }
+
+    /* Küçük Ekranlar & Tabletler */
+    @media (max-width: 900px) {
+
+      html,
+      body {
+        overflow-y: auto;
+        height: auto;
+      }
+
+      .app-container {
+        height: auto;
+        max-height: none;
+      }
+
+      .cards-row-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .term-image-box {
+        min-height: 120px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app-container">
+
+    <!-- Üst Başlık & İstatistik Barı -->
+    <header class="top-bar">
+      <div class="logo-area">
+        <img src="1.svg" alt="Logo" class="brand-logo">
+        <div class="title-group">
+          <h1>
+            Kavram Eşleştirme
+            <span class="lesson-tag">Çevrim İçi Türkçe & Türk Kültürü</span>
+          </h1>
+          <p>Kavramları ve kısa tanımlarını eşleştir</p>
+        </div>
+      </div>
+
+      <div class="header-stats">
+        <div class="stat-pill" title="Başarılı Eşleşme Sayısı">
+          <span>Eşleşme:</span>
+          <span class="val" id="matchScore">0 / 5</span>
+        </div>
+        <div class="stat-pill" title="Toplam Hamle">
+          <span>Hamle:</span>
+          <span class="val" id="moveCount">0</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn btn-secondary" id="hintBtn" type="button" title="İpucu Göster">
+          <span>💡</span> İpucu
+        </button>
+        <button class="btn btn-primary" id="restartBtn" type="button" title="Oyunu Yeniden Başlat">
+          <span>↻</span> Yeniden Başla
+        </button>
+      </div>
+    </header>
+
+    <!-- İlerleme Çubuğu -->
+    <div class="progress-strip">
+      <span>İlerleme Durumu</span>
+      <div class="progress-bar-wrap" role="progressbar" aria-valuemin="0" aria-valuemax="5" aria-valuenow="0"
+        id="progressBar">
+        <div class="progress-bar-fill" id="progressFill"></div>
+      </div>
+      <span id="progressPercent">%0 Tamamlandı</span>
+    </div>
+
+    <!-- Ana Oyun Eşleştirme Alanı (Tek Ekranda 5'li Yatay Yerleşim) -->
+    <main class="game-arena">
+
+      <!-- Üst Satır: 5 Kavram Kartı (Büyük Görsel + Büyüteç) -->
+      <section class="row-panel" aria-label="Kavram Kartları Satırı">
+        <div class="row-header">
+          <div class="row-title">
+            <span class="icon">🖼️</span> 1. Adım: Bir Kavram Görseli Seç
+          </div>
+          <span class="row-badge">Görselleri büyütmek için 🔍 büyütece tıkla</span>
+        </div>
+        <div class="cards-row-grid" id="termsList">
+          <!-- Dinamik Olarak JS ile Oluşturulacak -->
+        </div>
+      </section>
+
+      <!-- Alt Satır: 5 Tanım Kartı (Kısa & Net Açıklamalar) -->
+      <section class="row-panel" aria-label="Açıklama Kartları Satırı">
+        <div class="row-header">
+          <div class="row-title">
+            <span class="icon">📖</span> 2. Adım: Doğru Tanımıyla Eşleştir
+          </div>
+          <span class="row-badge">Kavrama uygun kısa açıklamayı tıkla</span>
+        </div>
+        <div class="cards-row-grid" id="cluesList">
+          <!-- Dinamik Olarak JS ile Oluşturulacak -->
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Alt Bilgilendirme ve Geri Bildirim Çubuğu -->
+    <footer class="bottom-bar">
+      <div class="feedback-msg" id="feedbackMessage" role="status">
+        <span class="feedback-icon" id="feedbackIcon">👉</span>
+        <span id="feedbackText">Başlamak için üstteki kavram görsellerinden birine tıkla.</span>
+      </div>
+      <button class="help-tooltip-trigger" id="infoBtn" type="button">
+        <span>ℹ️</span> Bilgi Notu
+      </button>
+    </footer>
+
+  </div>
+
+  <!-- Görsel Büyütme Modalı (Lightbox) -->
+  <div class="lightbox-overlay" id="lightboxModal" role="dialog" aria-modal="true" aria-label="Büyük Görsel Önizleme">
+    <div class="lightbox-content">
+      <button class="lightbox-close-btn" id="closeLightboxBtn" type="button" title="Kapat">✕</button>
+      <img src="" alt="" class="lightbox-image" id="lightboxImg">
+      <div class="lightbox-meta">
+        <h3 class="lightbox-title" id="lightboxTitle">Kavram Başlığı</h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hatırlatma Bilgi Notu Modalı -->
+  <div class="info-modal-backdrop" id="infoModal">
+    <div class="info-dialog">
+      <h3><span>🌟</span> Kavram Hatırlatması</h3>
+      <p>
+        <strong>Türkiye</strong> bir <em>ülke</em>, <strong>Ankara</strong> bir <em>şehir</em>dir.
+        Aynı şehirden olan kişiler birbirinin <em>hemşehrisi</em>dir.
+        <em>Memleket</em> ise doğup büyüdüğümüz veya köklerimizin bağlı olduğu yerdir.
+      </p>
+      <div style="text-align: right;">
+        <button class="btn btn-primary" id="closeInfoBtn" type="button">Anladım</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tebrikler / Kazanma Modalı -->
+  <div class="win-overlay" id="winModal" role="dialog" aria-modal="true">
+    <div class="win-modal">
+      <div class="win-icon">🏆</div>
+      <h2 class="win-title">Tebrikler, Harikasın!</h2>
+      <p class="win-desc">
+        Tüm kavramları doğru tanımlarıyla eşleştirdin.
+      </p>
+      <div class="win-stats-grid">
+        <div class="win-stat-box">
+          <div class="title">Eşleşme</div>
+          <div class="num">5 / 5</div>
+        </div>
+        <div class="win-stat-box">
+          <div class="title">Toplam Hamle</div>
+          <div class="num" id="winMoveCount">5</div>
+        </div>
+      </div>
+      <button class="btn btn-primary" id="playAgainBtn" style="width: 100%; justify-content: center; padding: 10px;"
+        type="button">
+        <span>🔄</span> Tekrar Oyna
+      </button>
+    </div>
+  </div>
+
+  <!-- Konfeti Efekti -->
+  <canvas id="confettiCanvas" style="position: fixed; inset: 0; pointer-events: none; z-index: 180;"></canvas>
+
+  <script>
+    // Kavram Verileri (Sade, kısa ve net tanımlar)
+    const conceptsData = [
+      {
+        id: "nerelisin",
+        name: "Nerelisin?",
+        image: "nerelisin.png",
+        clue: "Birine memleketini sormak için kullanılan soru.",
+        hint: "Birinin nereden olduğunu öğrenmek için sorulur."
+      },
+      {
+        id: "memleket",
+        name: "Memleket",
+        image: "memleket.png",
+        clue: "Doğup büyüdüğümüz veya köklerimizin bağlı olduğu yer.",
+        hint: "Köklerimizin dayandığı ve kendimizi ait hissettiğimiz yerdir."
+      },
+      {
+        id: "hemsehri",
+        name: "Hemşehri",
+        image: "hemsehri.png",
+        clue: "Aynı şehirden veya memleketten olan kişiler.",
+        hint: "Aynı memleketli olan insanlar."
+      },
+      {
+        id: "sehir",
+        name: "Şehir",
+        image: "sehir.png",
+        clue: "Büyük ve kalabalık yerleşim yeri (İl).",
+        hint: "Türkiye'deki 81 ilden her biri."
+      },
+      {
+        id: "ulke",
+        name: "Ülke",
+        image: "ulke.png",
+        clue: "Sınırları ve bayrağı olan vatan toprağı.",
+        hint: "Türkiye gibi bağımsız bir devletin toprağı."
+      }
+    ];
+
+    // Web Audio API Ses Sentezleyici
+    const audioCtx = (function () {
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        return new AudioContext();
+      } catch (e) {
+        return null;
+      }
+    })();
+
+    function playTone(freq, type, duration) {
+      if (!audioCtx) return;
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type || 'sine';
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) { }
+    }
+
+    function soundSelect() { playTone(440, 'sine', 0.12); }
+    function soundMatch() {
+      if (!audioCtx) return;
+      setTimeout(() => playTone(523.25, 'triangle', 0.15), 0);
+      setTimeout(() => playTone(659.25, 'triangle', 0.15), 100);
+      setTimeout(() => playTone(783.99, 'triangle', 0.25), 200);
+    }
+    function soundWrong() {
+      if (!audioCtx) return;
+      playTone(220, 'sawtooth', 0.15);
+      setTimeout(() => playTone(180, 'sawtooth', 0.2), 120);
+    }
+    function soundWin() {
+      if (!audioCtx) return;
+      const notes = [523.25, 659.25, 783.99, 1046.50];
+      notes.forEach((n, idx) => {
+        setTimeout(() => playTone(n, 'triangle', 0.3), idx * 120);
+      });
+    }
+
+    // Oyun Durumu (State)
+    let selectedTermId = null;
+    let matchedIds = new Set();
+    let moveCount = 0;
+
+    // DOM Referansları
+    const termsList = document.getElementById("termsList");
+    const cluesList = document.getElementById("cluesList");
+    const matchScoreEl = document.getElementById("matchScore");
+    const moveCountEl = document.getElementById("moveCount");
+    const progressFill = document.getElementById("progressFill");
+    const progressPercent = document.getElementById("progressPercent");
+    const feedbackIcon = document.getElementById("feedbackIcon");
+    const feedbackText = document.getElementById("feedbackText");
+    const feedbackMsg = document.getElementById("feedbackMessage");
+    const winModal = document.getElementById("winModal");
+    const winMoveCount = document.getElementById("winMoveCount");
+    const infoModal = document.getElementById("infoModal");
+
+    // Lightbox DOM
+    const lightboxModal = document.getElementById("lightboxModal");
+    const lightboxImg = document.getElementById("lightboxImg");
+    const lightboxTitle = document.getElementById("lightboxTitle");
+    const closeLightboxBtn = document.getElementById("closeLightboxBtn");
+
+    // Dizi Karıştırma Fonksiyonu
+    function shuffleArray(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    // Geri Bildirim Güncelleme
+    function setFeedback(msg, type = "info", icon = "👉") {
+      feedbackText.textContent = msg;
+      feedbackIcon.textContent = icon;
+      feedbackMsg.className = "feedback-msg " + type;
+    }
+
+    // Büyüteç / Lightbox Açma
+    function openLightbox(item) {
+      lightboxImg.src = item.image;
+      lightboxImg.alt = item.name;
+      lightboxTitle.textContent = item.name;
+      lightboxModal.classList.add("active");
+    }
+
+    function closeLightbox() {
+      lightboxModal.classList.remove("active");
+    }
+
+    closeLightboxBtn.addEventListener("click", closeLightbox);
+    lightboxModal.addEventListener("click", (e) => {
+      if (e.target === lightboxModal) closeLightbox();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && lightboxModal.classList.contains("active")) {
+        closeLightbox();
+      }
+    });
+
+    // Kavram Kartı Oluşturma (Üst Satır)
+    function createTermCard(item) {
+      const card = document.createElement("button");
+      card.type = "button";
+      card.className = "game-card term-card";
+      card.dataset.termId = item.id;
+      card.setAttribute("aria-label", item.name + " kavramı");
+
+      card.innerHTML = `
+        <div class="term-image-box">
+          <img src="${item.image}" alt="${item.name}" loading="eager" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'200\\' height=\\'140\\' fill=\\'%236366f1\\'><rect width=\\'200\\' height=\\'140\\' fill=\\'%23eef2ff\\'/><text x=\\'50%\\' y=\\'50%\\' dominant-baseline=\\'middle\\' text-anchor=\\'middle\\' font-size=\\'24\\'>📌</text></svg>'">
+          <button type="button" class="zoom-btn" title="Görseli Büyüt (Büyüteç)" aria-label="${item.name} görselini büyüt">
+            🔍
+          </button>
+        </div>
+        <div class="term-footer">
+          <div class="term-info">
+            <span class="term-name">${item.name}</span>
+          </div>
+          <div class="term-status-badge">
+            <span class="badge-icon">●</span>
+          </div>
+        </div>
+      `;
+
+      // Büyütece tıklanınca sadece lightbox açılsın
+      const zoomBtn = card.querySelector(".zoom-btn");
+      zoomBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        openLightbox(item);
+      });
+
+      if (matchedIds.has(item.id)) {
+        card.classList.add("matched");
+        card.disabled = true;
+        card.querySelector(".term-status-badge").innerHTML = "✓";
+      } else {
+        card.addEventListener("click", () => handleTermClick(item.id));
+      }
+
+      return card;
+    }
+
+    // Açıklama Kartı Oluşturma (Alt Satır - A, B, C, D, E)
+    function createClueCard(item, letterIndex) {
+      const letter = String.fromCharCode(65 + letterIndex);
+      const card = document.createElement("button");
+      card.type = "button";
+      card.className = "game-card clue-card";
+      card.dataset.clueId = item.id;
+      card.setAttribute("aria-label", "Tanım " + letter + ": " + item.clue);
+
+      card.innerHTML = `
+        <div class="clue-top">
+          <div class="clue-letter">${letter}</div>
+          <span class="clue-tag">Kavram Tanımı</span>
+        </div>
+        <p class="clue-text">${item.clue}</p>
+      `;
+
+      if (matchedIds.has(item.id)) {
+        card.classList.add("matched");
+        card.disabled = true;
+        card.querySelector(".clue-letter").innerHTML = "✓";
+      } else {
+        card.addEventListener("click", () => handleClueClick(item.id));
+      }
+
+      return card;
+    }
+
+    // Tahtayı Çizme
+    function renderBoard() {
+      termsList.replaceChildren();
+      cluesList.replaceChildren();
+
+      // Üst Satır: Kavramlar
+      const shuffledTerms = shuffleArray(conceptsData);
+      shuffledTerms.forEach(item => {
+        termsList.appendChild(createTermCard(item));
+      });
+
+      // Alt Satır: Tanımlar
+      const shuffledClues = shuffleArray(conceptsData);
+      shuffledClues.forEach((item, index) => {
+        cluesList.appendChild(createClueCard(item, index));
+      });
+
+      updateStats();
+    }
+
+    // Kavram Kartına Tıklama
+    function handleTermClick(id) {
+      if (matchedIds.has(id)) return;
+
+      soundSelect();
+      clearHints();
+
+      document.querySelectorAll(".term-card").forEach(c => c.classList.remove("selected"));
+
+      selectedTermId = id;
+      const targetCard = document.querySelector(`.term-card[data-term-id="${id}"]`);
+      if (targetCard) targetCard.classList.add("selected");
+
+      const item = conceptsData.find(c => c.id === id);
+      setFeedback(`“${item.name}” seçildi. Şimdi alttan doğru tanıma tıkla!`, "info", "🔍");
+    }
+
+    // Tanım Kartına Tıklama
+    function handleClueClick(id) {
+      if (matchedIds.has(id)) return;
+
+      if (!selectedTermId) {
+        soundWrong();
+        setFeedback("Önce üstteki kavram görsellerinden birini seçmelisin!", "error", "⚠️");
+        return;
+      }
+
+      moveCount++;
+      moveCountEl.textContent = moveCount;
+
+      const currentTerm = conceptsData.find(c => c.id === selectedTermId);
+      const chosenClueCard = document.querySelector(`.clue-card[data-clue-id="${id}"]`);
+      const chosenTermCard = document.querySelector(`.term-card[data-term-id="${selectedTermId}"]`);
+
+      if (selectedTermId === id) {
+        // DOĞRU EŞLEŞME
+        matchedIds.add(id);
+        soundMatch();
+
+        chosenTermCard.classList.remove("selected");
+        chosenTermCard.classList.add("matched");
+        chosenTermCard.disabled = true;
+        chosenTermCard.querySelector(".term-status-badge").innerHTML = "✓";
+
+        chosenClueCard.classList.add("matched");
+        chosenClueCard.disabled = true;
+        chosenClueCard.querySelector(".clue-letter").innerHTML = "✓";
+
+        selectedTermId = null;
+        updateStats();
+
+        if (matchedIds.size === conceptsData.length) {
+          soundWin();
+          triggerConfetti();
+          setFeedback("🎉 Harika! Tüm kavramları başarıyla eşleştirdin!", "success", "🏆");
+          setTimeout(() => {
+            winMoveCount.textContent = moveCount;
+            winModal.classList.add("show");
+          }, 500);
+        } else {
+          setFeedback(`✅ Doğru! “${currentTerm.name}” kavramını başarıyla eşleştirdin.`, "success", "✨");
+        }
+      } else {
+        // YANLIŞ EŞLEŞME
+        soundWrong();
+        if (chosenClueCard) {
+          chosenClueCard.classList.add("wrong-shake");
+          setTimeout(() => chosenClueCard.classList.remove("wrong-shake"), 450);
+        }
+        if (chosenTermCard) {
+          chosenTermCard.classList.add("wrong-shake");
+          setTimeout(() => chosenTermCard.classList.remove("wrong-shake"), 450);
+        }
+
+        setFeedback(`Bu tanım “${currentTerm.name}” ile eşleşmedi. Tekrar dene!`, "error", "❌");
+
+        selectedTermId = null;
+        document.querySelectorAll(".term-card").forEach(c => c.classList.remove("selected"));
+      }
+    }
+
+    // İstatistik ve İlerleme
+    function updateStats() {
+      const total = conceptsData.length;
+      const count = matchedIds.size;
+      const percent = Math.round((count / total) * 100);
+
+      matchScoreEl.textContent = `${count} / ${total}`;
+      progressFill.style.width = `${percent}%`;
+      progressPercent.textContent = `%${percent} Tamamlandı`;
+    }
+
+    // İpucu Fonksiyonu
+    function clearHints() {
+      document.querySelectorAll(".game-card").forEach(c => c.classList.remove("hint-glow"));
+    }
+
+    document.getElementById("hintBtn").addEventListener("click", () => {
+      clearHints();
+      const remaining = conceptsData.filter(c => !matchedIds.has(c.id));
+      if (remaining.length === 0) {
+        setFeedback("Tüm eşleşmeleri zaten tamamladın!", "success", "🌟");
+        return;
+      }
+
+      const target = remaining[0];
+      handleTermClick(target.id);
+
+      const termCard = document.querySelector(`.term-card[data-term-id="${target.id}"]`);
+      const clueCard = document.querySelector(`.clue-card[data-clue-id="${target.id}"]`);
+
+      if (termCard) termCard.classList.add("hint-glow");
+      if (clueCard) clueCard.classList.add("hint-glow");
+
+      setFeedback(`💡 İpucu: ${target.hint}`, "info", "💡");
+    });
+
+    // Yeniden Başlatma
+    function restartGame() {
+      selectedTermId = null;
+      matchedIds.clear();
+      moveCount = 0;
+      moveCountEl.textContent = "0";
+      winModal.classList.remove("show");
+      clearHints();
+      renderBoard();
+      setFeedback("Oyun hazır! Başlamak için üstten bir kavram görseli seç.", "info", "👉");
+    }
+
+    document.getElementById("restartBtn").addEventListener("click", restartGame);
+    document.getElementById("playAgainBtn").addEventListener("click", restartGame);
+
+    // Bilgi Notu Modalı
+    const infoBtn = document.getElementById("infoBtn");
+    const closeInfoBtn = document.getElementById("closeInfoBtn");
+
+    infoBtn.addEventListener("click", () => {
+      infoModal.classList.add("open");
+    });
+
+    closeInfoBtn.addEventListener("click", () => {
+      infoModal.classList.remove("open");
+    });
+
+    infoModal.addEventListener("click", (e) => {
+      if (e.target === infoModal) {
+        infoModal.classList.remove("open");
+      }
+    });
+
+    // Konfeti Efekti
+    const canvas = document.getElementById('confettiCanvas');
+    const ctx = canvas.getContext('2d');
+    let confettiParticles = [];
+    let confettiAnimId = null;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function triggerConfetti() {
+      confettiParticles = [];
+      const colors = ['#4f46e5', '#f59e0b', '#10b981', '#ef4444', '#06b6d4', '#ec4899'];
+      for (let i = 0; i < 90; i++) {
+        confettiParticles.push({
+          x: canvas.width * 0.5,
+          y: canvas.height * 0.35,
+          r: Math.random() * 6 + 4,
+          d: Math.random() * 90,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          tilt: Math.floor(Math.random() * 10) - 10,
+          tiltAngle: 0,
+          tiltAngleIncremental: Math.random() * 0.07 + 0.05,
+          vx: (Math.random() - 0.5) * 14,
+          vy: (Math.random() - 0.8) * 14
+        });
+      }
+      if (confettiAnimId) cancelAnimationFrame(confettiAnimId);
+      animateConfetti();
+    }
+
+    function animateConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      let stillRunning = false;
+
+      for (let i = 0; i < confettiParticles.length; i++) {
+        const p = confettiParticles[i];
+        p.tiltAngle += p.tiltAngleIncremental;
+        p.y += (Math.cos(p.d) + 3 + p.r / 2) / 2 + p.vy;
+        p.x += Math.sin(p.d) * 2 + p.vx;
+        p.vy += 0.25;
+        p.vx *= 0.98;
+        p.tilt = Math.sin(p.tiltAngle) * 15;
+
+        if (p.y < canvas.height + 20) {
+          stillRunning = true;
+          ctx.beginPath();
+          ctx.lineWidth = p.r;
+          ctx.strokeStyle = p.color;
+          ctx.moveTo(p.x + p.tilt + p.r / 4, p.y);
+          ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r / 4);
+          ctx.stroke();
+        }
+      }
+
+      if (stillRunning) {
+        confettiAnimId = requestAnimationFrame(animateConfetti);
+      } else {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+
+    // İlk Yükleme
+    renderBoard();
+  </script>
+</body>
+
+</html>
