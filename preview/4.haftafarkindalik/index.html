@@ -54,7 +54,7 @@
       </div>
     </section>
     <section class="view country-view" id="countryView">
-      <h1 class="title">HANGİ ÜLKEDE YAŞIYORSUN?</h1>
+      <h1 class="title">NEREDE YAŞIYORSUN?</h1>
       <div class="country-grid" id="countryGrid"></div>
     </section>
     <section class="view" id="finalView">
@@ -146,7 +146,7 @@
   ].sort((a,b)=>a.name.localeCompare(b.name,'tr'));
   const getCountry=id=>countries.find(c=>c.id===id);
   function staticFlag(c){const file=c.id==='turkey'?'turk_bayragi_2893.png':c.name+'.png';return `<img src="${esc(file)}" alt="${esc(c.name)} bayrağı" draggable="false">`}
-  const audioMap={opening:['acilis.mp3'],findTurkey:['sesler/turk-bayragini-bul.mp3','türk bayrağını bul.wav'],success:['sesler/harika.mp3','harika.wav'],turkey:['sesler/turkiye.mp3','Türkiye.wav'],chooseCountry:['sesler/hangi-ulkede-yasiyorsun.mp3','hangi ülkede.wav']};
+  const audioMap={opening:['acilis.mp3'],findTurkey:['sesler/turk-bayragini-bul.mp3','türk bayrağını bul.wav'],success:['sesler/harika.mp3','harika.wav'],turkey:['sesler/turkiye.mp3','Türkiye.wav'],chooseCountry:['nerede yaşıyorsun.wav']};
   let activeAudio=null,soundOn=true,audioToken=0;
   function stopAudio(){audioToken++;if(activeAudio){activeAudio.pause();activeAudio.currentTime=0;activeAudio=null}if('speechSynthesis'in window)speechSynthesis.cancel()}
   /* Bilgisayarın yapay konuşma sesi kullanılmaz. Yalnızca klasördeki kayıtlar çalınır. */
@@ -171,7 +171,7 @@
   $('#paintStage').addEventListener('click',e=>{if(currentFlag!=='turkey'){paintCountryColor();return}const g=e.target.closest('[data-region]');if(g)paint(g)});$('#paintStage').addEventListener('keydown',e=>{if(e.key!=='Enter'&&e.key!==' ')return;e.preventDefault();if(currentFlag!=='turkey'){paintCountryColor();return}if(e.target.matches('[data-region]'))paint(e.target)})
   function checkPaint(){const groups=$$('#paintStage [data-region]');if(!groups.length||!groups.every(g=>g.dataset.ok==='true')||finished)return;finished=true;$('#feedback').textContent='';if(currentFlag==='turkey'){$('#paintStage').innerHTML=staticFlag({id:'turkey',name:'Türkiye'})}else{const photo=$('#countryPaintImage');if(photo){photo.style.filter='saturate(1.18) contrast(1.06)';photo.style.opacity='1'}$$('#paintStage .paint-image-layer').forEach(layer=>layer.style.opacity='0');groups.forEach(group=>regionShapes(group).forEach(shape=>{shape.setAttribute('fill','transparent');shape.style.opacity='0'}))}playKey('success','Aferin!',()=>{const n=$('#colorNext');n.hidden=false;n.disabled=false;n.textContent=currentFlag==='turkey'?'ÜLKEMİ SEÇ':'BAYRAKLARIMI GÖR'})}
   $('#colorNext').addEventListener('click',()=>{if(currentFlag==='turkey')showCountries();else showFinal()});
-  function showCountries(){showView('countryView');$('#countryGrid').innerHTML=countries.map(c=>`<button class="country-card" data-id="${c.id}" aria-label="${esc(c.name)}">${staticFlag(c)}<span>${esc(c.name)}</span></button>`).join('');playKey('chooseCountry','Hangi ülkede yaşıyorsun?')}
+  function showCountries(){showView('countryView');$('#countryGrid').innerHTML=countries.map(c=>`<button class="country-card" data-id="${c.id}" aria-label="${esc(c.name)}">${staticFlag(c)}<span>${esc(c.name)}</span></button>`).join('');playKey('chooseCountry','Nerede yaşıyorsun?')}
   $('#countryGrid').addEventListener('click',e=>{const b=e.target.closest('.country-card');if(!b)return;currentCountry=getCountry(b.dataset.id);b.style.borderColor='#55be80';beginColoring(currentCountry.id);playCountry(currentCountry)});
   function showFinal(){showView('finalView');$('#finalTurkey').innerHTML=staticFlag({id:'turkey',name:'Türkiye'});$('#finalCountry').innerHTML=staticFlag(currentCountry);$('#finalCountryName').textContent=currentCountry.name.toLocaleUpperCase('tr-TR')}
   function stopEndingVideo(){const video=$('#endingVideo');video.pause();video.currentTime=0}
