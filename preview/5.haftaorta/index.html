@@ -1,0 +1,1491 @@
+<!doctype html>
+<html lang="tr" class="h-full">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diyalog Tamamlama Oyunu - Kültür Köprüsü</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,600&display=swap"
+    rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com/3.4.17" type="text/javascript"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <style>
+    :root {
+      --ink: #1b352b;
+      --muted: #536f63;
+      --green: #29604e;
+      --green-dark: #1b4436;
+      --green-light: #eaf5ee;
+      --terracotta: #bf5e3d;
+      --terracotta-light: #fdf2ed;
+      --sand: #f8f6f0;
+      --border: #dbe7da;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+      margin: 0;
+      padding: 0;
+      color: var(--ink);
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f6f8f3;
+      /* Pastel geometric tile pattern + ambient pastel washes */
+      background-image:
+        radial-gradient(ellipse at 12% 16%, rgba(214, 238, 226, 0.7) 0%, transparent 48%),
+        radial-gradient(ellipse at 88% 82%, rgba(253, 233, 223, 0.7) 0%, transparent 48%),
+        radial-gradient(ellipse at 50% 50%, rgba(246, 240, 225, 0.45) 0%, transparent 60%),
+        url("data:image/svg+xml,%3Csvg width='56' height='56' viewBox='0 0 56 56' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%237ea590' stroke-width='0.85' stroke-opacity='0.22'%3E%3Cpath d='M28 0 L56 28 L28 56 L0 28 Z'/%3E%3Cpath d='M0 0 L28 28 L56 0'/%3E%3Cpath d='M0 56 L28 28 L56 56'/%3E%3Ccircle cx='28' cy='28' r='9' stroke='%23cf876e' stroke-opacity='0.22' stroke-width='0.85'/%3E%3Ccircle cx='0' cy='0' r='5.5' stroke='%23cf876e' stroke-opacity='0.18'/%3E%3Ccircle cx='56' cy='0' r='5.5' stroke='%23cf876e' stroke-opacity='0.18'/%3E%3Ccircle cx='0' cy='56' r='5.5' stroke='%23cf876e' stroke-opacity='0.18'/%3E%3Ccircle cx='56' cy='56' r='5.5' stroke='%23cf876e' stroke-opacity='0.18'/%3E%3C/g%3E%3C/svg%3E");
+      background-attachment: fixed;
+    }
+
+    .display {
+      font-family: 'Fraunces', Georgia, serif;
+    }
+
+    /* Pastel Tags & Badges */
+    .canva-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #eaf4eb;
+      color: #245e49;
+      border: 1px solid #d0e5d4;
+    }
+
+    .canva-panel {
+      background: #ffffff;
+      border: 1px solid var(--border);
+    }
+
+    .game-card-shadow {
+      box-shadow: 0 20px 48px -12px rgba(28, 56, 44, 0.09), 0 4px 16px -2px rgba(28, 56, 44, 0.04);
+    }
+
+    /* Scene Image Frame & Tam Oturma (Edge-to-edge frame fitting) */
+    .scene-image-frame {
+      position: relative;
+      width: 100%;
+      height: 230px;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 2px solid #dce8db;
+      background: #eef5ee;
+      box-shadow: 0 6px 20px -4px rgba(32, 64, 50, 0.08);
+    }
+
+    @media (min-width: 640px) {
+      .scene-image-frame {
+        height: 260px;
+      }
+    }
+
+    @media (min-width: 768px) {
+      .scene-image-frame {
+        height: 280px;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .scene-image-frame {
+        height: 295px;
+      }
+    }
+
+    .scene-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center center;
+      display: block;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .scene-image-frame:hover .scene-image {
+      transform: scale(1.03);
+    }
+
+    /* Choice Buttons */
+    .choice {
+      width: 100%;
+      text-align: left;
+      border: 1.5px solid #d9e5d8;
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--ink);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+
+    .choice:not(:disabled):hover {
+      transform: translateY(-2px);
+      border-color: #4b8b6f;
+      background: #f4faf6;
+      box-shadow: 0 6px 20px rgba(36, 91, 73, 0.08);
+    }
+
+    .choice:not(:disabled):active {
+      transform: translateY(0);
+    }
+
+    .choice:disabled {
+      cursor: default;
+    }
+
+    .choice-badge {
+      width: 32px;
+      height: 32px;
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      background: #eef6ed;
+      color: #245e49;
+      font-weight: 800;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+      border: 1px solid #d4e4d2;
+    }
+
+    .choice-text {
+      flex: 1;
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+
+    .choice-icon {
+      width: 26px;
+      height: 26px;
+      flex-shrink: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      font-size: 0.85rem;
+      font-weight: 800;
+    }
+
+    /* Correct Choice */
+    .choice.is-correct,
+    .choice.is-correct:disabled {
+      border-color: #2e7d32 !important;
+      background: #edf7ee !important;
+      color: #1b5e20 !important;
+      box-shadow: 0 6px 18px rgba(46, 125, 50, 0.14) !important;
+    }
+
+    .choice.is-correct .choice-badge {
+      background: #2e7d32 !important;
+      color: #ffffff !important;
+      border-color: #2e7d32 !important;
+    }
+
+    .choice.is-correct .choice-icon {
+      display: inline-flex !important;
+      background: #2e7d32;
+      color: #ffffff;
+    }
+
+    /* Incorrect Choice */
+    .choice.is-incorrect,
+    .choice.is-incorrect:disabled {
+      border-color: #c94a38 !important;
+      background: #fdf2ef !important;
+      color: #922b1e !important;
+      box-shadow: 0 6px 18px rgba(201, 74, 56, 0.12) !important;
+    }
+
+    .choice.is-incorrect .choice-badge {
+      background: #c94a38 !important;
+      color: #ffffff !important;
+      border-color: #c94a38 !important;
+    }
+
+    .choice.is-incorrect .choice-icon {
+      display: inline-flex !important;
+      background: #c94a38;
+      color: #ffffff;
+    }
+
+    /* Primary Action Buttons */
+    .primary-btn {
+      background: linear-gradient(135deg, #245b49 0%, #1a4738 100%);
+      color: #ffffff;
+      border: none;
+      cursor: pointer;
+      font-weight: 700;
+      border-radius: 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      box-shadow: 0 8px 22px rgba(36, 91, 73, 0.24);
+    }
+
+    .primary-btn:hover {
+      background: linear-gradient(135deg, #1d4d3e 0%, #14382c 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 26px rgba(36, 91, 73, 0.32);
+    }
+
+    .primary-btn:active {
+      transform: translateY(0);
+    }
+
+    button:focus-visible {
+      outline: 3px solid #d99126;
+      outline-offset: 2px;
+    }
+
+    .scene:not(.hidden) {
+      animation: rise 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    @keyframes rise {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    #confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    @keyframes popIn {
+      0% {
+        opacity: 0;
+        transform: scale(0.92) translateY(16px);
+      }
+
+      100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .modal-pop-in {
+      animation: popIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    /* Audio Play Button */
+    .audio-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: linear-gradient(135deg, #eaf6ef 0%, #d9f0e4 100%);
+      color: #245b49;
+      border: 1.5px solid #b6ddc6;
+      border-radius: 50px;
+      padding: 7px 16px 7px 12px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 2px 8px rgba(36, 91, 73, 0.08);
+      font-family: inherit;
+      user-select: none;
+    }
+
+    .audio-btn:hover {
+      background: linear-gradient(135deg, #d9f0e4 0%, #c3e8d4 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(36, 91, 73, 0.14);
+    }
+
+    .audio-btn:active {
+      transform: translateY(0);
+    }
+
+    .audio-btn.playing {
+      background: linear-gradient(135deg, #245b49 0%, #1a4738 100%);
+      color: #ffffff;
+      border-color: #245b49;
+      box-shadow: 0 4px 16px rgba(36, 91, 73, 0.25);
+      animation: audioPulse 1.6s infinite ease-in-out;
+    }
+
+    @keyframes audioPulse {
+
+      0%,
+      100% {
+        box-shadow: 0 4px 16px rgba(36, 91, 73, 0.25);
+      }
+
+      50% {
+        box-shadow: 0 4px 22px rgba(36, 91, 73, 0.45);
+      }
+    }
+
+    .audio-btn .audio-icon {
+      font-size: 1rem;
+      line-height: 1;
+      display: inline-block;
+      transition: transform 0.2s ease;
+    }
+
+    .audio-btn.playing .audio-icon {
+      animation: audioWave 1s infinite alternate ease-in-out;
+    }
+
+    @keyframes audioWave {
+      from {
+        transform: scale(0.95);
+      }
+
+      to {
+        transform: scale(1.15);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body data-template-id="__page-root" class="min-h-screen flex flex-col justify-between">
+
+  <!-- Header with 1.svg Logo -->
+  <header class="w-full border-b border-[#dce8db] bg-[#fbf9f4]/90 backdrop-blur-md sticky top-0 z-20 flex-none">
+    <div class="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-2.5 sm:px-6">
+      <div class="flex items-center gap-3">
+        <!-- 1.svg Logo displayed crisply -->
+        <a href="#" class="flex items-center gap-2.5 group transition-transform hover:scale-102">
+          <img src="1.svg" alt="Kültür Köprüsü Logo" class="h-9 sm:h-11 w-auto object-contain">
+          <div class="flex flex-col">
+            <span data-template-id="brand-name"
+              class="canva-text font-extrabold tracking-wide text-xs sm:text-sm text-[#1b352b]">KÜLTÜR KÖPRÜSÜ</span>
+            <span class="text-[10px] text-[#557165] font-semibold hidden sm:inline-block">Diyalog &amp; Nezaket
+              Oyunu</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="flex items-center gap-2.5">
+        <span id="level-badge" data-template-id="level-badge"
+          class="canva-tag rounded-full px-3 py-1 text-[11px] sm:text-xs font-bold tracking-wider bg-[#e6f4eb] text-[#246146] border border-[#cbe4d4] shadow-sm">
+          ✦ 1. SEVİYE · Hitap Oyunu
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Game Stage -->
+  <main class="mx-auto w-full max-w-6xl flex-1 px-4 py-2.5 sm:py-3.5 sm:px-6 flex flex-col justify-center">
+
+    <!-- Top Eyebrow & Title Area -->
+    <div class="mb-2.5 sm:mb-3">
+      <div class="flex items-center gap-2 flex-wrap">
+        <span id="stage-eyebrow" data-template-id="eyebrow"
+          class="canva-tag rounded-full px-3 py-0.5 text-[11px] font-bold tracking-wider">
+          TÜRKÇE VE TÜRK KÜLTÜRÜ
+        </span>
+        <span id="stage-sub-eyebrow" class="text-xs text-[#5f7a6e] font-medium hidden sm:inline-block">· Günlük Yaşamda
+          Doğru Hitap</span>
+      </div>
+      <h1 id="page-heading" data-template-id="page-heading"
+        class="canva-text display mt-0.5 text-xl sm:text-2xl lg:text-3xl font-extrabold text-[#17362a] tracking-tight">
+        Nasıl seslenirsin?
+      </h1>
+      <p id="page-intro" data-template-id="intro"
+        class="canva-text mt-0.5 text-xs sm:text-sm text-[#4d665a] max-w-2xl leading-relaxed">
+        Üç kısa diyalogda, akraban olmayan kişilere uygun hitabı seç. 🔊 Ses simgesine tıklayarak sesi
+        dinleyebilirsin!
+      </p>
+    </div>
+
+    <!-- Main Game Card Panel -->
+    <section data-template-id="game-panel"
+      class="canva-panel game-card-shadow rounded-2xl sm:rounded-3xl p-4 sm:p-5 lg:p-6 bg-white/95 backdrop-blur-md border border-[#dce8db]"
+      aria-label="Diyalog oyunu">
+
+      <!-- Active Game View -->
+      <div id="game-view">
+
+        <!-- Progress Tracker Bar -->
+        <div class="mb-3 sm:mb-4">
+          <div class="flex items-center justify-between gap-4">
+            <div class="flex items-center gap-2">
+              <span data-template-id="progress-label"
+                class="canva-text text-xs font-extrabold tracking-wider text-[#4d665a] uppercase">İLERLEME</span>
+              <span class="text-[11px] text-[#6d8479] font-medium hidden xs:inline">· Hitap Alıştırması</span>
+            </div>
+            <span id="progress-count"
+              class="text-xs sm:text-sm font-extrabold text-[#245b49] bg-[#eef7f1] px-3 py-0.5 rounded-full border border-[#d2e7d9]"
+              aria-live="polite">
+              1 / 3
+            </span>
+          </div>
+
+          <div id="progress-bar" class="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-[#e8eee6]" role="progressbar"
+            aria-label="Tamamlanan soru sayısı" aria-valuemin="0" aria-valuemax="3" aria-valuenow="1">
+            <div id="progress-fill"
+              class="h-full rounded-full bg-gradient-to-r from-[#245b49] to-[#bf5e3d] transition-all duration-300 ease-out"
+              style="width: 33%"></div>
+          </div>
+        </div>
+
+        <!-- Scenes / Questions Container -->
+        <div>
+
+          <!-- SCENE 1: Mahallede (Ahmet amca) -->
+          <article class="scene question-card" data-answer="1">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-5 sm:gap-6 items-start">
+
+              <!-- Left Side: Large Full-bleed Image & Culture Note -->
+              <div class="md:col-span-6 lg:col-span-6 flex flex-col gap-3.5">
+                <div class="scene-image-frame">
+                  <img src="1.png" alt="Mahallede komşu Ahmet amca" data-template-id="scene-1-image" loading="eager"
+                    class="canva-image scene-image">
+                  <span data-template-id="scene-1-tag"
+                    class="canva-tag absolute top-3 left-3 rounded-xl px-3 py-1 text-xs font-extrabold shadow-sm bg-white/95 backdrop-blur-md border border-[#cbe0d0] text-[#1f352e]">
+                    📍 01 · Mahallede
+                  </span>
+                </div>
+
+                <!-- Culture Note Card -->
+                <aside data-template-id="culture-note"
+                  class="rounded-xl border border-[#f2ded3] bg-[#fffaf5] p-3 sm:p-3.5 shadow-sm">
+                  <div class="flex items-center gap-1.5 text-[#bf5e3d] font-bold text-xs uppercase tracking-wider">
+                    <span aria-hidden="true" class="text-sm">💡</span>
+                    <h2 data-template-id="note-heading"
+                      class="canva-text display font-bold text-xs sm:text-sm text-[#bf5e3d]">
+                      Kültür Notu</h2>
+                  </div>
+                  <p data-template-id="note-body" class="canva-text mt-1.5 text-xs text-[#52665c] leading-relaxed">
+                    “Abi” ve “abla” yalnızca kardeşlerimiz için değildir. Akrabamız olmayan gençlere
+                    <strong>abi</strong> veya
+                    <strong>abla</strong>, daha büyük kişilere <strong>amca</strong> veya <strong>teyze</strong> diye
+                    seslenebiliriz.
+                  </p>
+                </aside>
+              </div>
+
+              <!-- Right Side: Question & Answers -->
+              <div class="md:col-span-6 lg:col-span-6 flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-[#627f71] uppercase tracking-wider">Hitabı Seç</span>
+                    <span class="text-xs text-[#7c9588] font-medium">1. Diyalog</span>
+                  </div>
+                  <h2 data-template-id="scene-1-question"
+                    class="canva-text display mt-1.5 text-lg sm:text-xl font-bold leading-snug text-[#1a382e]">
+                    Sabah komşun Ahmet Bey sana “Günaydın” dedi. Sen ne dersin?
+                  </h2>
+
+                  <!-- Scene 1 Audio (s1.mp3) -->
+                  <div class="mt-2.5">
+                    <button type="button" class="audio-btn" id="audio-btn-1" onclick="toggleSceneAudio(1, this)"
+                      aria-label="1. diyalog sesini dinle">
+                      <span class="audio-icon">🔊</span>
+                      <span class="audio-label">Sesi Dinle</span>
+                    </button>
+                    <audio id="scene-audio-1" src="s1.mp3" preload="none"></audio>
+                  </div>
+
+                  <!-- Options -->
+                  <div class="mt-4 space-y-2.5 sm:space-y-3" role="group" aria-label="Birinci diyalog için cevaplar">
+                    <button type="button" data-template-id="scene-1-a" class="choice">
+                      <span class="choice-badge">A</span>
+                      <span class="choice-text">İyi geceler, Ahmet Bey!</span>
+                      <span class="choice-icon" aria-hidden="true">✕</span>
+                    </button>
+                    <button type="button" data-template-id="scene-1-b" class="choice">
+                      <span class="choice-badge">B</span>
+                      <span class="choice-text">Günaydın Ahmet amca, nasılsınız?</span>
+                      <span class="choice-icon" aria-hidden="true">✓</span>
+                    </button>
+                    <button type="button" data-template-id="scene-1-c" class="choice">
+                      <span class="choice-badge">C</span>
+                      <span class="choice-text">Ben parka top oynamaya gidiyorum.</span>
+                      <span class="choice-icon" aria-hidden="true">✕</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </article>
+
+          <!-- SCENE 2: Pazardan Dönüş (Ayşe teyze) -->
+          <article class="scene question-card hidden" data-answer="2">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-5 sm:gap-6 items-start">
+
+              <!-- Left Side: Large Full-bleed Image & Culture Note -->
+              <div class="md:col-span-6 lg:col-span-6 flex flex-col gap-3.5">
+                <div class="scene-image-frame">
+                  <img src="2.png" alt="Pazardan dönen Ayşe teyze" data-template-id="scene-2-image" loading="lazy"
+                    class="canva-image scene-image">
+                  <span data-template-id="scene-2-tag"
+                    class="canva-tag absolute top-3 left-3 rounded-xl px-3 py-1 text-xs font-extrabold shadow-sm bg-white/95 backdrop-blur-md border border-[#cbe0d0] text-[#1f352e]">
+                    📍 02 · Pazardan dönüş
+                  </span>
+                </div>
+
+                <!-- Culture Note Card -->
+                <aside class="rounded-xl border border-[#f2ded3] bg-[#fffaf5] p-3 sm:p-3.5 shadow-sm">
+                  <div class="flex items-center gap-1.5 text-[#bf5e3d] font-bold text-xs uppercase tracking-wider">
+                    <span aria-hidden="true" class="text-sm">💡</span>
+                    <h2 class="canva-text display font-bold text-xs sm:text-sm text-[#bf5e3d]">
+                      Kültür Notu</h2>
+                  </div>
+                  <p class="canva-text mt-1.5 text-xs text-[#52665c] leading-relaxed">
+                    Büyüklerimize saygı ve yardımseverlik kültürümüzün temelidir. Taşıdığı yüke yardım teklif ederken
+                    <strong>teyze</strong> hitabı samimi ve saygılı bir köprüdür.
+                  </p>
+                </aside>
+              </div>
+
+              <!-- Right Side: Question & Answers -->
+              <div class="md:col-span-6 lg:col-span-6 flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-[#627f71] uppercase tracking-wider">Hitabı Seç</span>
+                    <span class="text-xs text-[#7c9588] font-medium">2. Diyalog</span>
+                  </div>
+                  <h2 data-template-id="scene-2-question"
+                    class="canva-text display mt-1.5 text-lg sm:text-xl font-bold leading-snug text-[#1a382e]">
+                    Komşunuz Ayşe Hanım pazardan dönüyor. Ne dersin?
+                  </h2>
+
+                  <!-- Scene 2 Audio (s2.mp3) -->
+                  <div class="mt-2.5">
+                    <button type="button" class="audio-btn" id="audio-btn-2" onclick="toggleSceneAudio(2, this)"
+                      aria-label="2. diyalog sesini dinle">
+                      <span class="audio-icon">🔊</span>
+                      <span class="audio-label">Sesi Dinle</span>
+                    </button>
+                    <audio id="scene-audio-2" src="s2.mp3" preload="none"></audio>
+                  </div>
+
+                  <!-- Options -->
+                  <div class="mt-4 space-y-2.5 sm:space-y-3" role="group" aria-label="İkinci diyalog için cevaplar">
+                    <button type="button" data-template-id="scene-2-a" class="choice">
+                      <span class="choice-badge">A</span>
+                      <span class="choice-text">İyi dersler, okulda görüşürüz!</span>
+                      <span class="choice-icon" aria-hidden="true">✕</span>
+                    </button>
+                    <button type="button" data-template-id="scene-2-b" class="choice">
+                      <span class="choice-badge">B</span>
+                      <span class="choice-text">Bugün hava çok yağmurlu.</span>
+                      <span class="choice-icon" aria-hidden="true">✕</span>
+                    </button>
+                    <button type="button" data-template-id="scene-2-c" class="choice">
+                      <span class="choice-badge">C</span>
+                      <span class="choice-text">Ayşe teyze, poşetlerinizi taşıyayım mı?</span>
+                      <span class="choice-icon" aria-hidden="true">✓</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </article>
+
+          <!-- SCENE 3: Apartmanda (Elif abla) -->
+          <article class="scene question-card hidden" data-answer="0">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-5 sm:gap-6 items-start">
+
+              <!-- Left Side: Large Full-bleed Image & Culture Note -->
+              <div class="md:col-span-6 lg:col-span-6 flex flex-col gap-3.5">
+                <div class="scene-image-frame">
+                  <img src="3.png" alt="Apartmanda yardımcı olan Elif abla" data-template-id="scene-3-image"
+                    loading="lazy" class="canva-image scene-image">
+                  <span data-template-id="scene-3-tag"
+                    class="canva-tag absolute top-3 left-3 rounded-xl px-3 py-1 text-xs font-extrabold shadow-sm bg-white/95 backdrop-blur-md border border-[#cbe0d0] text-[#1f352e]">
+                    📍 03 · Apartmanda
+                  </span>
+                </div>
+
+                <!-- Culture Note Card -->
+                <aside class="rounded-xl border border-[#f2ded3] bg-[#fffaf5] p-3 sm:p-3.5 shadow-sm">
+                  <div class="flex items-center gap-1.5 text-[#bf5e3d] font-bold text-xs uppercase tracking-wider">
+                    <span aria-hidden="true" class="text-sm">💡</span>
+                    <h2 class="canva-text display font-bold text-xs sm:text-sm text-[#bf5e3d]">
+                      Kültür Notu</h2>
+                  </div>
+                  <p class="canva-text mt-1.5 text-xs text-[#52665c] leading-relaxed">
+                    Çevremizde bizden birkaç yaş büyük gençlere <strong>abla</strong> veya
+                    <strong>abi</strong> diyerek teşekkür
+                    etmek nezaketimizi ve samimiyetimizi gösterir.
+                  </p>
+                </aside>
+              </div>
+
+              <!-- Right Side: Question & Answers -->
+              <div class="md:col-span-6 lg:col-span-6 flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-[#627f71] uppercase tracking-wider">Hitabı Seç</span>
+                    <span class="text-xs text-[#7c9588] font-medium">3. Diyalog</span>
+                  </div>
+                  <h2 data-template-id="scene-3-question"
+                    class="canva-text display mt-1.5 text-lg sm:text-xl font-bold leading-snug text-[#1a382e]">
+                    Komşunuzun kızı Elif, ödevinde takıldığın bir soruda sana yardım etti. Ne dersin?
+                  </h2>
+
+                  <!-- Scene 3 Audio (s3.mp3) -->
+                  <div class="mt-2.5">
+                    <button type="button" class="audio-btn" id="audio-btn-3" onclick="toggleSceneAudio(3, this)"
+                      aria-label="3. diyalog sesini dinle">
+                      <span class="audio-icon">🔊</span>
+                      <span class="audio-label">Sesi Dinle</span>
+                    </button>
+                    <audio id="scene-audio-3" src="s3.mp3" preload="none"></audio>
+                  </div>
+
+                  <!-- Options -->
+                  <div class="mt-4 space-y-2.5 sm:space-y-3" role="group" aria-label="Üçüncü diyalog için cevaplar">
+                    <button type="button" data-template-id="scene-3-a" class="choice">
+                      <span class="choice-badge">A</span>
+                      <span class="choice-text">Teşekkür ederim Elif abla!</span>
+                      <span class="choice-icon" aria-hidden="true">✓</span>
+                    </button>
+                    <button type="button" data-template-id="scene-3-b" class="choice">
+                      <span class="choice-badge">B</span>
+                      <span class="choice-text">Afiyet olsun, elinize sağlık!</span>
+                      <span class="choice-icon" aria-hidden="true">✕</span>
+                    </button>
+                    <button type="button" data-template-id="scene-3-c" class="choice">
+                      <span class="choice-badge">C</span>
+                      <span class="choice-text">Elif Hanım, yemekte ne var?</span>
+                      <span class="choice-icon" aria-hidden="true">✕</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </article>
+
+        </div>
+
+        <!-- Feedback & Action Area -->
+        <div class="mt-5 pt-4 border-t border-[#e2ece0] flex flex-col sm:flex-row items-center justify-between gap-4">
+
+          <!-- Feedback Status Banner -->
+          <div id="feedback"
+            class="hidden w-full sm:w-auto flex-1 rounded-2xl p-3 sm:p-3.5 text-xs sm:text-sm font-semibold transition-all border"
+            role="status" aria-live="polite">
+            <div class="flex items-center gap-2.5">
+              <span id="feedback-icon" class="text-lg" aria-hidden="true"></span>
+              <div>
+                <p data-template-id="correct-message" id="correct-message" class="hidden font-bold">
+                  Harika! Uygun hitabı seçtin.
+                </p>
+                <p data-template-id="incorrect-message" id="incorrect-message" class="hidden font-bold">
+                  Bir daha düşünelim: Doğru hitap yeşil renkle gösteriliyor.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Next Button -->
+          <button id="next-button" type="button" data-template-id="next-button"
+            class="primary-btn hidden w-full sm:w-auto sm:min-w-[200px] py-3.5 px-7 text-sm sm:text-base font-bold shadow-md sm:ml-auto">
+            <span>Sonraki diyalog</span>
+            <span aria-hidden="true">→</span>
+          </button>
+
+        </div>
+
+      </div>
+
+      <!-- Result / Completion View -->
+      <div id="result-view" class="hidden py-8 sm:py-12 text-center" aria-live="polite">
+        <div aria-hidden="true"
+          class="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-[#e8f5ee] to-[#d6ebd9] text-4xl text-[#245b49] shadow-sm mb-4 border border-[#cbe4d4]">
+          🏆
+        </div>
+        <h2 data-template-id="result-heading"
+          class="canva-text display text-2xl sm:text-3xl font-extrabold text-[#17362a]">
+          Kültür köprüsünü tamamladın!
+        </h2>
+        <p data-template-id="result-description"
+          class="canva-text mx-auto mt-3 max-w-lg text-xs sm:text-sm text-[#4f645a] leading-relaxed">
+          Akraban olmayan kişilere <strong>amca, teyze ve abla</strong> diye seslenmeyi; selam vermeyi, teşekkür
+          etmeyi ve yardım teklif etmeyi pekiştirdin.
+        </p>
+
+        <div class="my-6 inline-block rounded-2xl bg-[#f4f9f4] border border-[#d6e7d8] px-8 py-5 shadow-sm">
+          <span class="block text-xs font-extrabold text-[#5b7a6d] uppercase tracking-wider">Başarı Durumu</span>
+          <p id="result-score" class="text-3xl sm:text-4xl font-extrabold text-[#245b49] mt-1"></p>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-center gap-3">
+          <button id="restart-button" type="button" data-template-id="restart-button"
+            class="choice py-3 px-6 text-sm font-bold w-auto">
+            <span>↻ Yeniden oyna</span>
+          </button>
+          <button id="result-go-to-video-btn" type="button" class="primary-btn py-3.5 px-7 text-sm font-bold shadow-md">
+            <span>▶ 2. Aşamaya Geç: Video İzle</span>
+            <span aria-hidden="true">→</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Stage 2: Video View (1.mp4) -->
+      <div id="video-view" class="hidden">
+        <!-- Stage Sub-Bar -->
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-3.5 pb-2.5 border-b border-[#e2ece0]">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span
+              class="canva-tag rounded-full px-3 py-1 text-xs font-extrabold bg-[#e6f4eb] text-[#246146] border border-[#cbe4d4]">
+              📍 2. AŞAMA · VİDEO İZLEME
+            </span>
+            <span id="video-stage-pill"
+              class="text-xs font-semibold text-[#536f63] bg-[#f2f7f3] px-2.5 py-0.5 rounded-full border border-[#dce8db]">
+              ⏱ 21. saniyede soru molası
+            </span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button id="back-to-quiz-btn" type="button"
+              class="text-xs font-bold text-[#355f4f] hover:text-[#17362a] px-3 py-1.5 rounded-xl hover:bg-[#edf5ef] transition-colors border border-[#dce8db]">
+              ← 1. Aşamaya Dön
+            </button>
+          </div>
+        </div>
+
+        <!-- Video Player Frame Container with Overlay -->
+        <div
+          class="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden bg-black shadow-xl border-2 border-[#dce8db]">
+          <video id="story-video" src="1.mp4" preload="metadata" playsinline controls
+            class="w-full h-auto max-h-[500px] mx-auto block object-contain aspect-video bg-black"></video>
+
+          <!-- Interactive Question Overlay (Triggered at 21 seconds) -->
+          <div id="question-overlay"
+            class="hidden absolute inset-0 z-30 bg-black/70 backdrop-blur-md flex items-center justify-center p-3.5 sm:p-5 transition-all">
+            <div
+              class="modal-pop-in bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-7 max-w-xl w-full shadow-2xl border-2 border-[#245b49]/30 text-left">
+              <!-- Question Header & Timer Badge -->
+              <div class="flex items-center justify-between gap-2 mb-3">
+                <span
+                  class="inline-flex items-center gap-1.5 text-xs font-extrabold px-3 py-1 rounded-full bg-[#fdf2ed] text-[#bf5e3d] border border-[#f3ded5]">
+                  <span>⏱ 00:21</span>
+                  <span>· Sözlü Soru Zamanı</span>
+                </span>
+                <span
+                  class="text-xs font-semibold text-[#668274] bg-[#f0f6f2] px-2.5 py-0.5 rounded-full border border-[#dce8db]">
+                  Video Duraklatıldı
+                </span>
+              </div>
+
+              <!-- Question Prompt -->
+              <h3 class="display font-extrabold text-base sm:text-lg lg:text-xl text-[#17362a] leading-snug mb-3">
+                “Mahallenizdeki bir teyzeye günlük bir işinde destek olduğunuz kısa bir anınızı paylaşır mısınız?”
+              </h3>
+
+              <!-- Verbal Answer Box (No Writing) -->
+              <div class="mb-4 p-3.5 sm:p-4 rounded-2xl bg-[#f4f9f5] border border-[#d2e6d6] flex items-center gap-3">
+                <div
+                  class="h-11 w-11 rounded-xl bg-[#e3f2e7] text-[#245b49] flex items-center justify-center text-xl flex-shrink-0 font-bold shadow-sm">
+                  🗣️
+                </div>
+                <div class="text-xs sm:text-sm text-[#244b3c] leading-relaxed">
+                  <p class="font-bold text-[#183d2f] text-xs sm:text-sm">Sözlü Olarak Cevaplayınız</p>
+                  <p class="text-[#496558] text-xs mt-0.5">
+                    Bu soruyu sözlü olarak sınıfta veya öğretmeninizle paylaşınız. Cevabınızı verdikten sonra aşağıdaki
+                    butona tıklayarak videoya devam edebilirsiniz.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Action Confirmation Button -->
+              <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-1">
+                <span class="text-[11px] text-[#6b8276] text-center sm:text-left">
+                  Butona tıkladığınızda video kaldığı yerden devam edecektir.
+                </span>
+                <button id="confirm-memory-btn" type="button"
+                  class="primary-btn w-full sm:w-auto py-3 px-6 text-xs sm:text-sm font-bold shadow-lg flex-shrink-0">
+                  <span>✓ Sözlü Olarak Paylaştım, Devam Et</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Video Start / Poster Overlay -->
+          <div id="video-start-overlay"
+            class="absolute inset-0 z-20 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col items-center justify-center p-4 text-center cursor-pointer transition-opacity duration-300">
+            <button type="button"
+              class="h-16 w-16 sm:h-20 sm:w-20 rounded-full bg-white/95 text-[#245b49] flex items-center justify-center text-2xl sm:text-3xl shadow-2xl transform hover:scale-110 active:scale-95 transition-all mb-3 pl-1 border-2 border-[#245b49]/30">
+              ▶
+            </button>
+            <h3 class="display text-white text-lg sm:text-2xl font-extrabold drop-shadow-md">
+              2. Aşamayı Başlat
+            </h3>
+            <p class="text-white/90 text-xs sm:text-sm max-w-sm mt-1 drop-shadow">
+              1.mp4 videosunu izleyin; 21. saniyede gelecek soruyu sözlü olarak yanıtlayın.
+            </p>
+          </div>
+        </div>
+
+        <!-- Video Info & Status Card -->
+        <div
+          class="mt-3 rounded-xl bg-[#f7faf7] border border-[#dce8db] p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+          <div class="flex items-center gap-3">
+            <div
+              class="h-9 w-9 rounded-xl bg-[#e5f2e8] text-[#245b49] flex items-center justify-center text-lg flex-shrink-0 font-bold">
+              🎬
+            </div>
+            <div>
+              <h4 class="font-bold text-[#1b352b] text-xs sm:text-sm">Dayanışma &amp; Nezaket Hikayesi (1.mp4)</h4>
+              <p class="text-[#556e62] text-[11px] mt-0.5">21. saniyedeki soruya sözlü yanıt verdikten sonra videoyu
+                tamamlayın.</p>
+            </div>
+          </div>
+          <div id="video-question-badge"
+            class="flex items-center gap-1.5 text-xs font-bold text-[#627e71] bg-[#eef5f0] px-3 py-1.5 rounded-full border border-[#d2e4d5] self-start sm:self-auto">
+            <span id="video-question-badge-icon">⏱</span>
+            <span id="video-question-badge-text">21. saniyede soru duraklaması</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stage 3: Celebration View (Triggered on video ended) -->
+      <div id="celebration-view" class="hidden py-6 sm:py-10 text-center" aria-live="polite">
+        <div class="relative mx-auto inline-block mb-3">
+          <div
+            class="flex h-20 w-20 sm:h-24 sm:w-24 items-center justify-center rounded-3xl bg-gradient-to-br from-[#e8f5ee] via-[#d6ebd9] to-[#bfdeca] text-4xl sm:text-5xl text-[#245b49] shadow-lg border-2 border-[#cbe4d4] animate-bounce">
+            🏆
+          </div>
+        </div>
+
+        <h2 class="canva-text display text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#17362a]">
+          Tebrikler! Etkinliği Başarıyla Tamamladın! 🎉
+        </h2>
+        <p class="canva-text mx-auto mt-2 max-w-lg text-xs sm:text-sm text-[#4f645a] leading-relaxed">
+          Hitap diyaloglarını tamamladın, videoyu izledin ve büyüklerimize yardımlaşma anını sözlü olarak paylaşarak
+          kültür köprüsünü
+          kurdun!
+        </p>
+
+        <!-- Summary Metric Cards -->
+        <div class="my-5 max-w-lg mx-auto grid grid-cols-1 sm:grid-cols-2 gap-3 text-left">
+          <div class="rounded-2xl bg-[#f4f9f4] border border-[#d6e7d8] p-4 shadow-sm">
+            <span class="block text-[11px] font-extrabold text-[#5b7a6d] uppercase tracking-wider">1. Aşama:
+              Hitaplar</span>
+            <p id="celebration-quiz-score" class="text-xl sm:text-2xl font-extrabold text-[#245b49] mt-1">3 / 3 Doğru
+            </p>
+            <span class="text-[11px] text-[#6d887a] mt-0.5 block">Diyaloglar tamamlandı ✓</span>
+          </div>
+          <div class="rounded-2xl bg-[#fff8f4] border border-[#f5ded3] p-4 shadow-sm">
+            <span class="block text-[11px] font-extrabold text-[#bf5e3d] uppercase tracking-wider">2. Aşama: Video &amp;
+              Sözlü Paylaşım</span>
+            <p class="text-xl sm:text-2xl font-extrabold text-[#bf5e3d] mt-1">Tamamlandı ✓</p>
+            <span class="text-[11px] text-[#8e685c] mt-0.5 block">1.mp4 &amp; 21. Saniye Sorusu</span>
+          </div>
+        </div>
+
+        <!-- Verbal Sharing Completed Box -->
+        <div id="shared-memory-display"
+          class="my-4 max-w-lg mx-auto rounded-2xl bg-[#fbfdfa] border border-[#cfe2d2] p-3.5 sm:p-4 text-left shadow-sm flex items-center gap-3">
+          <div
+            class="h-10 w-10 rounded-xl bg-[#e3f2e7] text-[#245b49] flex items-center justify-center text-xl flex-shrink-0 font-bold shadow-sm">
+            🗣️
+          </div>
+          <div>
+            <span class="block text-xs font-bold text-[#245b49] uppercase tracking-wider">Sözlü Paylaşım
+              Tamamlandı</span>
+            <p class="text-xs text-[#4b6659] mt-0.5">Yardımlaşma anınızı sözlü olarak paylaştınız ve kültür köprüsünü
+              kurdunuz.</p>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex flex-wrap items-center justify-center gap-3 mt-6">
+          <button id="celebration-restart-btn" type="button"
+            class="primary-btn py-3.5 px-6 text-sm font-bold shadow-md">
+            <span>↻ Baştan Başla</span>
+          </button>
+          <button id="celebration-rewatch-btn" type="button"
+            class="choice font-bold text-xs sm:text-sm py-3 px-5 rounded-2xl border-2 border-[#245b49] text-[#245b49] hover:bg-[#edf7ee] w-auto">
+            <span>🎬 Videoyu Tekrar İzle</span>
+          </button>
+          <button id="more-confetti-btn" type="button"
+            class="choice font-bold text-xs sm:text-sm py-3 px-5 rounded-2xl border-2 border-[#bf5e3d] text-[#bf5e3d] hover:bg-[#fdf2ed] w-auto">
+            <span>🎉 Konfeti Patlat!</span>
+          </button>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer
+    class="w-full border-t border-[#dce8db] bg-[#fbf9f4]/80 px-4 py-3 text-center text-xs text-[#52695f] flex-none">
+    <p data-template-id="footer-text" class="canva-text font-medium">
+      “Kelimeler, bizi birbirimize bağlayan köprülerdir.”
+    </p>
+  </footer>
+
+  <!-- Fullscreen Confetti Canvas for celebration -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <script>
+    // Audio synthesis for friendly tactile feedback & celebratory fanfare
+    function playTone(type) {
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        const ctx = new AudioContext();
+        if (ctx.state === 'suspended') {
+          ctx.resume();
+        }
+        const now = ctx.currentTime;
+
+        if (type === 'correct') {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523.25, now); // C5
+          osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.12); // E5
+          gain.gain.setValueAtTime(0.18, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.32);
+          osc.start(now);
+          osc.stop(now + 0.32);
+        } else if (type === 'fanfare') {
+          // Melodic celebratory fanfare: C5 -> E5 -> G5 -> C6
+          const notes = [523.25, 659.25, 783.99, 1046.50];
+          notes.forEach((freq, idx) => {
+            const noteOsc = ctx.createOscillator();
+            const noteGain = ctx.createGain();
+            noteOsc.type = 'triangle';
+            noteOsc.frequency.setValueAtTime(freq, now + idx * 0.12);
+            noteGain.gain.setValueAtTime(0.2, now + idx * 0.12);
+            noteGain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.12 + 0.38);
+            noteOsc.connect(noteGain);
+            noteGain.connect(ctx.destination);
+            noteOsc.start(now + idx * 0.12);
+            noteOsc.stop(now + idx * 0.12 + 0.38);
+          });
+        } else {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(320, now);
+          osc.frequency.linearRampToValueAtTime(260, now + 0.18);
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+          osc.start(now);
+          osc.stop(now + 0.28);
+        }
+      } catch (e) {
+        // Audio is an enhancement; proceed quietly if unsupported
+      }
+    }
+
+    // Confetti Animation System (with pure canvas fallback)
+    function runCanvasConfettiFallback() {
+      const canvas = document.getElementById('confetti-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const pieces = [];
+      const colors = ['#245b49', '#bf5e3d', '#f59e0b', '#10b981', '#3b82f6', '#ec4899', '#8b5cf6', '#eab308'];
+      for (let i = 0; i < 180; i++) {
+        pieces.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * -canvas.height * 0.8,
+          w: Math.random() * 10 + 6,
+          h: Math.random() * 6 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          speedY: Math.random() * 4 + 3.5,
+          speedX: (Math.random() - 0.5) * 5,
+          rotation: Math.random() * 360,
+          rotSpeed: (Math.random() - 0.5) * 8
+        });
+      }
+
+      const start = Date.now();
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let hasAlive = false;
+        pieces.forEach(p => {
+          p.y += p.speedY;
+          p.x += p.speedX;
+          p.rotation += p.rotSpeed;
+          if (p.y < canvas.height + 25) {
+            hasAlive = true;
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate((p.rotation * Math.PI) / 180);
+            ctx.fillStyle = p.color;
+            ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+            ctx.restore();
+          }
+        });
+        if (hasAlive && Date.now() - start < 5000) {
+          requestAnimationFrame(animate);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+
+    function triggerConfetti() {
+      if (typeof window.confetti === 'function') {
+        const duration = 3.5 * 1000;
+        const animationEnd = Date.now() + duration;
+        const defaults = { startVelocity: 32, spread: 360, ticks: 70, zIndex: 10000 };
+
+        function randomInRange(min, max) {
+          return Math.random() * (max - min) + min;
+        }
+
+        const interval = setInterval(function () {
+          const timeLeft = animationEnd - Date.now();
+          if (timeLeft <= 0) {
+            return clearInterval(interval);
+          }
+          const particleCount = 45 * (timeLeft / duration);
+          window.confetti(Object.assign({}, defaults, {
+            particleCount,
+            origin: { x: randomInRange(0.15, 0.35), y: Math.random() - 0.15 },
+            colors: ['#245b49', '#bf5e3d', '#f59e0b', '#10b981', '#3b82f6', '#ec4899']
+          }));
+          window.confetti(Object.assign({}, defaults, {
+            particleCount,
+            origin: { x: randomInRange(0.65, 0.85), y: Math.random() - 0.15 },
+            colors: ['#245b49', '#bf5e3d', '#f59e0b', '#10b981', '#6366f1']
+          }));
+        }, 220);
+      } else {
+        runCanvasConfettiFallback();
+      }
+    }
+
+    // DOM Elements - Stage 1 (Questions)
+    const cards = [...document.querySelectorAll('.question-card')];
+    const progressCount = document.getElementById('progress-count');
+    const progressFill = document.getElementById('progress-fill');
+    const progressBar = document.getElementById('progress-bar');
+    const feedback = document.getElementById('feedback');
+    const feedbackIcon = document.getElementById('feedback-icon');
+    const correctMessage = document.getElementById('correct-message');
+    const incorrectMessage = document.getElementById('incorrect-message');
+    const nextButton = document.getElementById('next-button');
+
+    // DOM Elements - Headers & Layout
+    const levelBadge = document.getElementById('level-badge');
+    const stageEyebrow = document.getElementById('stage-eyebrow');
+    const stageSubEyebrow = document.getElementById('stage-sub-eyebrow');
+    const pageHeading = document.getElementById('page-heading');
+    const pageIntro = document.getElementById('page-intro');
+
+    // DOM Elements - Views
+    const gameView = document.getElementById('game-view');
+    const resultView = document.getElementById('result-view');
+    const videoView = document.getElementById('video-view');
+    const celebrationView = document.getElementById('celebration-view');
+
+    // DOM Elements - Stage 2 (Video & 21s Question)
+    const storyVideo = document.getElementById('story-video');
+    const questionOverlay = document.getElementById('question-overlay');
+    const videoStartOverlay = document.getElementById('video-start-overlay');
+    const confirmMemoryBtn = document.getElementById('confirm-memory-btn');
+    const videoQuestionBadge = document.getElementById('video-question-badge');
+    const videoQuestionBadgeIcon = document.getElementById('video-question-badge-icon');
+    const videoQuestionBadgeText = document.getElementById('video-question-badge-text');
+    const backToQuizBtn = document.getElementById('back-to-quiz-btn');
+    const resultGoToVideoBtn = document.getElementById('result-go-to-video-btn');
+
+    // DOM Elements - Stage 3 (Celebration)
+    const celebrationQuizScore = document.getElementById('celebration-quiz-score');
+    const sharedMemoryDisplay = document.getElementById('shared-memory-display');
+    const celebrationRestartBtn = document.getElementById('celebration-restart-btn');
+    const celebrationRewatchBtn = document.getElementById('celebration-rewatch-btn');
+    const moreConfettiBtn = document.getElementById('more-confetti-btn');
+
+    // Game & Video State
+    let current = 0;
+    let score = 0;
+    let answered = false;
+    let questionAnswered = false;
+    const QUESTION_TRIGGER_SECOND = 21;
+
+    // Scene Audio Management (s1.mp3, s2.mp3, s3.mp3)
+    let currentPlayingAudio = null;
+    let currentPlayingBtn = null;
+
+    function stopAllAudios() {
+      for (let i = 1; i <= 3; i++) {
+        const audio = document.getElementById(`scene-audio-${i}`);
+        const btn = document.getElementById(`audio-btn-${i}`);
+        if (audio) {
+          audio.pause();
+          audio.currentTime = 0;
+        }
+        if (btn) {
+          btn.classList.remove('playing');
+          const icon = btn.querySelector('.audio-icon');
+          const label = btn.querySelector('.audio-label');
+          if (icon) icon.textContent = '🔊';
+          if (label) label.textContent = 'Sesi Dinle';
+          btn.setAttribute('aria-label', `${i}. diyalog sesini dinle`);
+        }
+      }
+      currentPlayingAudio = null;
+      currentPlayingBtn = null;
+    }
+
+    function toggleSceneAudio(sceneNum, btn) {
+      const audio = document.getElementById(`scene-audio-${sceneNum}`);
+      if (!audio) return;
+
+      const isCurrentPlaying = (currentPlayingAudio === audio && !audio.paused);
+
+      // Stop any audio that is currently running
+      stopAllAudios();
+
+      if (isCurrentPlaying) {
+        // Was playing and user clicked again to stop
+        return;
+      }
+
+      // Play selected scene audio
+      audio.currentTime = 0;
+      audio.play().then(() => {
+        currentPlayingAudio = audio;
+        currentPlayingBtn = btn;
+        btn.classList.add('playing');
+        const icon = btn.querySelector('.audio-icon');
+        const label = btn.querySelector('.audio-label');
+        if (icon) icon.textContent = '⏸';
+        if (label) label.textContent = 'Durdur';
+        btn.setAttribute('aria-label', `${sceneNum}. diyalog sesini durdur`);
+      }).catch(err => {
+        console.warn('Audio play error:', err);
+      });
+
+      audio.onended = () => {
+        stopAllAudios();
+      };
+    }
+
+    function updateProgress() {
+      progressCount.textContent = `${current + 1} / ${cards.length}`;
+      const percentage = Math.round(((current + 1) / cards.length) * 100);
+      progressFill.style.width = `${percentage}%`;
+      progressBar.setAttribute('aria-valuenow', String(current + 1));
+    }
+
+    // Question Choice Click Handler
+    cards.forEach((card, cardIndex) => {
+      [...card.querySelectorAll('.choice')].forEach((button, choiceIndex) => {
+        button.addEventListener('click', () => {
+          if (cardIndex !== current || answered) return;
+          answered = true;
+          const correctIndex = Number(card.dataset.answer);
+          const correct = (choiceIndex === correctIndex);
+          if (correct) score++;
+
+          // Visual feedback on choice buttons
+          card.querySelectorAll('.choice').forEach((choice, index) => {
+            choice.disabled = true;
+            if (index === correctIndex) {
+              choice.classList.add('is-correct');
+            } else if (index === choiceIndex) {
+              choice.classList.add('is-incorrect');
+            }
+          });
+
+          // Play subtle audio cue
+          playTone(correct ? 'correct' : 'incorrect');
+
+          // Feedback container
+          feedback.classList.remove('hidden', 'bg-[#edf7ee]', 'border-[#bfe3c3]', 'text-[#1e5d26]', 'bg-[#fdf1ee]', 'border-[#f5c7bc]', 'text-[#9b2a1c]');
+          if (correct) {
+            feedback.classList.add('bg-[#edf7ee]', 'border-[#bfe3c3]', 'text-[#1e5d26]');
+            feedbackIcon.textContent = '🌟';
+          } else {
+            feedback.classList.add('bg-[#fdf1ee]', 'border-[#f5c7bc]', 'text-[#9b2a1c]');
+            feedbackIcon.textContent = '💡';
+          }
+
+          correctMessage.classList.toggle('hidden', !correct);
+          incorrectMessage.classList.toggle('hidden', correct);
+
+          // Update Next Button label: If it's the last question, go directly to Video stage!
+          if (current === cards.length - 1) {
+            nextButton.querySelector('span:first-child').textContent = '2. Aşamaya Geç: Video İzle';
+          } else {
+            nextButton.querySelector('span:first-child').textContent = 'Sonraki diyalog';
+          }
+
+          nextButton.classList.remove('hidden');
+          nextButton.focus();
+        });
+      });
+    });
+
+    // Next Button Click Handler
+    nextButton.addEventListener('click', () => {
+      if (!answered) return;
+      stopAllAudios();
+      cards[current].classList.add('hidden');
+      current++;
+      answered = false;
+      feedback.classList.add('hidden');
+      nextButton.classList.add('hidden');
+
+      if (current < cards.length) {
+        cards[current].classList.remove('hidden');
+        updateProgress();
+        const firstChoice = cards[current].querySelector('.choice');
+        if (firstChoice) firstChoice.focus();
+      } else {
+        // Questions completed: Transition straight to Video stage!
+        startVideoStage();
+      }
+    });
+
+    // Start Video Stage Flow
+    function startVideoStage() {
+      stopAllAudios();
+      gameView.classList.add('hidden');
+      resultView.classList.add('hidden');
+      celebrationView.classList.add('hidden');
+      videoView.classList.remove('hidden');
+
+      // Update Header & Eyebrow
+      levelBadge.textContent = '✦ 2. SEVİYE · Video Etkinliği';
+      stageEyebrow.textContent = 'TÜRKÇE VE TÜRK KÜLTÜRÜ';
+      stageSubEyebrow.textContent = '· Komşuluk ve Dayanışma';
+      pageHeading.textContent = 'Dayanışma Hikayesi & Düşünme Zamanı';
+      pageIntro.textContent = '1.mp4 videosunu izleyin. 21. saniyede gelecek özel soruyu sözlü olarak yanıtlayarak etkinliğe katılın.';
+
+      // Reset poster/overlay if at 0s
+      if (storyVideo.currentTime === 0) {
+        videoStartOverlay.classList.remove('hidden');
+      }
+
+      window.scrollTo({ top: videoView.offsetTop - 70, behavior: 'smooth' });
+    }
+
+    // Video Start Overlay click
+    videoStartOverlay.addEventListener('click', () => {
+      videoStartOverlay.classList.add('hidden');
+      storyVideo.play().catch(() => { });
+    });
+
+    storyVideo.addEventListener('play', () => {
+      videoStartOverlay.classList.add('hidden');
+      // If modal is currently open and time is at or beyond trigger, keep paused
+      if (!questionAnswered && storyVideo.currentTime >= QUESTION_TRIGGER_SECOND) {
+        storyVideo.pause();
+      }
+    });
+
+    // Time update listener: Pauses at 21 seconds and brings up the question
+    storyVideo.addEventListener('timeupdate', () => {
+      if (!questionAnswered && storyVideo.currentTime >= QUESTION_TRIGGER_SECOND) {
+        storyVideo.pause();
+        showQuestionModal();
+      }
+    });
+
+    // Prevent skipping past 21 seconds without answering
+    storyVideo.addEventListener('seeking', () => {
+      if (!questionAnswered && storyVideo.currentTime > QUESTION_TRIGGER_SECOND + 0.2) {
+        storyVideo.currentTime = QUESTION_TRIGGER_SECOND;
+        storyVideo.pause();
+        showQuestionModal();
+      }
+    });
+
+    function showQuestionModal() {
+      questionOverlay.classList.remove('hidden');
+      confirmMemoryBtn.focus();
+    }
+
+    function hideQuestionModal() {
+      questionOverlay.classList.add('hidden');
+    }
+
+    // "Sözlü Olarak Paylaştım" Button Handler
+    confirmMemoryBtn.addEventListener('click', () => {
+      questionAnswered = true;
+
+      hideQuestionModal();
+
+      // Update badge
+      videoQuestionBadge.classList.remove('text-[#627e71]', 'bg-[#eef5f0]', 'border-[#d2e4d5]');
+      videoQuestionBadge.classList.add('text-[#246146]', 'bg-[#e6f4eb]', 'border-[#cbe4d4]');
+      videoQuestionBadgeIcon.textContent = '✓';
+      videoQuestionBadgeText.textContent = '21. Saniye Sorusu Sözlü Yanıtlandı';
+
+      playTone('correct');
+
+      // Video resumes flowing!
+      storyVideo.play().catch(() => { });
+    });
+
+    // Video Finished Event: Confetti burst & Congratulations!
+    storyVideo.addEventListener('ended', () => {
+      showCelebrationStage();
+    });
+
+    function showCelebrationStage() {
+      videoView.classList.add('hidden');
+      celebrationView.classList.remove('hidden');
+
+      levelBadge.textContent = '✦ BAŞARIYLA TAMAMLANDI 🏆';
+      stageEyebrow.textContent = 'TEBRİKLER! · KÜLTÜR KÖPRÜSÜ';
+      stageSubEyebrow.textContent = '· Harika Bir Başarı';
+      pageHeading.textContent = 'Tebrikler! Etkinliği Başarıyla Tamamladın!';
+      pageIntro.textContent = 'Diyalogları doğru yanıtladın, videoyu izledin ve teyzemize yardım anını sözlü olarak paylaştın.';
+
+      celebrationQuizScore.textContent = `${score} / ${cards.length} Doğru`;
+
+      if (sharedMemoryDisplay) {
+        sharedMemoryDisplay.classList.remove('hidden');
+      }
+
+      // Explode Confetti!
+      triggerConfetti();
+
+      // Play fanfare!
+      playTone('fanfare');
+
+      window.scrollTo({ top: celebrationView.offsetTop - 70, behavior: 'smooth' });
+    }
+
+    // Full Reset function
+    function resetAll() {
+      stopAllAudios();
+      current = 0;
+      score = 0;
+      answered = false;
+      questionAnswered = false;
+
+      storyVideo.pause();
+      storyVideo.currentTime = 0;
+      hideQuestionModal();
+      videoStartOverlay.classList.remove('hidden');
+
+      // Reset badge
+      videoQuestionBadge.classList.add('text-[#627e71]', 'bg-[#eef5f0]', 'border-[#d2e4d5]');
+      videoQuestionBadge.classList.remove('text-[#246146]', 'bg-[#e6f4eb]', 'border-[#cbe4d4]');
+      videoQuestionBadgeIcon.textContent = '⏱';
+      videoQuestionBadgeText.textContent = '21. saniyede soru molası';
+
+      // Reset question cards
+      cards.forEach((card, index) => {
+        card.classList.toggle('hidden', index !== 0);
+        card.querySelectorAll('.choice').forEach(choice => {
+          choice.disabled = false;
+          choice.classList.remove('is-correct', 'is-incorrect');
+        });
+      });
+
+      feedback.classList.add('hidden');
+      nextButton.classList.add('hidden');
+      nextButton.querySelector('span:first-child').textContent = 'Sonraki diyalog';
+
+      // Reset headers
+      levelBadge.textContent = '✦ 1. SEVİYE · Hitap Oyunu';
+      stageEyebrow.textContent = 'TÜRKÇE VE TÜRK KÜLTÜRÜ';
+      stageSubEyebrow.textContent = '· Günlük Yaşamda Doğru Hitap';
+      pageHeading.textContent = 'Nasıl seslenirsin?';
+      pageIntro.textContent = 'Üç kısa diyalogda, akraban olmayan kişilere uygun hitabı seç. 🔊 Ses simgesine tıklayarak sesi dinleyebilirsin!';
+
+      resultView.classList.add('hidden');
+      videoView.classList.add('hidden');
+      celebrationView.classList.add('hidden');
+      gameView.classList.remove('hidden');
+
+      updateProgress();
+      const firstChoice = cards[0].querySelector('.choice');
+      if (firstChoice) firstChoice.focus();
+    }
+
+    document.getElementById('restart-button').addEventListener('click', resetAll);
+    celebrationRestartBtn.addEventListener('click', resetAll);
+
+    // Rewatch Video Action
+    celebrationRewatchBtn.addEventListener('click', () => {
+      celebrationView.classList.add('hidden');
+      videoView.classList.remove('hidden');
+
+      levelBadge.textContent = '✦ 2. SEVİYE · Video Etkinliği';
+      stageEyebrow.textContent = 'TÜRKÇE VE TÜRK KÜLTÜRÜ';
+      stageSubEyebrow.textContent = '· Komşuluk ve Dayanışma';
+      pageHeading.textContent = 'Dayanışma Hikayesi & Düşünme Zamanı';
+      pageIntro.textContent = '1.mp4 videosunu izleyin.';
+
+      storyVideo.currentTime = 0;
+      videoStartOverlay.classList.add('hidden');
+      storyVideo.play().catch(() => { });
+    });
+
+    // More Confetti button
+    moreConfettiBtn.addEventListener('click', () => {
+      triggerConfetti();
+      playTone('fanfare');
+    });
+
+    // Result view "Videoya Geç" button
+    resultGoToVideoBtn.addEventListener('click', startVideoStage);
+
+    // Back to Quiz button from video view
+    backToQuizBtn.addEventListener('click', () => {
+      stopAllAudios();
+      storyVideo.pause();
+      videoView.classList.add('hidden');
+      celebrationView.classList.add('hidden');
+      gameView.classList.remove('hidden');
+
+      levelBadge.textContent = '✦ 1. SEVİYE · Hitap Oyunu';
+      stageEyebrow.textContent = 'TÜRKÇE VE TÜRK KÜLTÜRÜ';
+      stageSubEyebrow.textContent = '· Günlük Yaşamda Doğru Hitap';
+      pageHeading.textContent = 'Nasıl seslenirsin?';
+      pageIntro.textContent = 'Üç kısa diyalogda, akraban olmayan kişilere uygun hitabı seç. 🔊 Ses simgesine tıklayarak sesi dinleyebilirsin!';
+    });
+
+    // Initialize initial state
+    updateProgress();
+  </script>
+</body>
+
+</html>

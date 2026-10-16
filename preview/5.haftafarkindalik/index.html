@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+  <meta name="theme-color" content="#fff9ef">
+  <meta name="description" content="1’den 10’a kadar saymayı öğreten çocuk dostu Türkçe sayı oyunu.">
+  <title>Sayılarla Oyna!</title>
+  <link rel="stylesheet" href="style.css?v=11">
+</head>
+<body>
+  <main id="uygulama">
+    <div id="akanYildizlar" class="akan-yildizlar" aria-hidden="true"></div>
+    <button id="sesBtn" class="yuvarlak-btn ses-btn" aria-label="Sesleri kapat" title="Sesleri kapat">♪</button>
+    <button id="tekrarSesBtn" class="yuvarlak-btn tekrar-ses-btn gizli" aria-label="Sesi tekrar dinle" title="Sesi tekrar dinle">↻</button>
+    <button id="geriBtn" class="yuvarlak-btn geri-btn gizli" aria-label="Geri dön" title="Geri dön">←</button>
+    <button id="tamEkranBtn" class="yuvarlak-btn tam-ekran-btn" aria-label="Tam ekran" title="Tam ekran">⛶</button>
+    <section id="ekran" class="ekran" aria-live="polite"></section>
+    <audio id="baslangicSesi" preload="auto" src="sesler/acilis.mp3"></audio>
+    <audio id="harikaSesi" preload="auto" src="sesler/harika.wav"></audio>
+  </main>
+  <script src="app.js?v=10"></script>
+</body>
+</html>
