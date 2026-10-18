@@ -61,13 +61,14 @@
       width: 100%;
       height: 100%;
       display: block;
-      object-fit: cover;
-      /* Tam çerçeveye kusursuz sığsın */
+      object-fit: contain;
+      background: #000;
+      /* Videonun tamamı eksiksiz ve kesilmeden görünsün */
       transition: object-fit 0.2s ease;
     }
 
-    .video-frame.fit-contain video {
-      object-fit: contain;
+    .video-frame.fit-cover video {
+      object-fit: cover;
     }
 
     /* Video range slider styling */
@@ -421,10 +422,10 @@
 
             <div class="flex items-center gap-1.5">
               <!-- Tam Çerçeve / Sığdır Modu -->
-              <button id="fit-toggle-btn" type="button" title="Tam Çerçeve (Doldur / Sığdır)"
+              <button id="fit-toggle-btn" type="button" title="Görünüm: Sığdır / Doldur"
                 class="bg-white/10 hover:bg-white/20 text-white text-xs px-2.5 py-1.5 rounded-lg transition flex items-center gap-1">
                 <span id="fit-icon">🔲</span>
-                <span id="fit-text" class="hidden md:inline font-medium text-[11px]">Tam Çerçeve</span>
+                <span id="fit-text" class="hidden md:inline font-medium text-[11px]">Sığdır</span>
               </button>
 
               <!-- Tam Ekran -->
@@ -456,10 +457,26 @@
 
         <!-- YÖNERGE BİLGİ KUTUSU -->
         <div
-          class="bg-[#edf0dc] border border-[#c8d4b7] text-[#173b32] text-xs font-semibold px-3 py-2 rounded-xl mb-2 flex items-center gap-2 shrink-0">
+          class="bg-[#edf0dc] border border-[#c8d4b7] text-[#173b32] text-xs font-semibold px-3 py-2 rounded-xl mb-2.5 flex items-center gap-2 shrink-0">
           <span class="text-base">🎧</span>
-          <span><strong>Yönerge:</strong> Önce videoyu dikkatle dinleyin, ardından diyalogdaki eksik kelimeleri
-            tamamlayın.</span>
+          <span><strong>Yönerge:</strong> Önce videoyu dikkatle dinleyin, ardından yukarıdaki kelimeleri diyalogdaki
+            doğru boşluklara yerleştirin.</span>
+        </div>
+
+        <!-- CONTROLS & WORD BANK (Metnin Üstünde & Karışık Sıralı) -->
+        <div class="shrink-0 mb-2.5 p-2.5 sm:p-3 bg-[#f8faf6] rounded-xl border border-[#dde4d4] shadow-sm">
+          <div class="flex items-center justify-between mb-2">
+            <span class="font-bold text-xs uppercase tracking-wider text-[#587164]">Kelime Havuzu</span>
+            <p class="text-[#718579] text-xs">Sürükle veya tıkla</p>
+          </div>
+
+          <div id="word-bank" class="flex flex-wrap gap-2">
+            <button type="button" class="word-chip" draggable="true" data-word="evladım">evladım</button>
+            <button type="button" class="word-chip" draggable="true" data-word="teyze">teyze</button>
+            <button type="button" class="word-chip" draggable="true" data-word="Günaydın">Günaydın</button>
+            <button type="button" class="word-chip" draggable="true" data-word="Okula">Okula</button>
+            <button type="button" class="word-chip" draggable="true" data-word="İyiyim">İyiyim</button>
+          </div>
         </div>
 
         <!-- DIALOGUE BOXES (Scrollable if needed, but designed to fit) -->
@@ -500,40 +517,22 @@
           <div class="rounded-xl bg-[#f2f4ea] px-3 py-2">
             <span class="block text-xs text-[#587164] font-bold mb-0.5">Çocuk:</span>
             <p class="text-sm leading-loose">
-              — Evet Nuray
-              <button type="button" class="drop-zone" data-answer="teyze" data-slot="6">6 · ___</button>,
-              okula gidiyorum.
+              — Evet Nuray teyze, okula gidiyorum.
             </p>
           </div>
         </div>
 
-        <!-- CONTROLS & WORD BANK -->
-        <div class="shrink-0 mt-2.5 pt-2.5 border-t border-[#e8e5d9]">
-          <div class="flex items-center justify-between mb-2">
-            <h3 class="font-bold text-sm">Kelime Havuzu</h3>
-            <p class="text-[#61756b] text-xs">Sürükle veya tıkla</p>
+        <!-- ACTION BUTTONS -->
+        <div class="shrink-0 mt-2.5 pt-2.5 border-t border-[#e8e5d9] flex flex-wrap gap-2 items-center justify-between">
+          <div class="flex gap-2">
+            <button id="check-button" type="button"
+              class="bg-[#173b32] text-white rounded-lg px-4 py-2 text-sm font-bold transition hover:bg-[#21483b] shadow-sm active:scale-95">✔️
+              Kontrol Et</button>
+            <button id="reset-button" type="button"
+              class="bg-white text-[#173b32] rounded-lg px-4 py-2 text-sm font-bold border border-[#cdd8c9] transition hover:bg-[#e7eee1] active:scale-95">🔄
+              Sıfırla</button>
           </div>
-
-          <div id="word-bank" class="flex flex-wrap gap-2 mb-3">
-            <button type="button" class="word-chip" draggable="true" data-word="Günaydın">Günaydın</button>
-            <button type="button" class="word-chip" draggable="true" data-word="teyze">teyze</button>
-            <button type="button" class="word-chip" draggable="true" data-word="evladım">evladım</button>
-            <button type="button" class="word-chip" draggable="true" data-word="İyiyim">İyiyim</button>
-            <button type="button" class="word-chip" draggable="true" data-word="Okula">Okula</button>
-            <button type="button" class="word-chip" draggable="true" data-word="teyze">teyze</button>
-          </div>
-
-          <div class="flex flex-wrap gap-2 items-center justify-between">
-            <div class="flex gap-2">
-              <button id="check-button" type="button"
-                class="bg-[#173b32] text-white rounded-lg px-4 py-2 text-sm font-bold transition hover:bg-[#21483b]">✔️
-                Kontrol Et</button>
-              <button id="reset-button" type="button"
-                class="bg-white text-[#173b32] rounded-lg px-4 py-2 text-sm font-bold border border-[#cdd8c9] transition hover:bg-[#e7eee1]">🔄
-                Sıfırla</button>
-            </div>
-            <p id="result" class="text-sm font-semibold m-0" role="status" aria-live="polite"></p>
-          </div>
+          <p id="result" class="text-sm font-semibold m-0" role="status" aria-live="polite"></p>
         </div>
       </section>
     </div>
@@ -549,14 +548,15 @@
             <span class="w-3 h-3 rounded-full bg-emerald-400 animate-pulse"></span>
             <div>
               <h2 class="text-white font-bold text-base sm:text-lg">2. Aşama: Saygı &amp; Hitap Sözleri</h2>
-              <p class="text-white/70 text-xs mt-0.5">Videoyu izleyin. 45. saniyede gelecek soruyu sözlü olarak
+              <p class="text-white/70 text-xs mt-0.5">Videoyu izleyin. Video esnasında karşınıza çıkacak soruyu sözlü
+                olarak
                 yanıtlayın.</p>
             </div>
           </div>
           <div id="stage2-question-badge"
             class="flex items-center gap-1.5 text-xs font-bold text-amber-200 bg-amber-900/40 border border-amber-500/30 px-3 py-1.5 rounded-full shrink-0">
             <span id="stage2-badge-icon">⏱</span>
-            <span id="stage2-badge-text">45. saniyede soru molası</span>
+            <span id="stage2-badge-text">Soru Molası</span>
           </div>
         </div>
 
@@ -623,10 +623,10 @@
             </div>
 
             <div class="flex items-center gap-1.5">
-              <button id="stage2-fit-toggle-btn" type="button" title="Tam Çerçeve (Doldur / Sığdır)"
+              <button id="stage2-fit-toggle-btn" type="button" title="Görünüm: Sığdır / Doldur"
                 class="bg-white/10 hover:bg-white/20 text-white text-xs px-2.5 py-1.5 rounded-lg transition flex items-center gap-1">
                 <span>🔲</span>
-                <span id="stage2-fit-text" class="hidden md:inline font-medium text-[11px]">Tam Çerçeve</span>
+                <span id="stage2-fit-text" class="hidden md:inline font-medium text-[11px]">Sığdır</span>
               </button>
 
               <button id="stage2-fullscreen-btn" type="button" title="Tam Ekran"
@@ -654,13 +654,13 @@
         🎉
       </div>
       <h3 class="display text-2xl font-bold text-[#173b32] mb-1">Tebrikler! 1. Aşamayı Tamamladın!</h3>
-      <p class="text-sm text-[#587164] mb-5">Diyalogdaki 6 kelimeyi de başarıyla yerleştirdin. Şimdi 2. aşamaya geçerek
+      <p class="text-sm text-[#587164] mb-5">Diyalogdaki 5 kelimeyi de başarıyla yerleştirdin. Şimdi 2. aşamaya geçerek
         videoyu izleyelim.</p>
 
       <div class="bg-[#f2f4ea] rounded-xl p-3 mb-5 border border-[#c8d4b7] flex items-center justify-around">
         <div>
           <span class="block text-xs text-[#61756b] font-medium">Başarı</span>
-          <span class="text-lg font-extrabold text-[#173b32]">6 / 6 Doğru ✓</span>
+          <span class="text-lg font-extrabold text-[#173b32]">5 / 5 Doğru ✓</span>
         </div>
         <div class="w-px h-8 bg-[#c8d4b7]"></div>
         <div>
@@ -682,14 +682,14 @@
     </div>
   </div>
 
-  <!-- 2. AŞAMA 45. SANİYE SORU MODALI -->
+  <!-- 2. AŞAMA SORU MODALI -->
   <div id="stage2-question-modal" class="modal-overlay hidden" role="dialog" aria-modal="true">
     <div class="modal-card">
       <div class="flex items-center justify-between gap-2 mb-4 pb-3 border-b border-[#e2e8f0]">
         <span
           class="inline-flex items-center gap-1.5 text-xs font-extrabold px-3 py-1 rounded-full bg-[#fdf2ed] text-[#bf5e3d] border border-[#f3ded5]">
-          <span>⏱ 00:45</span>
-          <span>· Düşünme Zamanı</span>
+          <span>⏱ Soru Zamanı</span>
+          <span>· Düşün &amp; Cevapla</span>
         </span>
         <span
           class="text-xs font-semibold text-[#587164] bg-[#edf0dc] px-2.5 py-1 rounded-full border border-[#c8d4b7]">
@@ -737,7 +737,7 @@
         <div class="bg-[#f2f4ea] p-3 rounded-2xl border border-[#c8d4b7] text-left">
           <span class="block text-[11px] font-bold text-[#587164] uppercase">1. Aşama</span>
           <span class="text-base font-bold text-[#173b32]">Diyalog Tamamlama</span>
-          <span class="block text-xs text-emerald-700 font-semibold mt-0.5">6/6 Doğru ✓</span>
+          <span class="block text-xs text-emerald-700 font-semibold mt-0.5">5/5 Doğru ✓</span>
         </div>
         <div class="bg-[#fdf3e9] p-3 rounded-2xl border border-[#f5ded3] text-left">
           <span class="block text-[11px] font-bold text-[#d87448] uppercase">2. Aşama</span>
@@ -838,8 +838,9 @@
       if (video.duration) {
         timeDuration.textContent = formatTime(video.duration);
       }
-      if (video.videoWidth) {
+      if (video.videoWidth && video.videoHeight) {
         videoStatus.textContent = `✓ Hazır (${video.videoWidth}x${video.videoHeight})`;
+        videoContainer.style.aspectRatio = `${video.videoWidth} / ${video.videoHeight}`;
       }
     }
 
@@ -884,16 +885,16 @@
       muteIcon.textContent = video.muted ? '🔇' : '🔊';
     });
 
-    // Tam Çerçeve (Doldur / Sığdır) Modu
-    let isCover = true;
+    // Video Görünüm (Sığdır / Doldur) Modu
+    let isCover = false;
     fitToggleBtn.addEventListener('click', () => {
       isCover = !isCover;
       if (isCover) {
-        videoContainer.classList.remove('fit-contain');
-        fitText.textContent = 'Tam Çerçeve';
+        videoContainer.classList.add('fit-cover');
+        fitText.textContent = 'Doldur';
       } else {
-        videoContainer.classList.add('fit-contain');
-        fitText.textContent = 'Oranlı Sığdır';
+        videoContainer.classList.remove('fit-cover');
+        fitText.textContent = 'Sığdır';
       }
     });
 
@@ -924,6 +925,8 @@
     const chips = [...document.querySelectorAll('.word-chip')];
     const result = document.getElementById('result');
     let selected = null;
+    let draggedChip = null;
+    let justDropped = false;
 
     function clearResult() {
       result.textContent = '';
@@ -933,6 +936,13 @@
     function selectChip(chip) {
       selected = selected === chip ? null : chip;
       chips.forEach(item => item.classList.toggle('selected', item === selected));
+      slots.forEach(slot => {
+        if (selected && !slot.dataset.chipIndex) {
+          slot.classList.add('selected-target');
+        } else {
+          slot.classList.remove('selected-target');
+        }
+      });
     }
 
     function releaseSlot(slot) {
@@ -943,6 +953,9 @@
       slot.dataset.chipIndex = '';
       slot.textContent = slot.dataset.slot + ' · ___';
       slot.classList.remove('filled', 'correct', 'incorrect');
+      if (selected) {
+        slot.classList.add('selected-target');
+      }
     }
 
     function place(chip, slot) {
@@ -961,28 +974,123 @@
     }
 
     chips.forEach(chip => {
-      chip.addEventListener('click', () => selectChip(chip));
+      chip.addEventListener('click', (e) => {
+        if (justDropped) return;
+        selectChip(chip);
+      });
+
       chip.addEventListener('dragstart', event => {
+        draggedChip = chip;
         event.dataTransfer.setData('text/plain', String(chips.indexOf(chip)));
         event.dataTransfer.effectAllowed = 'move';
         selectChip(chip);
       });
-      chip.addEventListener('dragend', () => selectChip(null));
+
+      chip.addEventListener('dragend', () => {
+        draggedChip = null;
+        selectChip(null);
+        slots.forEach(s => s.classList.remove('over'));
+      });
     });
 
     slots.forEach(slot => {
-      slot.addEventListener('click', () => {
-        if (selected) place(selected, slot);
-        else if (slot.dataset.chipIndex) { clearResult(); releaseSlot(slot); }
+      slot.addEventListener('click', (e) => {
+        // Sürükleyip bırakma hemen sonrası oluşan tıklamayı yut (kelimenin hemen silinmesini engeller)
+        if (justDropped) {
+          justDropped = false;
+          return;
+        }
+        if (selected) {
+          place(selected, slot);
+        } else if (slot.dataset.chipIndex) {
+          clearResult();
+          releaseSlot(slot);
+        }
       });
+
       slot.addEventListener('dragenter', event => event.preventDefault());
-      slot.addEventListener('dragover', event => { event.preventDefault(); slot.classList.add('over'); });
+      slot.addEventListener('dragover', event => {
+        event.preventDefault();
+        slot.classList.add('over');
+      });
       slot.addEventListener('dragleave', () => slot.classList.remove('over'));
+
       slot.addEventListener('drop', event => {
         event.preventDefault();
         slot.classList.remove('over');
+
+        // Bırakma sonrası tetiklenen sentetik click olayını engellemek için flag koyuyoruz
+        justDropped = true;
+        setTimeout(() => {
+          justDropped = false;
+        }, 200);
+
         const index = Number(event.dataTransfer.getData('text/plain'));
-        if (Number.isInteger(index) && chips[index]) place(chips[index], slot);
+        const chipToPlace = draggedChip || (Number.isInteger(index) && chips[index] ? chips[index] : null);
+        if (chipToPlace) {
+          place(chipToPlace, slot);
+        }
+      });
+    });
+
+    // Dokunmatik Ekranlar & Akıllı Tahtalar / Tabletler için Touch Desteği
+    let touchChip = null;
+    let touchGhost = null;
+
+    chips.forEach(chip => {
+      chip.addEventListener('touchstart', (e) => {
+        if (chip.classList.contains('used')) return;
+        touchChip = chip;
+        selectChip(chip);
+      }, { passive: true });
+
+      chip.addEventListener('touchmove', (e) => {
+        if (!touchChip) return;
+        const touch = e.touches[0];
+        if (!touchGhost) {
+          touchGhost = touchChip.cloneNode(true);
+          touchGhost.style.position = 'fixed';
+          touchGhost.style.pointerEvents = 'none';
+          touchGhost.style.zIndex = '9999';
+          touchGhost.style.opacity = '0.9';
+          touchGhost.style.transform = 'scale(1.05)';
+          touchGhost.style.boxShadow = '0 8px 24px rgba(0,0,0,0.3)';
+          document.body.appendChild(touchGhost);
+        }
+        touchGhost.style.left = `${touch.clientX - 40}px`;
+        touchGhost.style.top = `${touch.clientY - 20}px`;
+
+        const targetEl = document.elementFromPoint(touch.clientX, touch.clientY);
+        const hoverSlot = targetEl ? targetEl.closest('.drop-zone') : null;
+        slots.forEach(s => s.classList.toggle('over', s === hoverSlot));
+      }, { passive: true });
+
+      chip.addEventListener('touchend', (e) => {
+        if (touchGhost) {
+          touchGhost.remove();
+          touchGhost = null;
+        }
+        if (touchChip) {
+          const touch = e.changedTouches[0];
+          const targetEl = document.elementFromPoint(touch.clientX, touch.clientY);
+          const dropSlot = targetEl ? targetEl.closest('.drop-zone') : null;
+          if (dropSlot) {
+            justDropped = true;
+            setTimeout(() => { justDropped = false; }, 200);
+            place(touchChip, dropSlot);
+          }
+          touchChip = null;
+        }
+        slots.forEach(s => s.classList.remove('over'));
+      });
+
+      chip.addEventListener('touchcancel', () => {
+        if (touchGhost) {
+          touchGhost.remove();
+          touchGhost = null;
+        }
+        touchChip = null;
+        slots.forEach(s => s.classList.remove('over'));
       });
     });
 
@@ -1009,7 +1117,7 @@
         stage2View.classList.remove('hidden');
         stage1View.classList.add('hidden');
         mainTitle.textContent = '2. Aşama: Saygı & Hitap Sözleri';
-        mainSubtitle.textContent = 'Videoyu izleyin. 45. saniyedeki soruyu sözlü olarak yanıtlayın.';
+        mainSubtitle.textContent = 'Videoyu izleyin. Video esnasında gelecek soruyu sözlü olarak yanıtlayın.';
         video.pause(); // 1. videoyu durdur
         if (stage2Video.paused && stage2Video.currentTime === 0) {
           stage2Video.play().catch(() => { });
@@ -1019,6 +1127,16 @@
 
     tabStage1.addEventListener('click', () => switchStage(1));
     tabStage2.addEventListener('click', () => switchStage(2));
+
+    function shuffleWordBank() {
+      const bank = document.getElementById('word-bank');
+      if (!bank) return;
+      const elements = Array.from(bank.children);
+      for (let i = elements.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        bank.appendChild(elements[j]);
+      }
+    }
 
     // Kontrol Et & Sıfırla (1. Aşama)
     document.getElementById('check-button').addEventListener('click', () => {
@@ -1045,13 +1163,13 @@
       }
 
       if (correct === slots.length) {
-        result.textContent = '🎉 Harika! 6/6 Doğru!';
+        result.textContent = '🎉 Harika! 5/5 Doğru!';
         result.style.color = '#286c48';
         setTimeout(() => {
           showStage1Modal();
         }, 500);
       } else {
-        result.textContent = `${correct}/6 doğru. Lütfen tekrar deneyin.`;
+        result.textContent = `${correct}/5 doğru. Lütfen tekrar deneyin.`;
         result.style.color = '#a64b35';
       }
     });
@@ -1060,6 +1178,7 @@
       slots.forEach(slot => releaseSlot(slot));
       clearResult();
       selectChip(null);
+      shuffleWordBank();
     });
 
     // 1. Aşama Tamamlandı Modalı
@@ -1153,7 +1272,10 @@
 
     stage2Video.addEventListener('loadedmetadata', () => {
       stage2TimeDuration.textContent = formatTime(stage2Video.duration);
-      stage2VideoStatus.textContent = `✓ Hazır (${stage2Video.videoWidth}x${stage2Video.videoHeight})`;
+      if (stage2Video.videoWidth && stage2Video.videoHeight) {
+        stage2VideoStatus.textContent = `✓ Hazır (${stage2Video.videoWidth}x${stage2Video.videoHeight})`;
+        stage2VideoContainer.style.aspectRatio = `${stage2Video.videoWidth} / ${stage2Video.videoHeight}`;
+      }
     });
 
     // 45. SANİYE SORUSU TETİKLEYİCİSİ
@@ -1195,7 +1317,7 @@
       // Rozeti güncelle
       stage2QuestionBadge.className = 'flex items-center gap-1.5 text-xs font-bold text-emerald-200 bg-emerald-900/40 border border-emerald-500/30 px-3 py-1.5 rounded-full shrink-0';
       stage2BadgeIcon.textContent = '✓';
-      stage2BadgeText.textContent = '45. Saniye Sorusu Cevaplandı';
+      stage2BadgeText.textContent = 'Soru Cevaplandı ✓';
 
       // Videonun akmaya devam etmesi
       stage2Video.play().catch(() => { });
@@ -1231,14 +1353,15 @@
       stage2MuteIcon.textContent = stage2Video.muted ? '🔇' : '🔊';
     });
 
+    let isStage2Cover = false;
     stage2FitToggleBtn.addEventListener('click', () => {
       isStage2Cover = !isStage2Cover;
       if (isStage2Cover) {
-        stage2VideoContainer.classList.remove('fit-contain');
-        stage2FitText.textContent = 'Tam Çerçeve';
+        stage2VideoContainer.classList.add('fit-cover');
+        stage2FitText.textContent = 'Doldur';
       } else {
-        stage2VideoContainer.classList.add('fit-contain');
-        stage2FitText.textContent = 'Oranlı Sığdır';
+        stage2VideoContainer.classList.remove('fit-cover');
+        stage2FitText.textContent = 'Sığdır';
       }
     });
 
@@ -1273,7 +1396,7 @@
       stage2QuestionAnswered = false;
       stage2QuestionBadge.className = 'flex items-center gap-1.5 text-xs font-bold text-amber-200 bg-amber-900/40 border border-amber-500/30 px-3 py-1.5 rounded-full shrink-0';
       stage2BadgeIcon.textContent = '⏱';
-      stage2BadgeText.textContent = '45. saniyede soru molası';
+      stage2BadgeText.textContent = 'Soru Molası';
       switchStage(1);
     });
 

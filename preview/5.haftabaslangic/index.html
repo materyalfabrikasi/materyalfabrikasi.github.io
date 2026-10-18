@@ -1640,7 +1640,7 @@
         <button type="button" class="stage-tab" id="tabVideo">
           <span class="stage-num">2</span>
           <span class="stage-label">Video ve Soru</span>
-          <span class="stage-badge" id="badgeVideo">00:20 Soru</span>
+          <span class="stage-badge" id="badgeVideo">Video Sorusu</span>
         </button>
       </nav>
     </div>
@@ -1835,7 +1835,7 @@
       </section>
 
       <!-- ==============================================
-           AŞAMA 2: VİDEO VE 00:20 SORUSU
+           AŞAMA 2: VİDEO VE SORU
       =============================================== -->
       <section class="stage-panel" id="videoStage" aria-label="Video ve soru aşaması">
         <div class="video-stage-container">
@@ -1845,7 +1845,7 @@
             <div>
               <h2>Video İzleme Zamanı</h2>
               <p>
-                Videoyu izle. 20. saniyedeki soruyu sesli cevapla ve devam et.
+                Videoyu izle. Gelen soruyu sesli cevapla ve devam et.
               </p>
             </div>
           </div>
@@ -1853,12 +1853,12 @@
           <div class="video-frame-card">
             <video id="lessonVideo" src="1.mp4" playsinline controls preload="auto" class="lesson-video"></video>
 
-            <!-- 00:20 SORU KATMANI -->
+            <!-- VİDEO SORU KATMANI -->
             <div class="video-overlay" id="videoQuestionOverlay" role="dialog" aria-modal="true"
               aria-labelledby="overlayQuestionTitle">
               <div class="video-question-card">
                 <div class="video-question-badge">
-                  <span aria-hidden="true">🎤</span> Video Sorusu (00:20)
+                  <span aria-hidden="true">🎤</span> Video Sorusu
                 </div>
 
                 <h3 class="video-question-title" id="overlayQuestionTitle">
@@ -1879,7 +1879,7 @@
           <div class="video-controls-bar">
             <div class="video-controls-info">
               <span>⏱️ Soru Durumu:</span>
-              <strong id="videoQuestionStatusText">20. saniyede soru var</strong>
+              <strong id="videoQuestionStatusText">Videoda soru var</strong>
             </div>
 
             <button type="button" class="video-replay-action-btn" id="rewindVideoBtn">
@@ -2080,7 +2080,7 @@
         videoStage.classList.add("active");
 
         progressTitleLabel.textContent = "Video";
-        progressText.textContent = questionAnswered ? "Soru Cevaplandı ✓" : "00:20 Soru";
+        progressText.textContent = questionAnswered ? "Soru Cevaplandı ✓" : "Video Sorusu";
         progressBar.style.width = questionAnswered ? "100%" : "50%";
 
         if (autoPlayVideo && lessonVideo) {
@@ -2598,16 +2598,16 @@
     });
 
     // ============================================
-    // VİDEO VE 00:20 SORUSU MANTIĞI
+    // VİDEO VE SORU MANTIĞI
     // ============================================
 
-    // 00:20 (20. saniye) kontrolü
+    // 22. saniye kontrolü
     lessonVideo.addEventListener("timeupdate", () => {
-      if (!questionTriggered && !questionAnswered && lessonVideo.currentTime >= 20.0) {
+      if (!questionTriggered && !questionAnswered && lessonVideo.currentTime >= 22.0) {
         stopCurrentAudio();
         questionTriggered = true;
         lessonVideo.pause();
-        lessonVideo.currentTime = 20.0;
+        lessonVideo.currentTime = 22.0;
         videoQuestionOverlay.classList.add("active");
         confirmAnswerBtn.focus();
         videoQuestionStatusText.textContent = "Soruyu cevapla...";
@@ -2615,11 +2615,11 @@
     });
 
     lessonVideo.addEventListener("seeking", () => {
-      if (!questionTriggered && !questionAnswered && lessonVideo.currentTime >= 20.0) {
+      if (!questionTriggered && !questionAnswered && lessonVideo.currentTime >= 22.0) {
         stopCurrentAudio();
         questionTriggered = true;
         lessonVideo.pause();
-        lessonVideo.currentTime = 20.0;
+        lessonVideo.currentTime = 22.0;
         videoQuestionOverlay.classList.add("active");
         confirmAnswerBtn.focus();
         videoQuestionStatusText.textContent = "Soruyu cevapla...";
@@ -2659,8 +2659,8 @@
       questionTriggered = false;
       questionAnswered = false;
       videoQuestionOverlay.classList.remove("active");
-      videoQuestionStatusText.textContent = "20. saniyede soru var";
-      badgeVideo.textContent = "00:20 Soru";
+      videoQuestionStatusText.textContent = "Videoda soru var";
+      badgeVideo.textContent = "Video Sorusu";
       badgeVideo.classList.remove("completed");
     });
 
@@ -2672,8 +2672,8 @@
       questionTriggered = false;
       questionAnswered = false;
       videoQuestionOverlay.classList.remove("active");
-      videoQuestionStatusText.textContent = "20. saniyede soru var";
-      badgeVideo.textContent = "00:20 Soru";
+      videoQuestionStatusText.textContent = "Videoda soru var";
+      badgeVideo.textContent = "Video Sorusu";
       badgeVideo.classList.remove("completed");
     });
 
@@ -2688,8 +2688,8 @@
       questionTriggered = false;
       questionAnswered = false;
       videoQuestionOverlay.classList.remove("active");
-      videoQuestionStatusText.textContent = "20. saniyede soru var";
-      badgeVideo.textContent = "00:20 Soru";
+      videoQuestionStatusText.textContent = "Videoda soru var";
+      badgeVideo.textContent = "Video Sorusu";
       badgeVideo.classList.remove("completed");
     });
 

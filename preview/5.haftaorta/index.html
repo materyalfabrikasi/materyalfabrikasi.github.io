@@ -480,7 +480,6 @@
                 <aside data-template-id="culture-note"
                   class="rounded-xl border border-[#f2ded3] bg-[#fffaf5] p-3 sm:p-3.5 shadow-sm">
                   <div class="flex items-center gap-1.5 text-[#bf5e3d] font-bold text-xs uppercase tracking-wider">
-                    <span aria-hidden="true" class="text-sm">💡</span>
                     <h2 data-template-id="note-heading"
                       class="canva-text display font-bold text-xs sm:text-sm text-[#bf5e3d]">
                       Kültür Notu</h2>
@@ -558,7 +557,6 @@
                 <!-- Culture Note Card -->
                 <aside class="rounded-xl border border-[#f2ded3] bg-[#fffaf5] p-3 sm:p-3.5 shadow-sm">
                   <div class="flex items-center gap-1.5 text-[#bf5e3d] font-bold text-xs uppercase tracking-wider">
-                    <span aria-hidden="true" class="text-sm">💡</span>
                     <h2 class="canva-text display font-bold text-xs sm:text-sm text-[#bf5e3d]">
                       Kültür Notu</h2>
                   </div>
@@ -633,7 +631,6 @@
                 <!-- Culture Note Card -->
                 <aside class="rounded-xl border border-[#f2ded3] bg-[#fffaf5] p-3 sm:p-3.5 shadow-sm">
                   <div class="flex items-center gap-1.5 text-[#bf5e3d] font-bold text-xs uppercase tracking-wider">
-                    <span aria-hidden="true" class="text-sm">💡</span>
                     <h2 class="canva-text display font-bold text-xs sm:text-sm text-[#bf5e3d]">
                       Kültür Notu</h2>
                   </div>
@@ -768,7 +765,7 @@
             </span>
             <span id="video-stage-pill"
               class="text-xs font-semibold text-[#536f63] bg-[#f2f7f3] px-2.5 py-0.5 rounded-full border border-[#dce8db]">
-              ⏱ 21. saniyede soru molası
+              ⏱ Soru molası
             </span>
           </div>
           <div class="flex items-center gap-2">
@@ -794,8 +791,8 @@
               <div class="flex items-center justify-between gap-2 mb-3">
                 <span
                   class="inline-flex items-center gap-1.5 text-xs font-extrabold px-3 py-1 rounded-full bg-[#fdf2ed] text-[#bf5e3d] border border-[#f3ded5]">
-                  <span>⏱ 00:21</span>
-                  <span>· Sözlü Soru Zamanı</span>
+                  <span>⏱</span>
+                  <span>Sözlü Soru Zamanı</span>
                 </span>
                 <span
                   class="text-xs font-semibold text-[#668274] bg-[#f0f6f2] px-2.5 py-0.5 rounded-full border border-[#dce8db]">
@@ -847,7 +844,7 @@
               2. Aşamayı Başlat
             </h3>
             <p class="text-white/90 text-xs sm:text-sm max-w-sm mt-1 drop-shadow">
-              1.mp4 videosunu izleyin; 21. saniyede gelecek soruyu sözlü olarak yanıtlayın.
+              Videoyu izleyiniz.
             </p>
           </div>
         </div>
@@ -861,15 +858,15 @@
               🎬
             </div>
             <div>
-              <h4 class="font-bold text-[#1b352b] text-xs sm:text-sm">Dayanışma &amp; Nezaket Hikayesi (1.mp4)</h4>
-              <p class="text-[#556e62] text-[11px] mt-0.5">21. saniyedeki soruya sözlü yanıt verdikten sonra videoyu
+              <h4 class="font-bold text-[#1b352b] text-xs sm:text-sm">Dayanışma &amp; Nezaket Hikayesi</h4>
+              <p class="text-[#556e62] text-[11px] mt-0.5">Videodaki soruya sözlü yanıt verdikten sonra videoyu
                 tamamlayın.</p>
             </div>
           </div>
           <div id="video-question-badge"
             class="flex items-center gap-1.5 text-xs font-bold text-[#627e71] bg-[#eef5f0] px-3 py-1.5 rounded-full border border-[#d2e4d5] self-start sm:self-auto">
             <span id="video-question-badge-icon">⏱</span>
-            <span id="video-question-badge-text">21. saniyede soru duraklaması</span>
+            <span id="video-question-badge-text">Soru duraklaması</span>
           </div>
         </div>
       </div>
@@ -905,7 +902,7 @@
             <span class="block text-[11px] font-extrabold text-[#bf5e3d] uppercase tracking-wider">2. Aşama: Video &amp;
               Sözlü Paylaşım</span>
             <p class="text-xl sm:text-2xl font-extrabold text-[#bf5e3d] mt-1">Tamamlandı ✓</p>
-            <span class="text-[11px] text-[#8e685c] mt-0.5 block">1.mp4 &amp; 21. Saniye Sorusu</span>
+            <span class="text-[11px] text-[#8e685c] mt-0.5 block">Video &amp; Sözlü Soru</span>
           </div>
         </div>
 
@@ -1240,7 +1237,7 @@
             feedbackIcon.textContent = '🌟';
           } else {
             feedback.classList.add('bg-[#fdf1ee]', 'border-[#f5c7bc]', 'text-[#9b2a1c]');
-            feedbackIcon.textContent = '💡';
+            feedbackIcon.textContent = '';
           }
 
           correctMessage.classList.toggle('hidden', !correct);
@@ -1293,7 +1290,7 @@
       stageEyebrow.textContent = 'TÜRKÇE VE TÜRK KÜLTÜRÜ';
       stageSubEyebrow.textContent = '· Komşuluk ve Dayanışma';
       pageHeading.textContent = 'Dayanışma Hikayesi & Düşünme Zamanı';
-      pageIntro.textContent = '1.mp4 videosunu izleyin. 21. saniyede gelecek özel soruyu sözlü olarak yanıtlayarak etkinliğe katılın.';
+      pageIntro.textContent = 'Videoyu izleyiniz.';
 
       // Reset poster/overlay if at 0s
       if (storyVideo.currentTime === 0) {
@@ -1353,7 +1350,7 @@
       videoQuestionBadge.classList.remove('text-[#627e71]', 'bg-[#eef5f0]', 'border-[#d2e4d5]');
       videoQuestionBadge.classList.add('text-[#246146]', 'bg-[#e6f4eb]', 'border-[#cbe4d4]');
       videoQuestionBadgeIcon.textContent = '✓';
-      videoQuestionBadgeText.textContent = '21. Saniye Sorusu Sözlü Yanıtlandı';
+      videoQuestionBadgeText.textContent = 'Sözlü Soru Yanıtlandı';
 
       playTone('correct');
 
@@ -1408,7 +1405,7 @@
       videoQuestionBadge.classList.add('text-[#627e71]', 'bg-[#eef5f0]', 'border-[#d2e4d5]');
       videoQuestionBadge.classList.remove('text-[#246146]', 'bg-[#e6f4eb]', 'border-[#cbe4d4]');
       videoQuestionBadgeIcon.textContent = '⏱';
-      videoQuestionBadgeText.textContent = '21. saniyede soru molası';
+      videoQuestionBadgeText.textContent = 'Soru duraklaması';
 
       // Reset question cards
       cards.forEach((card, index) => {
@@ -1452,7 +1449,7 @@
       stageEyebrow.textContent = 'TÜRKÇE VE TÜRK KÜLTÜRÜ';
       stageSubEyebrow.textContent = '· Komşuluk ve Dayanışma';
       pageHeading.textContent = 'Dayanışma Hikayesi & Düşünme Zamanı';
-      pageIntro.textContent = '1.mp4 videosunu izleyin.';
+      pageIntro.textContent = 'Videoyu izleyiniz.';
 
       storyVideo.currentTime = 0;
       videoStartOverlay.classList.add('hidden');
