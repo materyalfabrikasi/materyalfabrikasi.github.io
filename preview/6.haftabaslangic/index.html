@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kime Ne Denir? | Kelime Bulmaca</title>
+
+  <style>
+    :root {
+      --green-950: #123f35;
+      --green-900: #155847;
+      --green-800: #1f725b;
+      --green-700: #2d8a6d;
+      --green-100: #dff4e9;
+      --green-50: #effaf5;
+
+      --yellow-500: #f9c74f;
+      --yellow-400: #ffd866;
+      --yellow-100: #fff4c7;
+
+      --red-500: #e76f51;
+      --red-100: #ffe5df;
+
+      --white: #ffffff;
+      --mint-bg: #edf8f3;
+      --slate-900: #17332d;
+      --slate-700: #45625a;
+      --slate-300: #c9dcd5;
+
+      --blue-card: #eaf4ff;
+      --pink-card: #fff0f4;
+      --orange-card: #fff5dc;
+      --purple-card: #f2efff;
+
+      --shadow-sm: 0 5px 16px rgba(29, 86, 68, 0.08);
+      --shadow-md: 0 12px 32px rgba(29, 86, 68, 0.12);
+      --shadow-glow: 0 8px 24px rgba(31, 114, 91, 0.28);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      height: 100vh;
+      max-height: 100vh;
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      color: var(--slate-900);
+      background: var(--mint-bg);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      display: flex;
+      flex-direction: column;
+    }
+
+    button {
+      font: inherit;
+      cursor: pointer;
+    }
+
+    /* ÜST BAŞLIK */
+    .topbar {
+      width: 100%;
+      background: linear-gradient(135deg, rgba(18, 63, 53, 0.96), rgba(31, 114, 91, 0.98)), var(--green-900);
+      color: var(--white);
+      padding: 6px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      border-bottom-left-radius: 16px;
+      border-bottom-right-radius: 16px;
+      box-shadow: var(--shadow-sm);
+      flex-shrink: 0;
+      height: 56px;
+      box-sizing: border-box;
+    }
+
+    .topbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      width: 100%;
+    }
+
+    .header-logo {
+      height: 38px;
+      width: auto;
+      background: #ffffff;
+      padding: 3px 8px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+
+    .topbar-titles {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .topbar h1 {
+      font-size: 1.15rem;
+      font-weight: 900;
+      margin: 0;
+      line-height: 1.15;
+      letter-spacing: -0.3px;
+    }
+
+    .topbar p {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--yellow-400);
+      margin: 0;
+      line-height: 1.15;
+    }
+
+    /* ANA DÜZEN (GRID) - 100vh Sığdırma */
+    .main-layout {
+      width: min(1360px, 98%);
+      margin: 0 auto;
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 12px;
+      padding: 8px 10px 10px 10px;
+      box-sizing: border-box;
+      align-items: stretch;
+    }
+
+    /* SOL KOLON */
+    .left-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      height: 100%;
+      min-height: 0;
+    }
+
+    /* AŞAMA / ADIM ÇUBUĞU */
+    .steps-container {
+      display: flex;
+      gap: 6px;
+      background: var(--white);
+      padding: 5px 10px;
+      border-radius: 12px;
+      box-shadow: var(--shadow-sm);
+      flex-shrink: 0;
+    }
+
+    .step-pill {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      padding: 5px 8px;
+      border-radius: 8px;
+      font-size: 0.74rem;
+      font-weight: 800;
+      color: var(--slate-700);
+      background: var(--green-50);
+      border: 1.5px solid transparent;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      text-align: center;
+      user-select: none;
+    }
+
+    .step-pill.active {
+      background: var(--yellow-100);
+      border-color: var(--yellow-500);
+      color: var(--slate-900);
+      box-shadow: 0 2px 8px rgba(249, 199, 79, 0.25);
+    }
+
+    .step-pill.completed {
+      background: var(--green-100);
+      border-color: var(--green-700);
+      color: var(--green-950);
+    }
+
+    .step-pill.locked {
+      opacity: 0.55;
+      background: #f1f6f4;
+    }
+
+    /* PROFİLLER GRID */
+    .profiles-grid {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .profile-card {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 6px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-evenly;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+      border: 2.5px solid transparent;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      min-height: 0;
+      height: 100%;
+      box-sizing: border-box;
+    }
+
+    .profile-card.blue {
+      background: var(--blue-card);
+      border-color: #d6eaff;
+    }
+
+    .profile-card.pink {
+      background: var(--pink-card);
+      border-color: #f8dce4;
+    }
+
+    .profile-card.orange {
+      background: var(--orange-card);
+      border-color: #f6e4b6;
+    }
+
+    .profile-card.purple {
+      background: var(--purple-card);
+      border-color: #e2dafb;
+    }
+
+    /* AKTİF KART VURGUSU */
+    .profile-card.active {
+      border-color: var(--green-800) !important;
+      box-shadow: var(--shadow-glow);
+      transform: scale(1.015);
+      z-index: 2;
+    }
+
+    /* TAMAMLANAN KART */
+    .profile-card.completed {
+      border-color: var(--green-700) !important;
+      background: #f1faf6 !important;
+      opacity: 0.95;
+    }
+
+    /* KİLİTLİ / SIRADAKİ KART */
+    .profile-card.locked {
+      opacity: 0.5;
+      filter: grayscale(25%);
+    }
+
+    /* KART ROZETİ */
+    .card-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 0.68rem;
+      font-weight: 800;
+      margin-bottom: 2px;
+      letter-spacing: 0.2px;
+      flex-shrink: 0;
+    }
+
+    .badge-active {
+      background: var(--yellow-400);
+      color: var(--slate-900);
+      animation: pulseBadge 2s infinite ease-in-out;
+    }
+
+    .badge-done {
+      background: var(--green-700);
+      color: var(--white);
+    }
+
+    .badge-locked {
+      background: var(--slate-300);
+      color: var(--slate-700);
+    }
+
+    @keyframes pulseBadge {
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.05);
+      }
+    }
+
+    .avatar-img {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid var(--white);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 8px;
+      background: var(--slate-300);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--slate-700);
+      font-size: 0.8rem;
+    }
+
+    .profile-hint {
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: var(--slate-900);
+      min-height: unset;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1.3;
+      text-align: center;
+    }
+
+    .word-boxes {
+      display: flex;
+      gap: 5px;
+      justify-content: center;
+      flex-wrap: wrap;
+      flex-shrink: 0;
+    }
+
+    .letter-box {
+      width: 38px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.35rem;
+      font-weight: 900;
+      background: var(--white);
+      border: 2px solid var(--slate-300);
+      border-radius: 8px;
+      color: transparent;
+      transition: all 0.25s ease;
+      user-select: none;
+    }
+
+    .letter-box.revealed {
+      background: var(--green-100);
+      border-color: var(--green-700);
+      color: var(--green-900);
+      transform: translateY(-2px);
+      box-shadow: 0 3px 0 rgba(45, 138, 109, 0.2);
+    }
+
+    .letter-box.placeholder {
+      color: var(--slate-300);
+      background: #fcfdfe;
+      border-style: dashed;
+      font-size: 1.1rem;
+    }
+
+    .letter-box.revealed-failed {
+      background: var(--red-100);
+      border-color: var(--red-500);
+      color: var(--red-500);
+    }
+
+    /* KART KAZANMA ANİMASYONU */
+    .profile-card.celebrating {
+      animation: cardWon 0.8s ease-in-out;
+    }
+
+    @keyframes cardWon {
+      0% {
+        transform: scale(1.015);
+      }
+
+      40% {
+        transform: scale(1.06) translateY(-4px);
+      }
+
+      100% {
+        transform: scale(1.015);
+      }
+    }
+
+    /* SAĞ: OYUN KONTROLLERİ (ÇİÇEK & KLAVYE) */
+    .controls-panel {
+      background: var(--white);
+      border-radius: 20px;
+      padding: 16px 14px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-evenly;
+      gap: 12px;
+      height: 100%;
+      min-height: 0;
+      box-sizing: border-box;
+    }
+
+    /* ÇİÇEK (CAN/HAK) ALANI */
+    .flower-area {
+      position: relative;
+      width: 140px;
+      height: 150px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 14px 0 24px 0;
+      transform: scale(1.4);
+      transform-origin: center;
+      flex-shrink: 0;
+    }
+
+    .flower-stem {
+      position: absolute;
+      bottom: -20px;
+      left: calc(50% - 4px);
+      width: 8px;
+      height: 70px;
+      background: var(--green-700);
+      border-radius: 4px;
+      z-index: 1;
+    }
+
+    #petals-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .flower-center {
+      position: absolute;
+      top: calc(50% - 22px);
+      left: calc(50% - 22px);
+      width: 44px;
+      height: 44px;
+      background: var(--yellow-400);
+      border-radius: 50%;
+      z-index: 3;
+      box-shadow: inset -4px -4px 0 rgba(0, 0, 0, 0.1);
+      margin: 0;
+    }
+
+    .flower-rule-badge {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #9d3022;
+      background: #fff0ed;
+      border: 1px solid #fed3ca;
+      padding: 4px 14px;
+      border-radius: 999px;
+      margin-bottom: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .flower-face {
+      position: absolute;
+      top: 12px;
+      left: 8px;
+      width: 28px;
+      display: flex;
+      justify-content: space-around;
+    }
+
+    .eye {
+      width: 5px;
+      height: 5px;
+      background: #333;
+      border-radius: 50%;
+    }
+
+    .smile {
+      position: absolute;
+      top: 10px;
+      left: 7px;
+      width: 14px;
+      height: 7px;
+      border-bottom: 3px solid #333;
+      border-radius: 50%;
+      transition: all 0.3s;
+    }
+
+    .flower-area.sad .smile {
+      top: 14px;
+      border-bottom: none;
+      border-top: 3px solid #333;
+    }
+
+    /* Yapraklar */
+    .petal {
+      position: absolute;
+      width: 34px;
+      height: 60px;
+      background: #ff7eb3;
+      border-radius: 50% 50% 20% 20%;
+      top: 15px;
+      left: calc(50% - 17px);
+      transform-origin: center 60px;
+      z-index: 2;
+      transition: transform 0.8s ease, opacity 0.8s ease;
+    }
+
+    /* Yaprak Düşme Efekti */
+    .petal.dropped {
+      opacity: 0;
+      transform: translateY(60px) rotate(calc(var(--rot) + 60deg)) scale(0.5) !important;
+    }
+
+    .status-text {
+      font-size: clamp(0.78rem, 1.2vh, 0.88rem);
+      font-weight: 800;
+      color: var(--green-900);
+      margin: 2px 0 4px 0;
+      text-align: center;
+      min-height: 22px;
+      line-height: 1.25;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* TÜRKÇE KLAVYE */
+    .keyboard {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px;
+      width: 100%;
+      max-width: 360px;
+      margin: 0 auto;
+      flex-shrink: 0;
+    }
+
+    .key-btn {
+      width: clamp(32px, 2.7vw, 38px);
+      height: clamp(38px, 4.4vh, 46px);
+      font-size: clamp(1rem, 1.4vh, 1.2rem);
+      font-weight: 900;
+      color: var(--slate-900);
+      background: var(--green-50);
+      border: 1.5px solid var(--green-100);
+      border-radius: 8px;
+      box-shadow: 0 3px 0 var(--green-100);
+      transition: all 0.1s;
+    }
+
+    .key-btn:active:not(:disabled) {
+      transform: translateY(3px);
+      box-shadow: 0 0 0 transparent;
+    }
+
+    .key-btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: translateY(4px);
+      box-shadow: 0 0 0 transparent;
+    }
+
+    .key-btn.correct {
+      background: var(--green-700) !important;
+      border-color: var(--green-900) !important;
+      color: var(--white) !important;
+      opacity: 1 !important;
+    }
+
+    .key-btn.wrong {
+      background: var(--red-500) !important;
+      border-color: #c0392b !important;
+      color: var(--white) !important;
+      opacity: 0.7 !important;
+    }
+
+    /* SONUÇ MODALI */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(11, 64, 51, 0.72);
+      backdrop-filter: blur(5px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      z-index: 100;
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-content {
+      background: var(--white);
+      padding: 36px 28px;
+      border-radius: 24px;
+      text-align: center;
+      max-width: 420px;
+      width: 100%;
+      transform: translateY(20px);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: var(--shadow-md);
+    }
+
+    .modal-overlay.active .modal-content {
+      transform: translateY(0);
+    }
+
+    .modal-content h2 {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+    }
+
+    .modal-content p {
+      font-size: 1rem;
+      color: var(--slate-700);
+      line-height: 1.5;
+    }
+
+    .modal-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .modal-btn {
+      padding: 13px 24px;
+      background: var(--green-800);
+      color: var(--white);
+      border: none;
+      border-radius: 12px;
+      font-size: 1.05rem;
+      font-weight: 900;
+      box-shadow: 0 4px 0 var(--green-950);
+      width: 100%;
+      transition: all 0.1s;
+    }
+
+    .modal-btn:active {
+      transform: translateY(4px);
+      box-shadow: 0 0 0 var(--green-950);
+    }
+
+    .modal-btn.secondary {
+      background: #e6edea;
+      color: var(--slate-900);
+      box-shadow: 0 4px 0 #cad7d2;
+    }
+
+    .modal-btn.secondary:active {
+      box-shadow: 0 0 0 #cad7d2;
+    }
+
+    /* RESPONSIVE (MOBİL UYUM) */
+    @media (max-width: 900px) {
+      .main-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .controls-panel {
+        position: static;
+        order: -1;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .profiles-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .steps-container {
+        flex-wrap: wrap;
+      }
+
+      .step-pill {
+        flex: 1 1 45%;
+        font-size: 0.75rem;
+      }
+
+      .key-btn {
+        width: 32px;
+        height: 40px;
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="topbar">
+    <div class="topbar-brand">
+      <img src="1.svg" class="header-logo" alt="Logo">
+      <div class="topbar-titles">
+        <h1>Kime Ne Denir?</h1>
+        <p>Soruları sırayla cevapla. Doğru harfleri bul. Yanlış harfte yapraklar kopar. Çiçeği koru.</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-layout">
+
+    <!-- SOL: AŞAMA ÇUBUĞU VE 4 KART -->
+    <section class="left-section">
+
+      <!-- Adım Göstergesi -->
+      <nav class="steps-container" id="stepsContainer" aria-label="Soru İlerlemesi">
+        <!-- JS ile doldurulacak -->
+      </nav>
+
+      <!-- 4 Kişinin Kartları -->
+      <div class="profiles-grid" id="profilesGrid">
+        <!-- JS ile doldurulacak -->
+      </div>
+
+    </section>
+
+    <!-- SAĞ: ÇİÇEK VE KLAVYE -->
+    <aside class="controls-panel">
+
+      <div class="flower-rule-badge">
+        <span>⚠️ Yanlış harfte yaprak kopar!</span>
+      </div>
+
+      <!-- Çiçek -->
+      <div class="flower-area" id="flower">
+        <div class="flower-stem"></div>
+        <div id="petals-container"></div>
+        <div class="flower-center">
+          <div class="flower-face">
+            <div class="eye"></div>
+            <div class="eye"></div>
+            <div class="smile"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Klavye -->
+      <div class="keyboard" id="keyboard"></div>
+
+    </aside>
+
+  </main>
+
+  <!-- OYUN SONU / TEKRAR DENE MODALI -->
+  <div class="modal-overlay" id="resultModal">
+    <div class="modal-content">
+      <div id="modalEmoji" style="font-size: 3.5rem; margin-bottom: 8px;">🌸</div>
+      <h2 id="modalTitle">Harika!</h2>
+      <p id="modalDesc">Tüm kelimeleri buldun ve çiçeği korudun.</p>
+      <div class="modal-buttons">
+        <button class="modal-btn" id="modalPrimaryBtn">Devam Et</button>
+        <button class="modal-btn secondary" id="modalSecondaryBtn" style="display: none;">Baştan Başla</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- 1. OYUN VERİLERİ (KİME NE DENİR) ---
+    const wordsData = [
+      {
+        word: "ABİ",
+        title: "Erkek Kardeş",
+        hint: "Bizden büyük erkek kardeşe ne denir?",
+        img: "abi.png",
+        color: "blue"
+      },
+      {
+        word: "ABLA",
+        title: "Kız Kardeş",
+        hint: "Bizden büyük kız kardeşe ne denir?",
+        img: "abla.png",
+        color: "pink"
+      },
+      {
+        word: "AMCA",
+        title: "Ahmet Bey",
+        hint: "Mahallemizdeki bakkal Ahmet Bey'e ne denir?",
+        img: "amca.png",
+        color: "orange"
+      },
+      {
+        word: "TEYZE",
+        title: "Ayşe Hanım",
+        hint: "Annemizin liseden arkadaşı Ayşe Hanım'a ne denir?",
+        img: "teyze.png",
+        color: "purple"
+      }
+    ];
+
+    const alphabet = [
+      "A", "B", "C", "Ç", "D", "E", "F", "G", "Ğ", "H",
+      "I", "İ", "J", "K", "L", "M", "N", "O", "Ö", "P",
+      "R", "S", "Ş", "T", "U", "Ü", "V", "Y", "Z"
+    ];
+
+    // --- 2. OYUN DURUM DEĞİŞKENLERİ ---
+    let currentWordIndex = 0;       // Sıradaki kelime indisi (0..3)
+    const maxMistakes = 6;          // Her kelime için 6 hata hakkı
+    let mistakes = 0;               // Mevcut kelimedeki hata sayısı
+    let isTransitioning = false;     // Kelimeler arası geçiş animasyonunda mı?
+
+    // DOM Elementleri
+    const stepsContainer = document.getElementById("stepsContainer");
+    const profilesGrid = document.getElementById("profilesGrid");
+    const petalsContainer = document.getElementById("petals-container");
+    const keyboard = document.getElementById("keyboard");
+    const flowerArea = document.getElementById("flower");
+    const statusText = document.getElementById("statusText");
+    const resultModal = document.getElementById("resultModal");
+    const modalEmoji = document.getElementById("modalEmoji");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalDesc = document.getElementById("modalDesc");
+    const modalPrimaryBtn = document.getElementById("modalPrimaryBtn");
+    const modalSecondaryBtn = document.getElementById("modalSecondaryBtn");
+
+    // --- 3. OYUNU BAŞLATMA ---
+    function initGame() {
+      currentWordIndex = 0;
+      startCurrentWordRound();
+    }
+
+    // Sıradaki kelime turunu kur
+    function startCurrentWordRound() {
+      mistakes = 0;
+      isTransitioning = false;
+      flowerArea.classList.remove("sad");
+      resultModal.classList.remove("active");
+
+      drawSteps();
+      drawCards();
+      drawFlower();
+      drawKeyboard();
+      updateStatusForCurrentWord();
+    }
+
+    // A. Adım / İlerleme Çubuğu
+    function drawSteps() {
+      stepsContainer.innerHTML = "";
+      wordsData.forEach((item, index) => {
+        const pill = document.createElement("div");
+        pill.className = "step-pill";
+
+        if (index < currentWordIndex) {
+          pill.classList.add("completed");
+          pill.innerHTML = `✓ ${index + 1}. ${item.word}`;
+        } else if (index === currentWordIndex) {
+          pill.classList.add("active");
+          pill.innerHTML = `🎯 Soru ${index + 1}`;
+        } else {
+          pill.classList.add("locked");
+          pill.innerHTML = `🔒 Soru ${index + 1}`;
+        }
+
+        stepsContainer.appendChild(pill);
+      });
+    }
+
+    // B. Kartları Çiz (Aktif, Tamamlanmış ve Kilitli Durumlar)
+    function drawCards() {
+      profilesGrid.innerHTML = "";
+
+      wordsData.forEach((item, index) => {
+        const card = document.createElement("div");
+        card.className = `profile-card ${item.color}`;
+        card.setAttribute("data-index", index);
+
+        let badgeHTML = "";
+        let boxesHTML = "";
+
+        if (index < currentWordIndex) {
+          // Önceki tamamlanmış kart
+          card.classList.add("completed");
+          badgeHTML = `<span class="card-badge badge-done">✓ Bildin (${item.word})</span>`;
+          for (let i = 0; i < item.word.length; i++) {
+            const char = item.word[i];
+            boxesHTML += `<div class="letter-box revealed" data-char="${char}">${char}</div>`;
+          }
+        } else if (index === currentWordIndex) {
+          // Şu an oynanan aktif kart
+          card.classList.add("active");
+          badgeHTML = `<span class="card-badge badge-active">🎯 Şu Anki Soru (${index + 1}/${wordsData.length})</span>`;
+          for (let i = 0; i < item.word.length; i++) {
+            const char = item.word[i];
+            boxesHTML += `<div class="letter-box" data-char="${char}">${char}</div>`;
+          }
+        } else {
+          // Henüz sırası gelmemiş kilitli kart
+          card.classList.add("locked");
+          badgeHTML = `<span class="card-badge badge-locked">🔒 Sırada (${index + 1}. Soru)</span>`;
+          for (let i = 0; i < item.word.length; i++) {
+            boxesHTML += `<div class="letter-box placeholder">?</div>`;
+          }
+        }
+
+        card.innerHTML = `
+          ${badgeHTML}
+          <img src="${item.img}" class="avatar-img" alt="${item.title}">
+          <div class="profile-hint">${item.hint}</div>
+          <div class="word-boxes">${boxesHTML}</div>
+        `;
+
+        profilesGrid.appendChild(card);
+      });
+    }
+
+    // C. Çiçek Yaprakları (Her kelimede taze 6 yaprak)
+    function drawFlower() {
+      petalsContainer.innerHTML = "";
+      for (let i = 0; i < maxMistakes; i++) {
+        const petal = document.createElement("div");
+        petal.className = "petal";
+        const deg = i * 60;
+        petal.style.transform = `rotate(${deg}deg)`;
+        petal.style.setProperty('--rot', `${deg}deg`);
+        petalsContainer.appendChild(petal);
+      }
+    }
+
+    // D. Klavyeyi Çiz
+    function drawKeyboard() {
+      keyboard.innerHTML = "";
+      alphabet.forEach(letter => {
+        const btn = document.createElement("button");
+        btn.className = "key-btn";
+        btn.innerText = letter;
+        btn.onclick = () => handleGuess(letter, btn);
+        keyboard.appendChild(btn);
+      });
+    }
+
+    // E. Durum Metnini Güncelle (Çiçeğin altında soru yazmasın)
+    function updateStatusForCurrentWord() {
+      if (statusText) {
+        statusText.innerHTML = "Klavyeden bir harf seç!";
+        statusText.style.color = "var(--green-900)";
+      }
+    }
+
+    // --- 4. TAHMİN MANTIĞI (HER KELİME İÇİN AYRI AYRI) ---
+    function handleGuess(letter, btn) {
+      if (btn.disabled || isTransitioning || mistakes >= maxMistakes) return;
+      btn.disabled = true;
+
+      const currentItem = wordsData[currentWordIndex];
+      const targetWord = currentItem.word;
+
+      // Sadece AKTİF kart üzerindeki harf kutularını kontrol et
+      const activeCard = document.querySelector(`.profile-card[data-index="${currentWordIndex}"]`);
+      if (!activeCard) return;
+
+      if (targetWord.includes(letter)) {
+        // DOĞRU HARF
+        btn.classList.add("correct");
+
+        const matchingBoxes = activeCard.querySelectorAll(`.letter-box[data-char="${letter}"]`);
+        matchingBoxes.forEach(box => {
+          box.classList.add("revealed");
+        });
+
+        // Aktif kelimedeki tüm harfler açıldı mı?
+        const allBoxes = activeCard.querySelectorAll(".letter-box");
+        const allRevealed = Array.from(allBoxes).every(box => box.classList.contains("revealed"));
+
+        if (allRevealed) {
+          handleWordCompleted();
+        } else if (statusText) {
+          statusText.innerHTML = `👏 Doğru harf! <strong>"${letter}"</strong> bulundu.`;
+          statusText.style.color = "var(--green-800)";
+        }
+
+      } else {
+        // YANLIŞ HARF
+        btn.classList.add("wrong");
+        mistakes++;
+        dropPetal();
+
+        if (statusText) {
+          statusText.innerHTML = `Bu kelimede <strong>"${letter}"</strong> harfi yok.`;
+          statusText.style.color = "var(--red-500)";
+        }
+
+        checkLose();
+      }
+    }
+
+    function dropPetal() {
+      const activePetals = document.querySelectorAll(".petal:not(.dropped)");
+      if (activePetals.length > 0) {
+        activePetals[activePetals.length - 1].classList.add("dropped");
+      }
+
+      if (mistakes >= 3) {
+        flowerArea.classList.add("sad");
+      }
+    }
+
+    // Kelime Doğru Tamamlandığında
+    function handleWordCompleted() {
+      isTransitioning = true;
+      const currentItem = wordsData[currentWordIndex];
+      const activeCard = document.querySelector(`.profile-card[data-index="${currentWordIndex}"]`);
+
+      if (activeCard) {
+        activeCard.classList.add("celebrating");
+      }
+
+      flowerArea.classList.remove("sad");
+
+      if (currentWordIndex < wordsData.length - 1) {
+        // Sıradaki kelimeye geçiş
+        if (statusText) {
+          statusText.innerHTML = `🎉 Harika! <strong>"${currentItem.word}"</strong> kelimesini bildin!<br><span style="font-size: 0.85rem; color: var(--green-700);">Sıradaki soruya geçiliyor...</span>`;
+          statusText.style.color = "var(--green-800)";
+        }
+
+        setTimeout(() => {
+          currentWordIndex++;
+          startCurrentWordRound();
+        }, 1300);
+
+      } else {
+        // 4 KELİMENİN HEPSİ BİTTİ (OYUN BİTTİ / ZAFER)
+        if (statusText) {
+          statusText.innerHTML = `🏆 Tebrikler! Tüm kelimeleri tamamladın!`;
+          statusText.style.color = "var(--green-800)";
+        }
+
+        // Son aşamayı da tamamlandı olarak göster
+        currentWordIndex++;
+        drawSteps();
+        drawCards();
+
+        setTimeout(() => {
+          modalEmoji.innerText = "🌸🏆";
+          modalTitle.innerText = "Tebrikler!";
+          modalTitle.style.color = "var(--green-900)";
+          modalDesc.innerHTML = "Tüm soruları sırasıyla doğru bildin ve çiçeği korudun. Harika bir iş çıkardın!";
+
+          modalPrimaryBtn.innerText = "Yeniden Oyna";
+          modalPrimaryBtn.onclick = () => initGame();
+          modalSecondaryBtn.style.display = "none";
+
+          resultModal.classList.add("active");
+        }, 900);
+      }
+    }
+
+    // 6 Hata Yapıldığında (Can Bittiğinde)
+    function checkLose() {
+      if (mistakes >= maxMistakes) {
+        isTransitioning = true;
+        const currentItem = wordsData[currentWordIndex];
+
+        if (statusText) {
+          statusText.innerHTML = `🥀 Yapraklar döküldü! Doğru cevap: <strong>${currentItem.word}</strong>`;
+          statusText.style.color = "var(--red-500)";
+        }
+
+        // Aktif karttaki açılmamış harfleri kırmızı göster
+        const activeCard = document.querySelector(`.profile-card[data-index="${currentWordIndex}"]`);
+        if (activeCard) {
+          const remainingBoxes = activeCard.querySelectorAll(".letter-box:not(.revealed)");
+          remainingBoxes.forEach(box => {
+            box.classList.add("revealed-failed");
+          });
+        }
+
+        setTimeout(() => {
+          modalEmoji.innerText = "🥀";
+          modalTitle.innerText = "Tekrar Dene!";
+          modalTitle.style.color = "var(--red-500)";
+          modalDesc.innerHTML = `Bu sorunun cevabı <strong>"${currentItem.word}"</strong> idi. Pes etmek yok!`;
+
+          modalPrimaryBtn.innerText = "Bu Soruyu Tekrar Dene";
+          modalPrimaryBtn.onclick = () => startCurrentWordRound();
+
+          modalSecondaryBtn.style.display = "block";
+          modalSecondaryBtn.innerText = "Baştan Başla";
+          modalSecondaryBtn.onclick = () => initGame();
+
+          resultModal.classList.add("active");
+        }, 1200);
+      }
+    }
+
+    // Klavyeden (Fiziksel) Yazma Desteği
+    window.addEventListener("keydown", (e) => {
+      if (resultModal.classList.contains("active") || isTransitioning) return;
+      const keyChar = e.key.toLocaleUpperCase("tr-TR");
+      const buttons = Array.from(document.querySelectorAll(".key-btn"));
+      const targetBtn = buttons.find(b => b.innerText === keyChar);
+      if (targetBtn && !targetBtn.disabled) {
+        targetBtn.click();
+      }
+    });
+
+    // Oyunu başlat
+    initGame();
+  </script>
+</body>
+
+</html>

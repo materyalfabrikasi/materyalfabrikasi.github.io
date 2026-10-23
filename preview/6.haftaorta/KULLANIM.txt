@@ -1,0 +1,17 @@
+YAŞA UYGUN HİTAPLAR
+Çevrim İçi Türkçe ve Türk Kültürü — Yaşa uygun hitaplar
+
+Oyunu açmak için index.html dosyasına çift tıklayın. İnternet bağlantısı gerekmez. index.html, 1.svg ve dört PNG görselini aynı klasörde tutun.
+
+1. aşama: Bir karakter seçin. Uygun hitabı seçip Kontrol et düğmesine basın. Dört hitabı oluşturduktan sonra Selamlaşmaya geç düğmesine basın.
+2. aşama: Karşılaşma durumunu okuyun; uygun selamlaşma cümlesini seçip kontrol edin.
+
+İlk denemede doğru cevap: 100 puan. Yanlış cevaptan sonra düzeltilen cevap: 50 puan. Yanlış cevapta yeniden deneyebilirsiniz.
+
+Toplam 8 görev ve en çok 800 puan vardır. Oyun sonunda Tekrar oyna düğmesi oyunu sıfırlar.
+
+Karakterler: Mehmet 25 — Mehmet abi; Elif 28 — Elif abla; Ahmet 65 — Ahmet amca; Ayşe 60 — Ayşe teyze.
+
+Dört karakter görseli yerleşik image_gen ile bu oyun için üretildi. Üretim istemleri gorsel-istemleri.txt dosyasındadır.
+
+Karakterlerin sırası her aşamada ve yeniden oynandığında karıştırılır. Hitap seçenekleri de karışık sırada sunulur.

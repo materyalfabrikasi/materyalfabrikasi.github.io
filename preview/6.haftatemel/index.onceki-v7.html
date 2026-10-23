@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Kime Ne Denir? Çark Oyunu</title>
+
+  <style>
+:root{--blue:#217e7c;--navy:#25433f;--text:#2c4540;--muted:#6b8077;--green:#25866c;--red:#c75353}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden}body{font-family:"Avenir Next","Segoe UI",Arial,sans-serif;color:var(--text);background:#f3f5f0}button{font:inherit;cursor:pointer;transition:background .2s,transform .2s}button:focus-visible{outline:3px solid #dc996b;outline-offset:3px}button:disabled{cursor:default}.app-shell{position:fixed;left:50%;top:50%;transform-origin:center;display:flex;flex-direction:column;overflow:hidden;background:#f3f5f0}
+.topbar{flex-shrink:0;background:white;border-bottom:1px solid #dfe7df;padding:12px 28px}.topbar-inner{max-width:1320px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:18px}.brand-lockup{display:flex;align-items:center;gap:18px}.brand-logo{width:160px;height:46px;object-fit:contain}.brand-lockup>div{border-left:1px solid #dfe7df;padding-left:18px}.eyebrow{margin:0 0 4px;font-size:9px;color:var(--muted);letter-spacing:1px}h1{margin:0;font-size:21px;letter-spacing:-.5px}.topbar-stats{display:flex;align-items:center;gap:17px}.stat-chip{font-size:10px;color:var(--muted);padding-right:17px;border-right:1px solid #dfe7df}.stat-chip strong{font-size:20px;display:block;color:var(--navy);margin-top:2px}.restart-button{border:1px solid #dce5de;background:white;border-radius:10px;padding:10px 13px;font-size:11px;color:var(--navy);font-weight:700}.restart-button:hover{background:#eef5f0}
+.page{width:min(1320px,calc(100% - 48px));margin:0 auto;flex:1;min-height:0;display:flex;flex-direction:column;padding:18px 0}.intro-card{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-shrink:0;margin-bottom:16px}.section-kicker{font-size:9px;letter-spacing:1.5px;color:var(--blue);font-weight:800;margin-bottom:6px}.intro-card h2{font-size:25px;letter-spacing:-.8px;margin:0 0 5px}.intro-card p{font-size:12px;color:var(--muted);margin:0;line-height:1.5}.instruction-badge{display:flex;gap:13px;font-size:10px;color:var(--muted);white-space:nowrap}.instruction-badge span{display:flex;align-items:center;gap:6px}.instruction-badge b{width:21px;height:21px;border:1px solid #d5e1d7;border-radius:50%;display:grid;place-items:center;color:var(--blue)}
+.game-card{flex:1;min-height:0;display:flex;flex-direction:column;background:white;border:1px solid #dce5db;border-radius:22px;overflow:hidden;box-shadow:0 12px 35px #25433f08}.game-grid{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1.13fr}.wheel-area{min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 22px;background:#e8f1eb;border-right:1px solid #dce5db;gap:10px}.wheel-heading{align-self:stretch;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}.wheel-title{font-size:13px;margin:0}.tiny-tag{font-size:9px;border:1px solid #d2e1d6;background:#ffffff88;border-radius:20px;padding:5px 8px;color:#647f70}.wheel-wrapper{position:relative;flex:1;min-height:0;aspect-ratio:1;max-height:380px;max-width:100%;display:grid;place-items:center}#wheelCanvas{height:100%;width:100%;object-fit:contain;filter:drop-shadow(0 8px 10px #284f3c24)}.wheel-pointer{position:absolute;z-index:4;left:50%;top:-2px;transform:translateX(-50%);border-left:11px solid transparent;border-right:11px solid transparent;border-top:28px solid var(--navy)}.wheel-center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:18%;aspect-ratio:1;display:grid;place-items:center;border-radius:50%;background:#fffdf5;border:5px solid white;box-shadow:0 2px 12px #183b4320;font-size:24px;font-weight:700;color:var(--blue);pointer-events:none}.spin-button{flex-shrink:0;width:min(280px,90%);border:0;border-radius:11px;background:var(--blue);color:white;padding:12px 20px;box-shadow:0 4px 0 #176965;font-size:14px;font-weight:700}.spin-button:hover:not(:disabled){background:#176b68}.spin-button:disabled{opacity:.5;box-shadow:none}.wheel-hint{flex-shrink:0;font-size:10px;line-height:1.5;color:#71877a;text-align:center;max-width:280px;margin:1px 0 0}
+.question-area{min-height:0;padding:18px 24px;display:flex;flex-direction:column;gap:10px}.question-topline{display:flex;justify-content:space-between;align-items:center;flex-shrink:0}.question-topline .section-kicker{margin:0}.round-dots{display:flex;gap:5px}.round-dot{width:6px;height:6px;border-radius:50%;background:#dfe8e0}.round-dot.done{background:var(--blue)}.selected-person{display:none}.scenario-card{display:flex;gap:14px;align-items:center;padding:12px 14px;background:#f6f8f4;border:1px solid #e0e8de;border-radius:13px;flex-shrink:0;min-height:88px}.scenario-portrait{width:80px;height:80px;object-fit:cover;border-radius:50%;flex-shrink:0;border:2px solid white}.scenario-portrait[hidden]{display:none}.scenario-copy{min-width:0;flex:1}.scenario-label{display:block;text-transform:uppercase;font-size:9px;letter-spacing:1.4px;color:var(--muted);font-weight:700;margin-bottom:6px}.scenario-text{font-size:14px;line-height:1.55;margin:0}.question-title{font-size:17px;letter-spacing:-.3px;margin:1px 0;flex-shrink:0}.sentence-box{display:none}.choices{display:grid;grid-template-columns:1fr 1fr;gap:9px;flex-shrink:0}.choice-button{display:flex;align-items:center;gap:8px;text-align:left;min-height:64px;padding:11px 13px;border:1px solid #d8e2d8;border-radius:11px;background:white;color:var(--navy);font-size:14px;line-height:1.45;font-weight:650}.choice-button span{flex:1;min-width:0;overflow-wrap:break-word}.choice-button:after{content:"";width:13px;height:13px;border-radius:50%;border:1.5px solid #cfdbd0;flex-shrink:0}.choice-button:hover:not(:disabled){border-color:var(--blue);background:#eff7f2}.choice-button.correct{background:#e8f5ec;border-color:var(--green);color:#22694f}.choice-button.correct:after{content:"✓";border:0;color:var(--green)}.choice-button.wrong{border-color:var(--red);background:#fff0ed;color:var(--red)}.choice-button.wrong:after{content:"×";border:0;color:var(--red)}.feedback{font-size:12px;line-height:1.6;color:var(--muted);min-height:48px;flex-shrink:0}.feedback strong{font-weight:750;margin-right:4px}.feedback.success{color:#227658}.feedback.error{color:#ac4844}.action-row{min-height:34px;display:flex;justify-content:flex-end;flex-shrink:0}.next-button{display:none;padding:8px 14px;background:var(--blue);color:white;border:0;border-radius:9px;font-size:12px;font-weight:700}.progress-section{margin-top:auto;flex-shrink:0;padding-top:9px;border-top:1px solid #e4eae2}.progress-info{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:7px}.progress-track{height:4px;border-radius:4px;overflow:hidden;background:#e4ece3}.progress-value{height:100%;width:0%;background:var(--blue);border-radius:4px;transition:width .4s}.footer-note{flex-shrink:0;border-top:1px solid #e4eae2;display:flex;justify-content:space-between;gap:10px;margin:0;padding:10px 18px;font-size:9px;color:var(--muted)}.footer-note strong{color:var(--blue)}.page-footer{display:none}
+.modal{position:fixed;inset:0;z-index:20;display:none;place-items:center;padding:16px;background:#153b36cc;backdrop-filter:blur(8px)}.modal.show{display:grid}.modal-card{width:min(430px,95vw);max-height:95dvh;padding:clamp(15px,3vh,32px);border-radius:23px;background:#fffdf7;text-align:center;box-shadow:0 20px 60px #0002}.modal-icon{font-size:clamp(24px,6vh,52px)}.modal-card h2{font-size:clamp(22px,4vh,30px);margin:10px 0;color:var(--navy)}.modal-card p{font-size:13px;line-height:1.65;color:var(--muted);margin:10px 0}.final-score{padding:12px;margin:14px 0;border-radius:13px;background:#e8f2eb;color:var(--blue);font-size:11px}.final-score strong{display:block;font-size:clamp(25px,6vh,40px);margin-top:3px}.modal-button{width:100%;border:0;border-radius:10px;padding:12px;background:var(--blue);color:white;font-size:14px;font-weight:700}.confetti{position:fixed;top:-15px;z-index:30;width:8px;height:12px;pointer-events:none;animation:fall 2.7s linear forwards}@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+.portrait-layout .topbar{padding:10px 14px}.portrait-layout .topbar-inner{gap:8px;flex-wrap:wrap}.portrait-layout .brand-lockup{gap:12px}.portrait-layout .brand-logo{width:123px;height:34px}.portrait-layout .brand-lockup>div{padding-left:12px}.portrait-layout .eyebrow{font-size:7px;letter-spacing:.6px}.portrait-layout h1{font-size:17px}.portrait-layout .topbar-stats{width:100%;justify-content:space-between;gap:10px}.portrait-layout .stat-chip{display:flex;gap:8px;align-items:center;padding-right:12px}.portrait-layout .stat-chip strong{font-size:17px;margin:0}.portrait-layout .restart-button{padding:7px 10px;font-size:10px}.portrait-layout .page{width:calc(100% - 24px);padding:10px 0}.portrait-layout .intro-card{margin-bottom:9px}.portrait-layout .intro-card .section-kicker{font-size:8px;margin-bottom:4px}.portrait-layout .intro-card h2{font-size:19px;margin-bottom:4px}.portrait-layout .intro-card p{font-size:10px}.portrait-layout .instruction-badge{display:none}.portrait-layout .game-card{border-radius:17px}.portrait-layout .game-grid{display:flex;flex-direction:column}.portrait-layout .wheel-area{flex:0 0 220px;position:relative;padding:8px 12px 10px;border:0;border-bottom:1px solid #dce5db;gap:5px}.portrait-layout .wheel-heading{position:absolute;top:10px;left:12px;right:12px;pointer-events:none}.portrait-layout .wheel-title{font-size:10px}.portrait-layout .tiny-tag{font-size:8px;padding:4px 6px}.portrait-layout .wheel-wrapper{height:166px;width:166px;flex:none}.portrait-layout .wheel-pointer{border-top-width:21px;border-left-width:8px;border-right-width:8px}.portrait-layout .wheel-center{font-size:17px;border-width:3px}.portrait-layout .spin-button{width:195px;font-size:12px;padding:9px 16px}.portrait-layout .wheel-hint{display:none}.portrait-layout .question-area{flex:1;padding:11px 13px;gap:8px}.portrait-layout .question-topline{display:none}.portrait-layout .scenario-card{min-height:70px;padding:8px 10px;gap:10px}.portrait-layout .scenario-portrait{width:61px;height:61px}.portrait-layout .scenario-label{font-size:8px;margin-bottom:3px}.portrait-layout .scenario-text{font-size:12px;line-height:1.5}.portrait-layout .question-title{font-size:15px}.portrait-layout .choice-button{min-height:55px;padding:8px 10px;font-size:12px;line-height:1.4;gap:5px}.portrait-layout .choices{gap:7px}.portrait-layout .feedback{font-size:10px;line-height:1.5;min-height:44px}.portrait-layout .action-row{min-height:29px}.portrait-layout .next-button{font-size:11px;padding:7px 11px}.portrait-layout .progress-section{padding-top:6px}.portrait-layout .progress-info{font-size:9px;margin-bottom:5px}.portrait-layout .footer-note{display:none}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}.confetti{display:none}}
+
+.wheel-wrapper{width:min(100%,360px);height:auto;flex:0 0 auto;max-height:none}.question-area{padding:16px 22px;gap:8px}.scenario-card{padding:10px 12px}.scenario-portrait{width:72px;height:72px}.choice-button{min-height:56px;padding:9px 12px}.feedback{min-height:60px}.portrait-layout .wheel-area{flex-basis:200px}.portrait-layout .wheel-wrapper{width:150px;height:150px;flex:none}.portrait-layout .question-area{padding:10px 13px;gap:6px}.portrait-layout .feedback{min-height:48px}.portrait-layout .choice-button{min-height:55px}
+
+/* Readable question text without adding a scroll step. */
+.scenario-text{font-size:20px;line-height:1.5;font-weight:600}.scenario-label{font-size:10px}.scenario-card{min-height:112px;padding:12px 14px}.question-title{font-size:20px}.choice-button{font-size:16px;min-height:64px}.question-area{gap:9px}.portrait-layout .scenario-text{font-size:16px;line-height:1.45}.portrait-layout .scenario-card{min-height:90px}.portrait-layout .question-title{font-size:18px}.portrait-layout .choice-button{font-size:14px;min-height:60px}.portrait-layout .scenario-portrait{width:58px;height:58px}.portrait-layout .question-area{gap:7px}.spin-button{font-size:13px}
+</style></head>
+
+<body>
+<div class="app-shell" id="appShell">
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand-lockup">
+        <img class="brand-logo" src="1.svg" alt="Ülkem Yanımda" />
+        <div>
+          <p class="eyebrow">Türkçe ve Türk Kültürü</p>
+          <h1>Kime Ne Denir?</h1>
+        </div>
+      </div>
+
+      <div class="topbar-stats">
+        <div class="stat-chip">
+          Toplam puan <strong id="scoreText">0</strong>
+        </div>
+
+        <div class="stat-chip">
+          Doğru serisi <strong id="streakText">0</strong>
+        </div>
+
+        <button class="restart-button" id="restartButton">
+          ↺ Yeniden başla
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="page">
+
+    <section class="intro-card">
+      <div>
+        <div class="section-kicker">6. HAFTA · NEZAKET VE HİTAP</div><h2>Her karşılaşma, yeni bir kelime.</h2>
+        <p>
+          Durumu oku; hem uygun nezaket ifadesini hem doğru hitap sözcüğünü seç.
+        </p>
+      </div>
+
+      <div class="instruction-badge"><span><b>1</b> Çarkı çevir</span><span><b>2</b> Durumu oku</span><span><b>3</b> Nazikçe söyle</span></div>
+    </section>
+
+    <section class="game-card">
+      <div class="game-grid">
+
+        <!-- ÇARK ALANI -->
+        <div class="wheel-area">
+          <div class="wheel-heading"><h2 class="wheel-title">Hitap çarkı</h2><span class="tiny-tag">4 kişi · 4 soru</span></div>
+
+          <div class="wheel-wrapper">
+            <div class="wheel-pointer"></div>
+            <canvas id="wheelCanvas" width="800" height="800" role="img" aria-label="Dört kişinin görsellerinden oluşan hitap çarkı"></canvas>
+            <div class="wheel-center">↻</div>
+          </div>
+
+          <button class="spin-button" id="spinButton">
+            Çarkı çevir &nbsp; ↗
+          </button>
+
+          <p class="wheel-hint">
+            Kişiye ve duruma dikkat et; söyleyebileceğin en uygun ifadeyi seç.
+          </p>
+        </div>
+
+        <!-- SORU ALANI -->
+        <div class="question-area"><div class="question-topline"><div class="section-kicker">SIRA SENDE</div><div class="round-dots" aria-hidden="true"><span class="round-dot"></span><span class="round-dot"></span><span class="round-dot"></span><span class="round-dot"></span></div></div>
+
+          <div class="selected-person" id="selectedPerson">
+            <span id="personLabel">Yeni bir karşılaşmaya hazır mısın?</span>
+          </div>
+
+          <div class="scenario-card"><img class="scenario-portrait" id="scenarioPortrait" src="" alt="" hidden /><div class="scenario-copy">
+            <span class="scenario-label">Karşılaşma</span>
+            <p class="scenario-text" id="scenarioText">
+              Çarkı çevir. Karşına çıkan kişiye nazikçe ne söyleyeceğini düşün.
+            </p>
+          </div></div>
+
+          <h2 class="question-title">
+            Ona ne söylersin?
+          </h2>
+
+          <div class="sentence-box">
+            <span id="sentenceText">
+              Nazik bir ifade ve uygun bir hitap seç.
+            </span>
+          </div>
+
+          <div class="choices" id="choices">
+            <!-- JavaScript tarafından otomatik oluşturulacak -->
+          </div>
+
+          <div class="feedback" id="feedback" role="status" aria-live="polite">
+            Başlamak için önce “Çarkı Çevir” düğmesine bas.
+          </div>
+
+          <div class="action-row">
+            <button class="next-button" id="nextButton">
+              Sonraki Tur →
+            </button>
+          </div>
+
+          <div class="progress-section">
+            <div class="progress-info">
+              <span id="roundText">Tur 0 / 4</span>
+              <span id="progressPercent">0%</span>
+            </div>
+
+            <div class="progress-track">
+              <div class="progress-value" id="progressBar"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <p class="footer-note">
+        <span>Biraz dikkat, biraz nezaket, bolca Türkçe.</span><strong>Her doğru cevap +100 puan</strong>
+      </p>
+    </section>
+<div class="page-footer"><span>TÜRKÇEYLE BAĞ KUR</span><span>Dinle, düşün, keşfet.</span></div>  </main>
+
+</div>
+  <!-- OYUN BİTİŞ PENCERESİ -->
+  <div class="modal" id="completionModal" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
+    <div class="modal-card">
+      <div class="modal-icon">🏆</div>
+
+      <h2 id="resultTitle">Tebrikler!</h2>
+
+      <p>
+        Dört soruyu da tamamladın! Nezaket ifadelerini ve hitap sözcüklerini birlikte çalıştın. Emeğine sağlık!
+      </p>
+
+      <div class="final-score">
+        Toplam Puanın
+        <strong id="finalScoreText">0</strong>
+      </div>
+
+      <button class="modal-button" id="playAgainButton">
+        ↺ Tekrar oyna
+      </button>
+    </div>
+  </div>
+
+  <script>
+    /*
+      ÇARKTAKİ KİŞİLER VE DOĞRU CEVAPLAR
+    */
+    const wheelItems = [
+      {
+        label: "Senden birkaç yaş büyük bir erkek çocuğu",
+        shortLabel: "Birkaç yaş büyük erkek",
+        answer: "abi",
+        color: "#29858b",
+        scenario:
+          "Senden birkaç yaş büyük bir erkek çocuk parkta topunu sana verdi.",
+        phrase: "Teşekkür ederim",
+        otherPhrase: "Rica ederim",
+        otherAddress: "abla",
+        explanation: "Birisi sana yardım ettiğinde “Teşekkür ederim” dersin. Senden birkaç yaş büyük erkek çocuğa “abi” diye seslenirsin."
+      },
+      {
+        label: "Senden birkaç yaş büyük bir kız çocuğu",
+        shortLabel: "Birkaç yaş büyük kız",
+        answer: "abla",
+        color: "#ad7766",
+        scenario:
+          "Senden birkaç yaş büyük bir kız öğrenci hasta olduğunu söyledi.",
+        phrase: "Geçmiş olsun",
+        otherPhrase: "Rica ederim",
+        otherAddress: "abi",
+        explanation: "Hasta olan birine “Geçmiş olsun” dersin. Senden birkaç yaş büyük kız öğrenciye “abla” diye seslenirsin."
+      },
+      {
+        label: "Yaşlı bir adam",
+        shortLabel: "Yaşlı bir adam",
+        answer: "amca",
+        color: "#857c64",
+        scenario:
+          "Cüzdanını düşüren yaşlı bir adama cüzdanını verdin. Adam sana “Teşekkür ederim.” dedi.",
+        phrase: "Rica ederim",
+        otherPhrase: "Geçmiş olsun",
+        otherAddress: "teyze",
+        explanation: "Yardım ettiğin kişi sana teşekkür ettiğinde “Rica ederim” dersin. Bu oyundaki yaşlı adama “amca” diye seslenirsin."
+      },
+      {
+        label: "Yaşlı bir kadın",
+        shortLabel: "Yaşlı bir kadın",
+        answer: "teyze",
+        color: "#af8078",
+        scenario:
+          "Yaşlı bir kadın sana evinde yaptığı kurabiyelerden ikram etti.",
+        phrase: "Ellerinize sağlık",
+        otherPhrase: "Geçmiş olsun",
+        otherAddress: "amca",
+        explanation: "Birinin hazırladığı yiyecek için “Ellerinize sağlık” dersin. Bu oyundaki yaşlı kadına “teyze” diye seslenirsin."
+      }
+    ];
+
+    function shuffleWheel() {
+      for (let i = wheelItems.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [wheelItems[i], wheelItems[j]] = [wheelItems[j], wheelItems[i]];
+      }
+    }
+    shuffleWheel();
+
+    const totalRounds = wheelItems.length;
+
+    let currentItem = null;
+    let currentIndex = null;
+    let score = 0;
+    let streak = 0;
+    let round = 0;
+    let hasAnswered = false;
+    let isSpinning = false;
+    let wheelRotation = 0;
+    let spinTimer = null;
+    const askedItems = new Set();
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    const wheelCanvas = document.getElementById("wheelCanvas");
+    const ctx = wheelCanvas.getContext("2d");
+
+    const spinButton = document.getElementById("spinButton");
+    const nextButton = document.getElementById("nextButton");
+    const restartButton = document.getElementById("restartButton");
+    const playAgainButton = document.getElementById("playAgainButton");
+
+    const selectedPerson = document.getElementById("selectedPerson");
+    const personLabel = document.getElementById("personLabel");
+    const scenarioText = document.getElementById("scenarioText");
+    const sentenceText = document.getElementById("sentenceText");
+    const feedback = document.getElementById("feedback");
+    const choices = document.getElementById("choices");
+
+    const scoreText = document.getElementById("scoreText");
+    const streakText = document.getElementById("streakText");
+    const roundText = document.getElementById("roundText");
+    const progressPercent = document.getElementById("progressPercent");
+    const progressBar = document.getElementById("progressBar");
+
+    const completionModal = document.getElementById("completionModal");
+    const finalScoreText = document.getElementById("finalScoreText");
+
+    /*
+      ÇARKI ÇİZ
+    */
+    const portraits = {};
+    ["abi", "abla", "amca", "teyze"].forEach(name => {
+      const img = new Image();
+      img.onload = drawWheel;
+      img.src = name + ".png";
+      portraits[name] = img;
+    });
+    function drawWheel() {
+      const size = wheelCanvas.width, center = size / 2, radius = center - 18;
+      const segment = Math.PI * 2 / wheelItems.length;
+      ctx.clearRect(0, 0, size, size);
+      wheelItems.forEach((item, index) => {
+        const start = index * segment - Math.PI / 2, middle = start + segment / 2;
+        ctx.beginPath();ctx.moveTo(center, center);ctx.arc(center,center,radius,start,start+segment);ctx.closePath();
+        ctx.fillStyle=item.color;ctx.fill();ctx.lineWidth=3;ctx.strokeStyle="#ffffffb0";ctx.stroke();
+        const x=center+Math.cos(middle)*radius*.63, y=center+Math.sin(middle)*radius*.63;
+        const img=portraits[item.answer];
+        const portraitRadius = 91;
+        ctx.save();ctx.beginPath();ctx.arc(x,y,portraitRadius,0,Math.PI*2);ctx.clip();
+        ctx.fillStyle="white";ctx.fillRect(x-portraitRadius,y-portraitRadius,portraitRadius*2,portraitRadius*2);
+        if(img && img.complete && img.naturalWidth) ctx.drawImage(img,x-portraitRadius,y-portraitRadius,portraitRadius*2,portraitRadius*2);
+        ctx.restore();
+
+      });
+      ctx.beginPath();ctx.arc(center,center,radius,0,Math.PI*2);ctx.lineWidth=15;ctx.strokeStyle="#fffdf7";ctx.stroke();
+      ctx.beginPath();ctx.arc(center,center,radius-14,0,Math.PI*2);ctx.lineWidth=2;ctx.strokeStyle="#ffffff70";ctx.stroke();
+    }
+
+    /*
+      YARDIMCI FONKSİYONLAR
+    */
+    function updateStats() {
+      scoreText.textContent = score;
+      document.querySelectorAll(".round-dot").forEach((dot, i) => dot.classList.toggle("done", i < round));
+      streakText.textContent = streak;
+      roundText.textContent = `Tur ${round} / ${totalRounds}`;
+
+      const percentage = Math.round((round / totalRounds) * 100);
+      progressPercent.textContent = `${percentage}%`;
+      progressBar.style.width = `${percentage}%`;
+    }
+
+    function resetQuestionArea() {
+      currentItem = null;
+      currentIndex = null;
+      hasAnswered = false;
+
+      personLabel.textContent = "Yeni bir karşılaşmaya hazır mısın?";
+      document.getElementById("scenarioPortrait").hidden = true;
+
+      scenarioText.textContent =
+        "Çarkı çevir. Karşına çıkan kişiye nazikçe ne söyleyeceğini düşün.";
+
+      sentenceText.textContent =
+        "Nazik bir ifade ve uygun bir hitap seç.";
+
+      feedback.className = "feedback";
+      feedback.textContent =
+        "Başlamak için önce “Çarkı Çevir” düğmesine bas.";
+
+      nextButton.style.display = "none";
+      nextButton.textContent = "Sonraki tur →";
+      spinButton.disabled = false;
+      spinButton.textContent = "Çarkı çevir ↻";
+
+      createChoiceButtons();
+    }
+
+    function prepareQuestion(item, index) {
+      currentItem = item;
+      currentIndex = index;
+      hasAnswered = false;
+
+      personLabel.textContent = item.label;
+      const portrait = document.getElementById("scenarioPortrait");
+      portrait.src = item.answer + ".png";
+      portrait.alt = item.label;
+      portrait.hidden = false;
+
+      scenarioText.textContent = item.scenario;
+
+      sentenceText.textContent = "Bu durumda hangi ifadeyi kullanırsın?";
+      createChoiceButtons(item);
+      feedback.className = "feedback";
+      feedback.textContent = "Hem nezaket ifadesine hem hitap sözcüğüne dikkat et.";
+
+      nextButton.style.display = "none";
+      spinButton.disabled = true;
+
+      const choiceButtons = document.querySelectorAll(".choice-button");
+
+      choiceButtons.forEach(button => {
+        button.disabled = false;
+        button.classList.remove("correct", "wrong");
+      });
+    }
+
+    /*
+      ÇARKI ÇEVİR
+    */
+    function spinWheel() {
+      if (isSpinning || round >= totalRounds || (currentItem && !hasAnswered)) return;
+      resetQuestionArea();
+      isSpinning = true;
+      spinButton.disabled = true;
+      spinButton.textContent = "Çark dönüyor…";
+
+      const remainingIndices = wheelItems.map((item, index) => index).filter(index => !askedItems.has(index));
+      const selectedIndex = remainingIndices[Math.floor(Math.random() * remainingIndices.length)];
+      const segmentAngle = 360 / wheelItems.length;
+
+      /*
+        DÜZELTİLDİ: Seçilen dilimin üstteki oka gelmesi için mutlak(absolute) dönüş hesaplanıyor.
+        Bu sayede ardışık çevirmelerde açılar bozulmuyor.
+      */
+      const currentTurns = Math.floor(wheelRotation / 360);
+      const sliceOffset = 360 - (selectedIndex * segmentAngle) - (segmentAngle / 2);
+
+      // Mevcut turun üzerine 6 ekstra tam tur dönüp ilgili hedefe gelsin
+      wheelRotation = (currentTurns + 6) * 360 + sliceOffset;
+
+      wheelCanvas.style.transition =
+        reducedMotion.matches ? "none" : "transform 3.6s cubic-bezier(0.16, 1, 0.3, 1)";
+
+      wheelCanvas.style.transform =
+        `rotate(${wheelRotation}deg)`;
+
+      feedback.textContent = "Çark dönüyor… Bakalım karşına kim çıkacak?";
+      spinTimer = setTimeout(() => {
+        spinTimer = null;
+        const selectedItem = wheelItems[selectedIndex];
+
+        askedItems.add(selectedIndex);
+        round++;
+        prepareQuestion(selectedItem, selectedIndex);
+        updateStats();
+
+        isSpinning = false;
+        spinButton.textContent = "Önce cevabını seç";
+      }, reducedMotion.matches ? 100 : 3700);
+    }
+    spinButton.addEventListener("click", spinWheel);
+
+    /*
+      CEVAP SEÇENEKLERİ
+    */
+    choices.addEventListener("click", event => {
+      const button = event.target.closest(".choice-button");
+
+      if (!button || !currentItem || hasAnswered) return;
+
+      hasAnswered = true;
+
+      const selectedAnswer = button.dataset.answer;
+      const correctAnswer = `${currentItem.phrase}, ${currentItem.answer}.`;
+
+      const allButtons =
+        document.querySelectorAll(".choice-button");
+
+      allButtons.forEach(choiceButton => {
+        choiceButton.disabled = true;
+
+        if (
+          choiceButton.dataset.answer === correctAnswer
+        ) {
+          choiceButton.classList.add("correct");
+        }
+      });
+
+      if (selectedAnswer === correctAnswer) {
+        score += 100;
+        streak++;
+
+        button.classList.add("correct");
+
+        feedback.className = "feedback success";
+        feedback.innerHTML =
+          `<strong>Harika! +100 puan.</strong> ${currentItem.explanation}`;
+
+        showConfetti();
+      } else {
+        streak = 0;
+        button.classList.add("wrong");
+
+        feedback.className = "feedback error";
+        feedback.innerHTML =
+          `<strong>Doğru ifade: “${correctAnswer}”</strong> ${currentItem.explanation}`;
+      }
+
+      sentenceText.textContent = `“${correctAnswer}”`;
+
+      updateStats();
+
+      if (round < totalRounds) {
+        spinButton.disabled = false;
+        spinButton.textContent = "Sonraki soru için çevir ↻";
+        nextButton.style.display = "none";
+      } else {
+        spinButton.disabled = true;
+        spinButton.textContent = "Dört soruyu tamamladın!";
+        nextButton.textContent = "Sonucu Gör →";
+        nextButton.style.display = "inline-block";
+      }
+    });
+
+    /*
+      SONRAKİ TUR
+    */
+    nextButton.addEventListener("click", () => {
+      if (round >= totalRounds) {
+        finishGame();
+        return;
+      }
+
+      if (hasAnswered) spinWheel();
+    });
+
+    /*
+      OYUNU BİTİR
+    */
+    function finishGame() {
+      finalScoreText.textContent = score;
+      completionModal.classList.add("show");
+      playAgainButton.focus();
+      showConfetti();
+      showConfetti();
+    }
+
+    /*
+      OYUNU SIFIRLA
+    */
+    function restartGame() {
+      clearTimeout(spinTimer);
+      askedItems.clear();
+      spinTimer = null;
+      document.querySelectorAll(".confetti").forEach(piece => piece.remove());
+      score = 0;
+      streak = 0;
+      round = 0;
+      currentItem = null;
+      currentIndex = null;
+      isSpinning = false;
+      wheelRotation = 0;
+      shuffleWheel();
+      drawWheel();
+
+      wheelCanvas.style.transition = "none";
+      wheelCanvas.style.transform = "rotate(0deg)";
+
+      completionModal.classList.remove("show");
+
+      resetQuestionArea();
+      updateStats();
+    }
+
+    restartButton.addEventListener("click", restartGame);
+    playAgainButton.addEventListener("click", restartGame);
+
+    /*
+      KONFETİ
+    */
+    function showConfetti() {
+      if (reducedMotion.matches) return;
+      const colors = [
+        "#29858b",
+        "#ffca28",
+        "#af8078",
+        "#5b8e99",
+        "#857c64",
+        "#ff8a3d"
+      ];
+
+      for (let i = 0; i < 45; i++) {
+        const piece = document.createElement("div");
+
+        piece.className = "confetti";
+        piece.style.left = Math.random() * 100 + "vw";
+        piece.style.background =
+          colors[Math.floor(Math.random() * colors.length)];
+        piece.style.transform =
+          `rotate(${Math.random() * 360}deg)`;
+        piece.style.animationDelay =
+          Math.random() * 0.6 + "s";
+
+        document.body.appendChild(piece);
+
+        setTimeout(() => {
+          piece.remove();
+        }, 3200);
+      }
+    }
+
+    /*
+      SEÇENEKLERİ OLUŞTUR
+    */
+    function createChoiceButtons(item = null) {
+      choices.innerHTML = "";
+      if (!item) return;
+      const options = [
+        {phrase: item.phrase, address: item.answer},
+        {phrase: item.phrase, address: item.otherAddress},
+        {phrase: item.otherPhrase, address: item.answer},
+        {phrase: item.otherPhrase, address: item.otherAddress}
+      ];
+      for (let i = options.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [options[i], options[j]] = [options[j], options[i]];
+      }
+      options.forEach(option => {
+        const button = document.createElement("button");
+        button.className = "choice-button";
+        const label = document.createElement("span");
+        label.textContent = `${option.phrase}, ${option.address}.`;
+        button.append(label);
+        button.dataset.answer = label.textContent;
+        choices.appendChild(button);
+      });
+    }
+
+    /*
+      BAŞLANGIÇ
+    */
+    function fitScreen() {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      const portrait = width < 720 && height > width;
+      const scale = Math.min(1, width / (portrait ? 390 : 960), height / (portrait ? 900 : 860));
+      const shell = document.getElementById("appShell");
+      shell.style.width = `${width / scale}px`;
+      shell.style.height = `${height / scale}px`;
+      shell.style.transform = `translate(-50%, -50%) scale(${scale})`;
+      shell.classList.toggle("portrait-layout", portrait);
+    }
+    window.addEventListener("resize", fitScreen);
+    fitScreen();
+
+    createChoiceButtons();
+    drawWheel();
+    updateStats();
+  </script>
+
+</body>
+</html>

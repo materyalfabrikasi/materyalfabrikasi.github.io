@@ -1,0 +1,14 @@
+Üretim aracı: yerleşik image_gen.
+
+Yeni varlıklar: zeynep.png, ece.png, ogrenci.png.
+
+Ahmet, Ayşe ve Mehmet portreleri önceki oyun için image_gen ile üretilen yerel görsellerden alındı.
+
+zeynep
+Use case: illustration-story. Asset type: character portrait for a Turkish educational game about age and respectful address. Input reference: style reference only. Create a friendly 22-year-old young adult Turkish woman with dark brown hair in a ponytail, warm smile, warm peach cardigan over cream T-shirt. Clearly adult, no childlike proportions. Match the reference's polished 2D storybook cartoon style with clean warm outlines, soft shading and expressive facial features. Square front-facing large head-and-torso portrait, centered fully visible head, circular pale peach medallion on white outer background. One person only, no objects, no lettering or numbers or watermark.
+
+ece
+Use case: illustration-story. Asset type: character portrait for a Turkish educational game. Input reference: style reference only. Create a friendly 7-year-old Turkish girl, clearly young child with child facial proportions, dark brown hair in two small pigtails, cheerful gentle smile, lilac sweatshirt. Match the reference's polished 2D storybook cartoon style with clean warm outlines, soft shading and expressive features. Square front-facing head-and-torso portrait, centered fully visible head, circular pale lavender medallion on white outer background. One person only, no objects, no lettering or numbers or watermark.
+
+ogrenci
+Use case: illustration-story. Asset type: small animated climbing avatar in a Turkish educational game. Input reference: style reference only. Draw one friendly 10-year-old Turkish schoolchild, gender-neutral appearance with short curly dark hair, mustard yellow sweatshirt, teal trousers and white sneakers, tiny coral backpack. FULL BODY from hair to soles visible, cheerful three-quarter view facing right, slightly bent knees as if ready to climb one stair, both arms close to body, clean distinct silhouette. Match the reference's polished warm 2D textbook cartoon style, clean outlines and soft shading. A SINGLE isolated child cutout on genuinely TRANSPARENT background, no shadow, no floor, no scene, no stairs, no lettering or numbers or watermark. Compact portrait canvas, tight but safe margin around the entire figure.
