@@ -1,1128 +1,126 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="tr">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kime Ne Denir? | Kelime Bulmaca</title>
-
-  <style>
-    :root {
-      --green-950: #123f35;
-      --green-900: #155847;
-      --green-800: #1f725b;
-      --green-700: #2d8a6d;
-      --green-100: #dff4e9;
-      --green-50: #effaf5;
-
-      --yellow-500: #f9c74f;
-      --yellow-400: #ffd866;
-      --yellow-100: #fff4c7;
-
-      --red-500: #e76f51;
-      --red-100: #ffe5df;
-
-      --white: #ffffff;
-      --mint-bg: #edf8f3;
-      --slate-900: #17332d;
-      --slate-700: #45625a;
-      --slate-300: #c9dcd5;
-
-      --blue-card: #eaf4ff;
-      --pink-card: #fff0f4;
-      --orange-card: #fff5dc;
-      --purple-card: #f2efff;
-
-      --shadow-sm: 0 5px 16px rgba(29, 86, 68, 0.08);
-      --shadow-md: 0 12px 32px rgba(29, 86, 68, 0.12);
-      --shadow-glow: 0 8px 24px rgba(31, 114, 91, 0.28);
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    html,
-    body {
-      height: 100vh;
-      max-height: 100vh;
-      overflow: hidden;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      color: var(--slate-900);
-      background: var(--mint-bg);
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      display: flex;
-      flex-direction: column;
-    }
-
-    button {
-      font: inherit;
-      cursor: pointer;
-    }
-
-    /* ÜST BAŞLIK */
-    .topbar {
-      width: 100%;
-      background: linear-gradient(135deg, rgba(18, 63, 53, 0.96), rgba(31, 114, 91, 0.98)), var(--green-900);
-      color: var(--white);
-      padding: 6px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      border-bottom-left-radius: 16px;
-      border-bottom-right-radius: 16px;
-      box-shadow: var(--shadow-sm);
-      flex-shrink: 0;
-      height: 56px;
-      box-sizing: border-box;
-    }
-
-    .topbar-brand {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      width: 100%;
-    }
-
-    .header-logo {
-      height: 38px;
-      width: auto;
-      background: #ffffff;
-      padding: 3px 8px;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-      object-fit: contain;
-      flex-shrink: 0;
-    }
-
-    .topbar-titles {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-
-    .topbar h1 {
-      font-size: 1.15rem;
-      font-weight: 900;
-      margin: 0;
-      line-height: 1.15;
-      letter-spacing: -0.3px;
-    }
-
-    .topbar p {
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: var(--yellow-400);
-      margin: 0;
-      line-height: 1.15;
-    }
-
-    /* ANA DÜZEN (GRID) - 100vh Sığdırma */
-    .main-layout {
-      width: min(1360px, 98%);
-      margin: 0 auto;
-      flex: 1;
-      min-height: 0;
-      display: grid;
-      grid-template-columns: 1fr 380px;
-      gap: 12px;
-      padding: 8px 10px 10px 10px;
-      box-sizing: border-box;
-      align-items: stretch;
-    }
-
-    /* SOL KOLON */
-    .left-section {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      height: 100%;
-      min-height: 0;
-    }
-
-    /* AŞAMA / ADIM ÇUBUĞU */
-    .steps-container {
-      display: flex;
-      gap: 6px;
-      background: var(--white);
-      padding: 5px 10px;
-      border-radius: 12px;
-      box-shadow: var(--shadow-sm);
-      flex-shrink: 0;
-    }
-
-    .step-pill {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 5px;
-      padding: 5px 8px;
-      border-radius: 8px;
-      font-size: 0.74rem;
-      font-weight: 800;
-      color: var(--slate-700);
-      background: var(--green-50);
-      border: 1.5px solid transparent;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      text-align: center;
-      user-select: none;
-    }
-
-    .step-pill.active {
-      background: var(--yellow-100);
-      border-color: var(--yellow-500);
-      color: var(--slate-900);
-      box-shadow: 0 2px 8px rgba(249, 199, 79, 0.25);
-    }
-
-    .step-pill.completed {
-      background: var(--green-100);
-      border-color: var(--green-700);
-      color: var(--green-950);
-    }
-
-    .step-pill.locked {
-      opacity: 0.55;
-      background: #f1f6f4;
-    }
-
-    /* PROFİLLER GRID */
-    .profiles-grid {
-      flex: 1;
-      min-height: 0;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      grid-template-rows: repeat(2, 1fr);
-      gap: 8px;
-    }
-
-    .profile-card {
-      background: var(--white);
-      border-radius: 16px;
-      padding: 6px 10px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-evenly;
-      text-align: center;
-      box-shadow: var(--shadow-sm);
-      border: 2.5px solid transparent;
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-      min-height: 0;
-      height: 100%;
-      box-sizing: border-box;
-    }
-
-    .profile-card.blue {
-      background: var(--blue-card);
-      border-color: #d6eaff;
-    }
-
-    .profile-card.pink {
-      background: var(--pink-card);
-      border-color: #f8dce4;
-    }
-
-    .profile-card.orange {
-      background: var(--orange-card);
-      border-color: #f6e4b6;
-    }
-
-    .profile-card.purple {
-      background: var(--purple-card);
-      border-color: #e2dafb;
-    }
-
-    /* AKTİF KART VURGUSU */
-    .profile-card.active {
-      border-color: var(--green-800) !important;
-      box-shadow: var(--shadow-glow);
-      transform: scale(1.015);
-      z-index: 2;
-    }
-
-    /* TAMAMLANAN KART */
-    .profile-card.completed {
-      border-color: var(--green-700) !important;
-      background: #f1faf6 !important;
-      opacity: 0.95;
-    }
-
-    /* KİLİTLİ / SIRADAKİ KART */
-    .profile-card.locked {
-      opacity: 0.5;
-      filter: grayscale(25%);
-    }
-
-    /* KART ROZETİ */
-    .card-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 2px 8px;
-      border-radius: 20px;
-      font-size: 0.68rem;
-      font-weight: 800;
-      margin-bottom: 2px;
-      letter-spacing: 0.2px;
-      flex-shrink: 0;
-    }
-
-    .badge-active {
-      background: var(--yellow-400);
-      color: var(--slate-900);
-      animation: pulseBadge 2s infinite ease-in-out;
-    }
-
-    .badge-done {
-      background: var(--green-700);
-      color: var(--white);
-    }
-
-    .badge-locked {
-      background: var(--slate-300);
-      color: var(--slate-700);
-    }
-
-    @keyframes pulseBadge {
-
-      0%,
-      100% {
-        transform: scale(1);
-      }
-
-      50% {
-        transform: scale(1.05);
-      }
-    }
-
-    .avatar-img {
-      width: 90px;
-      height: 90px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 4px solid var(--white);
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      margin-bottom: 8px;
-      background: var(--slate-300);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--slate-700);
-      font-size: 0.8rem;
-    }
-
-    .profile-hint {
-      font-size: 0.9rem;
-      font-weight: 800;
-      color: var(--slate-900);
-      min-height: unset;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      line-height: 1.3;
-      text-align: center;
-    }
-
-    .word-boxes {
-      display: flex;
-      gap: 5px;
-      justify-content: center;
-      flex-wrap: wrap;
-      flex-shrink: 0;
-    }
-
-    .letter-box {
-      width: 38px;
-      height: 44px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.35rem;
-      font-weight: 900;
-      background: var(--white);
-      border: 2px solid var(--slate-300);
-      border-radius: 8px;
-      color: transparent;
-      transition: all 0.25s ease;
-      user-select: none;
-    }
-
-    .letter-box.revealed {
-      background: var(--green-100);
-      border-color: var(--green-700);
-      color: var(--green-900);
-      transform: translateY(-2px);
-      box-shadow: 0 3px 0 rgba(45, 138, 109, 0.2);
-    }
-
-    .letter-box.placeholder {
-      color: var(--slate-300);
-      background: #fcfdfe;
-      border-style: dashed;
-      font-size: 1.1rem;
-    }
-
-    .letter-box.revealed-failed {
-      background: var(--red-100);
-      border-color: var(--red-500);
-      color: var(--red-500);
-    }
-
-    /* KART KAZANMA ANİMASYONU */
-    .profile-card.celebrating {
-      animation: cardWon 0.8s ease-in-out;
-    }
-
-    @keyframes cardWon {
-      0% {
-        transform: scale(1.015);
-      }
-
-      40% {
-        transform: scale(1.06) translateY(-4px);
-      }
-
-      100% {
-        transform: scale(1.015);
-      }
-    }
-
-    /* SAĞ: OYUN KONTROLLERİ (ÇİÇEK & KLAVYE) */
-    .controls-panel {
-      background: var(--white);
-      border-radius: 20px;
-      padding: 16px 14px;
-      box-shadow: var(--shadow-sm);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-evenly;
-      gap: 12px;
-      height: 100%;
-      min-height: 0;
-      box-sizing: border-box;
-    }
-
-    /* ÇİÇEK (CAN/HAK) ALANI */
-    .flower-area {
-      position: relative;
-      width: 140px;
-      height: 150px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 14px 0 24px 0;
-      transform: scale(1.4);
-      transform-origin: center;
-      flex-shrink: 0;
-    }
-
-    .flower-stem {
-      position: absolute;
-      bottom: -20px;
-      left: calc(50% - 4px);
-      width: 8px;
-      height: 70px;
-      background: var(--green-700);
-      border-radius: 4px;
-      z-index: 1;
-    }
-
-    #petals-container {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-    }
-
-    .flower-center {
-      position: absolute;
-      top: calc(50% - 22px);
-      left: calc(50% - 22px);
-      width: 44px;
-      height: 44px;
-      background: var(--yellow-400);
-      border-radius: 50%;
-      z-index: 3;
-      box-shadow: inset -4px -4px 0 rgba(0, 0, 0, 0.1);
-      margin: 0;
-    }
-
-    .flower-rule-badge {
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: #9d3022;
-      background: #fff0ed;
-      border: 1px solid #fed3ca;
-      padding: 4px 14px;
-      border-radius: 999px;
-      margin-bottom: 0;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      flex-shrink: 0;
-    }
-
-    .flower-face {
-      position: absolute;
-      top: 12px;
-      left: 8px;
-      width: 28px;
-      display: flex;
-      justify-content: space-around;
-    }
-
-    .eye {
-      width: 5px;
-      height: 5px;
-      background: #333;
-      border-radius: 50%;
-    }
-
-    .smile {
-      position: absolute;
-      top: 10px;
-      left: 7px;
-      width: 14px;
-      height: 7px;
-      border-bottom: 3px solid #333;
-      border-radius: 50%;
-      transition: all 0.3s;
-    }
-
-    .flower-area.sad .smile {
-      top: 14px;
-      border-bottom: none;
-      border-top: 3px solid #333;
-    }
-
-    /* Yapraklar */
-    .petal {
-      position: absolute;
-      width: 34px;
-      height: 60px;
-      background: #ff7eb3;
-      border-radius: 50% 50% 20% 20%;
-      top: 15px;
-      left: calc(50% - 17px);
-      transform-origin: center 60px;
-      z-index: 2;
-      transition: transform 0.8s ease, opacity 0.8s ease;
-    }
-
-    /* Yaprak Düşme Efekti */
-    .petal.dropped {
-      opacity: 0;
-      transform: translateY(60px) rotate(calc(var(--rot) + 60deg)) scale(0.5) !important;
-    }
-
-    .status-text {
-      font-size: clamp(0.78rem, 1.2vh, 0.88rem);
-      font-weight: 800;
-      color: var(--green-900);
-      margin: 2px 0 4px 0;
-      text-align: center;
-      min-height: 22px;
-      line-height: 1.25;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    /* TÜRKÇE KLAVYE */
-    .keyboard {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 6px;
-      width: 100%;
-      max-width: 360px;
-      margin: 0 auto;
-      flex-shrink: 0;
-    }
-
-    .key-btn {
-      width: clamp(32px, 2.7vw, 38px);
-      height: clamp(38px, 4.4vh, 46px);
-      font-size: clamp(1rem, 1.4vh, 1.2rem);
-      font-weight: 900;
-      color: var(--slate-900);
-      background: var(--green-50);
-      border: 1.5px solid var(--green-100);
-      border-radius: 8px;
-      box-shadow: 0 3px 0 var(--green-100);
-      transition: all 0.1s;
-    }
-
-    .key-btn:active:not(:disabled) {
-      transform: translateY(3px);
-      box-shadow: 0 0 0 transparent;
-    }
-
-    .key-btn:disabled {
-      opacity: 0.55;
-      cursor: not-allowed;
-      transform: translateY(4px);
-      box-shadow: 0 0 0 transparent;
-    }
-
-    .key-btn.correct {
-      background: var(--green-700) !important;
-      border-color: var(--green-900) !important;
-      color: var(--white) !important;
-      opacity: 1 !important;
-    }
-
-    .key-btn.wrong {
-      background: var(--red-500) !important;
-      border-color: #c0392b !important;
-      color: var(--white) !important;
-      opacity: 0.7 !important;
-    }
-
-    /* SONUÇ MODALI */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(11, 64, 51, 0.72);
-      backdrop-filter: blur(5px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.3s ease;
-      z-index: 100;
-      padding: 20px;
-    }
-
-    .modal-overlay.active {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    .modal-content {
-      background: var(--white);
-      padding: 36px 28px;
-      border-radius: 24px;
-      text-align: center;
-      max-width: 420px;
-      width: 100%;
-      transform: translateY(20px);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: var(--shadow-md);
-    }
-
-    .modal-overlay.active .modal-content {
-      transform: translateY(0);
-    }
-
-    .modal-content h2 {
-      font-size: 1.8rem;
-      margin-bottom: 10px;
-    }
-
-    .modal-content p {
-      font-size: 1rem;
-      color: var(--slate-700);
-      line-height: 1.5;
-    }
-
-    .modal-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-top: 24px;
-    }
-
-    .modal-btn {
-      padding: 13px 24px;
-      background: var(--green-800);
-      color: var(--white);
-      border: none;
-      border-radius: 12px;
-      font-size: 1.05rem;
-      font-weight: 900;
-      box-shadow: 0 4px 0 var(--green-950);
-      width: 100%;
-      transition: all 0.1s;
-    }
-
-    .modal-btn:active {
-      transform: translateY(4px);
-      box-shadow: 0 0 0 var(--green-950);
-    }
-
-    .modal-btn.secondary {
-      background: #e6edea;
-      color: var(--slate-900);
-      box-shadow: 0 4px 0 #cad7d2;
-    }
-
-    .modal-btn.secondary:active {
-      box-shadow: 0 0 0 #cad7d2;
-    }
-
-    /* RESPONSIVE (MOBİL UYUM) */
-    @media (max-width: 900px) {
-      .main-layout {
-        grid-template-columns: 1fr;
-      }
-
-      .controls-panel {
-        position: static;
-        order: -1;
-      }
-    }
-
-    @media (max-width: 600px) {
-      .profiles-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .steps-container {
-        flex-wrap: wrap;
-      }
-
-      .step-pill {
-        flex: 1 1 45%;
-        font-size: 0.75rem;
-      }
-
-      .key-btn {
-        width: 32px;
-        height: 40px;
-        font-size: 1rem;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#187e78">
+<title>Yaşa Uygun Hitaplar · Türkçe ve Türk Kültürü</title>
+<style>
+:root{--ink:#244740;--muted:#6a8076;--teal:#187e78;--teal-soft:#e5f3ee;--coral:#d97a64;--cream:#fffaf0;--line:#dfe7db;--sage:#729675;--purple:#8873b0;--red:#b24848;--shadow:0 14px 40px #2b493c0b}*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#f4f6ed;color:var(--ink);font-family:"Avenir Next","Segoe UI",Arial,sans-serif}button{font:inherit;cursor:pointer;touch-action:manipulation;transition:background .18s,transform .18s,border-color .18s}button:focus-visible{outline:3px solid #e5ac54;outline-offset:4px}button:disabled{cursor:default}button:hover:not(:disabled){transform:translateY(-2px)}[hidden]{display:none!important}.app-shell{min-height:100dvh;display:flex;flex-direction:column;background:radial-gradient(ellipse at 95% 15%,#fae7cf66,transparent 35%),radial-gradient(ellipse at 0% 85%,#cfe8dc66,transparent 38%)}
+.topbar{background:#ffffffdb;border-bottom:1px solid var(--line);padding:14px 30px}.topbar-inner{max-width:1270px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:20px}.brand{display:flex;align-items:center;gap:20px}.brand img{width:166px;height:48px;object-fit:contain}.brand-copy{border-left:1px solid var(--line);padding-left:20px}.brand-copy p{font-size:10px;letter-spacing:1.2px;margin:0 0 5px;color:var(--muted)}.brand-copy strong{font-size:17px;letter-spacing:-.3px}.header-actions{display:flex;align-items:center;gap:18px}.score-label{font-size:10px;letter-spacing:.8px;color:var(--muted)}.score-label strong{font-size:22px;display:block;letter-spacing:0;color:var(--teal);margin-top:2px}.restart{border:1px solid var(--line);background:white;padding:11px 15px;border-radius:11px;color:var(--ink);font-size:12px;font-weight:700}.page{width:min(1270px,calc(100% - 52px));margin:0 auto;padding:24px 0 18px;flex:1;display:flex;flex-direction:column;gap:18px}.intro{display:flex;align-items:center;justify-content:space-between;gap:24px}.kicker{color:var(--teal);font-size:10px;font-weight:800;letter-spacing:1.8px;margin:0 0 7px}h1{font-size:32px;letter-spacing:-1.1px;margin:0 0 7px;font-weight:800}.intro p{font-size:13px;line-height:1.6;color:var(--muted);margin:0}.lesson-tag{display:flex;align-items:center;gap:9px;white-space:nowrap;font-size:11px;padding:10px 14px;border-radius:24px;border:1px solid #e4ddc7;background:#fff8e7;color:#95712e}.lesson-tag span{font-size:19px}.steps{display:grid;grid-template-columns:1fr 1fr;gap:12px}.step{display:flex;align-items:center;gap:12px;padding:11px 15px;border:1px solid var(--line);border-radius:13px;background:#ffffffa1;color:var(--muted)}.step-number{display:grid;place-items:center;width:28px;height:28px;border-radius:9px;background:#eaf0e5;font-size:12px;font-weight:800}.step strong{display:block;font-size:13px;margin-bottom:3px}.step small{font-size:10px}.step.active{background:var(--teal);color:white;border-color:var(--teal)}.step.active .step-number{background:#ffffff26}.step.complete{background:#e2f1e6;color:var(--teal)}.workspace{background:#fff;border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);padding:21px;flex:1;display:flex;flex-direction:column;gap:18px}.workspace-heading{display:flex;align-items:center;justify-content:space-between;gap:20px}.workspace-heading h2{font-size:19px;letter-spacing:-.4px;margin:0 0 5px}.workspace-heading p{font-size:12px;color:var(--muted);margin:0}.round-chip{background:#f1f5eb;border:1px solid #e5ebdd;white-space:nowrap;border-radius:20px;font-size:11px;padding:8px 12px;color:#718168}.characters{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}.character{position:relative;display:flex;flex-direction:column;align-items:center;padding:11px 12px 13px;border:2px solid #e8ece2;border-radius:18px;background:#fff;min-width:0;color:var(--ink)}.character:hover:not(:disabled){border-color:var(--character-color)}.character[aria-pressed="true"]{border-color:var(--character-color);background:var(--character-bg);box-shadow:0 5px 16px #2846350b}.character img{width:clamp(105px,11vw,160px);height:clamp(105px,11vw,160px);object-fit:cover;border-radius:50%;margin:0 0 8px}.character strong{font-size:18px;letter-spacing:-.3px}.character small{font-size:12px;color:var(--muted);margin-top:4px}.character .status{position:absolute;top:10px;right:11px;width:23px;height:23px;display:grid;place-items:center;border:1px solid #e1e9db;border-radius:50%;background:#fff;color:#a3b09b;font-size:11px}.character.solved .status{background:var(--teal);color:white;border-color:var(--teal)}.character.solved{opacity:.72}.interaction{display:grid;grid-template-columns:1fr 1.12fr;gap:22px;border-top:1px solid #edf0e8;padding-top:18px}.activity-left{background:#f6f8f0;border:1px solid #e5eadc;border-radius:17px;padding:20px;display:flex;flex-direction:column;justify-content:center;min-height:175px}.mini-label{font-size:9px;letter-spacing:1.6px;text-transform:uppercase;color:var(--muted);font-weight:800;margin:0 0 10px}.builder{display:flex;align-items:center;justify-content:center;gap:11px;margin:2px 0 10px}.name-token,.address-token{padding:13px 17px;background:white;border:1px solid #dde6d7;border-radius:12px;font-size:26px;font-weight:750;min-width:99px;text-align:center}.address-token{border:2px dashed #9fbeb1;background:#e9f3ec;color:var(--teal)}.address-token.filled{border-style:solid;border-color:#86b9a5;background:#deeee6}.plus{color:#9daf9e;font-size:22px}.builder-help{font-size:11px;color:var(--muted);text-align:center;margin:0;line-height:1.5}.activity-right{display:flex;flex-direction:column;justify-content:center;gap:13px}.answer-heading{font-size:14px;font-weight:700;margin:0}.address-options{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.address-choice{min-height:48px;border:1px solid #dce5d5;background:white;border-radius:11px;color:var(--ink);font-size:17px;font-weight:700}.address-choice[aria-pressed="true"]{background:var(--teal-soft);border-color:var(--teal);color:var(--teal)}.answer-choice.correct{background:#e7f4e8;border-color:#388d68;color:#226d4d}.answer-choice.wrong{background:#fff0eb;border-color:#cc7564;color:#ac4b40}.control-row{display:flex;justify-content:space-between;align-items:center;gap:14px}.feedback{color:var(--muted);font-size:12px;line-height:1.6;flex:1;min-height:38px}.feedback.success{color:#237756}.feedback.error{color:#b25343}.primary{border:0;border-radius:11px;padding:13px 19px;background:var(--teal);color:white;font-size:13px;font-weight:750;white-space:nowrap;box-shadow:0 3px 0 #12625e}.primary:disabled{background:#b6c9bd;box-shadow:none;opacity:.65}.primary:hover:not(:disabled){background:#116c67}.scenario{font-size:21px;line-height:1.6;letter-spacing:-.3px;font-weight:650;margin:0}.greeting-options{display:grid;grid-template-columns:1fr 1fr;gap:9px}.greeting-choice{display:flex;align-items:center;gap:10px;border:1px solid #dce5d5;border-radius:12px;background:white;padding:13px 14px;min-height:62px;text-align:left;font-size:14px;line-height:1.45;color:var(--ink);font-weight:600}.greeting-choice:before{content:attr(data-letter);width:24px;height:24px;display:grid;place-items:center;flex-shrink:0;border-radius:8px;background:#f0f4e9;color:#7f9275;font-size:10px}.greeting-choice[aria-pressed="true"]{border-color:var(--teal);background:var(--teal-soft)}.greeting-choice.correct:before{content:"✓";background:#d1e9d6;color:#226d4d}.greeting-choice.wrong:before{content:"×";background:#f8d9cf;color:#ac4b40}.workspace-footer{border-top:1px solid #edf0e8;padding-top:13px;display:flex;align-items:center;justify-content:space-between;gap:18px}.progress-group{flex:1;max-width:280px}.progress-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:7px}.progress-track{height:5px;border-radius:5px;background:#e9eee2;overflow:hidden}.progress-bar{height:100%;width:0%;border-radius:5px;background:linear-gradient(90deg,var(--teal),#a6be75);transition:width .35s}.teaching-note{font-size:10px;line-height:1.6;color:var(--muted);margin:0;max-width:580px;text-align:right}.page-footer{display:flex;justify-content:space-between;gap:15px;font-size:9px;letter-spacing:.8px;color:#8c9a81;margin:0}.modal{position:fixed;inset:0;z-index:50;background:#193c36c9;backdrop-filter:blur(8px);display:grid;place-items:center;padding:18px}.modal-card{max-width:460px;width:100%;background:#fffdf5;padding:30px;border-radius:26px;text-align:center;box-shadow:0 30px 90px #10271b33}.trophy{font-size:53px}.modal h2{font-size:30px;letter-spacing:-1px;margin:12px 0}.modal p{font-size:13px;line-height:1.7;color:var(--muted)}.final-score{display:flex;justify-content:center;gap:28px;padding:17px;background:#eaf2e4;border-radius:15px;margin:20px 0}.final-score strong{display:block;color:var(--teal);font-size:30px;margin-top:5px}.final-score span{font-size:10px;color:var(--muted)}.modal .primary{width:100%}.confetti{position:fixed;top:-15px;z-index:60;width:8px;height:12px;pointer-events:none;animation:fall 2.6s ease-in forwards}@keyframes fall{to{transform:translateY(110vh) rotate(620deg);opacity:0}}.stage-greeting .character img{width:clamp(90px,8vw,125px);height:clamp(90px,8vw,125px)}
+@media(min-width:960px) and (max-height:850px){.topbar{padding:9px 28px}.brand img{height:40px}.page{padding:15px 0 12px;gap:12px}.intro h1{font-size:27px}.intro p{font-size:12px}.steps .step{padding:8px 13px}.workspace{padding:16px 19px;gap:13px}.character img{width:112px;height:112px}.character{padding:8px 10px 10px}.character strong{font-size:16px}.character small{font-size:11px}.interaction{padding-top:13px;gap:18px}.activity-left{min-height:165px;padding:16px}.workspace-footer{padding-top:10px}.page-footer{font-size:8px}.stage-greeting .character img{width:95px;height:95px}.scenario{font-size:19px}}
+@media(max-width:959px){.brand img{width:140px}.brand-copy p{font-size:8px}.brand-copy strong{font-size:15px}.topbar{padding:12px 20px}.page{width:calc(100% - 32px);padding-top:18px}.intro h1{font-size:27px}.lesson-tag{display:none}.interaction{grid-template-columns:1fr}.activity-left{min-height:125px;padding:16px}.builder{margin:0 0 8px}.teaching-note{max-width:300px}.character img{width:clamp(85px,13vw,120px);height:clamp(85px,13vw,120px)}.character strong{font-size:16px}.workspace{padding:17px}.greeting-options{gap:10px}.control-row{min-height:42px}.scenario{font-size:20px}}
+@media(max-width:600px){.topbar{padding:11px 14px}.topbar-inner{gap:10px;flex-wrap:wrap}.brand{gap:12px}.brand img{width:130px;height:38px}.brand-copy{padding-left:12px}.brand-copy p{font-size:7px;letter-spacing:.7px}.brand-copy strong{font-size:12px}.header-actions{width:100%;justify-content:space-between;gap:10px}.score-label{display:flex;align-items:center;gap:10px;font-size:9px}.score-label strong{font-size:19px;margin:0}.restart{font-size:10px;padding:7px 10px}.page{width:calc(100% - 22px);gap:12px;padding:16px 0 12px}.intro h1{font-size:25px}.intro p{font-size:11px}.kicker{font-size:8px}.steps{gap:8px}.step{padding:9px;gap:8px}.step-number{width:24px;height:24px;font-size:11px;flex-shrink:0}.step strong{font-size:11px}.step small{font-size:9px}.workspace{padding:13px;border-radius:20px;gap:13px}.workspace-heading{gap:10px}.workspace-heading h2{font-size:17px}.workspace-heading p{font-size:10px;line-height:1.5}.round-chip{padding:6px 8px;font-size:9px}.characters{grid-template-columns:repeat(4,1fr);gap:5px}.character{border-radius:12px;padding:7px 3px 9px;border-width:1.5px}.character img,.stage-greeting .character img{width:62px;height:62px;margin-bottom:6px}.character strong{font-size:12px}.character small{font-size:9px;margin-top:4px}.character .status{width:16px;height:16px;font-size:9px;right:4px;top:4px}.interaction{gap:13px;padding-top:13px}.name-token,.address-token{font-size:25px;padding:11px 15px;min-width:92px}.builder-help{font-size:10px}.activity-left{padding:14px}.answer-heading{font-size:13px}.address-options{gap:7px}.address-choice{font-size:16px;min-height:45px}.control-row{align-items:stretch;flex-direction:column;gap:8px}.feedback{font-size:11px;min-height:36px}.primary{padding:12px 15px;font-size:12px}.workspace-footer{gap:12px;align-items:stretch;flex-direction:column}.progress-group{max-width:none}.teaching-note{text-align:left;max-width:none;font-size:9px}.page-footer{font-size:7px;letter-spacing:.3px}.greeting-choice{font-size:12px;min-height:65px;padding:10px;gap:7px}.greeting-choice:before{width:20px;height:20px;font-size:9px;border-radius:6px}.scenario{font-size:18px}.modal-card{padding:24px}.modal h2{font-size:27px}}
+@media(max-width:370px){.character img,.stage-greeting .character img{width:52px;height:52px}.character strong{font-size:11px}.character small{font-size:8px}.brand img{width:115px}.brand-copy strong{font-size:11px}.greeting-options{grid-template-columns:1fr}.greeting-choice{min-height:48px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}.confetti{display:none}}
+
+@media(min-width:960px) and (max-height:850px){.page{padding:12px 0 10px;gap:10px}.workspace{gap:10px}.activity-left{min-height:140px}.interaction{padding-top:10px}.intro h1{font-size:25px}.workspace-footer{padding-top:8px}}
+</style>
 </head>
-
 <body>
-
-  <header class="topbar">
-    <div class="topbar-brand">
-      <img src="1.svg" class="header-logo" alt="Logo">
-      <div class="topbar-titles">
-        <h1>Kime Ne Denir?</h1>
-        <p>Soruları sırayla cevapla. Doğru harfleri bul. Yanlış harfte yapraklar kopar. Çiçeği koru.</p>
-      </div>
-    </div>
-  </header>
-
-  <main class="main-layout">
-
-    <!-- SOL: AŞAMA ÇUBUĞU VE 4 KART -->
-    <section class="left-section">
-
-      <!-- Adım Göstergesi -->
-      <nav class="steps-container" id="stepsContainer" aria-label="Soru İlerlemesi">
-        <!-- JS ile doldurulacak -->
-      </nav>
-
-      <!-- 4 Kişinin Kartları -->
-      <div class="profiles-grid" id="profilesGrid">
-        <!-- JS ile doldurulacak -->
-      </div>
-
-    </section>
-
-    <!-- SAĞ: ÇİÇEK VE KLAVYE -->
-    <aside class="controls-panel">
-
-      <div class="flower-rule-badge">
-        <span>⚠️ Yanlış harfte yaprak kopar!</span>
-      </div>
-
-      <!-- Çiçek -->
-      <div class="flower-area" id="flower">
-        <div class="flower-stem"></div>
-        <div id="petals-container"></div>
-        <div class="flower-center">
-          <div class="flower-face">
-            <div class="eye"></div>
-            <div class="eye"></div>
-            <div class="smile"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Klavye -->
-      <div class="keyboard" id="keyboard"></div>
-
-    </aside>
-
-  </main>
-
-  <!-- OYUN SONU / TEKRAR DENE MODALI -->
-  <div class="modal-overlay" id="resultModal">
-    <div class="modal-content">
-      <div id="modalEmoji" style="font-size: 3.5rem; margin-bottom: 8px;">🌸</div>
-      <h2 id="modalTitle">Harika!</h2>
-      <p id="modalDesc">Tüm kelimeleri buldun ve çiçeği korudun.</p>
-      <div class="modal-buttons">
-        <button class="modal-btn" id="modalPrimaryBtn">Devam Et</button>
-        <button class="modal-btn secondary" id="modalSecondaryBtn" style="display: none;">Baştan Başla</button>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    // --- 1. OYUN VERİLERİ (KİME NE DENİR) ---
-    const wordsData = [
-      {
-        word: "ABİ",
-        title: "Erkek Kardeş",
-        hint: "Bizden büyük erkek kardeşe ne denir?",
-        img: "abi.png",
-        color: "blue"
-      },
-      {
-        word: "ABLA",
-        title: "Kız Kardeş",
-        hint: "Bizden büyük kız kardeşe ne denir?",
-        img: "abla.png",
-        color: "pink"
-      },
-      {
-        word: "AMCA",
-        title: "Ahmet Bey",
-        hint: "Mahallemizdeki bakkal Ahmet Bey'e ne denir?",
-        img: "amca.png",
-        color: "orange"
-      },
-      {
-        word: "TEYZE",
-        title: "Ayşe Hanım",
-        hint: "Annemizin liseden arkadaşı Ayşe Hanım'a ne denir?",
-        img: "teyze.png",
-        color: "purple"
-      }
-    ];
-
-    const alphabet = [
-      "A", "B", "C", "Ç", "D", "E", "F", "G", "Ğ", "H",
-      "I", "İ", "J", "K", "L", "M", "N", "O", "Ö", "P",
-      "R", "S", "Ş", "T", "U", "Ü", "V", "Y", "Z"
-    ];
-
-    // --- 2. OYUN DURUM DEĞİŞKENLERİ ---
-    let currentWordIndex = 0;       // Sıradaki kelime indisi (0..3)
-    const maxMistakes = 6;          // Her kelime için 6 hata hakkı
-    let mistakes = 0;               // Mevcut kelimedeki hata sayısı
-    let isTransitioning = false;     // Kelimeler arası geçiş animasyonunda mı?
-
-    // DOM Elementleri
-    const stepsContainer = document.getElementById("stepsContainer");
-    const profilesGrid = document.getElementById("profilesGrid");
-    const petalsContainer = document.getElementById("petals-container");
-    const keyboard = document.getElementById("keyboard");
-    const flowerArea = document.getElementById("flower");
-    const statusText = document.getElementById("statusText");
-    const resultModal = document.getElementById("resultModal");
-    const modalEmoji = document.getElementById("modalEmoji");
-    const modalTitle = document.getElementById("modalTitle");
-    const modalDesc = document.getElementById("modalDesc");
-    const modalPrimaryBtn = document.getElementById("modalPrimaryBtn");
-    const modalSecondaryBtn = document.getElementById("modalSecondaryBtn");
-
-    // --- 3. OYUNU BAŞLATMA ---
-    function initGame() {
-      currentWordIndex = 0;
-      startCurrentWordRound();
-    }
-
-    // Sıradaki kelime turunu kur
-    function startCurrentWordRound() {
-      mistakes = 0;
-      isTransitioning = false;
-      flowerArea.classList.remove("sad");
-      resultModal.classList.remove("active");
-
-      drawSteps();
-      drawCards();
-      drawFlower();
-      drawKeyboard();
-      updateStatusForCurrentWord();
-    }
-
-    // A. Adım / İlerleme Çubuğu
-    function drawSteps() {
-      stepsContainer.innerHTML = "";
-      wordsData.forEach((item, index) => {
-        const pill = document.createElement("div");
-        pill.className = "step-pill";
-
-        if (index < currentWordIndex) {
-          pill.classList.add("completed");
-          pill.innerHTML = `✓ ${index + 1}. ${item.word}`;
-        } else if (index === currentWordIndex) {
-          pill.classList.add("active");
-          pill.innerHTML = `🎯 Soru ${index + 1}`;
-        } else {
-          pill.classList.add("locked");
-          pill.innerHTML = `🔒 Soru ${index + 1}`;
-        }
-
-        stepsContainer.appendChild(pill);
-      });
-    }
-
-    // B. Kartları Çiz (Aktif, Tamamlanmış ve Kilitli Durumlar)
-    function drawCards() {
-      profilesGrid.innerHTML = "";
-
-      wordsData.forEach((item, index) => {
-        const card = document.createElement("div");
-        card.className = `profile-card ${item.color}`;
-        card.setAttribute("data-index", index);
-
-        let badgeHTML = "";
-        let boxesHTML = "";
-
-        if (index < currentWordIndex) {
-          // Önceki tamamlanmış kart
-          card.classList.add("completed");
-          badgeHTML = `<span class="card-badge badge-done">✓ Bildin (${item.word})</span>`;
-          for (let i = 0; i < item.word.length; i++) {
-            const char = item.word[i];
-            boxesHTML += `<div class="letter-box revealed" data-char="${char}">${char}</div>`;
-          }
-        } else if (index === currentWordIndex) {
-          // Şu an oynanan aktif kart
-          card.classList.add("active");
-          badgeHTML = `<span class="card-badge badge-active">🎯 Şu Anki Soru (${index + 1}/${wordsData.length})</span>`;
-          for (let i = 0; i < item.word.length; i++) {
-            const char = item.word[i];
-            boxesHTML += `<div class="letter-box" data-char="${char}">${char}</div>`;
-          }
-        } else {
-          // Henüz sırası gelmemiş kilitli kart
-          card.classList.add("locked");
-          badgeHTML = `<span class="card-badge badge-locked">🔒 Sırada (${index + 1}. Soru)</span>`;
-          for (let i = 0; i < item.word.length; i++) {
-            boxesHTML += `<div class="letter-box placeholder">?</div>`;
-          }
-        }
-
-        card.innerHTML = `
-          ${badgeHTML}
-          <img src="${item.img}" class="avatar-img" alt="${item.title}">
-          <div class="profile-hint">${item.hint}</div>
-          <div class="word-boxes">${boxesHTML}</div>
-        `;
-
-        profilesGrid.appendChild(card);
-      });
-    }
-
-    // C. Çiçek Yaprakları (Her kelimede taze 6 yaprak)
-    function drawFlower() {
-      petalsContainer.innerHTML = "";
-      for (let i = 0; i < maxMistakes; i++) {
-        const petal = document.createElement("div");
-        petal.className = "petal";
-        const deg = i * 60;
-        petal.style.transform = `rotate(${deg}deg)`;
-        petal.style.setProperty('--rot', `${deg}deg`);
-        petalsContainer.appendChild(petal);
-      }
-    }
-
-    // D. Klavyeyi Çiz
-    function drawKeyboard() {
-      keyboard.innerHTML = "";
-      alphabet.forEach(letter => {
-        const btn = document.createElement("button");
-        btn.className = "key-btn";
-        btn.innerText = letter;
-        btn.onclick = () => handleGuess(letter, btn);
-        keyboard.appendChild(btn);
-      });
-    }
-
-    // E. Durum Metnini Güncelle (Çiçeğin altında soru yazmasın)
-    function updateStatusForCurrentWord() {
-      if (statusText) {
-        statusText.innerHTML = "Klavyeden bir harf seç!";
-        statusText.style.color = "var(--green-900)";
-      }
-    }
-
-    // --- 4. TAHMİN MANTIĞI (HER KELİME İÇİN AYRI AYRI) ---
-    function handleGuess(letter, btn) {
-      if (btn.disabled || isTransitioning || mistakes >= maxMistakes) return;
-      btn.disabled = true;
-
-      const currentItem = wordsData[currentWordIndex];
-      const targetWord = currentItem.word;
-
-      // Sadece AKTİF kart üzerindeki harf kutularını kontrol et
-      const activeCard = document.querySelector(`.profile-card[data-index="${currentWordIndex}"]`);
-      if (!activeCard) return;
-
-      if (targetWord.includes(letter)) {
-        // DOĞRU HARF
-        btn.classList.add("correct");
-
-        const matchingBoxes = activeCard.querySelectorAll(`.letter-box[data-char="${letter}"]`);
-        matchingBoxes.forEach(box => {
-          box.classList.add("revealed");
-        });
-
-        // Aktif kelimedeki tüm harfler açıldı mı?
-        const allBoxes = activeCard.querySelectorAll(".letter-box");
-        const allRevealed = Array.from(allBoxes).every(box => box.classList.contains("revealed"));
-
-        if (allRevealed) {
-          handleWordCompleted();
-        } else if (statusText) {
-          statusText.innerHTML = `👏 Doğru harf! <strong>"${letter}"</strong> bulundu.`;
-          statusText.style.color = "var(--green-800)";
-        }
-
-      } else {
-        // YANLIŞ HARF
-        btn.classList.add("wrong");
-        mistakes++;
-        dropPetal();
-
-        if (statusText) {
-          statusText.innerHTML = `Bu kelimede <strong>"${letter}"</strong> harfi yok.`;
-          statusText.style.color = "var(--red-500)";
-        }
-
-        checkLose();
-      }
-    }
-
-    function dropPetal() {
-      const activePetals = document.querySelectorAll(".petal:not(.dropped)");
-      if (activePetals.length > 0) {
-        activePetals[activePetals.length - 1].classList.add("dropped");
-      }
-
-      if (mistakes >= 3) {
-        flowerArea.classList.add("sad");
-      }
-    }
-
-    // Kelime Doğru Tamamlandığında
-    function handleWordCompleted() {
-      isTransitioning = true;
-      const currentItem = wordsData[currentWordIndex];
-      const activeCard = document.querySelector(`.profile-card[data-index="${currentWordIndex}"]`);
-
-      if (activeCard) {
-        activeCard.classList.add("celebrating");
-      }
-
-      flowerArea.classList.remove("sad");
-
-      if (currentWordIndex < wordsData.length - 1) {
-        // Sıradaki kelimeye geçiş
-        if (statusText) {
-          statusText.innerHTML = `🎉 Harika! <strong>"${currentItem.word}"</strong> kelimesini bildin!<br><span style="font-size: 0.85rem; color: var(--green-700);">Sıradaki soruya geçiliyor...</span>`;
-          statusText.style.color = "var(--green-800)";
-        }
-
-        setTimeout(() => {
-          currentWordIndex++;
-          startCurrentWordRound();
-        }, 1300);
-
-      } else {
-        // 4 KELİMENİN HEPSİ BİTTİ (OYUN BİTTİ / ZAFER)
-        if (statusText) {
-          statusText.innerHTML = `🏆 Tebrikler! Tüm kelimeleri tamamladın!`;
-          statusText.style.color = "var(--green-800)";
-        }
-
-        // Son aşamayı da tamamlandı olarak göster
-        currentWordIndex++;
-        drawSteps();
-        drawCards();
-
-        setTimeout(() => {
-          modalEmoji.innerText = "🌸🏆";
-          modalTitle.innerText = "Tebrikler!";
-          modalTitle.style.color = "var(--green-900)";
-          modalDesc.innerHTML = "Tüm soruları sırasıyla doğru bildin ve çiçeği korudun. Harika bir iş çıkardın!";
-
-          modalPrimaryBtn.innerText = "Yeniden Oyna";
-          modalPrimaryBtn.onclick = () => initGame();
-          modalSecondaryBtn.style.display = "none";
-
-          resultModal.classList.add("active");
-        }, 900);
-      }
-    }
-
-    // 6 Hata Yapıldığında (Can Bittiğinde)
-    function checkLose() {
-      if (mistakes >= maxMistakes) {
-        isTransitioning = true;
-        const currentItem = wordsData[currentWordIndex];
-
-        if (statusText) {
-          statusText.innerHTML = `🥀 Yapraklar döküldü! Doğru cevap: <strong>${currentItem.word}</strong>`;
-          statusText.style.color = "var(--red-500)";
-        }
-
-        // Aktif karttaki açılmamış harfleri kırmızı göster
-        const activeCard = document.querySelector(`.profile-card[data-index="${currentWordIndex}"]`);
-        if (activeCard) {
-          const remainingBoxes = activeCard.querySelectorAll(".letter-box:not(.revealed)");
-          remainingBoxes.forEach(box => {
-            box.classList.add("revealed-failed");
-          });
-        }
-
-        setTimeout(() => {
-          modalEmoji.innerText = "🥀";
-          modalTitle.innerText = "Tekrar Dene!";
-          modalTitle.style.color = "var(--red-500)";
-          modalDesc.innerHTML = `Bu sorunun cevabı <strong>"${currentItem.word}"</strong> idi. Pes etmek yok!`;
-
-          modalPrimaryBtn.innerText = "Bu Soruyu Tekrar Dene";
-          modalPrimaryBtn.onclick = () => startCurrentWordRound();
-
-          modalSecondaryBtn.style.display = "block";
-          modalSecondaryBtn.innerText = "Baştan Başla";
-          modalSecondaryBtn.onclick = () => initGame();
-
-          resultModal.classList.add("active");
-        }, 1200);
-      }
-    }
-
-    // Klavyeden (Fiziksel) Yazma Desteği
-    window.addEventListener("keydown", (e) => {
-      if (resultModal.classList.contains("active") || isTransitioning) return;
-      const keyChar = e.key.toLocaleUpperCase("tr-TR");
-      const buttons = Array.from(document.querySelectorAll(".key-btn"));
-      const targetBtn = buttons.find(b => b.innerText === keyChar);
-      if (targetBtn && !targetBtn.disabled) {
-        targetBtn.click();
-      }
-    });
-
-    // Oyunu başlat
-    initGame();
-  </script>
+<div class="app-shell" id="appShell">
+<header class="topbar"><div class="topbar-inner"><div class="brand"><img src="1.svg" alt="Ülkem Yanımda"><div class="brand-copy"><p>ÇEVRİM İÇİ TÜRKÇE VE TÜRK KÜLTÜRÜ</p><strong>Yaşa uygun hitaplar</strong></div></div><div class="header-actions"><div class="score-label">TOPLAM PUAN<strong id="scoreText">0</strong></div><button class="restart" id="restartButton" type="button">↻ Yeniden başla</button></div></div></header>
+<main class="page">
+<section class="intro"><div><div class="kicker">6. HAFTA · TÜRKÇEYLE BAĞ KUR</div><h1>Yaşa Uygun Hitaplar</h1><p>Önce kişiyi tanı, hitabını oluştur. Sonra ona güzel bir selam ver.</p></div><div class="lesson-tag"><span aria-hidden="true">✦</span> Bir isim, sıcacık bir merhaba.</div></section>
+<nav class="steps" aria-label="Oyun aşamaları"><div class="step active" id="stepOne" aria-current="step"><span class="step-number">1</span><div><strong>Hitabı oluştur</strong><small>İsim + uygun hitap</small></div></div><div class="step" id="stepTwo"><span class="step-number">2</span><div><strong>Selamını seç</strong><small>Duruma uygun cümle</small></div></div></nav>
+<section class="workspace" aria-labelledby="activityTitle">
+<div class="workspace-heading"><div><h2 id="activityTitle">Kime nasıl seslenirsin?</h2><p id="activityDescription">Bir karakter seç. İsmini uygun hitap sözcüğüyle birleştir.</p></div><span class="round-chip" id="roundText">0 / 4 tamamlandı</span></div>
+<div class="characters" id="characters" role="group" aria-label="Karakter seç"></div>
+<div class="interaction"><div class="activity-left"><p class="mini-label" id="leftLabel">HİTABINI OLUŞTUR</p><div id="builderArea"><div class="builder"><span class="name-token" id="nameToken">Mehmet</span><span class="plus" aria-hidden="true">+</span><span class="address-token" id="addressToken">?</span></div><p class="builder-help" id="builderHelp">25 yaşında · İsmin yanına hangi hitap gelir?</p></div><p class="scenario" id="scenarioText" hidden></p></div><div class="activity-right"><p class="answer-heading" id="answerHeading">Uygun hitabı seç:</p><div id="options" class="address-options" role="group" aria-label="Cevap seçenekleri"></div><div class="control-row"><div class="feedback" id="feedback" role="status" aria-live="polite">Bir hitap seç, ardından “Kontrol et” düğmesine bas.</div><button class="primary" id="actionButton" type="button" disabled>Kontrol et ✓</button></div></div></div>
+<div class="workspace-footer"><div class="progress-group"><div class="progress-labels"><span id="progressLabel">Yolculuğun · 0 / 8</span><span id="progressPercent">%0</span></div><div class="progress-track" role="progressbar" id="progressTrack" aria-label="Oyunun tamamlanma oranı" aria-valuemin="0" aria-valuemax="8" aria-valuenow="0"><div class="progress-bar" id="progressBar"></div></div></div><p class="teaching-note" id="teachingNote">Bu oyunda senden büyük kişilere isimleriyle birlikte abi, abla, amca ve teyze diye sesleniyoruz.</p></div>
+</section>
+<footer class="page-footer"><span>ÇEVRİM İÇİ TÜRKÇE VE TÜRK KÜLTÜRÜ</span><span>DÜŞÜN · BİRLEŞTİR · SELAMLAŞ</span></footer>
+</main>
+</div>
+<div class="modal" id="completionModal" role="dialog" aria-modal="true" aria-labelledby="completionTitle" hidden><div class="modal-card"><div class="trophy" aria-hidden="true">🏆</div><div class="kicker">YOLCULUĞUN TAMAMLANDI</div><h2 id="completionTitle">Tebrikler!</h2><p>Mehmet abi, Elif abla, Ahmet amca ve Ayşe teyze ile tanıştın. Uygun hitapları oluşturdun, selamlaşma cümlelerini seçtin. Emeğine sağlık!</p><div class="final-score"><div><span>TOPLAM PUANIN</span><strong id="finalScoreText">0</strong></div><div><span>TAMAMLANAN GÖREV</span><strong>8 / 8</strong></div></div><button class="primary" id="playAgainButton" type="button">↻ Tekrar oyna</button></div></div>
+<script>
+"use strict";
+const people = [
+ {id:"mehmet",name:"Mehmet",age:25,address:"abi",color:"#248e89",bg:"#ecf8f3",scenario:"Sabah Mehmet ile karşılaştın. Ona nasıl selam verirsin?",greeting:"Günaydın, Mehmet abi!",alternatives:["Günaydın, Mehmet amca!","İyi akşamlar, Mehmet abi!","İyi akşamlar, Mehmet amca!"],explanation:"Sabah karşılaştığımızda “Günaydın” deriz. Mehmet'e “Mehmet abi” diye sesleniyoruz."},
+ {id:"elif",name:"Elif",age:28,address:"abla",color:"#cd7e69",bg:"#fff1e9",scenario:"Komşun Elif ile parkta karşılaştın. Ona nasıl selam verirsin?",greeting:"Merhaba, Elif abla!",alternatives:["Merhaba, Elif teyze!","Hoşça kal, Elif abla!","Hoşça kal, Elif teyze!"],explanation:"Komşumuza “Merhaba” diyerek selam verebiliriz. Elif'e “Elif abla” diye sesleniyoruz."},
+ {id:"ahmet",name:"Ahmet",age:65,address:"amca",color:"#648caf",bg:"#edf4fc",scenario:"Akşam Ahmet ile karşılaştın. Ona nasıl selam verirsin?",greeting:"İyi akşamlar, Ahmet amca!",alternatives:["İyi akşamlar, Ahmet abi!","Günaydın, Ahmet amca!","Günaydın, Ahmet abi!"],explanation:"Akşam karşılaştığımızda “İyi akşamlar” deriz. Ahmet'e “Ahmet amca” diye sesleniyoruz."},
+ {id:"ayse",name:"Ayşe",age:60,address:"teyze",color:"#8a9770",bg:"#f1f5e8",scenario:"Öğle vakti Ayşe ile karşılaştın. Ona nasıl selam verirsin?",greeting:"İyi günler, Ayşe teyze!",alternatives:["İyi günler, Ayşe abla!","İyi geceler, Ayşe teyze!","İyi geceler, Ayşe abla!"],explanation:"Gündüz karşılaştığımızda “İyi günler” diyebiliriz. Ayşe'ye “Ayşe teyze” diye sesleniyoruz."}
+];
+const $ = id => document.getElementById(id);
+let stage=1, selectedId=null, selectedAnswer=null, score=0, locked=false;
+let personOrder=[];
+let completed={1:new Set(),2:new Set()}, attempted={1:new Set(),2:new Set()};
+const addresses=["abi","abla","amca","teyze"];
+const reducedMotion=window.matchMedia("(prefers-reduced-motion: reduce)");
+function shuffle(items){const list=[...items];for(let i=list.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[list[i],list[j]]=[list[j],list[i]];}return list;}
+function mixPeople(){
+ let next=shuffle(people);
+ for(let tries=0;tries<4;tries++){
+  const canonical=next.every((p,i)=>p.id===people[i].id);
+  const previous=next.every((p,i)=>p.id===personOrder[i]?.id);
+  if(!canonical&&!previous)break;
+  next.push(next.shift());
+ }
+ personOrder=next;
+}
+function currentPerson(){return people.find(p=>p.id===selectedId);}
+function renderCharacters(){
+ $("characters").replaceChildren();
+ personOrder.forEach((person,index)=>{
+  const button=document.createElement("button");button.type="button";button.className="character"+(completed[stage].has(person.id)?" solved":"");button.dataset.id=person.id;button.style.setProperty("--character-color",person.color);button.style.setProperty("--character-bg",person.bg);button.setAttribute("aria-pressed",String(person.id===selectedId));button.setAttribute("aria-label",`${person.name}, ${person.age} yaşında${completed[stage].has(person.id)?", tamamlandı":""}`);
+  button.disabled=completed[stage].has(person.id);
+  const img=document.createElement("img");img.src=person.id+".png";img.alt="";img.width=160;img.height=160;
+  const name=document.createElement("strong");name.textContent=stage===2?person.name+" "+person.address:person.name;
+  const age=document.createElement("small");age.textContent=person.age+" yaşında";
+  const status=document.createElement("span");status.className="status";status.setAttribute("aria-hidden","true");status.textContent=completed[stage].has(person.id)?"✓":String(index+1);
+  button.append(img,name,age,status);$("characters").append(button);
+ });
+}
+function renderQuestion(){
+ const p=currentPerson();selectedAnswer=null;locked=false;renderCharacters();
+ $("appShell").classList.toggle("stage-greeting",stage===2);
+ $("stepOne").className="step"+(stage===1?" active":" complete");$("stepTwo").className="step"+(stage===2?" active":"");
+ $("stepOne").setAttribute("aria-current",stage===1?"step":"false");$("stepTwo").setAttribute("aria-current",stage===2?"step":"false");
+ $("activityTitle").textContent=stage===1?"Kime nasıl seslenirsin?":"Şimdi güzel bir selam ver!";
+ $("activityDescription").textContent=stage===1?"Bir karakter seç. İsmini uygun hitap sözcüğüyle birleştir.":"Durumu oku. Hem selamlaşma ifadesine hem hitaba dikkat et.";
+ $("leftLabel").textContent=stage===1?"HİTABINI OLUŞTUR":"KARŞILAŞMA";
+ $("builderArea").hidden=stage!==1;$("scenarioText").hidden=stage!==2;
+ $("nameToken").textContent=p.name;$("addressToken").textContent="?";$("addressToken").className="address-token";
+ $("builderHelp").textContent=p.age+" yaşında · İsmin yanına hangi hitap gelir?";
+ $("scenarioText").textContent=p.scenario;
+ $("answerHeading").textContent=stage===1?"Uygun hitabı seç:":"Ona ne söylersin?";
+ $("options").className=stage===1?"address-options":"greeting-options";$("options").replaceChildren();
+ const values=stage===1?shuffle(addresses):shuffle([p.greeting,...p.alternatives]);
+ values.forEach((answer,index)=>{const button=document.createElement("button");button.type="button";button.className="answer-choice "+(stage===1?"address-choice":"greeting-choice");button.dataset.answer=answer;button.dataset.letter=String.fromCharCode(65+index);button.setAttribute("aria-pressed","false");button.textContent=answer;$("options").append(button);});
+ $("feedback").className="feedback";$("feedback").textContent=stage===1?"Bir hitap seç, ardından “Kontrol et” düğmesine bas.":"Bir selamlaşma cümlesi seç, ardından kontrol et.";
+ $("actionButton").textContent="Kontrol et ✓";$("actionButton").disabled=true;
+ $("teachingNote").textContent=stage===1?"Bu oyunda senden büyük kişilere isimleriyle birlikte abi, abla, amca ve teyze diye sesleniyoruz.":"Sabah: günaydın · Gündüz: iyi günler · Akşam: iyi akşamlar · Karşılaşınca: merhaba";
+ updateProgress();
+}
+function updateProgress(){const count=completed[1].size+completed[2].size;$("scoreText").textContent=score;$("roundText").textContent=completed[stage].size+" / 4 tamamlandı";$("progressLabel").textContent="Yolculuğun · "+count+" / 8";$("progressPercent").textContent="%"+Math.round(count/8*100);$("progressBar").style.width=(count/8*100)+"%";$("progressTrack").setAttribute("aria-valuenow",count);}
+$("characters").addEventListener("click",event=>{const card=event.target.closest(".character");if(!card||card.disabled||card.dataset.id===selectedId)return;if(locked&&completed[stage].size===4)return;selectedId=card.dataset.id;renderQuestion();});
+$("options").addEventListener("click",event=>{
+ const button=event.target.closest(".answer-choice");if(!button||locked||button.disabled)return;
+ selectedAnswer=button.dataset.answer;
+ $("options").querySelectorAll("button").forEach(b=>{b.setAttribute("aria-pressed",String(b===button));b.classList.remove("wrong");});
+ if(stage===1){$("addressToken").textContent=selectedAnswer;$("addressToken").className="address-token filled";}
+ $("actionButton").disabled=false;$("feedback").className="feedback";$("feedback").textContent="Hazırsan cevabını kontrol et.";
+});
+function checkAnswer(){
+ if(!selectedAnswer||locked)return;
+ const p=currentPerson(),correct=stage===1?p.address:p.greeting;
+ if(selectedAnswer!==correct){attempted[stage].add(p.id);const chosen=[...$("options").querySelectorAll("button")].find(b=>b.dataset.answer===selectedAnswer);chosen.classList.add("wrong");$("feedback").className="feedback error";$("feedback").textContent=stage===1?`Bir daha düşün: Bu oyunda ${p.age} yaşındaki ${p.name}'e “${p.address}” diye sesleniyoruz.`:p.explanation;$("actionButton").disabled=true;selectedAnswer=null;return;}
+ locked=true;completed[stage].add(p.id);const points=attempted[stage].has(p.id)?50:100;score+=points;
+ $("options").querySelectorAll("button").forEach(b=>{b.disabled=true;if(b.dataset.answer===correct)b.classList.add("correct");});
+ $("feedback").className="feedback success";$("feedback").textContent=stage===1?`Harika! ${p.name} + ${p.address} = ${p.name} ${p.address}. +${points} puan!`:`Doğru! ${p.explanation} +${points} puan!`;
+ $("actionButton").disabled=false;$("actionButton").textContent=completed[stage].size<4?"Sıradaki kişi →":stage===1?"Selamlaşmaya geç →":"Sonucunu gör →";
+ renderCharacters();updateProgress();
+}
+function advance(){
+ if(!locked){checkAnswer();return;}
+ if(completed[stage].size===4){if(stage===1){stage=2;mixPeople();selectedId=personOrder[0].id;renderQuestion();$("activityTitle").focus();}else finishGame();return;}
+ selectedId=personOrder.find(p=>!completed[stage].has(p.id)).id;renderQuestion();
+}
+function finishGame(){$("finalScoreText").textContent=score;$("completionModal").hidden=false;$("playAgainButton").focus();confetti();}
+function restartGame(){stage=1;mixPeople();selectedId=personOrder[0].id;selectedAnswer=null;score=0;locked=false;completed={1:new Set(),2:new Set()};attempted={1:new Set(),2:new Set()};$("completionModal").hidden=true;document.querySelectorAll(".confetti").forEach(p=>p.remove());renderQuestion();}
+function confetti(){if(reducedMotion.matches)return;const colors=["#248e89","#d97a64","#e4bc61","#8d7ab1","#89a76b"];for(let i=0;i<48;i++){const p=document.createElement("span");p.className="confetti";p.style.left=Math.random()*100+"vw";p.style.background=colors[i%colors.length];p.style.animationDelay=Math.random()*.6+"s";document.body.append(p);setTimeout(()=>p.remove(),3400);}}
+$("actionButton").addEventListener("click",advance);$("restartButton").addEventListener("click",restartGame);$("playAgainButton").addEventListener("click",restartGame);$("activityTitle").setAttribute("tabindex","-1");
+mixPeople();selectedId=personOrder[0].id;renderQuestion();
+</script>
 </body>
-
 </html>

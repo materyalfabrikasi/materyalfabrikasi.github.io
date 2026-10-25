@@ -1,0 +1,18 @@
+SAYGI MERDİVENİ
+Çevrim İçi Türkçe ve Türk Kültürü — 6. hafta
+
+AÇMA
+index.html dosyasına çift tıklayın. İnternet gerekmez. HTML, SVG ve PNG dosyalarını aynı klasörde tutun.
+
+OYUN
+Sen 13 yaşındasın. Beş farklı yaştaki kişinin yaşını ve seninle ilişkisini incele. Her soruda uygun hitabı, “siz”li saygılı ifadeyi veya küçüklere sevgi gösteren cümleyi seç.
+
+Her doğru cevapta öğrenci merdivende bir basamak yükselir ve 100 puan kazanır. Yanlış cevapta basamak kaybı olmaz; kısa ipucunu okuyup yeniden deneyebilirsin. Sonraki basamak düğmesi yalnızca doğru cevaptan sonra açılır.
+
+Yedi soru ve yedi basamak vardır. Sorular ve şıklar her oyunda karışır. Oyun sonunda tebrik ekranı ve Tekrar oyna seçeneği görünür.
+
+İÇERİK
+Genç komşular: Zeynep abla, Mehmet abi. Diğer komşular: Ahmet amca, Ayşe teyze. Küçük çocuk: Ece. “Nasılsınız”, “naziksiniz” biçimleri ve nazik yardım teklifi çalışılır.
+
+GÖRSELLER
+Zeynep, Ece ve merdivende ilerleyen öğrenci bu oyun için yerleşik image_gen ile üretildi. Ahmet, Ayşe ve Mehmet görselleri önceki oyun için üretilen çizimlerden alındı. İstemler gorsel-istemleri.txt dosyasında.
