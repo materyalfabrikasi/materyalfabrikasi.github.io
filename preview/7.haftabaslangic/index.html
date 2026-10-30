@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#172c4a"><title>Bugün nasılsın? | Çevrim İçi Türkçe ve Türk Kültürü</title>
+<link rel="stylesheet" href="stil.css"><script src="oyun.js" defer></script>
+</head>
+<body>
+<header class="topbar">
+<img class="logo" src="1.svg" alt="Ülkem Yanımda">
+<div class="course">ÇEVRİM İÇİ TÜRKÇE VE TÜRK KÜLTÜRÜ</div>
+<div class="tools"><button id="sound" class="tool" aria-pressed="true">Ses açık</button><button id="fullscreen" class="tool">Tam ekran</button></div>
+</header>
+<main>
+<div class="heading"><h1>Bugün nasılsın?</h1><div class="stage-tabs" aria-label="Oyun aşamaları"><span id="stageRadar" class="active" aria-current="step">1. Radar</span><span id="stageVideo">2. Video</span></div></div>
+<section class="game" id="radarGame" aria-label="Bugün nasılsın? oyunu">
+<div class="radar-panel">
+<div class="panel-top"><span class="live-dot"></span><span id="radarStatus" role="status">Radar hazır</span><span class="number" id="round">0 / 5</span></div>
+<div class="radar-wrap"><div class="radar" id="radar">
+<div class="axis horizontal"></div><div class="axis vertical"></div><div class="sweep"></div><div class="orbit-dot d1"></div><div class="orbit-dot d2"></div><div class="orbit-dot d3"></div>
+<div class="radar-center" id="radarCenter"><span class="center-ring"></span><span class="center-small"></span></div>
+<figure class="portrait" id="portrait" hidden><img id="personPhoto" src="gorseller/ayse.jpg" alt=""><figcaption id="personName"></figcaption></figure>
+</div></div>
+<div class="progress-track" aria-label="Tamamlanan turlar"><div id="progressBar"></div></div>
+</div>
+<div class="content-panel">
+<section id="welcome"><h2>Merhaba!</h2><p class="intro">Fotoğrafa bak, cevabı seç.</p><button id="start" class="primary">Başla <span aria-hidden="true">→</span></button></section>
+<section id="searching" hidden aria-live="polite"><h2>Radar dönüyor…</h2><div class="search-bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div></section>
+<section id="question" hidden>
+<div class="question-top"><h2 id="questionTitle" tabindex="-1">Merhaba! Nasılsın?</h2><button id="listenQuestion" class="listen-button" aria-label="Merhaba nasılsın sorusunu dinle">Dinle</button></div>
+<div class="sentence-row clue-row"><p class="clue" id="clue"></p><button id="listenClue" class="listen-button" aria-label="Çocuğun cümlesini dinle">Dinle</button></div><fieldset id="answers"><legend class="sr-only">Cevabını seç</legend></fieldset>
+<button id="check" class="primary" disabled>Kontrol et <span aria-hidden="true">→</span></button>
+<div id="feedback" class="feedback" role="status" aria-live="polite"></div>
+<div id="success" class="success" hidden><p class="success-tag">DOĞRU!</p><div class="sentence-row answer-row"><blockquote id="speech"></blockquote><button id="listenAnswer" hidden class="listen-button" aria-label="Doğru cevap cümlesini dinle">Dinle</button></div><div class="next-row"><button id="next" class="primary">Devam et <span aria-hidden="true">→</span></button></div><label class="auto-label"><input id="autoNext" type="checkbox" checked> Otomatik devam et</label></div>
+</section>
+</div>
+</section>
+<section class="friends-section" id="friendsSection" aria-label="Beş arkadaş"><div class="friends" id="friends"></div></section>
+<section id="videoStage" class="video-stage" hidden aria-label="Video aşaması">
+<div class="video-heading"><h2>İzle ve söyle.</h2><span id="videoTime">0:00 / 0:43</span></div>
+<div class="video-frame">
+<video id="lessonVideo" src="1.mp4" preload="metadata" playsinline aria-label="Nasılsın? Türkçe videosu" disablepictureinpicture></video>
+<div id="videoStart" class="video-overlay"><button id="playVideo" class="primary">Videoyu başlat <span aria-hidden="true">→</span></button></div>
+<div id="videoPrompt" class="video-overlay prompt-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="videoPromptTitle"><div class="prompt-card"><p class="eyebrow">SÖZ SENDE</p><div class="sentence-row prompt-sentence"><h2 id="videoPromptTitle" tabindex="-1">Peki, bugün sen nasılsın?</h2></div><p>Sözlü cevap ver.</p><button id="answerDone" class="primary">Tamam <span aria-hidden="true">→</span></button></div></div>
+</div>
+<div class="video-bottom"><button id="pauseVideo" class="tool" disabled>Duraklat</button><div class="video-progress" role="progressbar" aria-label="Video ilerlemesi" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="videoProgress"><div id="videoProgressBar"></div></div></div>
+<p id="videoError" role="alert" hidden>Video açılamadı. 1.mp4 dosyasını oyun klasöründe tut.</p>
+</section>
+<section id="complete" class="complete-stage" hidden><div class="finish-mark" aria-hidden="true">5/5</div><h2 id="finishTitle" tabindex="-1">Oyunu tamamladın, tebrikler!</h2><button id="restart" class="primary">Yeniden oyna <span aria-hidden="true">↻</span></button></section>
+</main>
+</body>
+</html>

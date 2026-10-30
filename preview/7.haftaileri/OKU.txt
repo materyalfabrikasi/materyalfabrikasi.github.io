@@ -1,0 +1,18 @@
+GÖNÜL KAPISINI AÇ! — 7. HAFTA
+
+index.html dosyasına çift tıklayarak başlayın. 1.svg, 1.mp4 ve assets klasörü aynı yerde kalmalıdır.
+
+1. aşama: Kapıyı çal → Selam ver → İki soruyu cevapla → Rica ederim.
+2. aşama: Video otomatik açılır. Tarayıcı otomatik oynatmayı engellerse Videoyu oynat düğmesine basın.
+Video süresinin yarısında hâl hatır sormayla ilgili sözlü soru için durur.
+Cevabınızı söyledikten sonra Cevabımı söyledim düğmesine basarak videoya devam edin.
+Mikrofon ve ses tanıma kullanılmaz; mikrofon izni istenmez.
+Sözlü cevabın içeriği otomatik puanlanmaz.
+Video bitince tebrik mesajı sessiz olarak görünür.
+Yeniden düğmesi tüm etkinliği başa alır. Ses düğmesi video dahil tüm sesleri açar/kapatır.
+
+Görseller: Özgün SVG bahçe çizimi ve imagegen ile üretilmiş Ayşe teyze karakteri.
+Konuşmalar: Türkçe Yelda sesiyle üretilmiş WAV dosyaları.
+
+Etkinlik sesleri yalnızca doğru cevaplarda ve birinci aşamanın tamamlanma kutlamasında çalar.
+Yanlış cevap açıklamaları, sorular ve “Bir merhaba, bir nasılsın…” cümlesi sessizdir; yazıları görünür. Videonun kendi sesi korunur.
