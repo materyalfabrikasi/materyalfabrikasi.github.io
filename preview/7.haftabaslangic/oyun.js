@@ -1,11 +1,12 @@
 'use strict';
 const people = [
-  {id:'ayse',clueAudio:'oyun',name:'Ayşe',answer:'Mutluyum',clue:'Oyun oynadım. Çok eğlendim!',speech:'Mutluyum, teşekkür ederim!',hint:'Çok eğlenmiş. Nasıl hissediyor?',options:['Mutluyum','Üzgünüm','Yorgunum'],position:'50% 44%'},
-  {id:'ali',clueAudio:'oyuncagim',name:'Ali',answer:'Üzgünüm',clue:'Oyuncağım kırıldı. Ağlamak istiyorum.',speech:'Üzgünüm. Bana eşlik eder misin?',hint:'Yüzüne bir daha bak.',options:['Üzgünüm','İyiyim','Kızgınım'],position:'50% 40%'},
-  {id:'ece',clueAudio:'cokkostum',answerAudio:'yorgunum',name:'Ece',answer:'Yorgunum',clue:'Çok koştum. Dinlenmek istiyorum.',speech:'Yorgunum. Biraz dinleneceğim.',hint:'Koşudan sonra uzanıp dinleniyor. Nasıl hissediyor?',options:['Hastayım','Yorgunum','Mutluyum'],position:'50% 50%'},
-  {id:'mert',clueAudio:'burnum',name:'Mert',answer:'Hastayım',clue:'Burnum akıyor. Evde dinleniyorum.',speech:'Hastayım. Bugün dinleniyorum.',hint:'Elindeki mendile bak.',options:['İyiyim','Hastayım','Kızgınım'],position:'50% 46%'},
-  {id:'can',clueAudio:'arkadasim',name:'Can',answer:'Kızgınım',clue:'Arkadaşım oyuncağımı izinsiz aldı. Kaşlarımı çattım!',speech:'Kızgınım. Biraz sakinleşmek istiyorum.',hint:'Kaşlarını çatmış. Nasıl hissediyor?',options:['Mutluyum','Yorgunum','Kızgınım'],position:'50% 43%'}
+  {id:'ayse',clueAudio:'oyun.wav',answerAudio:'mutluyumtesekkür.mp3',name:'Ayşe',answer:'Mutluyum',clue:'Oyun oynadım. Çok eğlendim!',speech:'Mutluyum, teşekkür ederim!',hint:'Çok eğlenmiş. Nasıl hissediyor?',options:['Mutluyum','Üzgünüm','Yorgunum'],position:'50% 44%'},
+  {id:'ali',clueAudio:'oyuncagim.wav',answerAudio:'uzgunumbana.mp3',name:'Ali',answer:'Üzgünüm',clue:'Oyuncağım kırıldı. Ağlamak istiyorum.',speech:'Üzgünüm. Bana eşlik eder misin?',hint:'Yüzüne bir daha bak.',options:['Üzgünüm','İyiyim','Kızgınım'],position:'50% 40%'},
+  {id:'ece',clueAudio:'cokkostum.wav',answerAudio:'yorgunum.wav',name:'Ece',answer:'Yorgunum',clue:'Çok koştum. Dinlenmek istiyorum.',speech:'Yorgunum. Biraz dinleneceğim.',hint:'Koşudan sonra uzanıp dinleniyor. Nasıl hissediyor?',options:['Hastayım','Yorgunum','Mutluyum'],position:'50% 50%'},
+  {id:'mert',clueAudio:'burnum.wav',answerAudio:'hastayimbugun.mp3',name:'Mert',answer:'Hastayım',clue:'Burnum akıyor. Evde dinleniyorum.',speech:'Hastayım. Bugün dinleniyorum.',hint:'Elindeki mendile bak.',options:['İyiyim','Hastayım','Kızgınım'],position:'50% 46%'},
+  {id:'can',clueAudio:'arkadasim.wav',answerAudio:'kizginimbiraz.mp3',name:'Can',answer:'Kızgınım',clue:'Arkadaşım oyuncağımı izinsiz aldı. Kaşlarımı çattım!',speech:'Kızgınım. Biraz sakinleşmek istiyorum.',hint:'Kaşlarını çatmış. Nasıl hissediyor?',options:['Mutluyum','Yorgunum','Kızgınım'],position:'50% 43%'}
 ];
+const optionAudio = {Mutluyum:'mutluyum.mp3',Üzgünüm:'uzgunum.mp3',Yorgunum:'yorgunum.mp3',Hastayım:'hastayim.mp3',İyiyim:'iyiyim.mp3',Kızgınım:'kizginim.mp3'};
 const $ = id => document.getElementById(id);
 const video = $('lessonVideo');
 const VIDEO_QUESTION_TIME = 21.4;
@@ -19,16 +20,29 @@ const shuffle = input => {
   return a;
 };
 function stopSound(){if(currentAudio){currentAudio.pause();currentAudio.currentTime=0;currentAudio=null;}}
-function play(id,onEnd){
+function play(file,onEnd){
   stopSound();
   if(!sound)return;
-  const clip=new Audio('sesler/'+id+'.wav');
+  if(state==='answered')clearTimeout(nextTimer);
+  $('audioStatus').textContent='';
+  const clip=new Audio('sesler/'+file);
   currentAudio=clip;
-  if(onEnd)clip.addEventListener('ended',()=>{if(currentAudio===clip)onEnd();},{once:true});
-  clip.play().catch(()=>{
-    if(currentAudio===clip&&state==='question')$('feedback').textContent='Sesi dinlemek için Dinle’ye bas.';
-  });
+  clip.addEventListener('ended',()=>{
+    if(currentAudio!==clip)return;
+    currentAudio=null;
+    if(onEnd)onEnd();
+    if(state==='answered')scheduleNext();
+  },{once:true});
+  const failed=()=>{
+    if(currentAudio!==clip)return;
+    currentAudio=null;
+    $('audioStatus').textContent='Ses açılamadı. Dinle düğmesine tekrar bas.';
+    if(state==='answered')scheduleNext();
+  };
+  clip.addEventListener('error',failed,{once:true});
+  clip.play().catch(failed);
 }
+function listen(file){if(!sound){sound=true;updateSound();}play(file);}
 function cancelTimers(){clearTimeout(scanTimer);clearTimeout(nextTimer);scanTimer=null;nextTimer=null;}
 function show(view){['welcome','searching','question'].forEach(id=>$(id).hidden=id!==view);}
 function renderFriends(){
@@ -66,15 +80,19 @@ function ask(){
   $('radarCenter').hidden=true;$('personPhoto').src='gorseller/'+p.id+'.jpg';$('personPhoto').style.objectPosition=p.position;
   $('personPhoto').alt=p.name+' adlı oyun karakterinin fotoğrafı';$('portrait').hidden=false;$('personName').textContent=p.name;
   $('radarStatus').textContent=p.name+' bulundu!';$('clue').textContent=p.clue;$('feedback').textContent='';
-  $('success').hidden=true;$('check').hidden=false;$('check').disabled=true;
+  $('audioStatus').textContent='';$('success').hidden=true;$('check').hidden=false;$('check').disabled=true;
   const legend=document.createElement('legend');legend.className='sr-only';legend.textContent='Cevabını seç';
   $('answers').replaceChildren(legend,...shuffle(p.options).map((text,i)=>{
+    const row=document.createElement('div');row.className='choice-row';
     const label=document.createElement('label');label.className='choice';
     const radio=document.createElement('input');radio.type='radio';radio.name='answer';radio.value=text;radio.id='option-'+i;
-    const word=document.createElement('span');word.textContent=text;
+    const word=document.createElement('span');word.textContent=text+'.';
     const letter=document.createElement('span');letter.className='letter';letter.textContent=['A','B','C'][i];letter.setAttribute('aria-hidden','true');
     radio.addEventListener('change',()=>{selected=text;$('check').disabled=false;$('feedback').textContent='';});
-    label.append(radio,word,letter);return label;
+    const listenButton=document.createElement('button');listenButton.type='button';listenButton.className='listen-button';
+    listenButton.textContent='Dinle';listenButton.setAttribute('aria-label',text+' cevabını dinle');
+    listenButton.addEventListener('click',()=>listen(optionAudio[text]));
+    label.append(radio,word,letter);row.append(label,listenButton);return row;
   }));
   renderFriends();$('questionTitle').focus({preventScroll:true});
   $('listenQuestion').hidden=false;
@@ -92,7 +110,7 @@ function check(){
   $('speech').textContent=p.name+': “'+p.speech+'”';$('listenAnswer').hidden=!p.answerAudio;$('next').firstChild.textContent=index===people.length-1?'Videoya geç ':'Devam et ';
   renderFriends();scheduleNext();
 }
-function scheduleNext(){clearTimeout(nextTimer);if($('autoNext').checked&&state==='answered')nextTimer=setTimeout(next,6000);}
+function scheduleNext(){clearTimeout(nextTimer);if($('autoNext').checked&&state==='answered'&&!currentAudio)nextTimer=setTimeout(next,6000);}
 function next(){if(state!=='answered')return;cancelTimers();stopSound();index++;if(index>=order.length)beginVideo();else scan();}
 function beginVideo(){
   cancelTimers();stopSound();state='video';setStage(true);video.load();video.muted=!sound;
@@ -138,13 +156,13 @@ $('playVideo').addEventListener('click',resumeVideo);$('answerDone').addEventLis
 $('pauseVideo').addEventListener('click',()=>{if(state!=='video')return;if(video.paused)resumeVideo();else video.pause();});
 $('start').addEventListener('click',start);$('restart').addEventListener('click',start);$('check').addEventListener('click',check);$('next').addEventListener('click',next);
 $('autoNext').addEventListener('change',scheduleNext);
-$('listenQuestion').addEventListener('click',()=>{if(!sound){sound=true;updateSound();}play('merhaba');});
-$('listenClue').addEventListener('click',()=>{if(!sound){sound=true;updateSound();}$('feedback').textContent='';play(person().clueAudio);});
-$('listenAnswer').addEventListener('click',()=>{if(!sound){sound=true;updateSound();}if(person().answerAudio)play(person().answerAudio);scheduleNext();});
+$('listenQuestion').addEventListener('click',()=>listen('merhaba.wav'));
+$('listenClue').addEventListener('click',()=>listen(person().clueAudio));
+$('listenAnswer').addEventListener('click',()=>listen(person().answerAudio));
 function updateSound(){
   $('sound').textContent=sound?'Ses açık':'Ses kapalı';$('sound').setAttribute('aria-pressed',String(sound));video.muted=!sound;
 }
-$('sound').addEventListener('click',()=>{sound=!sound;updateSound();if(!sound)stopSound();});
+$('sound').addEventListener('click',()=>{sound=!sound;updateSound();if(!sound){stopSound();scheduleNext();}});
 $('fullscreen').addEventListener('click',async()=>{
   try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen();}
   catch{$('fullscreen').textContent='Tam ekran açılamadı';}

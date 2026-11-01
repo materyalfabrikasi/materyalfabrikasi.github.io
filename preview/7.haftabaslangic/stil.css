@@ -6,3 +6,6 @@
 
 /* İsteğe bağlı cümle dinleme düğmeleri */
 .sentence-row{display:flex;align-items:center;gap:12px}.sentence-row>*:first-child{flex:1;min-width:0}.clue-row{margin-bottom:18px}.clue-row .clue{margin:0}.listen-button{flex-shrink:0;align-self:center;border:1px solid #b7d4cc;color:#087f7c;background:#f0f7f4;border-radius:10px;padding:10px 12px;font-size:12px;font-weight:bold;cursor:pointer}.listen-button:hover{background:#dfeee7}.answer-row{margin-bottom:10px}.answer-row blockquote{margin:0}.answered .clue-row{display:none}.prompt-sentence{text-align:left}.prompt-sentence h2{margin:0}.prompt-card .eyebrow{margin-bottom:18px}@media(max-width:740px){.sentence-row{gap:8px}.listen-button{padding:10px;font-size:11px}.prompt-sentence{flex-direction:column;text-align:center}.prompt-sentence .listen-button{margin-top:3px}.prompt-card{padding:18px 14px}.prompt-card h2{font-size:22px}.clue-row .clue{padding:10px;font-size:14px}}
+
+/* Şık seçimi ile ses düğmesi birbirinden bağımsızdır. */
+.choice-row{display:flex;align-items:stretch;gap:10px}.choice-row .choice{flex:1;min-width:0}.choice-row>.listen-button{align-self:stretch;min-width:64px}.choice-row .choice>span:not(.letter){overflow-wrap:anywhere}@media(max-width:400px){.choice-row{gap:6px}.choice-row .choice{padding:10px;gap:8px;font-size:16px}}

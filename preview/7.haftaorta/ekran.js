@@ -1,12 +1,15 @@
 "use strict";
 // Resim ve tıklama alanları aynı 3:2 koordinat düzleminde tutulur.
 (() => {
- const frame=document.querySelector(".scene-frame"),scene=document.querySelector(".scene");
+ const frame=document.querySelector(".scene-frame"),scene=document.querySelector(".scene"),layout=document.querySelector(".map-space"),card=document.querySelector(".map-card");
  const dialogs=[...document.querySelectorAll("dialog")];
  function viewport(){return {width:window.visualViewport?.width||window.innerWidth,height:window.visualViewport?.height||window.innerHeight};}
  function fitScene(){
-  if(!frame||!scene||frame.clientWidth<=0||frame.clientHeight<=0)return;
-  const width=Math.min(frame.clientWidth,frame.clientHeight*1.5);
+  if(!frame||!scene||!layout||!card||layout.clientWidth<=0||layout.clientHeight<=0)return;
+  const chrome=card.querySelector(".map-top").offsetHeight+card.querySelector(".map-bottom").offsetHeight+2;
+  const width=Math.max(0,Math.min(layout.clientWidth-2,(layout.clientHeight-chrome)*1.5));
+  card.style.width=(width+2)+"px";
+  card.style.height=(width/1.5+chrome)+"px";
   scene.style.width=width+"px";scene.style.height=width/1.5+"px";
  }
  function fitDialog(dialog){
@@ -16,7 +19,7 @@
  }
  function fitAll(){fitScene();dialogs.forEach(fitDialog);}
  const observer=new ResizeObserver(()=>fitAll());
- if(frame)observer.observe(frame);dialogs.forEach(d=>observer.observe(d));
+ if(layout)observer.observe(layout);if(frame)observer.observe(frame);dialogs.forEach(d=>observer.observe(d));
  const openObserver=new MutationObserver(()=>requestAnimationFrame(fitAll));
  dialogs.forEach(d=>openObserver.observe(d,{attributes:true,attributeFilter:["open"]}));
  window.addEventListener("resize",fitAll);window.visualViewport?.addEventListener("resize",fitAll);

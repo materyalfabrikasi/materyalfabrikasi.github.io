@@ -584,6 +584,7 @@
                         <option value="12 Ekim - 18 Ekim">12 Ekim - 18 Ekim</option>
                         <option value="19 Ekim - 25 Ekim">19 Ekim - 25 Ekim</option>
                         <option value="26 Ekim - 1 Kasım">26 Ekim - 1 Kasım</option>
+                        <option value="2-8 Kasım">2-8 Kasım</option>
                     </select>
                 </div>
                 <button class="clear-filters" onclick="clearFilters()">Filtreleri Temizle</button>
@@ -1163,10 +1164,10 @@
                 scormPath: "scorm/6.haftaileri.zip",
                 previewUrl: "preview/6.haftaileri/index.html",
                 sunumPath: "pptx/ileri3.pptx"
-            }, /* {
+            }, {
                 id: 43,
                 name: "Nasılsın?",
-                description: "1'den 10'a kadar ritmik sayar. Temel rakam görsellerini tanır.",
+                description: "Temel duygu ifadelerini ayırt eder.Temel vücut bölümlerini gösterir.",
                 icon: "materyal.png",
                 tema: "Merhaba Ben! Kendime Yolculuk",
                 yas: "Tohum",
@@ -1179,7 +1180,7 @@
             }, {
                 id: 44,
                 name: "Nasılsın?",
-                description: "1’den 20’ye kadar sayıları söyler. Yaşını söyler ve karşısındaki kişinin yaşını sorar.",
+                description: "Hâl hatır sormaya ve cevap vermeye yönelik temel ifadeleri kullanır.Duygu ve durumunu temel ifadelerle belirtir.",
                 icon: "materyal.png",
                 tema: "Merhaba Ben! Kendime Yolculuk",
                 yas: "Tohum",
@@ -1192,7 +1193,7 @@
             }, {
                 id: 45,
                 name: "Nasılsın?",
-                description: "Kişilerin yaşlarına ve karşılaşma durumlarına göre kullanılan hitap ve selamlaşma ifadelerini karşılaştırır.",
+                description: "Öğrenci, kişilerin nasıl olduklarını belirten ifadeleri durumlarına uygun şekilde kullanır.",
                 icon: "materyal.png",
                 tema: "Merhaba Ben! Kendime Yolculuk",
                 yas: "Filiz,Fidan,Çınar",
@@ -1205,7 +1206,7 @@
             }, {
                 id: 46,
                 name: "Nasılsın?",
-                description: "Öğrenci, kendisinden büyük kişilere seslenirken abi, abla, amca ve teyze gibi hitap sözcüklerinin kullanıldığını fark eder.",
+                description: "Öğrenci, hâl hatır sorma diyaloglarını sıralayarak nazik iletişim kurallarını uygular.",
                 icon: "materyal.png",
                 tema: "Merhaba Ben! Kendime Yolculuk",
                 yas: "Filiz,Fidan,Çınar",
@@ -1218,7 +1219,7 @@
             }, {
                 id: 47,
                 name: "Nasılsın?",
-                description: "Öğrenci, çark oyununda yaşa uygun hitap ve nezaket ifadelerini kullanır.",
+                description: "Öğrenci, hâl hatır sormada kullanılan nazik ifadeleri karşılaştırır.",
                 icon: "materyal.png",
                 tema: "Merhaba Ben! Kendime Yolculuk",
                 yas: "Filiz,Fidan,Çınar",
@@ -1231,7 +1232,7 @@
             }, {
                 id: 48,
                 name: "Nasılsın?",
-                description: "Öğrenci, 'Saygı Merdiveni' oyununda yaşa uygun hitapları seçerek saygı, sevgi ve nezaket ifadelerinin doğru kullanımını analiz eder.",
+                description: "Öğrenci, Türk kültüründe hâl hatır sormanın önemini ve nazik iletişim ifadelerinin insanlar arasındaki bağları güçlendirmedeki rolünü analiz eder.",
                 icon: "materyal.png",
                 tema: "Merhaba Ben! Kendime Yolculuk",
                 yas: "Filiz,Fidan,Çınar",
@@ -1241,7 +1242,7 @@
                 scormPath: "scorm/7.haftaileri.zip",
                 previewUrl: "preview/7.haftaileri/index.html",
                 sunumPath: "pptx/ileri4.pptx"
-            }*/
+            }
         ];
 
         let filteredMaterials = [...materials];
@@ -1352,7 +1353,16 @@
             const seviyeFilter = document.getElementById('seviyeFilter').value.toLocaleLowerCase('tr');
             const yasFilter = document.getElementById('yasFilter').value.toLocaleLowerCase('tr');
             const beceriFilter = document.getElementById('beceriFilter').value.toLocaleLowerCase('tr');
-            const normalizeDate = (str) => (str || '').replace(/\s*-\s*/g, '-').replace(/\s+/g, ' ').trim().toLocaleLowerCase('tr');
+            const normalizeDate = (str) => {
+                if (!str) return '';
+                let s = str.toLocaleLowerCase('tr')
+                    .replace(/\b0+(\d+)\b/g, '$1')
+                    .replace(/\s*-\s*/g, '-')
+                    .replace(/\s+/g, ' ')
+                    .trim();
+                s = s.replace(/(\d+)\s+([^\d\s\-]+)-(\d+)\s+\2/u, '$1-$3 $2');
+                return s.replace(/\s*-\s*/g, '-').trim();
+            };
             const tarihFilter = document.getElementById('tarihFilter') ? normalizeDate(document.getElementById('tarihFilter').value) : '';
 
             filteredMaterials = materials.filter(material => {
