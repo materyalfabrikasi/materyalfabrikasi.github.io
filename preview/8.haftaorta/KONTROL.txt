@@ -1,0 +1,38 @@
+YENİ TASARIM — TEKNİK KONTROL
+
+Geçen kontroller:
+- JavaScript sözdizimi.
+- 7 kelime / 7 karşılık gelen mektup boşluğu.
+- Yanlış yerleştirmede ipucu ve ilerlememe.
+- Serbest yerleştirme sırası ve yinelenen yerleştirmeye karşı koruma.
+- İlerleme kaydından devam etme.
+- Son kelimeden sonra otomatik zarf aşamasına geçiş.
+- Pul görselinin zarf aşamasında bulunması.
+- Gönderen adı olmadan gönderime hazırlanamama.
+- Adın HTML olarak çalıştırılmadan gösterilmesi.
+- Oyun içi gönderme ve tamamlanma kaydı.
+- Mektubun “Sevgili Kaan,” / “Nasılsın?” ile başlayıp “Seni özledik!” ile bitmesi.
+- Farklı ekran oranlarında sığdırma hesabı.
+- Yerel HTML, görsel ve ses bağlantılarının geçerliliği.
+- Yeni SVG görsellerinin raster önizlemeleri incelendi.
+
+Sınır:
+Akış testleri DOM test düzeneğinde gerçekleştirildi. Bu ortamda önceki tarayıcı
+başlatma ve yerel önizleme güvenlik kısıtları sürdüğünden gerçek tarayıcıda
+görsel yerleşim, sürükleme hareketi, animasyon zamanlaması, sesin işitilmesi,
+pano ve kart indirme uçtan uca doğrulanamadı. Öğrenciyle kullanıcı testi yapılmadı.
+
+PROFESYONEL GÖRSEL GÜNCELLEMESİ
+- Beş yeni illüstrasyon üretildi; tümünün ortak paleti ve saydamlığı incelendi.
+- Yeni görseller oyundaki mevcut görsel bağlantılarına yerleştirildi.
+- PNG kaynaklar korundu; oyun için saydam WebP dosyaları oluşturuldu.
+- Görsel dosyaları ve bağlantıları doğrulandı; eski Ülkem Yanımda logosu korundu.
+
+- Grip boşluğu yerine Nasılsın boşluğu eklendi. Yedi boşluk korunuyor.
+- Grip sözcüğü mektupta sabit; Nasılsın soru işaretiyle tamamlanıyor.
+
+- Gönderen adı onayından sonra form kaldırılır; gönderme adımında tekrarlanmaz.
+
+- “Gönderen: sen!” başlığı kaldırıldı.
+- Mektup penceresinin çarpısı üst sağda ayrı alana alındı; büyük ve üst katmanda.
+- Pencere açılınca klavye odağı kapatma düğmesine verilir.

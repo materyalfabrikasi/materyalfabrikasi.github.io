@@ -1,0 +1,40 @@
+BİR NASILSIN, BİR KALP! — Başlangıç seviyesi
+
+index.html dosyasını tarayıcıda açın. İnternet gerekmez.
+Tüm dosyaları aynı klasör içinde birlikte tutun.
+
+Üç kişiye sırayla tıklayın. Yeşil kelimeleri boş yerlere sürükleyin.
+Cümleyi kurduktan sonra Kontrol et düğmesine basın.
+Kelimeleri kutular arasında sürükleyerek yer değiştirebilir,
+yeniden kelime havuzuna taşıyabilirsiniz. Tıklayarak da ekleyip çıkarabilirsiniz.
+Temizle düğmesi o cümleyi sıfırlar.
+Yanlış cevapta ipucu görünür. Kalp kaybı veya süre sınırı yoktur.
+Her konuşma bir kalp yakar. Sonunda mahallenin büyük kalbi renklenir.
+
+Sesli okuma yoktur. Yalnızca tıklama, doğru seçim ve tamamlanma sesleri vardır.
+Ses düğmesi bütün oyun seslerini açar veya kapatır.
+Tab ile düğmeler arasında geçin; Enter veya boşluk ile kelimeleri ekleyip çıkarın.
+Yardım ve yeniden başlatma pencereleri Escape ile kapatılabilir.
+Oyun pencereye otomatik sığar; sayfa kaydırması gerektirmez.
+
+Hedefler: Nasılsın? / Yapabileceğim bir şey var mı? / Siz nasılsınız? /
+Ailen nasıl? / Ailem iyi, teşekkür ederim. / Geçmiş olsun!
+
+index.html: Ana sayfa
+stil.css: Ekran tasarımı
+oyun.js: Etkileşim ve pencereye sığdırma
+gorseller/mahalle.png: Özgün mahalle illüstrasyonu
+1.svg: Kullanıcının sağladığı logo
+sesler/tik.wav: Tıklama
+sesler/dogru.wav: Onay
+sesler/tamam.wav: Oyun tamamlanma
+
+Kayıt, mikrofon, konuşma sentezi, dış bağlantı veya takip kodu kullanılmaz.
+
+Arkadaş: Çok yorgunum.
+Öğrenci: Yapabileceğim bir şey var mı?
+Arkadaş: Dinleniyorum. Teşekkür ederim.
+
+Sorular: Arkadaşın yorgun görünüyor. Ona ne dersin? /
+Arkadaşın hasta görünüyor. Ona ne dersin?
+Kelime havuzunda yalnızca cümleyi tamamlamak için gereken kelimeler vardır.

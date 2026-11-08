@@ -1,0 +1,15 @@
+Görseller yerleşik ImageGen aracı ile üretildi.
+
+Ortak üretim istemi: Türkçe bir ilkokul hâl hatır sorma oyunu için profesyonel çağdaş çocuk kitabı illüstrasyonu; guaj ve renkli kalem dokusu; doğal yüz ifadeleri ve el anatomisi; sıcak ışık; sade krem arka plan; kare, ortalanmış belden yukarı kompozisyon; yazı ve filigran yok.
+
+Karakterler:
+- Efe: Dişi ağrıyan, eli yanağında, kiremit renkli üst giyen çocuk.
+- Zeynep: Heyecanlı, elleri göğsünde birleşmiş, hardal sarısı hırkalı kız.
+- Deniz: Yeşil üstlü, açık defterine kalemle çalışan çocuk.
+- Elif: Mutlu, pembe üstlü, yıldızlı sınav kâğıdını gösteren kız.
+- Ali: Biraz üzgün, mavi üstlü çocuk.
+- Çanta: Yeşil kumaş okul çantası; sarı ön cep; kiremit renkli kalp arması; aynı kitap illüstrasyonu stili.
+
+1.svg kullanıcı tarafından sağlanan özgün logodur ve değiştirilmemiştir.
+
+Düzenleme (yerleşik ImageGen): Zeynep görselindeki Türk bayraklı tokayı tamamen kaldır; yerini çevreyle uyumlu doğal kahverengi saç telleriyle doldur. Diğer görsel özelliklerini koru.

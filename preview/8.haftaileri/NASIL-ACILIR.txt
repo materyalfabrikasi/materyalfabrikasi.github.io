@@ -1,0 +1,38 @@
+ALO NASILSINIZ — Aile bağlarımız
+
+BAŞLATMA
+index.html dosyasına çift tıklayın. İnternet, kurulum veya üyelik gerekmez.
+assets klasörü index.html ile aynı yerde durmalıdır.
+
+OYUN
+1. Babaanne, dede veya teyzeyi seçin. Telefon çalar.
+2. Akrabanın yazılı selamını okuyun. Öğrencinin nazik yanıtını seçin.
+3. “Sohbete devam et” düğmesine basın.
+4. Her akraba için iki farklı durumda uygun konuşma balonunu seçin.
+   Babaanne: özlem ve evdekilerin hâli.
+   Dede: geçmiş olsun dileği ve babaannenin hâli.
+   Teyze: evdekilerin hâli ve kuzenine selam.
+5. Yanlış seçimde ipucu gelir; öğrenci tekrar deneyebilir.
+6. Doğru seçimde akraba gülümser; başarı ve alkış efektleri çalar.
+7. Üç akrabayla da sohbet ederek üç kalbi tamamlayın.
+
+SESLER
+Telefon çalması, düğme tıklaması, tekrar deneme, başarı melodisi ve alkış.
+Hiçbir ses dosyasında konuşma veya metin okuma bulunmaz.
+Ses açık/kapalı düğmesiyle efektleri kapatabilirsiniz.
+Tarayıcı, ilk tıklamadan sonra sesleri etkinleştirir.
+
+ERİŞİLEBİLİRLİK
+Düğmeler Tab ve Enter/Boşluk ile kullanılabilir.
+Soru aşamasında 1, 2, 3 tuşları seçenekleri seçer.
+Esc açık aramayı bitirir. Hareket azaltma tercihi desteklenir.
+İlerleme mümkün olduğunda yalnızca kullanılan tarayıcıda saklanır.
+
+ÖĞRETMEN NOTU
+Öğrenci, “İyiyim, teşekkür ederim. Siz nasılsınız?” yanıtını ve
+“Evdekiler nasıl?” sorusunu yüksek sesle söyleyerek pratik yapabilir.
+Diyaloglar ekranda yazılıdır; mikrofon veya ses kaydı kullanılmaz.
+Bitişte “Birini arayıp hâlini hatırını sormak ona nasıl hissettirir?”
+sorusuyla aile bağları üzerine konuşabilirsiniz.
+
+Görseller ImageGen ile üretilmiş, iki ifadeli karakter portreleridir. Efektler bu oyun için sentezlenmiştir.

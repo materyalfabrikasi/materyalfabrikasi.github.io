@@ -1,0 +1,78 @@
+BİR NASILSIN, BİR GÖNÜL BAĞI! — gönül postası
+Çevrim İçi Türkçe ve Türk Kültürü / 8. hafta / Orta düzey
+
+BAŞLATMA
+index.html dosyasını güncel tarayıcıyla açın. Diğer dosyalar aynı klasörde kalsın.
+Kurulum ve dış ağ bağlantısı gerektirmez. Çevrim içi kullanım için klasörün
+tamamını bir statik web sunucusuna veya HTML içeriği destekleyen ders ortamına yükleyin.
+Bu teslim yerel dosyalardan oluşur. Herkese açık bir adreste yayımlanmadı.
+SCORM paketi değildir.
+
+YENİ OYUN AKIŞI
+Tek mektup ekranında 7 boşluk vardır. Kelimeler mektubun iki yanında durur.
+Bir kelimeyi uygun boşluğa sürükleyin. Alternatif olarak kelimeye ve ardından
+boşluğa tıklayın. Önce boşluğu, sonra kelimeyi seçmek de mümkündür.
+Yerleştirme sırası serbesttir. Yanlış kelimede ipucu verilir; puan kaybı olmaz.
+Yerleşen kelime bankada işaretlenir ve tekrar kullanılamaz.
+Yedi kelime yerleşince tamamlanan mektup kısa süre görünür, katlanır, zarf kapanır
+ve çiçekli pul ile posta damgası görünür. Öğrenci gönderen adını yazar ve
+“Adımı zarfa yaz” düğmesiyle onaylar. Sonra “Mektubumu gönder” seçeneği açılır.
+Gönderme oyun içi canlandırmadır; gerçek bir kişiye mesaj iletilmez.
+Finalde mektup yeniden okunabilir, PNG kartı indirilebilir veya metin kopyalanabilir.
+
+MEKTUP METNİ
+Sevgili Kaan,
+
+Nasılsın?
+
+Grip yüzünden okula gelemediğini öğrendim. Çok üzüldüm.
+
+Geçmiş olsun, acil şifalar!
+
+Bence biraz dinlenmelisin. İstersen ödevlerini getirebilirim.
+
+Evdekiler nasıl? Ailene selam söyle!
+
+Seni özledik!
+
+EKSİK KELİMELER
+Nasılsın / olsun / dinlenmelisin / getirebilirim / nasıl / selam / özledik
+
+DERS İÇİN ÖNERİLEN KULLANIM (7–10 DAKİKA)
+Kaan’ın hastalığını konuşun. Her boşlukta cümleyi okutun ve kelime seçimini
+öğrenciye açıklatın. Mektup tamamlanınca tekrar okuyun. “Başka hangi durumlarda
+geçmiş olsun deriz?” sorusuyla günlük yaşama aktarın. Otomatik süre sınırı yoktur.
+
+GÖRSELLER VE SESLER
+1.svg: Ülkem Yanımda logosu; dosya değiştirilmeden üst alanda kullanılır.
+Aktif profesyonel görseller: gorseller/profesyonel/ altında arkadas, kus,
+pul, posta-kutusu ve masa. Oyun saydam WebP sürümlerini kullanır.
+Yüksek çözünürlüklü PNG kaynakları aynı klasöre eklenmiştir.
+Önceki SVG çizimleri korunmuştur. Üretim istemleri GORSEL-URETIM.txt içindedir.
+WAV geri bildirimleri: tik, dogru, tekrar, zarf, tamam.
+
+ERİŞİLEBİLİRLİK VE EKRAN
+Ana sayfada aşağı kaydırma yoktur; oyun sahnesi ekrana sığacak şekilde ölçeklenir.
+Fare, sürükleme, dokunarak seçim ve Tab/Enter/boşluk ile kullanım desteklenir.
+Ses kapatılabilir. Her sesli geri bildirimin metin karşılığı bulunur.
+Cihazın hareket azaltma tercihi gözetilir. Küçük ekranda yazılar da ölçeklenir;
+çevrim içi derslerde daha rahat okuma için geniş ekran tercih edilebilir.
+
+KAYIT
+İlerleme ve gönderen adı yalnızca bu tarayıcının localStorage alanında saklanır.
+Sunucuya veri gönderilmez. Kayıt engellenmişse mevcut oturumda oynanabilir.
+Ortak cihazda final ekranındaki “Yeniden oyna” ile bu oyunun kaydı temizlenebilir.
+Yeni tasarım, önceki beş görevli sürümün ilerlemesini kullanmaz.
+
+KILAVUZ İLKELERİ
+Öğrenme hedefiyle doğrudan ilişkili cümle tamamlama; açıklayıcı geri bildirim;
+cezasız hata yönetimi; görünür ilerleme; alternatif girdi; zaman baskısı olmaması;
+düşük ağ bağımlılığı ve öğrenci mahremiyeti gözetilmiştir.
+Gerçek öğrenci grubunda dil seviyesi, süre ve kullanım gözlemi yapılmalıdır.
+
+SON DÜZENLEME
+“Nasılsın?” sorusu boşluk doldurmaya eklendi. Grip, kelime bankasından
+çıkarıldı; “Grip yüzünden…” cümlesinin başında dolu olarak yer alır.
+
+Gönderen adı yalnızca bir kez istenir. “Adımı zarfa yaz” ile onaylandıktan
+sonra ad alanı kaldırılır; gönderme düğmesi gösterilir.

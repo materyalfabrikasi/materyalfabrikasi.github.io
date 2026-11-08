@@ -1,0 +1,15 @@
+Nasılsın? İyilik Çantamı Dolduruyorum
+
+index.html dosyasına çift tıklayarak açın. İnternet veya kurulum gerekmez.
+1.svg logosunu ve assets klasörünü index.html ile aynı yerde tutun.
+
+1. Büyük Nasılsın? düğmesine tıklayın.
+2. Karakterin cevabını okuyun.
+3. Açılan üç karttan uygun güzel sözü çantaya sürükleyin.
+   Alternatif: Karta, ardından çantaya tıklayın veya dokunun.
+4. Beş karşılaşmayı tamamlayın.
+
+Klavye: Tab ile ilerleyin, Enter veya boşluk ile seçim yapın.
+Düzen ekran yüksekliğine uyarlanır; oyun için aşağı kaydırmak gerekmez.
+
+Oyun sesleri: Açılış melodisi ilk tıklamada çalar. Soru sorma, kart seçme, doğru cevap, tekrar deneme, tur geçişi ve oyun bitişi için kısa müzik efektleri vardır. Sağ üstteki Ses açık / Ses kapalı düğmesiyle kontrol edilir. Ses tercihi bu tarayıcıda hatırlanır. Konuşma veya metin okuma sesi kullanılmaz; internet gerekmez.
