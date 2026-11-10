@@ -402,69 +402,13 @@ window.addEventListener('DOMContentLoaded', () => {
   bodyNext.addEventListener('click', () => {
     if (!bodyNext.disabled) openPainGame();
   });
-  const roadScreen = document.createElement('section');
-  roadScreen.className = 'road-screen';
-  roadScreen.innerHTML = `
-    <div class="road-card">
-      <video class="road-video" src="assets/videos/okul-yolu.mp4?v=3" playsinline preload="metadata"></video>
-      <div class="road-heading"><b>İzle ve Cevapla.</b><span>1</span></div>
-      <button class="road-start" type="button" aria-label="Videoyu başlat">▶</button>
-      <div class="road-question" hidden>
-        <button class="road-listen" type="button" aria-label="Sesi tekrar dinle">🔊 <b>Nasılsın?</b></button>
-        <div class="road-faces">
-          <button type="button" data-answer="happy" aria-label="Mutlu"><img class="road-face-image" src="assets/images/mutlu.png" alt=""><span class="road-face-label">İyiyim</span></button>
-          <button type="button" data-answer="sad" aria-label="Üzgün"><img class="road-face-image" src="assets/images/uzgun.png" alt=""><span class="road-face-label">Üzgünüm</span></button>
-        </div>
-        <div class="road-nav"><button class="road-back" type="button" aria-label="Geri">←</button><button class="road-next" type="button" aria-label="İleri" disabled>İleri&nbsp; →</button></div>
-      </div>
-    </div>`;
-  document.body.appendChild(roadScreen);
-
-  const roadVideo = roadScreen.querySelector('.road-video');
-  const roadStart = roadScreen.querySelector('.road-start');
-  const roadQuestion = roadScreen.querySelector('.road-question');
-  const roadNext = roadScreen.querySelector('.road-next');
-  const roadAudio = new Audio();
-  const roadSounds = {prompt:'assets/audio/nasilsin.wav',happy:'assets/audio/iyiyim.wav',sad:'assets/audio/uzgunum.wav'};
-  const playRoadSound = (src) => {
-    roadAudio.pause();
-    roadAudio.currentTime = 0;
-    roadAudio.src = src;
-    roadAudio.play().catch(() => {});
-  };
-  const resetRoad = () => {
-    roadAudio.pause();
-    roadQuestion.hidden = true;
-    roadNext.disabled = true;
-    roadScreen.querySelectorAll('.road-faces button').forEach((button) => button.classList.remove('selected'));
-    roadVideo.currentTime = 0;
-    roadStart.hidden = false;
-  };
-  roadStart.addEventListener('click', () => {
-    roadStart.hidden = true;
-    roadVideo.currentTime = 0;
-    roadVideo.play().catch(() => { roadStart.hidden = false; });
-  });
-  roadVideo.addEventListener('ended', () => {
-    roadQuestion.hidden = false;
-    playRoadSound(roadSounds.prompt);
-  });
-  roadScreen.querySelector('.road-listen').addEventListener('click', () => playRoadSound(roadSounds.prompt));
-  roadScreen.querySelectorAll('.road-faces button').forEach((button) => button.addEventListener('click', () => {
-    roadScreen.querySelectorAll('.road-faces button').forEach((item) => item.classList.remove('selected'));
-    button.classList.add('selected');
-    roadNext.disabled = false;
-    playRoadSound(roadSounds[button.dataset.answer]);
-  }));
-  roadScreen.querySelector('.road-back').addEventListener('click', resetRoad);
-
   const gardenScreen = document.createElement('section');
   gardenScreen.className = 'garden-screen';
-  gardenScreen.hidden = true;
+  gardenScreen.hidden = false;
   gardenScreen.innerHTML = `
     <div class="garden-card">
       <video class="garden-video" src="assets/videos/okul-bahcesi.mp4" playsinline preload="metadata"></video>
-      <div class="garden-heading"><b>İzle ve Cevapla.</b><span>2</span></div>
+      <div class="garden-heading"><b>İzle ve Cevapla.</b><span>1</span></div>
       <div class="garden-placeholder" hidden><span>🎬</span><b>Video hazırlanıyor</b></div>
       <button class="garden-start" type="button" aria-label="Videoyu başlat">▶</button>
       <div class="garden-question" hidden>
@@ -520,8 +464,6 @@ window.addEventListener('DOMContentLoaded', () => {
     gardenStart.hidden = false;
   };
   const openGardenGame = () => {
-    roadScreen.hidden = true;
-    roadScreen.classList.remove('leaving');
     gardenScreen.hidden = false;
     gardenScreen.classList.remove('leaving');
     resetGarden();
@@ -553,11 +495,7 @@ window.addEventListener('DOMContentLoaded', () => {
       window.setTimeout(() => { gardenSuccess.hidden = true; }, 850);
     }));
   }));
-  gardenScreen.querySelector('.garden-back').addEventListener('click', () => {
-    resetGarden();
-    gardenScreen.hidden = true;
-    roadScreen.hidden = false;
-  });
+  gardenScreen.querySelector('.garden-back').addEventListener('click', resetGarden);
 
   const sadScreen = document.createElement('section');
   sadScreen.className = 'sad-screen';
@@ -565,7 +503,7 @@ window.addEventListener('DOMContentLoaded', () => {
   sadScreen.innerHTML = `
     <div class="sad-card">
       <video class="sad-video" src="assets/videos/uzgun.mp4" playsinline preload="metadata"></video>
-      <div class="sad-heading"><b>İzle ve Cevapla.</b><span>3</span></div>
+      <div class="sad-heading"><b>İzle ve Cevapla.</b><span>2</span></div>
       <div class="sad-placeholder" hidden><span>🎬</span><b>Video hazırlanıyor</b></div>
       <button class="sad-start" type="button" aria-label="Videoyu başlat">▶</button>
       <div class="sad-question" hidden>
@@ -673,7 +611,7 @@ window.addEventListener('DOMContentLoaded', () => {
   angryScreen.innerHTML = `
     <div class="sad-card angry-card">
       <video class="sad-video angry-video" src="assets/videos/kizgin.mp4" playsinline preload="metadata"></video>
-      <div class="sad-heading angry-heading"><b>İzle ve Cevapla.</b><span>4</span></div>
+      <div class="sad-heading angry-heading"><b>İzle ve Cevapla.</b><span>3</span></div>
       <div class="sad-placeholder angry-placeholder" hidden><span>🎬</span><b>Video hazırlanıyor</b></div>
       <button class="sad-start angry-start" type="button" aria-label="Videoyu başlat">▶</button>
       <div class="sad-question angry-question" hidden>
@@ -778,7 +716,7 @@ window.addEventListener('DOMContentLoaded', () => {
   happyScreen.innerHTML = `
     <div class="sad-card happy-card">
       <video class="sad-video happy-video" src="assets/videos/mutlu.mp4" playsinline preload="metadata"></video>
-      <div class="sad-heading happy-heading"><b>İzle ve Cevapla.</b><span>5</span></div>
+      <div class="sad-heading happy-heading"><b>İzle ve Cevapla.</b><span>4</span></div>
       <div class="sad-placeholder happy-placeholder" hidden><span>🎬</span><b>Video hazırlanıyor</b></div>
       <button class="sad-start happy-start" type="button" aria-label="Videoyu başlat">▶</button>
       <div class="sad-question happy-question" hidden>
@@ -905,16 +843,15 @@ window.addEventListener('DOMContentLoaded', () => {
     angryScreen.hidden = false;
   });
   finalScreen.querySelector('.restart-game').addEventListener('click', () => {
-    [roadVideo,gardenVideo,sadVideo,angryVideo,happyVideo,emotionVideo].forEach((media) => media.pause());
-    [roadAudio,gardenAudio,sadAudio,angryAudio,happyAudio].forEach((media) => media.pause());
-    resetRoad();resetGarden();resetSad();resetAngry();resetHappy();
+    [gardenVideo,sadVideo,angryVideo,happyVideo,emotionVideo].forEach((media) => media.pause());
+    [gardenAudio,sadAudio,angryAudio,happyAudio].forEach((media) => media.pause());
+    resetGarden();resetSad();resetAngry();resetHappy();
     finalScreen.classList.remove('is-open');
     finalScreen.hidden = true;
     stopPainAudio();
     bodyNext.disabled = true;
     [gardenScreen,sadScreen,angryScreen,happyScreen,emotionScreen,painScreen,songScreen].forEach((screen) => { screen.hidden = true; screen.classList.remove('is-open','leaving'); });
-    roadScreen.hidden = false;
-    roadScreen.classList.remove('leaving');
+    openGardenGame();
   });
   finalScreen.querySelector('.final-next').addEventListener('click', () => {
     finalScreen.classList.remove('is-open');
@@ -947,16 +884,6 @@ window.addEventListener('DOMContentLoaded', () => {
     gardenVideo.pause();
     gardenScreen.classList.add('leaving');
     window.setTimeout(() => { gardenScreen.hidden = true; openSadGame(); }, 350);
-  });
-
-  roadNext.addEventListener('click', () => {
-    if (roadNext.disabled) return;
-    roadAudio.pause();
-    roadScreen.classList.add('leaving');
-    window.setTimeout(() => {
-      roadScreen.hidden = true;
-      openGardenGame();
-    }, 350);
   });
 
   const player = document.querySelector('#player');
