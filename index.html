@@ -383,6 +383,50 @@
             gap: 0.5rem;
         }
 
+        .like-guidance {
+            text-align: center;
+            color: #475569;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .like-btn {
+            margin-top: 1rem;
+            width: 100%;
+            background: #fdf2f8;
+            color: #be185d;
+            border: 1px solid #fbcfe8;
+            font-family: inherit;
+        }
+
+        .like-count {
+            padding: 0.2rem 0.6rem;
+            border-radius: 999px;
+            background: rgba(190, 24, 93, 0.08);
+            font-size: 0.8rem;
+            white-space: nowrap;
+        }
+
+        .like-btn[aria-pressed="true"] .like-count {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .like-btn:hover {
+            background: #fce7f3;
+        }
+
+        .like-btn[aria-pressed="true"] {
+            background: #be185d;
+            color: #ffffff;
+            border-color: #be185d;
+        }
+
+        .like-btn:focus-visible {
+            outline: 3px solid #6366f1;
+            outline-offset: 3px;
+        }
+
         .download-btn {
             background: #10b981;
             color: white;
@@ -601,6 +645,9 @@
 
         <div class="results-count" id="resultsCount"></div>
 
+        <p class="like-guidance">Kullandığınız ve beğendiğiniz materyalleri beğenebilirsiniz.<br>
+            <small>Sayaç yalnızca bu tarayıcıdaki beğeninizi gösterir.</small>
+        </p>
         <div class="materials-grid" id="materialsGrid"></div>
         <div class="no-results" id="noResults" style="display: none;">
             <h2>🔍 Sonuç Bulunamadı</h2>
@@ -1323,6 +1370,41 @@
             }
         ];
 
+        // Beğeniler yalnızca bu tarayıcıda saklanır.
+        const likesStorageKey = 'materyalFabrikasi.likes.v1';
+        let likedMaterials = new Set();
+        try {
+            const savedLikes = JSON.parse(localStorage.getItem(likesStorageKey) || '[]');
+            if (Array.isArray(savedLikes)) {
+                likedMaterials = new Set(savedLikes.filter(id =>
+                    materials.some(material => material.id === id)));
+            }
+        } catch (error) {
+            // Depolama kullanılamıyorsa beğeniler açık sayfada çalışmaya devam eder.
+        }
+
+        function toggleMaterialLike(materialId, button) {
+            if (likedMaterials.has(materialId)) {
+                likedMaterials.delete(materialId);
+            } else {
+                likedMaterials.add(materialId);
+            }
+            try {
+                localStorage.setItem(likesStorageKey, JSON.stringify([...likedMaterials]));
+            } catch (error) {
+                // Depolama engellense de mevcut sayfadaki seçim korunur.
+            }
+            const isLiked = likedMaterials.has(materialId);
+            button.setAttribute('aria-pressed', String(isLiked));
+            button.innerHTML = materialLikeLabel(isLiked);
+        }
+
+        function materialLikeLabel(isLiked) {
+            return `<span aria-hidden="true">${isLiked ? '♥' : '♡'}</span>
+                ${isLiked ? 'Beğendiniz' : 'Beğen'}
+                <span class="like-count">${isLiked ? 1 : 0} beğeni</span>`;
+        }
+
         let filteredMaterials = [...materials];
 
         async function generateAndDownloadSCORM(name, previewUrl) {
@@ -1421,6 +1503,12 @@
                             📄 ${material.pdfUrl ? 'PDF' : 'Sunum'}
                         </a>
                     </div>
+                    <button type="button" class="action-btn like-btn"
+                        aria-pressed="${likedMaterials.has(material.id)}"
+                        title="${material.name.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')} materyalini beğen"
+                        onclick="toggleMaterialLike(${material.id}, this)">
+                        ${materialLikeLabel(likedMaterials.has(material.id))}
+                    </button>
                 </div>
             `).join('');
         }
