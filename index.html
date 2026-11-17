@@ -3,6 +3,14 @@
 
 <head>
     <meta charset="UTF-8">
+    <!-- Google Analytics: page views and material interactions -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z7CF7M54CV"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-Z7CF7M54CV');
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="https://ulkemyanimda.github.io/icons/factory.ico" type="image/x-icon">
     <title>Materyal Fabrikası - Türkçe ve Türk Kültürü</title>
@@ -359,6 +367,24 @@
             margin-bottom: 2rem;
         }
 
+        .material-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem 1.2rem;
+            padding: 0.8rem 0;
+            margin-bottom: 0.8rem;
+            border-top: 1px solid #e2e8f0;
+            color: #475569;
+            font-size: 0.85rem;
+        }
+
+        .stats-status {
+            color: #64748b;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
         .card-actions {
             display: flex;
             gap: 1rem;
@@ -600,6 +626,7 @@
         </div>
 
         <div class="results-count" id="resultsCount"></div>
+        <p class="stats-status" id="statsStatus" role="status">Materyal istatistikleri yükleniyor…</p>
 
         <div class="materials-grid" id="materialsGrid"></div>
         <div class="no-results" id="noResults" style="display: none;">
@@ -1324,8 +1351,80 @@
         ];
 
         let filteredMaterials = [...materials];
+        let publicStats = null;
+        const countFormatter = new Intl.NumberFormat('tr-TR');
 
-        async function generateAndDownloadSCORM(name, previewUrl) {
+        function materialCount(id, field) {
+            const count = publicStats?.materials?.[String(id)]?.[field];
+            return Number.isSafeInteger(count) && count >= 0 ? countFormatter.format(count) : '—';
+        }
+
+        async function loadPublicStats() {
+            const status = document.getElementById('statsStatus');
+            try {
+                const response = await fetch('data/material-stats.json', {
+                    cache: 'no-cache', signal: AbortSignal.timeout(10000)
+                });
+                if (!response.ok) throw new Error('İstatistikler alınamadı.');
+                const snapshot = await response.json();
+                if (snapshot.version !== 1 || !snapshot.materials || Array.isArray(snapshot.materials)) {
+                    throw new Error('Geçersiz istatistik verisi.');
+                }
+                if (!snapshot.updatedAt) {
+                    status.textContent = 'Sayaçlar hazırlanıyor. İlk veriler alındığında sayılar burada görünecek.';
+                    return;
+                }
+                if (!Number.isFinite(Date.parse(snapshot.updatedAt)) || !/^\d{4}-\d{2}-\d{2}$/.test(snapshot.throughDate)) {
+                    throw new Error('Geçersiz istatistik tarihi.');
+                }
+                for (const counts of Object.values(snapshot.materials)) {
+                    if (!counts || !['previews', 'downloads'].every(key => Number.isSafeInteger(counts[key]) && counts[key] >= 0)) {
+                        throw new Error('Geçersiz sayaç değeri.');
+                    }
+                }
+                publicStats = snapshot;
+                const date = new Date(snapshot.throughDate + 'T12:00:00Z').toLocaleDateString('tr-TR', { timeZone: 'Europe/Istanbul' });
+                status.textContent = date + ' tarihine kadar ölçülen toplamlar. Günlük güncellenir; son işlemler gecikmeli yansıyabilir. İndirme sayısı, indirme başlatma işlemlerini gösterir.';
+                renderMaterials(filteredMaterials);
+            } catch (error) {
+                status.textContent = 'İstatistikler şu anda görüntülenemiyor. Materyalleri kullanmaya devam edebilirsiniz.';
+            }
+        }
+
+        // Custom event names keep these counts separate from automatic file_download events.
+        function trackMaterialEvent(eventName, material, fileType, fileName) {
+            try {
+                if (!material || typeof window.gtag !== 'function') return;
+                window.gtag('event', eventName, {
+                    material_id: String(material.id),
+                    material_name: material.name,
+                    material_level: material.seviye,
+                    file_type: fileType,
+                    file_name: fileName || '',
+                    transport_type: 'beacon'
+                });
+            } catch (error) {
+                // Measurement must never interrupt opening or downloading a material.
+                console.warn('Materyal ölçümü gönderilemedi.', error);
+            }
+        }
+
+        // Delegation continues to work after filtering and rendering the cards again.
+        document.getElementById('materialsGrid').addEventListener('click', function (event) {
+            const link = event.target.closest('a[data-material-id]');
+            if (!link) return;
+            const material = materials.find(item => String(item.id) === link.dataset.materialId);
+            if (link.classList.contains('preview-btn')) {
+                trackMaterialEvent('material_preview', material, 'preview');
+            } else if (link.classList.contains('pdf-btn')) {
+                const path = material && (material.pdfUrl || material.sunumPath);
+                if (!path) return;
+                trackMaterialEvent('material_download', material,
+                    material.pdfUrl ? 'pdf' : 'pptx', path.split('/').pop());
+            }
+        });
+
+        async function generateAndDownloadSCORM(name, previewUrl, materialId) {
             try {
                 // Mevcut sayfanın ana URL'sini alır ve önizleme URL'sini mutlak URL'ye çeviririz
                 const baseUrl = window.location.href.split('/').slice(0, -1).join('/');
@@ -1363,6 +1462,9 @@
                 document.body.appendChild(downloadLink);
                 downloadLink.click();
                 document.body.removeChild(downloadLink);
+                // The ZIP is ready and the browser download was triggered (not proof of saving).
+                const material = materials.find(item => item.id === materialId);
+                trackMaterialEvent('material_download', material, 'scorm', downloadLink.download);
             } catch (error) {
                 console.error('Hata:', error);
                 alert('SCORM oluşturulurken bir hata oluştu: ' + error.message);
@@ -1410,14 +1512,18 @@
                         ${material.description}
                     </div>
                     
+                    <div class="material-stats" aria-label="Materyal kullanım sayıları">
+                        <span>👁️ <strong>${materialCount(material.id, 'previews')}</strong> önizleme</span>
+                        <span>📥 <strong>${materialCount(material.id, 'downloads')}</strong> indirme</span>
+                    </div>
                     <div class="card-actions">
-                        <button onclick="generateAndDownloadSCORM('${material.name.replace(/'/g, "\\'")}', '${material.previewUrl}')" class="action-btn download-btn" style="font-family: inherit;">
+                        <button onclick="generateAndDownloadSCORM('${material.name.replace(/'/g, "\\'")}', '${material.previewUrl}', ${material.id})" class="action-btn download-btn" style="font-family: inherit;">
                             📥 SCORM
                         </button>
-                        <a href="${material.previewUrl}" class="action-btn preview-btn" target="_blank">
+                        <a href="${material.previewUrl}" data-material-id="${material.id}" class="action-btn preview-btn" target="_blank">
                             👁️ Önizle
                         </a>
-                        <a href="${material.pdfUrl || material.sunumPath}" class="action-btn pdf-btn" download>
+                        <a href="${material.pdfUrl || material.sunumPath}" data-material-id="${material.id}" class="action-btn pdf-btn" download>
                             📄 ${material.pdfUrl ? 'PDF' : 'Sunum'}
                         </a>
                     </div>
@@ -1477,6 +1583,7 @@
         if (document.getElementById('tarihFilter')) document.getElementById('tarihFilter').addEventListener('change', filterMaterials);
 
         renderMaterials(materials);
+        loadPublicStats();
     </script>
 
 
