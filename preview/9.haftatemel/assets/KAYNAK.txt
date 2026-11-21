@@ -1,0 +1,6 @@
+Çanta ve tören görselleri: Bu oyun için yerleşik Imagegen aracıyla üretilmiştir.
+Diğer oyun görselleri: Kullanıcının masaüstündeki 9.haftabaslangic/assets klasöründen.
+Logo ve kitap: Kullanıcının masaüstündeki 9.haftatemel/kitap klasöründen.
+
+Atatürk büstü fotoğrafı: Efes Bronze, AT-1804 ürün fotoğrafı. Klasik montaj ile tören görseline eklenmiştir.
+https://www.efesbronze.com/tr/ataturk-1/ataturk-bustu/AT-1804

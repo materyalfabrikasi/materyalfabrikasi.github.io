@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102c24">
+  <title>Okul Zilinin Şifresi</title>
+  <link rel="icon" href="oyun-varliklari/zil.webp" type="image/webp">
+  <style>
+    :root {
+      color-scheme: light;
+      --forest: #102c24;
+      --ink: #18352c;
+      --muted: #4f6056;
+      --paper: #fffdf6;
+      --gold: #f5c878;
+      --line: #dddccf;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--forest);
+      color: var(--ink);
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 1rem;
+    }
+    [hidden] { display: none !important; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button { font: inherit; }
+    :focus-visible { outline: 3px solid #996020; outline-offset: 4px; }
+    .game { min-height: 100svh; position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .92fr); }
+    .stage {
+      min-height: 46rem;
+      padding: clamp(1.4rem, 4vw, 4rem);
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      isolation: isolate;
+      position: relative;
+      overflow: hidden;
+      color: #fff9e8;
+      background: #14352a;
+    }
+    .school, .stage::after { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; }
+    .school { object-fit: cover; object-position: 50% 52%; }
+    .stage::after {
+      content: "";
+      background: linear-gradient(180deg, rgba(10, 32, 25, .38), transparent 28%, rgba(7, 25, 19, .15) 48%, rgba(8, 29, 22, .95) 93%);
+    }
+    .course-label {
+      position: absolute;
+      z-index: 2;
+      top: clamp(1.4rem, 4vw, 4rem);
+      right: clamp(1.35rem, 4.8vw, 5rem);
+      max-width: 25ch;
+      padding: .42rem .62rem;
+      border-radius: .4rem;
+      background: #102c24ed;
+      color: #fff9e8;
+      text-align: right;
+      font-size: .875rem;
+      font-weight: 630;
+      line-height: 1.3;
+    }
+    .brand {
+      align-self: start;
+      justify-self: start;
+      background: #fffef8;
+      padding: .48rem .73rem;
+      border-radius: .55rem;
+      box-shadow: 0 7px 25px #0d201c32;
+    }
+    .brand img { display: block; width: clamp(8.25rem, 13vw, 11rem); height: auto; }
+    .bell-wrap { display: grid; place-items: center; min-height: 15rem; position: relative; }
+    .bell-wrap::before {
+      content: "";
+      position: absolute;
+      width: min(80%, 25rem);
+      aspect-ratio: 1;
+      background: radial-gradient(closest-side, #ffd98461, #ffde9d0d 70%, transparent);
+    }
+    .bell {
+      width: clamp(10rem, 24vw, 20rem);
+      max-height: 24rem;
+      object-fit: contain;
+      transform-origin: 50% 16%;
+      filter: drop-shadow(0 15px 17px #10332670);
+      z-index: 1;
+    }
+    .bell.ringing { animation: ring 1.46s ease-in-out both; }
+    @keyframes ring {
+      0%, 100% { transform: rotate(0); }
+      5.5% { transform: rotate(-19deg); }
+      50% { transform: rotate(19deg); }
+      74% { transform: rotate(-6deg); }
+      89% { transform: rotate(3deg); }
+    }
+    .stage-footer { position: relative; }
+    h1, h2, p { margin: 0; }
+    h1, h2 { font-family: Georgia, 'Times New Roman', serif; text-wrap: balance; }
+    h1 { max-width: 11ch; font-size: clamp(3rem, 6vw, 6.4rem); line-height: .99; letter-spacing: -.065em; }
+    .instructions { color: #ffe5b5; margin-top: .85rem; line-height: 1.5; max-width: 38ch; }
+    .code { display: flex; gap: .56rem; margin: 1.35rem 0 0; }
+    .tile {
+      display: grid;
+      place-items: center;
+      width: clamp(2.8rem, 5vw, 3.6rem);
+      aspect-ratio: 1;
+      border: 1px solid #fce4a98a;
+      background: #0f2e25bc;
+      border-radius: .55rem;
+      color: #f7db9d;
+      font-size: 1.6rem;
+      font-weight: 750;
+    }
+    .tile.unlocked { background: var(--gold); color: #352b16; border-color: #ffd891; animation: unlock .32s ease-out; }
+    @keyframes unlock { from { transform: scale(.85); } to { transform: scale(1); } }
+    .play-area {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 0;
+      background: var(--paper);
+      padding: clamp(1.35rem, 4.8vw, 5rem);
+    }
+    .lesson { width: min(100%, 33rem); }
+    .progress-label { display: flex; justify-content: space-between; gap: 1rem; align-items: center; font-weight: 680; color: var(--muted); }
+    .progress { display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem; margin: .72rem 0 2.25rem; height: .28rem; }
+    .progress span { border-radius: 1rem; background: #e1e6dc; }
+    .progress span.active { background: #bc7f2e; }
+    .progress span.done { background: #3f6c54; }
+    .question-tools { display: flex; align-items: center; justify-content: space-between; gap: .65rem; margin-bottom: .65rem; }
+    .location { color: #475f51; font-weight: 720; }
+    .listen {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      min-height: 2.75rem;
+      flex: 0 0 auto;
+      padding: .45rem .75rem;
+      border: 1px solid #bdcdbf;
+      border-radius: .5rem;
+      background: #eef4eb;
+      color: #254b39;
+      font-size: .9rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .listen svg { width: 1.125rem; height: 1.125rem; flex: none; }
+    .listen:hover { background: #e2eddf; }
+    .listen-status:not(:empty) { margin-top: .5rem; color: var(--muted); font-size: .875rem; }
+    h2 { font-size: clamp(2rem, 3.4vw, 3.45rem); line-height: 1.12; letter-spacing: -.04em; }
+    .options { margin-top: 1.55rem; display: grid; gap: .64rem; }
+    .answer {
+      display: flex;
+      align-items: center;
+      gap: .73rem;
+      width: 100%;
+      min-height: 3.55rem;
+      border: 1px solid var(--line);
+      border-radius: .65rem;
+      background: #fffefa;
+      color: var(--ink);
+      padding: .7rem .78rem;
+      text-align: start;
+      cursor: pointer;
+      line-height: 1.35;
+      font-weight: 620;
+    }
+    .answer:hover:not([aria-disabled="true"]) { border-color: #698b76; background: #f0f6ec; }
+    .choice {
+      display: grid;
+      flex: 0 0 1.9rem;
+      height: 1.9rem;
+      place-items: center;
+      color: #355447;
+      background: #eef1e8;
+      border-radius: .35rem;
+      font-size: .9rem;
+      font-weight: 750;
+    }
+    .answer.wrong { background: #fcf0e7; border-color: #bf7956; }
+    .answer.wrong .choice { background: #f2d6c8; color: #7b3b27; }
+    .answer.correct { background: #edf4e9; border-color: #628671; }
+    .answer.correct .choice { background: #315c45; color: #fff; }
+    .answer[aria-disabled="true"] { cursor: default; }
+    .feedback { min-height: 3.1rem; color: #863d26; margin-top: .85rem; line-height: 1.42; }
+    .feedback.success { color: #2b6042; }
+    .action {
+      min-height: 3.1rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: .72rem 1.22rem;
+      background: #1b4636;
+      color: #fffef8;
+      border: 0;
+      border-radius: .52rem;
+      cursor: pointer;
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .action:hover { background: #2a624c; }
+    .end-text { margin: 1rem 0 1.5rem; color: var(--muted); line-height: 1.6; }
+    noscript { display: block; color: #863d26; margin-top: 1rem; }
+    @media (max-width: 760px) {
+      .game { grid-template-columns: 1fr; }
+      .stage { min-height: 0; padding: 1.05rem 1.25rem 1.3rem; grid-template-rows: minmax(3.6rem, auto) 1fr auto; }
+      .course-label { top: 1.05rem; right: 1.25rem; max-width: min(18ch, calc(100% - 11.4rem)); }
+      .bell-wrap { min-height: 8.8rem; }
+      .bell { width: 7.45rem; height: 8.8rem; }
+      h1 { font-size: clamp(2.25rem, 8.5vw, 4rem); max-width: none; }
+      .instructions { margin-top: .45rem; }
+      .code { margin-top: .85rem; }
+      .tile { width: 2.6rem; font-size: 1.3rem; }
+      .play-area { padding: 1.5rem 1.25rem 1.8rem; align-items: start; }
+      .progress { margin-bottom: 1.35rem; }
+      .feedback { min-height: 2.8rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .tile.unlocked { animation: none; }
+      .bell.ringing { animation: none; filter: drop-shadow(0 0 22px #ffe1a2); }
+    }
+  </style>
+</head>
+<body>
+  <main class="game">
+    <p class="course-label">Çevrim İçi Türkçe Ve Türk Kültürü Dersi</p>
+    <section class="stage" aria-labelledby="game-title">
+      <img class="school" src="oyun-varliklari/okul.webp" alt="">
+      <div class="brand"><img src="kitap/1.svg" alt="Kurum logosu"></div>
+      <div class="bell-wrap"><img class="bell" id="bell" src="oyun-varliklari/zil.webp" alt="Pirinç okul zili"></div>
+      <div class="stage-footer">
+        <h1 id="game-title">Okul Zilinin Şifresi</h1>
+        <p class="instructions">Üç soruyu çöz. Harfleri topla ve kitabı aç.</p>
+        <div class="code" id="code" role="img" aria-label="Zil şifresi. Üç harf henüz kapalı.">
+          <span class="tile" aria-hidden="true">·</span>
+          <span class="tile" aria-hidden="true">·</span>
+          <span class="tile" aria-hidden="true">·</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="play-area" aria-label="Okul kültürü görevleri">
+      <div class="lesson">
+        <div class="progress-label">
+          <span>Okul kültürü</span>
+          <span id="progress-label">Görev 1 / 3</span>
+        </div>
+        <div class="progress" aria-hidden="true"><span></span><span></span><span></span></div>
+        <div id="question-area">
+          <div class="question-tools">
+            <p class="location" id="location"></p>
+            <button class="listen" type="button" id="listen">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <path d="M11 5 6 9H3v6h3l5 4V5Z"/>
+                <path d="M15 9a4 4 0 0 1 0 6m3-8a7 7 0 0 1 0 10"/>
+              </svg>
+              <span>Soruyu dinle</span>
+            </button>
+          </div>
+          <h2 id="question" tabindex="-1"></h2>
+          <p class="listen-status" id="listen-status" role="status"></p>
+          <div class="options" id="options" role="group" aria-labelledby="question"></div>
+          <p class="feedback" id="feedback" role="status" aria-atomic="true"></p>
+          <button class="action" type="button" id="next" hidden>Sonraki görev</button>
+          <noscript>Oyunu oynamak için tarayıcında JavaScript’i etkinleştir.</noscript>
+        </div>
+        <div id="ending" hidden>
+          <h2 id="ending-title" tabindex="-1">Şifre çözüldü!</h2>
+          <p class="end-text">ZİL tamamlandı. <strong>Emre Türkiye’de Okulda</strong> kitabı açılıyor.</p>
+          <a class="action" id="book" href="kitap/index.html">Kitabı aç</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <audio id="question-audio" src="1.wav" preload="auto"></audio>
+  <audio id="ring-sound" src="oyun-varliklari/okul-zili.wav" preload="auto"></audio>
+  <script>
+    const tasks = [
+      {
+        location: 'Sınıf',
+        audio: '1.wav',
+        question: 'Sabah öğretmenin sınıfa girdiğinde onu nasıl selamlarsın?',
+        answers: ['Günaydın öğretmenim!', 'İyi günler arkadaşlar!', 'İyi akşamlar öğretmenim!'],
+        correct: 0,
+        letter: 'Z',
+        hint: 'İpucu: Günün hangi saati olduğunu ve kime seslendiğini düşün.',
+        explanation: 'Okulda öğretmenimize “öğretmenim” diye sesleniriz.'
+      },
+      {
+        location: 'Okul bahçesi',
+        audio: '2.wav',
+        question: 'Okul bahçesindeki bayrak töreninde hangisi okunur?',
+        answers: ['Gençliğe Hitabe', 'Öğrenci Andı', 'İstiklal Marşı'],
+        correct: 2,
+        letter: 'İ',
+        hint: 'İpucu: Türkiye’nin millî marşını düşün.',
+        explanation: 'Bayrak töreninde İstiklal Marşı okunur.'
+      },
+      {
+        location: 'Okul takvimi',
+        audio: '3.wav',
+        question: 'Türkiye’de Öğretmenler Günü hangi tarihte kutlanır?',
+        answers: ['24 Kasım', '29 Ekim', '23 Nisan'],
+        correct: 0,
+        letter: 'L',
+        hint: 'İpucu: Aradığın tarih kasım ayında.',
+        explanation: 'Öğretmenler Günü 24 Kasım’da kutlanır.'
+      }
+    ];
+
+    const questionArea = document.querySelector('#question-area');
+    const locationLabel = document.querySelector('#location');
+    const question = document.querySelector('#question');
+    const options = document.querySelector('#options');
+    const feedback = document.querySelector('#feedback');
+    const next = document.querySelector('#next');
+    const progressLabel = document.querySelector('#progress-label');
+    const bars = document.querySelectorAll('.progress span');
+    const code = document.querySelector('#code');
+    const tiles = code.querySelectorAll('.tile');
+    const ending = document.querySelector('#ending');
+    const book = document.querySelector('#book');
+    const bell = document.querySelector('#bell');
+    const sound = document.querySelector('#ring-sound');
+    const questionAudio = document.querySelector('#question-audio');
+    const listen = document.querySelector('#listen');
+    const listenStatus = document.querySelector('#listen-status');
+
+    let current = 0;
+    let solved = false;
+
+    function playQuestionAudio() {
+      const source = tasks[current].audio;
+      listenStatus.textContent = '';
+      if (questionAudio.getAttribute('src') !== source) {
+        questionAudio.src = source;
+      } else {
+        questionAudio.currentTime = 0;
+      }
+
+      questionAudio.play().catch(error => {
+        if (tasks[current].audio !== source || error.name === 'AbortError' || solved) return;
+        listenStatus.textContent = error.name === 'NotAllowedError'
+          ? 'Sesi başlatmak için “Soruyu dinle” düğmesine bas.'
+          : 'Soru sesi açılamadı. Tekrar dene.';
+      });
+    }
+
+    function showTask(moveFocus = false) {
+      const task = tasks[current];
+      solved = false;
+      progressLabel.textContent = `Görev ${current + 1} / ${tasks.length}`;
+      bars[current].classList.add('active');
+      locationLabel.textContent = task.location;
+      question.textContent = task.question;
+      feedback.textContent = '';
+      feedback.classList.remove('success');
+      next.hidden = true;
+      options.replaceChildren();
+
+      task.answers.forEach((label, index) => {
+        const button = document.createElement('button');
+        const choice = document.createElement('span');
+        button.type = 'button';
+        button.className = 'answer';
+        choice.className = 'choice';
+        choice.textContent = String.fromCharCode(65 + index);
+        choice.setAttribute('aria-hidden', 'true');
+        button.append(choice, document.createTextNode(label));
+        button.addEventListener('click', () => checkAnswer(index, button));
+        options.append(button);
+      });
+
+      if (moveFocus) question.focus({ preventScroll: true });
+      playQuestionAudio();
+    }
+
+    function checkAnswer(index, button) {
+      if (solved) return;
+      const task = tasks[current];
+      options.querySelector('.wrong')?.classList.remove('wrong');
+
+      if (index !== task.correct) {
+        button.classList.add('wrong');
+        feedback.textContent = task.hint;
+        return;
+      }
+
+      solved = true;
+      questionAudio.pause();
+      listenStatus.textContent = '';
+      button.classList.add('correct');
+      options.querySelectorAll('button').forEach(answer => answer.setAttribute('aria-disabled', 'true'));
+      bars[current].classList.replace('active', 'done');
+      tiles[current].textContent = task.letter;
+      tiles[current].classList.add('unlocked');
+      const letters = tasks.slice(0, current + 1).map(item => item.letter).join(' ');
+      code.setAttribute('aria-label', `Açılan şifre harfleri. ${letters}.`);
+
+      if (current === tasks.length - 1) {
+        finish();
+        return;
+      }
+
+      feedback.classList.add('success');
+      feedback.textContent = `${task.letter} harfi açıldı. ${task.explanation}`;
+      next.hidden = false;
+    }
+
+    function finish() {
+      progressLabel.textContent = '3 görev tamamlandı';
+      questionArea.hidden = true;
+      ending.hidden = false;
+      document.querySelector('#ending-title').focus({ preventScroll: true });
+      bell.classList.add('ringing');
+      const bellBounds = bell.getBoundingClientRect();
+      if (bellBounds.top < 0 || bellBounds.bottom > window.innerHeight) {
+        bell.scrollIntoView({ block: 'center', behavior: 'instant' });
+      }
+
+      // Start audio directly inside the final answer's click or keyboard action.
+      const minimumDisplayTime = 2450;
+      const start = performance.now();
+      let opened = false;
+      function openBook() {
+        if (opened) return;
+        opened = true;
+        window.location.assign(book.href);
+      }
+      function afterChime() {
+        window.setTimeout(openBook, Math.max(0, minimumDisplayTime - (performance.now() - start)));
+      }
+
+      book.addEventListener('click', () => { opened = true; }, { once: true });
+      sound.addEventListener('ended', afterChime, { once: true });
+      sound.play().catch(afterChime);
+      window.setTimeout(openBook, 3600);
+    }
+
+    listen.addEventListener('click', playQuestionAudio);
+    next.addEventListener('click', () => {
+      current += 1;
+      showTask(true);
+    });
+    showTask();
+  </script>
+</body>
+</html>
