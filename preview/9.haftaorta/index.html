@@ -121,6 +121,8 @@ progress::-moz-progress-bar { background: #7956b4; border-radius: 10px; }
 fieldset { min-width: 0; padding: 0; margin: 0; border: 0; }
 legend { padding: 0; margin: 0 0 8px; line-height: 1.35; font-size: 1rem; color: var(--muted); }
 .choices { display: grid; gap: 6px; }
+.choice-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px; }
+.choice-row .listen-choice { align-self: center; padding-inline: 9px; font-size: .85rem; }
 .option {
   position: relative;
   display: flex;
@@ -363,9 +365,12 @@ const answers = Array(questions.length).fill(null);
 let current = 0;
 let playbackRequest = 0;
 
-async function playQuestionAudio() {
+function playQuestionAudio() {
+  return playAudio(`${current + 1}.mp3`, "Soru sesi");
+}
+
+async function playAudio(source, description) {
   const request = ++playbackRequest;
-  const source = `${current + 1}.mp3`;
   audioStatus.hidden = true;
   if (questionAudio.getAttribute("src") !== source) {
     questionAudio.src = source;
@@ -379,7 +384,7 @@ async function playQuestionAudio() {
     if (request !== playbackRequest) return;
     audioStatus.textContent = error.name === "NotAllowedError"
       ? "Sesi başlatmak için “Dinle” düğmesine bas."
-      : "Soru sesi açılamadı. “Dinle” düğmesiyle yeniden dene.";
+      : `${description} açılamadı. “Dinle” düğmesiyle yeniden dene.`;
     audioStatus.hidden = false;
   }
 }
@@ -419,6 +424,11 @@ function showQuestion(index, moveFocus = true) {
   byId("action").textContent = current === questions.length - 1 ? "Bitir" : "Sonraki soru";
 
   choices.replaceChildren(...question.choices.map((ending, option) => {
+    const letter = ["A", "B", "C"][option];
+    const source = `s${index + 1}${letter.toLowerCase()}.mp3`;
+    const row = document.createElement("div");
+    row.className = "choice-row";
+
     const label = document.createElement("label");
     label.className = "option";
 
@@ -431,13 +441,21 @@ function showQuestion(index, moveFocus = true) {
     const mark = document.createElement("span");
     mark.className = "option-mark";
     mark.setAttribute("aria-hidden", "true");
-    mark.textContent = ["A", "B", "C"][option];
+    mark.textContent = letter;
 
     const text = document.createElement("span");
     text.textContent = ending[0].toLocaleUpperCase("tr-TR") + ending.slice(1);
 
+    const listen = document.createElement("button");
+    listen.type = "button";
+    listen.className = "button secondary listen-choice";
+    listen.textContent = "Dinle";
+    listen.setAttribute("aria-label", `${letter} şıkkını dinle`);
+    listen.addEventListener("click", () => playAudio(source, `${letter} şıkkının sesi`));
+
     label.append(input, mark, text);
-    return label;
+    row.append(label, listen);
+    return row;
   }));
 
   updateAnswer();
