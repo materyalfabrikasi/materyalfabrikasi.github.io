@@ -150,6 +150,12 @@
     .listen-status:not(:empty) { margin-top: .5rem; color: var(--muted); font-size: .875rem; }
     h2 { font-size: clamp(2rem, 3.4vw, 3.45rem); line-height: 1.12; letter-spacing: -.04em; }
     .options { margin-top: 1.55rem; display: grid; gap: .64rem; }
+    .option-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: .5rem;
+    }
     .answer {
       display: flex;
       align-items: center;
@@ -274,7 +280,7 @@
       </div>
     </section>
   </main>
-  <audio id="question-audio" src="1.wav" preload="auto"></audio>
+  <audio id="narration-audio" src="1.wav" preload="auto"></audio>
   <audio id="ring-sound" src="oyun-varliklari/okul-zili.wav" preload="auto"></audio>
   <script>
     const tasks = [
@@ -282,7 +288,11 @@
         location: 'Sınıf',
         audio: '1.wav',
         question: 'Sabah öğretmenin sınıfa girdiğinde onu nasıl selamlarsın?',
-        answers: ['Günaydın öğretmenim!', 'İyi günler arkadaşlar!', 'İyi akşamlar öğretmenim!'],
+        answers: [
+          { label: 'Günaydın öğretmenim!', audio: '1a.wav' },
+          { label: 'İyi günler arkadaşlar!', audio: '1b.wav' },
+          { label: 'İyi akşamlar öğretmenim!', audio: '1c.mp3' }
+        ],
         correct: 0,
         letter: 'Z',
         hint: 'İpucu: Günün hangi saati olduğunu ve kime seslendiğini düşün.',
@@ -292,7 +302,11 @@
         location: 'Okul bahçesi',
         audio: '2.wav',
         question: 'Okul bahçesindeki bayrak töreninde hangisi okunur?',
-        answers: ['Gençliğe Hitabe', 'Öğrenci Andı', 'İstiklal Marşı'],
+        answers: [
+          { label: 'Gençliğe Hitabe', audio: '2a.wav' },
+          { label: 'Öğrenci Andı', audio: '2b.wav' },
+          { label: 'İstiklal Marşı', audio: '2c.wav' }
+        ],
         correct: 2,
         letter: 'İ',
         hint: 'İpucu: Türkiye’nin millî marşını düşün.',
@@ -302,7 +316,11 @@
         location: 'Okul takvimi',
         audio: '3.wav',
         question: 'Türkiye’de Öğretmenler Günü hangi tarihte kutlanır?',
-        answers: ['24 Kasım', '29 Ekim', '23 Nisan'],
+        answers: [
+          { label: '24 Kasım', audio: '3a.wav' },
+          { label: '29 Ekim', audio: '3b.wav' },
+          { label: '23 Nisan', audio: '3c.wav' }
+        ],
         correct: 0,
         letter: 'L',
         hint: 'İpucu: Aradığın tarih kasım ayında.',
@@ -324,28 +342,33 @@
     const book = document.querySelector('#book');
     const bell = document.querySelector('#bell');
     const sound = document.querySelector('#ring-sound');
-    const questionAudio = document.querySelector('#question-audio');
+    const narration = document.querySelector('#narration-audio');
     const listen = document.querySelector('#listen');
     const listenStatus = document.querySelector('#listen-status');
 
     let current = 0;
     let solved = false;
+    let narrationRequest = 0;
 
-    function playQuestionAudio() {
-      const source = tasks[current].audio;
+    function playNarration(source, buttonLabel, errorMessage) {
+      const request = ++narrationRequest;
       listenStatus.textContent = '';
-      if (questionAudio.getAttribute('src') !== source) {
-        questionAudio.src = source;
+      if (narration.getAttribute('src') !== source) {
+        narration.src = source;
       } else {
-        questionAudio.currentTime = 0;
+        narration.currentTime = 0;
       }
 
-      questionAudio.play().catch(error => {
-        if (tasks[current].audio !== source || error.name === 'AbortError' || solved) return;
+      narration.play().catch(error => {
+        if (request !== narrationRequest || error.name === 'AbortError') return;
         listenStatus.textContent = error.name === 'NotAllowedError'
-          ? 'Sesi başlatmak için “Soruyu dinle” düğmesine bas.'
-          : 'Soru sesi açılamadı. Tekrar dene.';
+          ? `Sesi başlatmak için “${buttonLabel}” düğmesine bas.`
+          : errorMessage;
       });
+    }
+
+    function playQuestionAudio() {
+      playNarration(tasks[current].audio, 'Soruyu dinle', 'Soru sesi açılamadı. Tekrar dene.');
     }
 
     function showTask(moveFocus = false) {
@@ -360,9 +383,12 @@
       next.hidden = true;
       options.replaceChildren();
 
-      task.answers.forEach((label, index) => {
+      task.answers.forEach(({ label, audio }, index) => {
+        const row = document.createElement('div');
         const button = document.createElement('button');
         const choice = document.createElement('span');
+        const listenButton = document.createElement('button');
+        row.className = 'option-row';
         button.type = 'button';
         button.className = 'answer';
         choice.className = 'choice';
@@ -370,7 +396,15 @@
         choice.setAttribute('aria-hidden', 'true');
         button.append(choice, document.createTextNode(label));
         button.addEventListener('click', () => checkAnswer(index, button));
-        options.append(button);
+        listenButton.type = 'button';
+        listenButton.className = 'listen';
+        listenButton.textContent = 'Dinle';
+        listenButton.setAttribute('aria-label', `${choice.textContent} şıkkını dinle`);
+        listenButton.addEventListener('click', () => {
+          playNarration(audio, 'Dinle', `${choice.textContent} şıkkının sesi açılamadı. Tekrar dene.`);
+        });
+        row.append(button, listenButton);
+        options.append(row);
       });
 
       if (moveFocus) question.focus({ preventScroll: true });
@@ -389,10 +423,11 @@
       }
 
       solved = true;
-      questionAudio.pause();
+      narrationRequest += 1;
+      narration.pause();
       listenStatus.textContent = '';
       button.classList.add('correct');
-      options.querySelectorAll('button').forEach(answer => answer.setAttribute('aria-disabled', 'true'));
+      options.querySelectorAll('.answer').forEach(answer => answer.setAttribute('aria-disabled', 'true'));
       bars[current].classList.replace('active', 'done');
       tiles[current].textContent = task.letter;
       tiles[current].classList.add('unlocked');
